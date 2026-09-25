@@ -121,7 +121,7 @@ export function VersionHistoryPanel() {
               <p className="text-sm text-red-300 font-semibold">{versionHistoryError}</p>
               <button
                 onClick={() => fetchWorkflowVersions()}
-                className="mt-2 text-xs font-semibold text-indigo-400 hover:text-indigo-300"
+                className="mt-2 text-xs font-semibold text-iris hover:text-iris"
               >
                 Tentar novamente
               </button>
@@ -175,7 +175,7 @@ export function VersionHistoryPanel() {
                     onClick={() => setConfirmingVersion(v.version)}
                     disabled={isRollingBack}
                     aria-label={`Restaurar versão ${v.version}`}
-                    className="shrink-0 px-3 py-1.5 rounded-lg bg-indigo-600/90 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+                    className="shrink-0 px-3 py-1.5 rounded-lg bg-iris/90 hover:bg-iris text-white text-xs font-semibold flex items-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                   >
                     {isRollingBack && rollbackTargetVersion === v.version ? (
                       <Loader2 className="w-3.5 h-3.5 animate-spin" />

@@ -33,7 +33,7 @@ export function PromptNode(props: NodeProps<StudioNode>) {
     <UnifiedNode
       {...props}
       iconName="MessageSquare"
-      colorClass="bg-indigo-500 text-indigo-600"
+      colorClass="bg-iris text-iris"
       headerTitle="Prompt"
     />
   );
@@ -56,7 +56,7 @@ export function ToolNode(props: NodeProps<StudioNode>) {
     <UnifiedNode
       {...props}
       iconName="Wrench"
-      colorClass="bg-blue-500 text-blue-600"
+      colorClass="bg-brand text-brand-ink dark:text-brand"
       headerTitle="Tool"
     />
   );

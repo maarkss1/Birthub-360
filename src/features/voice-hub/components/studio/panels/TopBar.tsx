@@ -25,7 +25,7 @@ export function TopBar({ health, issues, onZoomIn, onZoomOut, onFitView, onSimul
           <div 
             onClick={onSimulate}
             title="Simular Ligação (Test Call)"
-            className="w-8 h-8 bg-indigo-600/90 rounded-lg flex items-center justify-center text-white cursor-pointer hover:bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all hover:scale-105 active:scale-95 border border-indigo-500/50"
+            className="w-8 h-8 bg-iris/90 rounded-lg flex items-center justify-center text-white cursor-pointer hover:bg-iris shadow-[0_0_15px_rgba(99,102,241,0.4)] transition-all hover:scale-105 active:scale-95 border border-indigo-500/50"
           >
              <Play className="w-4 h-4 fill-current" />
           </div>
@@ -102,7 +102,7 @@ export function TopBar({ health, issues, onZoomIn, onZoomOut, onFitView, onSimul
             onClick={onPublish}
             disabled={hasErrors || publishState === 'publishing'}
             title={hasErrors ? 'Corrija os erros de validação listados em "Errors & Validation" antes de publicar.' : 'Valida e ativa este fluxo para o Voice Runtime.'}
-            className="px-4 py-1.5 rounded-lg bg-indigo-600/90 text-white text-xs font-semibold hover:bg-indigo-500 flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-indigo-600/90"
+            className="px-4 py-1.5 rounded-lg bg-iris/90 text-white text-xs font-semibold hover:bg-iris flex items-center gap-2 shadow-[0_0_15px_rgba(99,102,241,0.3)] border border-indigo-500/50 transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-iris/90"
           >
             {publishState === 'publishing' ? (
               <Loader2 className="w-3.5 h-3.5 animate-spin" />

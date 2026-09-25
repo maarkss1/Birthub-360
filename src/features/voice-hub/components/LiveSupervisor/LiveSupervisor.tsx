@@ -3,7 +3,7 @@ import { AlertCircle, ShieldAlert, HeartPulse, Activity, Zap, Shield, Clock, Wif
 import { motion, AnimatePresence } from 'motion/react';
 import { io, Socket } from 'socket.io-client';
 import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 
 interface Alert {
   id: string;
@@ -230,7 +230,7 @@ export function LiveSupervisor({ sessionId }: LiveSupervisorProps) {
 
       <div className="p-4 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-500/20 text-indigo-400 rounded-lg">
+          <div className="p-2 bg-iris/20 text-iris rounded-lg">
             <ShieldAlert className="w-5 h-5" />
           </div>
           <div>
@@ -282,17 +282,17 @@ export function LiveSupervisor({ sessionId }: LiveSupervisorProps) {
               <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-semibold text-slate-300 flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-indigo-400" />
+                    <Zap className="w-4 h-4 text-iris" />
                     Intenção Atual
                   </h3>
-                  <span className="text-xs font-mono text-indigo-300 bg-indigo-500/20 px-2 py-1 rounded">
+                  <span className="text-xs font-mono text-iris bg-iris/20 px-2 py-1 rounded">
                     Confiança: {intent.confidence}%
                   </span>
                 </div>
                 <div className="text-xl font-medium text-white">{intent.primary}</div>
                 <div className="mt-4 h-2 bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
-                    className="h-full bg-indigo-500"
+                    className="h-full bg-iris"
                     initial={{ width: 0 }}
                     animate={{ width: `${intent.confidence}%` }}
                     transition={{ duration: 0.5 }}

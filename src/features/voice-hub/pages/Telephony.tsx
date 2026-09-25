@@ -159,7 +159,7 @@ export default function TelephonyPage() {
                 <tbody className="divide-y divide-slate-100">
                     <tr>
                         <td className="p-3 font-mono">+55 11 99999-0000</td>
-                        <td className="p-3"><span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold">TWILIO</span></td>
+                        <td className="p-3"><span className="px-2 py-1 bg-brand text-brand-ink dark:text-brand rounded text-xs font-bold">TWILIO</span></td>
                         <td className="p-3 text-slate-500 truncate max-w-xs">https://api.birthhub.com/voice/incoming/...</td>
                         <td className="p-3"><span className="w-2 h-2 bg-green-500 rounded-full inline-block mr-2"></span>Ativo</td>
                     </tr>

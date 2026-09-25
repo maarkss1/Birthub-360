@@ -23,7 +23,7 @@ export default function SupervisionPage() {
     <div className="h-full flex flex-col -m-8">
       <div className="bg-white border-b border-gray-200 px-8 py-6">
         <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-          <PhoneCall className="w-6 h-6 text-indigo-600" />
+          <PhoneCall className="w-6 h-6 text-iris" />
           Supervisão ao Vivo
         </h1>
         <p className="text-gray-500 mt-1">Acompanhe métricas emocionais e cognitivas em tempo real durante chamadas ativas.</p>
@@ -49,13 +49,13 @@ export default function SupervisionPage() {
             <button
               type="submit"
               disabled={!sessionIdInput.trim()}
-              className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
+              className="w-full py-2 bg-iris hover:bg-iris disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-lg transition-colors"
             >
               Acompanhar
             </button>
           </form>
 
-          <div className="mt-4 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-xs text-indigo-800 flex gap-2">
+          <div className="mt-4 p-3 bg-indigo-50 border border-indigo-100 rounded-lg text-xs text-iris flex gap-2">
             <Info className="w-4 h-4 flex-shrink-0 mt-0.5" />
             <span>
               Uma lista de chamadas ativas do tenant em tempo real ainda depende de um endpoint dedicado

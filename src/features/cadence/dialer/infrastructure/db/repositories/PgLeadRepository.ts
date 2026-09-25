@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import { prisma } from '../../../../../../lib/prisma';
 import { Lead, type LeadProps, type LeadStatus } from "../../../domain/entities/Lead.js";
 import { PhoneNumber } from "../../../domain/value-objects/PhoneNumber.js";
 import type { LeadRepository } from "../../../application/ports/LeadRepository.js";

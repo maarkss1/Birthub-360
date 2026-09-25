@@ -342,7 +342,7 @@ export function Badge({ children, variant = 'primary', className = '' }: BadgePr
     success: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900/40",
     warning: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900/40",
     danger: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/40 dark:text-red-300 dark:border-red-900/40",
-    info: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/40 dark:text-blue-300 dark:border-blue-900/40"
+    info: "bg-blue-50 text-brand-ink dark:text-brand border-blue-200 dark:bg-blue-950/40 dark:text-brand-ink dark:text-brand dark:border-blue-900/40"
   };
 
   return (
@@ -448,14 +448,14 @@ export function Alert({ title, description, variant = 'info' }: AlertProps) {
     success: <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />,
     warning: <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400" />,
     danger: <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />,
-    info: <Info className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+    info: <Info className="h-5 w-5 text-brand-ink dark:text-brand dark:text-brand-ink dark:text-brand" />
   };
 
   const styles = {
     success: "bg-green-50 border-green-200 text-green-800 dark:bg-green-950/20 dark:border-green-900/30 dark:text-green-300",
     warning: "bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-950/20 dark:border-amber-900/30 dark:text-amber-300",
     danger: "bg-red-50 border-red-200 text-red-800 dark:bg-red-950/20 dark:border-red-900/30 dark:text-red-300",
-    info: "bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-950/20 dark:border-blue-900/30 dark:text-blue-300"
+    info: "bg-blue-50 border-blue-200 text-brand-ink dark:text-brand dark:bg-blue-950/20 dark:border-blue-900/30 dark:text-brand-ink dark:text-brand"
   };
 
   return (
@@ -878,7 +878,7 @@ export function ToastContainer({ toasts }: { toasts: Toast[] }) {
           >
             {toast.type === 'success' && <CheckCircle aria-hidden="true" className="h-5 w-5 text-green-600 dark:text-green-450 shrink-0 mt-0.5" />}
             {toast.type === 'error' && <AlertCircle aria-hidden="true" className="h-5 w-5 text-red-600 dark:text-red-450 shrink-0 mt-0.5" />}
-            {toast.type === 'info' && <Info aria-hidden="true" className="h-5 w-5 text-blue-600 dark:text-blue-450 shrink-0 mt-0.5" />}
+            {toast.type === 'info' && <Info aria-hidden="true" className="h-5 w-5 text-brand-ink dark:text-brand dark:text-blue-450 shrink-0 mt-0.5" />}
             <span className="text-xs font-semibold leading-relaxed flex-1">{toast.message}</span>
           </motion.div>
         ))}

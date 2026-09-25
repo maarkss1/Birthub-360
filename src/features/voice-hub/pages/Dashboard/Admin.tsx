@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Activity, Server, Users, RefreshCw } from 'lucide-react';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../lib/logger';
 
 type Session = {
   id: string;
@@ -147,7 +147,7 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
     const colors: Record<string, string> = {
-        blue: 'bg-blue-50 text-blue-600',
+        blue: 'bg-blue-50 text-brand-ink dark:text-brand',
         green: 'bg-green-50 text-green-600',
         red: 'bg-red-50 text-red-600',
         purple: 'bg-purple-50 text-purple-600',
@@ -169,6 +169,6 @@ function StatCard({ icon: Icon, label, value, color }: StatCardProps) {
 
 function StatusBadge({ status }: { status: string }) {
     if (status === 'completed') return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">Concluído</span>;
-    if (status === 'qualified') return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">Qualificado</span>;
+    if (status === 'qualified') return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-brand text-brand-ink dark:text-brand">Qualificado</span>;
     return <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-700">{status}</span>;
 }

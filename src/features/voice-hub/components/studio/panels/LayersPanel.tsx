@@ -34,12 +34,12 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
       case 'start': return <Play className="w-3.5 h-3.5 text-green-500 shrink-0" />;
       case 'voice': return <Mic className="w-3.5 h-3.5 text-pink-500 shrink-0" />;
       case 'llm': return <BrainCircuit className="w-3.5 h-3.5 text-purple-500 shrink-0" />;
-      case 'prompt': return <MessageSquare className="w-3.5 h-3.5 text-indigo-500 shrink-0" />;
+      case 'prompt': return <MessageSquare className="w-3.5 h-3.5 text-iris shrink-0" />;
       case 'question': return <HelpCircle className="w-3.5 h-3.5 text-teal-500 shrink-0" />;
       case 'condition': return <GitBranch className="w-3.5 h-3.5 text-orange-500 shrink-0" />;
       case 'switch': return <Split className="w-3.5 h-3.5 text-yellow-500 shrink-0" />;
       case 'knowledge': return <BookOpen className="w-3.5 h-3.5 text-cyan-500 shrink-0" />;
-      case 'tool': return <Wrench className="w-3.5 h-3.5 text-blue-500 shrink-0" />;
+      case 'tool': return <Wrench className="w-3.5 h-3.5 text-brand-ink dark:text-brand shrink-0" />;
       case 'memory': return <Database className="w-3.5 h-3.5 text-emerald-500 shrink-0" />;
       case 'human_handoff': return <Headphones className="w-3.5 h-3.5 text-rose-500 shrink-0" />;
       case 'end': return <Square className="w-3.5 h-3.5 text-slate-700 shrink-0" />;
@@ -88,7 +88,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
         <button 
           onClick={() => setActiveTab('assets')}
           className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-colors ${
-            activeTab === 'assets' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-300'
+            activeTab === 'assets' ? 'border-indigo-500 text-iris' : 'border-transparent text-gray-500 hover:text-gray-300'
           }`}
         >
           Node Specs
@@ -96,7 +96,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
         <button 
           onClick={() => setActiveTab('favorites')}
           className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-colors ${
-            activeTab === 'favorites' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-300'
+            activeTab === 'favorites' ? 'border-indigo-500 text-iris' : 'border-transparent text-gray-500 hover:text-gray-300'
           }`}
         >
           Favs
@@ -104,7 +104,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
         <button 
           onClick={() => setActiveTab('templates')}
           className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-colors ${
-            activeTab === 'templates' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-300'
+            activeTab === 'templates' ? 'border-indigo-500 text-iris' : 'border-transparent text-gray-500 hover:text-gray-300'
           }`}
         >
           Templates
@@ -112,7 +112,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
         <button 
           onClick={() => setActiveTab('layers')}
           className={`flex-1 py-2 text-[10px] font-bold uppercase tracking-wider border-b-2 transition-colors ${
-            activeTab === 'layers' ? 'border-indigo-500 text-indigo-400' : 'border-transparent text-gray-500 hover:text-gray-300'
+            activeTab === 'layers' ? 'border-indigo-500 text-iris' : 'border-transparent text-gray-500 hover:text-gray-300'
           }`}
         >
           Layers
@@ -130,7 +130,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
                 onClick={() => setCategoryFilter('all')}
                 className={`px-2 py-0.5 rounded text-[9px] font-semibold transition-all shrink-0 uppercase tracking-wide border ${
                   categoryFilter === 'all' 
-                    ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]' 
+                    ? 'bg-iris/20 text-iris border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]' 
                     : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10'
                 }`}
               >
@@ -142,7 +142,7 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
                   onClick={() => setCategoryFilter(cat)}
                   className={`px-2 py-0.5 rounded text-[9px] font-semibold transition-all shrink-0 uppercase tracking-wide border ${
                     categoryFilter === cat 
-                      ? 'bg-indigo-500/20 text-indigo-300 border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]' 
+                      ? 'bg-iris/20 text-iris border-indigo-500/50 shadow-[0_0_10px_rgba(99,102,241,0.2)]' 
                       : 'bg-white/5 text-gray-400 border-white/10 hover:bg-white/10'
                   }`}
                 >
@@ -171,12 +171,12 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
                     }}
                     className="p-2.5 bg-white/5 border border-white/10 hover:border-indigo-500/50 rounded-xl cursor-pointer flex items-start gap-2.5 transition-all group hover:bg-white/10 hover:shadow-[0_0_15px_rgba(99,102,241,0.1)] focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/50 focus-visible:border-indigo-500/50"
                   >
-                    <div className="p-1.5 rounded-lg bg-black/20 group-hover:bg-indigo-500/20 text-gray-400 group-hover:text-indigo-400 transition-colors border border-white/5 group-hover:border-indigo-500/30">
+                    <div className="p-1.5 rounded-lg bg-black/20 group-hover:bg-iris/20 text-gray-400 group-hover:text-iris transition-colors border border-white/5 group-hover:border-indigo-500/30">
                       {getIconForType(item.type)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-gray-200 group-hover:text-indigo-300 truncate pr-1 transition-colors">
+                        <span className="text-xs font-bold text-gray-200 group-hover:text-iris truncate pr-1 transition-colors">
                           {item.label}
                         </span>
                         <button 
@@ -271,10 +271,10 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
                   className="w-full text-left p-2.5 bg-white/5 border border-white/10 hover:border-indigo-500/50 rounded-lg cursor-pointer transition-all hover:bg-white/10 hover:shadow-[0_0_15px_rgba(99,102,241,0.1)] group focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/50"
                 >
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-gray-200 group-hover:text-indigo-300 truncate transition-colors">
+                    <span className="text-xs font-bold text-gray-200 group-hover:text-iris truncate transition-colors">
                       {tpl.name}
                     </span>
-                    <FolderOpen className="w-3.5 h-3.5 text-gray-500 group-hover:text-indigo-400 transition-colors" />
+                    <FolderOpen className="w-3.5 h-3.5 text-gray-500 group-hover:text-iris transition-colors" />
                   </div>
                   <div className="text-[10px] text-gray-500 font-mono mt-1 font-semibold uppercase">
                     {tpl.nodes.length} Nodes • {tpl.edges.length} Edges
@@ -305,15 +305,15 @@ export function LayersPanel({ nodes }: LayersPanelProps) {
                       type="button"
                       onClick={() => setSelectedNodeId(node.id)}
                       aria-label={`Selecionar nó ${node.data.label} e abrir no inspetor`}
-                      className="w-full flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-indigo-500/10 cursor-pointer group transition-colors text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/50"
+                      className="w-full flex items-center justify-between px-2 py-1.5 rounded-md hover:bg-iris/10 cursor-pointer group transition-colors text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-indigo-500/50"
                     >
                       <div className="flex items-center gap-2 min-w-0">
                         {getIconForType(node.type || '')}
-                        <span className="text-xs font-medium text-gray-400 group-hover:text-indigo-300 truncate transition-colors">
+                        <span className="text-xs font-medium text-gray-400 group-hover:text-iris truncate transition-colors">
                           {node.data.label}
                         </span>
                       </div>
-                      <span className="text-[8px] font-mono font-semibold text-gray-500 group-hover:text-indigo-400 uppercase shrink-0 transition-colors">
+                      <span className="text-[8px] font-mono font-semibold text-gray-500 group-hover:text-iris uppercase shrink-0 transition-colors">
                         {state}
                       </span>
                     </button>

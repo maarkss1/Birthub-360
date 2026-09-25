@@ -496,7 +496,7 @@ export default function LandingPage() {
                           ) : (
                             simulatedTranscription.map((log, i) => (
                               <div key={i} className="text-slate-300">
-                                {log.startsWith('[Lead]') && <span className="text-blue-400 font-bold">{log}</span>}
+                                {log.startsWith('[Lead]') && <span className="text-brand-ink dark:text-brand font-bold">{log}</span>}
                                 {log.startsWith('[IA Catarina]') && <span className="text-green-400 font-bold">{log}</span>}
                                 {log.startsWith('[Sistema]') && <span className="text-amber-400 font-bold">{log}</span>}
                               </div>
@@ -670,7 +670,7 @@ export default function LandingPage() {
 
             {/* Benefício 2 */}
             <Card className="p-6 space-y-4 hoverable group">
-              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 rounded-xl w-fit group-hover:scale-105 transition-transform">
+              <div className="p-3 bg-blue-50 dark:bg-blue-950/40 text-brand-ink dark:text-brand dark:text-brand-ink dark:text-brand rounded-xl w-fit group-hover:scale-105 transition-transform">
                 <Database className="h-5 w-5" />
               </div>
               <h4 className="text-lg font-bold text-slate-900 dark:text-white">Memória Inteligente e Contexto</h4>

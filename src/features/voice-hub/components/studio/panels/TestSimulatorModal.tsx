@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Mic, MicOff, PhoneOff, User, Bot, Loader2, AlertTriangle } from 'lucide-react';
-import { logger } from '@/lib/logger';
+import { logger } from '../../../../../lib/logger';
 import { useStudioStore } from '../../../store/useStudioStore';
 import { validationEngine } from '../../../lib/studio/ValidationEngine';
 
@@ -293,7 +293,7 @@ export function TestSimulatorModal({ onClose }: TestSimulatorModalProps) {
               className={`w-16 h-16 flex items-center justify-center rounded-full shadow-lg transition-all ${
                 isListening 
                   ? 'bg-red-500 text-white shadow-red-500/20 animate-pulse'
-                  : 'bg-indigo-600 text-white hover:bg-indigo-500 hover:scale-105 shadow-indigo-600/20'
+                  : 'bg-iris text-white hover:bg-iris hover:scale-105 shadow-indigo-600/20'
               }`}
             >
               {isListening ? <MicOff className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
