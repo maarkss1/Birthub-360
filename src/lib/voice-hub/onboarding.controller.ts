@@ -4,7 +4,7 @@ import { getChecklist, saveChecklist, resetChecklist } from '../services/setting
 
 export async function getChecklistHandler(req: Request, res: Response) {
   const checklist = await getChecklist(req.organizationId!, req.user!.id);
-  res.json({ checklist });
+  return res.json({ checklist });
 }
 
 export async function saveChecklistHandler(req: Request, res: Response) {
@@ -12,10 +12,10 @@ export async function saveChecklistHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   await saveChecklist(req.organizationId!, req.user!.id, parsed.data.checklist);
-  res.json({ success: true, checklist: parsed.data.checklist });
+  return res.json({ success: true, checklist: parsed.data.checklist });
 }
 
 export async function resetChecklistHandler(req: Request, res: Response) {
   await resetChecklist(req.organizationId!, req.user!.id);
-  res.json({ success: true, message: 'Progresso resetado.' });
+  return res.json({ success: true, message: 'Progresso resetado.' });
 }

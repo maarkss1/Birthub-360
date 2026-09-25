@@ -7,7 +7,7 @@ export const requireTenant = async (req: Request, res: Response, next: NextFunct
     if (!req.user || !req.organizationId) {
       return res.status(401).json({ error: 'Não autorizado.' });
     }
-    next();
+    return next();
   });
 };
 
@@ -22,7 +22,7 @@ export const requireRole = (allowedRoles: string[]) => {
       return res.status(403).json({ error: `Acesso proibido. Requer nível: ${allowedRoles.join(' ou ')}.` });
     }
 
-    next();
+    return next();
   };
 };
 
@@ -54,8 +54,8 @@ export const requirePermission = (permission: string) => {
         if (!allowed) {
           return res.status(403).json({ error: `Acesso proibido. Requer a permissão: ${permission}.` });
         }
-        next();
+        return next();
       })
-      .catch(next);
+      .catch (next: any);
   };
 };

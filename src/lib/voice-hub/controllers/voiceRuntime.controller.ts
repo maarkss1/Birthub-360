@@ -4,7 +4,7 @@ import { getVoiceRuntimeConfig, saveVoiceRuntimeConfig, resetVoiceRuntimeConfig 
 
 export async function getVoiceRuntimeHandler(req: Request, res: Response) {
   const config = await getVoiceRuntimeConfig(req.organizationId!, req.user!.id);
-  res.json({ config });
+  return res.json({ config });
 }
 
 export async function createVoiceRuntimeHandler(req: Request, res: Response) {
@@ -12,7 +12,7 @@ export async function createVoiceRuntimeHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   const config = await saveVoiceRuntimeConfig(req.organizationId!, req.user!.id, parsed.data.config, false);
-  res.json({ success: true, config });
+  return res.json({ success: true, config });
 }
 
 export async function updateVoiceRuntimeHandler(req: Request, res: Response) {
@@ -20,10 +20,10 @@ export async function updateVoiceRuntimeHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   const config = await saveVoiceRuntimeConfig(req.organizationId!, req.user!.id, parsed.data.config, true);
-  res.json({ success: true, config });
+  return res.json({ success: true, config });
 }
 
 export async function resetVoiceRuntimeHandler(req: Request, res: Response) {
   await resetVoiceRuntimeConfig(req.organizationId!, req.user!.id);
-  res.json({ success: true, message: 'Configurações de voz restauradas ao padrão.' });
+  return res.json({ success: true, message: 'Configurações de voz restauradas ao padrão.' });
 }

@@ -5,7 +5,7 @@ import { writeAuditLog } from '../services/audit.js';
 
 export async function listCallLogsHandler(req: Request, res: Response) {
   const logs = await listCallLogs(req.organizationId!);
-  res.json({ callLogs: logs });
+  return res.json({ callLogs: logs });
 }
 
 export async function createCallLogHandler(req: Request, res: Response) {
@@ -14,7 +14,7 @@ export async function createCallLogHandler(req: Request, res: Response) {
 
   const log = await createCallLog(req.organizationId!, req.user?.id ?? null, parsed.data);
   if (req.user) writeAuditLog(req.organizationId, req.user.id, 'CALL_LOG_CREATE', { logId: log.id });
-  res.json({ success: true, log });
+  return res.json({ success: true, log });
 }
 
 export async function updateCallLogHandler(req: Request, res: Response) {
@@ -23,7 +23,7 @@ export async function updateCallLogHandler(req: Request, res: Response) {
 
   try {
     const log = await updateCallLog(String(req.params.id), req.organizationId!, parsed.data);
-    res.json({ success: true, log });
+    return res.json({ success: true, log });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
@@ -33,7 +33,7 @@ export async function updateCallLogHandler(req: Request, res: Response) {
 export async function deleteCallLogHandler(req: Request, res: Response) {
   try {
     await deleteCallLog(String(req.params.id), req.organizationId!);
-    res.json({ success: true, message: 'Log excluído com sucesso.' });
+    return res.json({ success: true, message: 'Log excluído com sucesso.' });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;

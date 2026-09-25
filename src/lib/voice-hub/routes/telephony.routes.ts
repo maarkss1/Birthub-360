@@ -33,7 +33,7 @@ function validateTwilioSignature(req: Request, res: Response, next: NextFunction
     return res.status(403).send();
   }
 
-  next();
+  return next();
 }
 
 router.post('/telephony/twilio/voice', validateTwilioSignature, incomingCallHandler);

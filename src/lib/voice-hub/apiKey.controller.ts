@@ -24,7 +24,7 @@ export async function createApiKeyHandler(req: Request, res: Response) {
   // Audit the creation event itself, never the secret value.
   writeAuditLog(req.organizationId, req.user?.id, 'API_KEY_CREATE', { apiKeyId: apiKey.id, name: apiKey.name });
 
-  res.status(201).json({
+  return res.status(201).json({
     apiKey: {
       id: apiKey.id,
       name: apiKey.name,
@@ -39,7 +39,7 @@ export async function createApiKeyHandler(req: Request, res: Response) {
 // includes the hash or the plaintext key.
 export async function listApiKeysHandler(req: Request, res: Response) {
   const apiKeys = await listApiKeysForTenant(req.organizationId as string);
-  res.json({ apiKeys });
+  return res.json({ apiKeys });
 }
 
 // DELETE /api/developers/keys/:id and POST /api/developers/keys/:id/revoke — both revoke the key
@@ -48,7 +48,7 @@ export async function revokeApiKeyHandler(req: Request, res: Response) {
   try {
     const apiKey = await revokeApiKeyForTenant(req.organizationId as string, String(req.params.id));
     writeAuditLog(req.organizationId, req.user?.id, 'API_KEY_REVOKE', { apiKeyId: apiKey.id });
-    res.json({ success: true, apiKey });
+    return res.json({ success: true, apiKey });
   } catch (err: any) {
     if (err instanceof ApiKeyServiceError) return res.status(err.status).json({ error: err.message });
     throw err;

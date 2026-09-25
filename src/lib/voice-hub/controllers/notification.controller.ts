@@ -25,7 +25,7 @@ function parsePagination(rawPage: unknown, rawPageSize: unknown): { page: number
 export async function listNotificationsHandler(req: Request, res: Response) {
   const { page, pageSize } = parsePagination(req.query.page, req.query.pageSize);
   const result = await listNotifications(req.user!.id, { page, pageSize });
-  res.json({
+  return res.json({
     items: result.items,
     unreadCount: result.unreadCount,
     page,
@@ -42,7 +42,7 @@ export async function listNotificationsHandler(req: Request, res: Response) {
 export async function markNotificationReadHandler(req: Request, res: Response) {
   try {
     const notification = await markAsRead(String(req.params.id), req.user!.id);
-    res.json({ notification });
+    return res.json({ notification });
   } catch (err: any) {
     if (err instanceof NotificationNotFoundError) {
       return res.status(404).json({ error: 'Notificação não encontrada.' });
@@ -54,5 +54,5 @@ export async function markNotificationReadHandler(req: Request, res: Response) {
 // POST /api/notifications/read-all — bulk "mark all as read" for the panel header action.
 export async function markAllNotificationsReadHandler(req: Request, res: Response) {
   const result = await markAllAsRead(req.user!.id);
-  res.json(result);
+  return res.json(result);
 }

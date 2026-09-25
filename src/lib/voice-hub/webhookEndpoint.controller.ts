@@ -14,7 +14,7 @@ import {
 // (caller returns immediately); false means the caller should rethrow.
 function handleKnownError(err: unknown, res: Response): boolean {
   if (err instanceof WebhookEndpointServiceError) {
-    res.status(err.status).json({ error: err.message });
+    return res.status(err.status).json({ error: err.message });
     return true;
   }
   return false;
@@ -34,7 +34,7 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
       url: endpoint.url,
       events: endpoint.events,
     });
-    res.status(201).json({
+    return res.status(201).json({
       webhookEndpoint: {
         id: endpoint.id,
         url: endpoint.url,
@@ -55,7 +55,7 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
 export async function listWebhookEndpointsHandler(req: Request, res: Response) {
   try {
     const webhookEndpoints = await listWebhookEndpointsForTenant(req.organizationId as string);
-    res.json({ webhookEndpoints });
+    return res.json({ webhookEndpoints });
   } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
@@ -68,7 +68,7 @@ export async function deleteWebhookEndpointHandler(req: Request, res: Response) 
   try {
     await deleteWebhookEndpointForTenant(req.organizationId as string, String(req.params.id));
     writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
-    res.json({ success: true });
+    return res.json({ success: true });
   } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
@@ -83,7 +83,7 @@ export async function regenerateWebhookEndpointSecretHandler(req: Request, res: 
     writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_REGENERATE_SECRET', {
       webhookEndpointId: endpoint.id,
     });
-    res.json({
+    return res.json({
       webhookEndpoint: {
         id: endpoint.id,
         url: endpoint.url,

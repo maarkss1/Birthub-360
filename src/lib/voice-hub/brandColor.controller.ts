@@ -4,7 +4,7 @@ import { getBrandColor, saveBrandColor, resetBrandColor } from '../services/sett
 
 export async function getBrandColorHandler(req: Request, res: Response) {
   const brandColor = await getBrandColor(req.organizationId ?? null);
-  res.json({ brandColor });
+  return res.json({ brandColor });
 }
 
 export async function saveBrandColorHandler(req: Request, res: Response) {
@@ -12,10 +12,10 @@ export async function saveBrandColorHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   await saveBrandColor(req.organizationId!, parsed.data.color);
-  res.json({ success: true, brandColor: parsed.data.color });
+  return res.json({ success: true, brandColor: parsed.data.color });
 }
 
 export async function resetBrandColorHandler(req: Request, res: Response) {
   await resetBrandColor(req.organizationId!);
-  res.json({ success: true, brandColor: '#2563eb' });
+  return res.json({ success: true, brandColor: '#2563eb' });
 }

@@ -198,7 +198,7 @@ export async function statusCallbackHandler(req: Request, res: Response) {
     logger.error('Failed to finalize call from status callback', err);
   }
 
-  res.status(200).send();
+  return res.status(200).send();
 }
 
 /**

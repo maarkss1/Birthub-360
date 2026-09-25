@@ -25,7 +25,7 @@ export async function requireAiProviderConsent(req: Request, res: Response, next
       });
     }
 
-    next();
+    return next();
   } catch (error: unknown) {
     logger.error('Failed to verify AI provider consent', { organizationId, err: error });
     return res.status(503).json({
