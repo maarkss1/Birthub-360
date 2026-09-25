@@ -120,7 +120,7 @@ export const ProspectorTab: React.FC<ProspectorTabProps> = ({
     fetch('/api/users', { credentials: 'include' })
       .then(res => res.json())
       .then(data => setUsersList(Array.isArray(data) ? data : []))
-      .catch(err => console.error(err));
+      .catch((err: any) => console.error(err));
   }, []);
 
   const isDark = theme === 'dark';
@@ -141,7 +141,7 @@ export const ProspectorTab: React.FC<ProspectorTabProps> = ({
            setSelectedCity(formatted[0].id);
         }
       })
-      .catch(err => console.error('Erro ao buscar municípios do IBGE:', err));
+      .catch((err: any) => console.error('Erro ao buscar municípios do IBGE:', err));
   }, [selectedState]);
 
   // Build the combined query string automatically whenever dropdowns change

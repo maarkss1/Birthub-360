@@ -2372,7 +2372,7 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
         await db.run(
           `UPDATE leads SET bitrix_export_status = ?, bitrix_export_error = ? WHERE id = ?`,
           ['blocked', eligibility.reasons.join(' | '), lead.id]
-        ).catch(e => console.error('Falha ao gravar bitrix_export_status=blocked:', e));
+        ).catch((e: any) => console.error('Falha ao gravar bitrix_export_status=blocked:', e));
       }
       return res.status(409).json({
         success: false,
@@ -2484,11 +2484,11 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
         await db.run(
           `INSERT INTO bitrix_export_log (lead_id, idempotency_key, status, bitrix_lead_id) VALUES (?, ?, 'success', ?)`,
           [lead.id, idempotencyKey, bitrixLeadId]
-        ).catch(e => console.error('Falha ao gravar bitrix_export_log:', e));
+        ).catch((e: any) => console.error('Falha ao gravar bitrix_export_log:', e));
         await db.run(
           `UPDATE leads SET bitrix_export_status = 'exported', bitrix_export_error = NULL, bitrix_exported_at = NOW() WHERE id = ?`,
           [lead.id]
-        ).catch(e => console.error('Falha ao gravar bitrix_export_status=exported:', e));
+        ).catch((e: any) => console.error('Falha ao gravar bitrix_export_status=exported:', e));
       }
       saveDatabase();
       return res.json({
@@ -2507,11 +2507,11 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
       await db.run(
         `INSERT INTO bitrix_export_log (lead_id, idempotency_key, status, error) VALUES (?, ?, 'error', ?)`,
         [lead.id, idempotencyKey, errMsg]
-      ).catch(e => console.error('Falha ao gravar bitrix_export_log:', e));
+      ).catch((e: any) => console.error('Falha ao gravar bitrix_export_log:', e));
       await db.run(
         `UPDATE leads SET bitrix_export_status = 'error', bitrix_export_error = ? WHERE id = ?`,
         [errMsg, lead.id]
-      ).catch(e => console.error('Falha ao gravar bitrix_export_status=error:', e));
+      ).catch((e: any) => console.error('Falha ao gravar bitrix_export_status=error:', e));
     }
     saveDatabase();
     const httpStatus = exportResult.status === 'rate_limited'
@@ -2532,7 +2532,7 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
       await db.run(
         `UPDATE leads SET bitrix_export_status = 'error', bitrix_export_error = ? WHERE id = ?`,
         [err.message || 'Falha ao conectar com o Bitrix24.', lead.id]
-      ).catch(e => console.error('Falha ao gravar bitrix_export_status=error:', e));
+      ).catch((e: any) => console.error('Falha ao gravar bitrix_export_status=error:', e));
     }
     res.status(500).json({ success: false, error: err.message || 'Falha ao conectar com o Bitrix24.' });
   }
