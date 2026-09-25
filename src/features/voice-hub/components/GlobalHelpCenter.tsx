@@ -31,7 +31,7 @@ export function GlobalHelpCenter() {
     { id: '1', sender: 'catarina', text: 'Olá! Sou a Catarina, sua assistente de IA para prospecção e qualificação por voz. Como posso ajudar você no setup hoje?' }
   ]);
   const [isTyping, setIsTyping] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
 
   // Auto-scroll chat
   useEffect(() => {

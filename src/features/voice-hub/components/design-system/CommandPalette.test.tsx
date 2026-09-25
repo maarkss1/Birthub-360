@@ -17,7 +17,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-vi.mock('./ThemeContext', () => ({
+vi.mock('./ThemeContext.js', () => ({
   useTheme: () => ({ theme: 'light', setTheme: mockSetTheme, resolvedTheme: 'light' })
 }));
 

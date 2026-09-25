@@ -9,7 +9,7 @@ const mockSetTheme = vi.fn();
 const mockShowToast = vi.fn();
 const mockLogout = vi.fn();
 
-vi.mock('../lib/auth', () => ({
+vi.mock('../lib/auth.js', () => ({
   auth: {
     getToken: () => 'true',
     logout: () => mockLogout()
@@ -19,7 +19,7 @@ vi.mock('../lib/auth', () => ({
 // Sidebar reads the real logged-in user (id/email/role/organizationId) from useSessionStore, which is
 // populated from GET /api/auth/me by DashboardLayout — not from a client-writable cookie. Mock
 // the store's selector-based API directly rather than a fabricated `user_info` cookie.
-vi.mock('../store/useSessionStore', () => ({
+vi.mock('../store/useSessionStore.js', () => ({
   useSessionStore: (selector: (state: { user: { id: string; email: string; role: string; organizationId: string } | null; sessionStatus: string }) => unknown) =>
     selector({
       user: { id: 'user-1', email: 'maria@teste.com', role: 'admin', organizationId: 'tenant-1' },
@@ -27,12 +27,12 @@ vi.mock('../store/useSessionStore', () => ({
     }),
 }));
 
-vi.mock('./design-system/ThemeContext', () => ({
+vi.mock('./design-system/ThemeContext.js', () => ({
   useTheme: () => ({ theme: 'light', setTheme: mockSetTheme, resolvedTheme: 'light' })
 }));
 
-vi.mock('./design-system', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./design-system')>();
+vi.mock('./design-system.js', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./design-system.js')>();
   return {
     ...actual,
     useToast: () => ({ toasts: [], showToast: mockShowToast })
@@ -41,7 +41,7 @@ vi.mock('./design-system', async (importOriginal) => {
 
 // NotificationCenter (Agente 12) owns its own fetch/open-close/state — isolate the Sidebar tree
 // from it here and cover its real behavior in components/NotificationCenter/NotificationCenter.test.tsx.
-vi.mock('./NotificationCenter', () => ({
+vi.mock('./NotificationCenter.js', () => ({
   NotificationCenter: () => <div data-testid="notification-center-stub" />
 }));
 

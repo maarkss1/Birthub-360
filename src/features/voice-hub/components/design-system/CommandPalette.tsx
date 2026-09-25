@@ -28,8 +28,8 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
   const { setTheme } = useTheme();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
   const [savedAgents, setSavedAgents] = useState<{ name: string }[]>([]);
   const paletteId = useId();
