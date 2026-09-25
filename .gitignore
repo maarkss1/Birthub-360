@@ -9,6 +9,7 @@ __pycache__/
 .env*
 !.env.example
 !.env.test.example
+!.env.codespace
 
 /src/generated/prisma
 # DEVOPS-003 (Onda 2): config real do Prometheus da OCI, gerada por scripts/deploy-oci.sh a partir
