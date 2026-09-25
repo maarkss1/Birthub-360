@@ -1,7 +1,7 @@
 import * as workflowRepository from '../repositories/workflowRepository.js';
 import { validationEngine } from '../../studio/ValidationEngine.js';
 import { validateRuntimeCompatibility } from './workflowRuntimeService.js';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 import type { StudioNode, StudioEdge, ValidationIssue } from '@/lib/studio/types.js';
 
 export class NotFoundError extends Error {}

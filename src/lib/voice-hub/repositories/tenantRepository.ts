@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function createTenant(name: string) {
   return prisma.tenant.create({ data: { name } });

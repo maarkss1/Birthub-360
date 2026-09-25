@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 /**
  * Persists the result of a call dispatched via the AtlasGR/Bland AI prospecting integration.

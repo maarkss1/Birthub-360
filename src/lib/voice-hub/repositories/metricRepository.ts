@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 // Metrics with userId === null are tenant-wide events (no single user to attribute them to —
 // e.g. an AI provider call triggered by an automated voice/call flow, see

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { changePlanSchema } from '../validators/index.js';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 import { writeAuditLog } from '../services/audit.js';
 import {
   changePlan,

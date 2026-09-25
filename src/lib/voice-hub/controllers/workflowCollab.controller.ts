@@ -16,7 +16,7 @@ export async function addCommentHandler(req: Request, res: Response) {
     const workflow = await addComment(req.organizationId!, req.voiceHubUser?.id, nodeId, text);
     return res.json({ success: true, workflow });
   } catch (err: any) {
-    handleCollabError(err, res);
+    return handleCollabError(err, res);
   }
 }
 
@@ -28,7 +28,7 @@ export async function resolveCommentHandler(req: Request, res: Response) {
     const workflow = await resolveComment(req.organizationId!, req.voiceHubUser?.id, commentId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
-    handleCollabError(err, res);
+    return handleCollabError(err, res);
   }
 }
 
@@ -40,7 +40,7 @@ export async function lockNodeHandler(req: Request, res: Response) {
     const workflow = await lockNode(req.organizationId!, req.voiceHubUser?.id, nodeId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
-    handleCollabError(err, res);
+    return handleCollabError(err, res);
   }
 }
 
@@ -52,6 +52,6 @@ export async function unlockNodeHandler(req: Request, res: Response) {
     const workflow = await unlockNode(req.organizationId!, req.voiceHubUser?.id, nodeId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
-    handleCollabError(err, res);
+    return handleCollabError(err, res);
   }
 }

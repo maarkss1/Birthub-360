@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { GoogleGenAI, GenerateVideosOperation } from '@google/genai';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 import { llmProviderGateway } from '@/lib/voice-runtime/providers/LLMGateway.js';
 import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
 

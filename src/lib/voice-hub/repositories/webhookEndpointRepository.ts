@@ -17,7 +17,7 @@
 // out for display) touch it. This makes an accidental hash leak through the listing endpoint
 // structurally impossible rather than something the service layer has to remember to strip.
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export interface TenantWebhookEndpointRecord {
   id: string;

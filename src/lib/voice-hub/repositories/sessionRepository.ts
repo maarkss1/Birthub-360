@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function listSessionsForUser(organizationId: string, userId: string) {
   return prisma.session.findMany({ where: { organizationId, userId, deletedAt: null }, orderBy: { createdAt: 'desc' } });

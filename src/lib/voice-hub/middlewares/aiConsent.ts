@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
 import { getAiConsent } from '../services/settingService.js';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 
 /**
  * Guards endpoints that send tenant/user data directly to an external AI provider without going

@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function findSetting(organizationId: string | null, userId: string | null, key: string) {
   return prisma.setting.findFirst({ where: { organizationId, userId, key } });

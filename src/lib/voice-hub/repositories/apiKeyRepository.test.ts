@@ -12,7 +12,7 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 import {
   API_KEY_SAFE_SELECT,
   createApiKey,

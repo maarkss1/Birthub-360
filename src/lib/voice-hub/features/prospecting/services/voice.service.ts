@@ -1,4 +1,4 @@
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema.js';
 import { buildAtlasGROutboundIdempotencyKey, claimIdempotencyKey } from '../lib/webhookIdempotency.js';
 import { getAiConsent } from '../../../services/settingService.js';

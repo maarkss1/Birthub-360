@@ -1,5 +1,5 @@
 import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function findWorkflowForTenant(organizationId: string) {
   return prisma.workflow.findFirst({ where: { organizationId, deletedAt: null }, orderBy: { updatedAt: 'desc' } });

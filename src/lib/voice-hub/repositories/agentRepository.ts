@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function listAgentsForTenant(organizationId: string) {
   return prisma.agent.findMany({ where: { organizationId, deletedAt: null }, orderBy: { createdAt: 'desc' } });

@@ -1,7 +1,7 @@
 import { createHmac } from 'node:crypto';
 import { Worker, type Job, UnrecoverableError } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 import { isPrivateOrReservedHost } from '../validators/index.js';
 import type { WebhookPayload } from './webhook.service.js';
 import { findActiveSigningSecretHash } from './webhookEndpointService.js';

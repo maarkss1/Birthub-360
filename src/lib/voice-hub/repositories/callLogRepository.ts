@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function listCallLogsForTenant(organizationId: string) {
   return prisma.callLog.findMany({ where: { organizationId }, orderBy: { timestamp: 'desc' }, take: 100 });

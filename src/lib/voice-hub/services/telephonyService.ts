@@ -15,7 +15,7 @@ import {
   type WorkflowNode,
   type WorkflowRuntimeState,
 } from './workflowRuntimeService.js';
-import { logger } from '@/lib/logger';
+import { logger } from '@/lib/logger.js';
 
 const DEFAULT_GREETING = 'Olá! Aqui é a assistente virtual do Birth Voices Hub. Como posso ajudar você hoje?';
 const DEFAULT_OUTBOUND_GREETING =
