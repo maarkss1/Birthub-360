@@ -1,4 +1,26 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: birthhub_postgres
+    environment:
+      POSTGRES_USER: prospector_app
+      POSTGRES_PASSWORD: prospector_app_pass
+      POSTGRES_DB: prospectordb
+      POSTGRES_INITDB_ARGS: '--encoding=UTF8'
+    ports:
+      - '5434:5432'
+    volumes:
+      - birthhub_pgdata:/var/lib/postgresql/data
+      - ./.devcontainer/docker-init.sh:/docker-entrypoint-initdb.d/docker-init.sh:ro
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U prospector_app -d prospectordb']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     image: mcr.microsoft.com/devcontainers/javascript-node:1-22-bookworm
     volumes:
@@ -37,3 +59,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_healthy
+
+volumes:
+  birthhub_pgdata:
