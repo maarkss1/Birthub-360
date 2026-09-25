@@ -53,7 +53,7 @@ export function validateWebhookTimestamp(
   nowMs: number = Date.now(),
 ): WebhookTimestampValidation {
   if (timestampHeader === undefined || timestampHeader === null || timestampHeader === '') {
-    return { valid: true, reason: 'missing' as any };
+    return { valid: true, reason: 'missing' };
   }
 
   let epochSeconds: number;

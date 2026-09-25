@@ -4,7 +4,7 @@ import { getWorkflow, saveWorkflow, updateWorkflow, removeWorkflow, getWorkflowH
 import { writeAuditLog } from '../services/audit.js';
 
 export async function getWorkflowHandler(req: Request, res: Response) {
-  const workflow = await getWorkflow(req.organizationId!);
+  const workflow = await getWorkflow(req.organizationId as string);
   res.json({ workflow: workflow || null });
 }
 
@@ -13,8 +13,8 @@ export async function saveWorkflowHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   const data = { ...parsed.data, commitMessage: req.body.commitMessage };
-  const workflow = await saveWorkflow(req.organizationId!, req.user!.id, data);
-  writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_SAVE', { workflowId: workflow.id, name: workflow.name, version: workflow.version });
+  const workflow = await saveWorkflow(req.organizationId as string, req.user?.id, data);
+  writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_SAVE', { workflowId: workflow.id, name: workflow.name, version: workflow.version });
   res.json({ success: true, workflow });
 }
 
@@ -23,8 +23,8 @@ export async function updateWorkflowHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   try {
-    const workflow = await updateWorkflow(req.organizationId!, req.user!.id, parsed.data);
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_UPDATE', { workflowId: workflow.id, name: workflow.name });
+    const workflow = await updateWorkflow(req.organizationId as string, req.user?.id, parsed.data);
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_UPDATE', { workflowId: workflow.id, name: workflow.name });
     res.json({ success: true, workflow });
   } catch (err) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
@@ -34,8 +34,8 @@ export async function updateWorkflowHandler(req: Request, res: Response) {
 
 export async function deleteWorkflowHandler(req: Request, res: Response) {
   try {
-    const deleted = await removeWorkflow(req.organizationId!);
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_DELETE', { workflowId: deleted.id });
+    const deleted = await removeWorkflow(req.organizationId as string);
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_DELETE', { workflowId: deleted.id });
     res.json({ success: true, message: 'Fluxo removido com sucesso.' });
   } catch (err) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
@@ -44,7 +44,7 @@ export async function deleteWorkflowHandler(req: Request, res: Response) {
 }
 
 export async function getWorkflowHistoryHandler(req: Request, res: Response) {
-  const history = await getWorkflowHistory(req.organizationId!);
+  const history = await getWorkflowHistory(req.organizationId as string);
   res.json({ history });
 }
 
@@ -53,8 +53,8 @@ export async function restoreWorkflowVersionHandler(req: Request, res: Response)
   if (!version) return res.status(400).json({ error: 'Versão é obrigatória.' });
 
   try {
-    const workflow = await restoreWorkflowVersion(req.organizationId!, req.user!.id, Number(version));
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_RESTORE', { workflowId: workflow.id, restoredVersion: version });
+    const workflow = await restoreWorkflowVersion(req.organizationId as string, req.user?.id, Number(version));
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_RESTORE', { workflowId: workflow.id, restoredVersion: version });
     res.json({ success: true, workflow });
   } catch (err) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
@@ -64,8 +64,8 @@ export async function restoreWorkflowVersionHandler(req: Request, res: Response)
 
 export async function publishWorkflowHandler(req: Request, res: Response) {
   try {
-    const workflow = await publishWorkflow(req.organizationId!, req.user!.id);
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_PUBLISH', { workflowId: workflow.id, version: workflow.version });
+    const workflow = await publishWorkflow(req.organizationId as string, req.user?.id);
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_PUBLISH', { workflowId: workflow.id, version: workflow.version });
     res.json({ success: true, workflow });
   } catch (err) {
     if (err instanceof ValidationFailedError) {
@@ -86,7 +86,7 @@ export async function publishWorkflowHandler(req: Request, res: Response) {
 // from the response shape.
 export async function listWorkflowVersionsHandler(req: Request, res: Response) {
   try {
-    const versions = await listWorkflowVersions(req.organizationId!, String(req.params.id));
+    const versions = await listWorkflowVersions(req.organizationId as string, String(req.params.id));
     res.json({ versions });
   } catch (err) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
@@ -104,8 +104,8 @@ export async function rollbackWorkflowVersionHandler(req: Request, res: Response
   }
 
   try {
-    const workflow = await rollbackToVersion(req.organizationId!, req.user!.id, String(req.params.id), versionParam);
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_ROLLBACK', {
+    const workflow = await rollbackToVersion(req.organizationId as string, req.user?.id, String(req.params.id), versionParam);
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_ROLLBACK', {
       workflowId: workflow.id,
       rolledBackToVersion: versionParam,
       newVersion: workflow.version,
@@ -122,8 +122,8 @@ export async function rollbackWorkflowVersionHandler(req: Request, res: Response
 
 export async function duplicateWorkflowHandler(req: Request, res: Response) {
   try {
-    const workflow = await duplicateWorkflow(req.organizationId!, req.user!.id, req.body.sourceId); // mock param
-    writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_DUPLICATE', { originalId: req.body.sourceId, newId: workflow.id });
+    const workflow = await duplicateWorkflow(req.organizationId as string, req.user?.id, req.body.sourceId); // mock param
+    writeAuditLog(req.organizationId, req.user?.id, 'WORKFLOW_DUPLICATE', { originalId: req.body.sourceId, newId: workflow.id });
     res.json({ success: true, workflow });
   } catch (err) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });

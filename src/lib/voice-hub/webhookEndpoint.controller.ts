@@ -28,8 +28,8 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   try {
-    const endpoint = await createWebhookEndpointForTenant(req.organizationId!, parsed.data);
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_CREATE', {
+    const endpoint = await createWebhookEndpointForTenant(req.organizationId as string, parsed.data);
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_CREATE', {
       webhookEndpointId: endpoint.id,
       url: endpoint.url,
       events: endpoint.events,
@@ -54,7 +54,7 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
 // includes the secret or its hash.
 export async function listWebhookEndpointsHandler(req: Request, res: Response) {
   try {
-    const webhookEndpoints = await listWebhookEndpointsForTenant(req.organizationId!);
+    const webhookEndpoints = await listWebhookEndpointsForTenant(req.organizationId as string);
     res.json({ webhookEndpoints });
   } catch (err) {
     if (handleKnownError(err, res)) return;
@@ -66,8 +66,8 @@ export async function listWebhookEndpointsHandler(req: Request, res: Response) {
 // even discover the existence of, an endpoint belonging to tenant B.
 export async function deleteWebhookEndpointHandler(req: Request, res: Response) {
   try {
-    await deleteWebhookEndpointForTenant(req.organizationId!, String(req.params.id));
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
+    await deleteWebhookEndpointForTenant(req.organizationId as string, String(req.params.id));
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
     res.json({ success: true });
   } catch (err) {
     if (handleKnownError(err, res)) return;
@@ -79,8 +79,8 @@ export async function deleteWebhookEndpointHandler(req: Request, res: Response) 
 // a new one, returned in plaintext exactly once, same rule as creation.
 export async function regenerateWebhookEndpointSecretHandler(req: Request, res: Response) {
   try {
-    const endpoint = await regenerateWebhookEndpointSecret(req.organizationId!, String(req.params.id));
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_REGENERATE_SECRET', {
+    const endpoint = await regenerateWebhookEndpointSecret(req.organizationId as string, String(req.params.id));
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_REGENERATE_SECRET', {
       webhookEndpointId: endpoint.id,
     });
     res.json({
