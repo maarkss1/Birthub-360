@@ -1,10 +1,23 @@
 {
   "name": "Central de Inteligência Comercial BIRTH HUB 360",
-  "dockerComposeFile": ["../docker-compose.yml", "docker-compose.yml"],
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.postgres-local.yml",
+    "docker-compose.yml"
+  ],
   "service": "app",
   "workspaceFolder": "/workspace",
   "shutdownAction": "stopCompose",
-  "forwardPorts": [3005, 5434, 6379, 7700, 9000, 9001, 4000, 11434],
+  "forwardPorts": [
+    3005,
+    5434,
+    6379,
+    7700,
+    9000,
+    9001,
+    4000,
+    11434
+  ],
   "portsAttributes": {
     "3005": {
       "label": "App (Express + Vite)",
