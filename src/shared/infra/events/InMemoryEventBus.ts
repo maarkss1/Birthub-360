@@ -1,6 +1,6 @@
-import { logger } from '../../../lib/logger';
-import type { DomainEvent } from '../../domain/events/DomainEvent';
-import type { EventBus } from '../../domain/events/EventBus';
+import { logger } from '../../../lib/logger.js';
+import type { DomainEvent } from '../../domain/events/DomainEvent.js';
+import type { EventBus } from '../../domain/events/EventBus.js';
 
 export class InMemoryEventBus implements EventBus {
   private handlers: Map<string, Array<(event: DomainEvent) => Promise<void>>> = new Map();
