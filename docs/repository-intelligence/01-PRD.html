@@ -1,0 +1,459 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>01 - PRD | Product Requirements Document | AtlasGR</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --primary: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+      --partial: #f59e0b;
+      --unverified: #64748b;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar li {
+      margin-bottom: 0.5rem;
+    }
+    .sidebar a {
+      color: var(--text);
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem 4rem;
+      max-width: 1200px;
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .nav {
+      margin-bottom: 2rem;
+    }
+    .nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav a:hover {
+      text-decoration: underline;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--primary);
+      font-size: 1.25rem;
+    }
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
+    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background-color: rgba(255,255,255,0.02);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:hover {
+      background-color: rgba(255,255,255,0.01);
+    }
+    pre {
+      background-color: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+    p code, li code, td code {
+      background-color: rgba(255,255,255,0.1);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .meta-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      background: var(--surface);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+    .meta-value {
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .accordion {
+      margin-top: 2rem;
+    }
+    .accordion-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .accordion-header {
+      background: var(--surface);
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .accordion-header:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .accordion-content {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    /* Utility classes */
+    .mt-8 { margin-top: 2rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .text-muted { color: var(--text-muted); }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simple accordion logic
+      document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const content = header.nextElementSibling;
+          const isVisible = content.style.display === 'block';
+          content.style.display = isVisible ? 'none' : 'block';
+          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
+        });
+      });
+    });
+  </script>
+
+    </head>
+    <body>
+      <div class="layout">
+
+    <div class="sidebar">
+      <h2>Documentation</h2>
+      <ul>
+
+          <li>
+            <a href="00-INDEX.html" style="">
+              Hub
+            </a>
+          </li>
+
+          <li>
+            <a href="01-PRD.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
+              01 - PRD
+            </a>
+          </li>
+
+          <li>
+            <a href="02-TRD.html" style="">
+              02 - TRD
+            </a>
+          </li>
+
+          <li>
+            <a href="03-APP-FLOW.html" style="">
+              03 - App Flow
+            </a>
+          </li>
+
+          <li>
+            <a href="04-UI-UX-DESIGN.html" style="">
+              04 - UI/UX Design
+            </a>
+          </li>
+
+          <li>
+            <a href="05-BACKEND-SCHEMA.html" style="">
+              05 - Backend Schema
+            </a>
+          </li>
+
+          <li>
+            <a href="06-IMPLEMENTATION-PLAN.html" style="">
+              06 - Implementation Plan
+            </a>
+          </li>
+
+      </ul>
+    </div>
+
+        <div class="main-content">
+
+    <div class="nav">
+      <a href="00-INDEX.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Documentation Hub
+      </a>
+    </div>
+    <div class="header">
+      <h1>PRODUCT REQUIREMENTS DOCUMENT (PRD)</h1>
+      <div class="meta-info">
+        <div class="meta-item">
+          <span class="meta-label">Branch</span>
+          <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Commit</span>
+          <span class="meta-value">7a71a56</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Generated Date</span>
+          <span class="meta-value">2026-09-25</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Repository</span>
+          <span class="meta-value">AtlasGR</span>
+        </div>
+      </div>
+    </div>
+
+
+          <h2>1. Product Overview</h2>
+          <p><strong>Name:</strong> AtlasGR</p>
+          <p><strong>Description:</strong> Commercial Intelligence OS & B2B Prospector. A comprehensive platform integrating CRM, AI-driven prospecting (SDR voice & email), lead enrichment, and autonomous workflow orchestration.</p>
+
+          <h2>2. Target Audience & Personas</h2>
+          <ul>
+            <li><strong>Sales Representatives (SDRs/BDRs):</strong> Needs to prospect, qualify leads, and manage pipeline efficiently.</li>
+            <li><strong>Sales Managers:</strong> Needs visibility into team performance, pipeline health, and revenue forecasting.</li>
+            <li><strong>RevOps / Admin:</strong> Needs to configure integrations, webhooks, security policies, and AI agent behaviors.</li>
+          </ul>
+
+          <h2>3. Feature Status & Traceability</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Module / Feature</th>
+                <th>Status</th>
+                <th>Traceability (Evidence)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>CRM Core</strong><br>Lead, Deal, Pipeline, Contact Management</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/features/crm/</code>, <code>src/features/companies/</code>, <code>src/features/contacts/</code><br>Prisma models: <code>Lead</code>, <code>CrmPipeline</code>, <code>CrmDealItem</code></td>
+              </tr>
+              <tr>
+                <td><strong>AI Copilot</strong><br>LangGraph orchestration, email generation, insights</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/features/copiloto-ia/</code>, <code>src/lib/ai/features.ts</code><br>Prisma models: <code>CopilotoConversation</code>, <code>CopilotoInsight</code></td>
+              </tr>
+              <tr>
+                <td><strong>Voice SDR (Birth Voices Hub)</strong><br>Autonomous outbound calling</td>
+                <td><span class="badge partial">PARCIAL</span></td>
+                <td><code>src/features/integrations/birth-voice/birthVoice.service.ts</code><br>Depends on external repository and env vars (<code>BIRTH_VOICES_URL</code>).</td>
+              </tr>
+              <tr>
+                <td><strong>Lead Enrichment Engine</strong><br>Multi-provider data enrichment (BrasilAPI, CnpjWs, etc.)</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/features/intelligence/</code><br>Provider Adapters: <code>BrasilApiAdapter</code>, <code>CnpjWsAdapter</code></td>
+              </tr>
+              <tr>
+                <td><strong>Autonomous Swarm Scheduler</strong><br>24/7 background lead engagement</td>
+                <td><span class="badge partial">PARCIAL</span></td>
+                <td><code>src/features/automations/</code>, Env vars: <code>SWARM_SCHEDULER_ENABLED</code></td>
+              </tr>
+              <tr>
+                <td><strong>Authentication & Authorization</strong><br>RBAC, Better Auth integration</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/features/auth/</code>, <code>src/bootstrap/auth.ts</code>, <code>src/config/access-policy.ts</code></td>
+              </tr>
+              <tr>
+                <td><strong>Webhooks & API Keys</strong><br>External integrations & event delivery</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/bootstrap/webhooks.ts</code><br>Prisma models: <code>OrganizationWebhookEndpoint</code>, <code>APIKey</code></td>
+              </tr>
+              <tr>
+                <td><strong>Billing & Wallets</strong><br>Subscription and credit tracking</td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+                <td><code>src/features/billing/</code><br>Prisma models: <code>Plan</code>, <code>Wallet</code>, <code>Transaction</code></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>4. Business Rules & Compliance</h2>
+          <ul>
+            <li><strong>Data Enrichment Caching:</strong> Strict 24-hour cache window (via <code>enrichedAt</code> on Company model) to minimize third-party API costs. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
+            <li><strong>Tenant Isolation:</strong> Enforced via PostgreSQL Row Level Security (RLS) policies based on <code>organizationId</code>. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
+            <li><strong>Public Endpoints:</strong> Production endpoints cannot resolve to <code>localhost</code> or <code>127.0.0.1</code> to prevent SSRF and configuration leaks. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
+          </ul>
+
+          <h2>5. Technical Inconsistencies</h2>
+          <div class="accordion">
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Legacy Enrichment Services <span class="badge partial">PARCIAL</span> <span class="icon">+</span>
+              </div>
+              <div class="accordion-content">
+                <strong>Finding:</strong> Some legacy enrichment services still exist alongside the modern <code>MergeEngineService</code>. They are maintained to avoid breaking changes but need incremental refactoring.
+                <br><br><strong>Evidence:</strong> Mentioned in architecture guidelines and <code>src/features/prospecting/</code> legacy files.
+              </div>
+            </div>
+            <div class="accordion-item">
+              <div class="accordion-header">
+                Email Inbound/Signature Stub <span class="badge partial">PARCIAL</span> <span class="icon">+</span>
+              </div>
+              <div class="accordion-content">
+                <strong>Finding:</strong> Webhooks for <code>/api/webhooks/email/inbound</code> and <code>/api/webhooks/signature/webhook</code> are partially stubbed without real inbound-parse providers plugged in yet, though the endpoint structure exists.
+                <br><br><strong>Evidence:</strong> Notes in <code>.env.example</code> (CYC-003, CYC-006).
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>

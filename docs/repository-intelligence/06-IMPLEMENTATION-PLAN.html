@@ -1,0 +1,447 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>06 - IMPLEMENTATION PLAN | Actionable Roadmap | AtlasGR</title>
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --primary: #3b82f6;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --success: #22c55e;
+      --warning: #eab308;
+      --danger: #ef4444;
+      --partial: #f59e0b;
+      --unverified: #64748b;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 2rem 1rem;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .sidebar h2 {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar li {
+      margin-bottom: 0.5rem;
+    }
+    .sidebar a {
+      color: var(--text);
+      text-decoration: none;
+      display: block;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: background-color 0.2s;
+    }
+    .sidebar a:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+    }
+    .main-content {
+      flex: 1;
+      padding: 2rem 4rem;
+      max-width: 1200px;
+    }
+    .header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    .nav {
+      margin-bottom: 2rem;
+    }
+    .nav a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .nav a:hover {
+      text-decoration: underline;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+    .card h3 {
+      margin-top: 0;
+      color: var(--primary);
+      font-size: 1.25rem;
+    }
+    .card a {
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      height: 100%;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-right: 0.5rem;
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
+    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
+    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 2rem 0;
+      font-size: 0.875rem;
+    }
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    th {
+      background-color: rgba(255,255,255,0.02);
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    tr:hover {
+      background-color: rgba(255,255,255,0.01);
+    }
+    pre {
+      background-color: rgba(0,0,0,0.3);
+      padding: 1rem;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid var(--border);
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.875rem;
+    }
+    p code, li code, td code {
+      background-color: rgba(255,255,255,0.1);
+      padding: 0.2rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.8em;
+    }
+    .meta-info {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      background: var(--surface);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      margin-bottom: 2rem;
+    }
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.7;
+      margin-bottom: 0.25rem;
+    }
+    .meta-value {
+      font-weight: 600;
+      color: var(--text);
+      font-family: var(--font-mono);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .accordion {
+      margin-top: 2rem;
+    }
+    .accordion-item {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+    .accordion-header {
+      background: var(--surface);
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .accordion-header:hover {
+      background: rgba(255,255,255,0.05);
+    }
+    .accordion-content {
+      padding: 1.5rem;
+      border-top: 1px solid var(--border);
+      display: none;
+    }
+
+    /* Utility classes */
+    .mt-8 { margin-top: 2rem; }
+    .mb-4 { margin-bottom: 1rem; }
+    .text-muted { color: var(--text-muted); }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Simple accordion logic
+      document.querySelectorAll('.accordion-header').forEach(header => {
+        header.addEventListener('click', () => {
+          const content = header.nextElementSibling;
+          const isVisible = content.style.display === 'block';
+          content.style.display = isVisible ? 'none' : 'block';
+          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
+        });
+      });
+    });
+  </script>
+
+    </head>
+    <body>
+      <div class="layout">
+
+    <div class="sidebar">
+      <h2>Documentation</h2>
+      <ul>
+
+          <li>
+            <a href="00-INDEX.html" style="">
+              Hub
+            </a>
+          </li>
+
+          <li>
+            <a href="01-PRD.html" style="">
+              01 - PRD
+            </a>
+          </li>
+
+          <li>
+            <a href="02-TRD.html" style="">
+              02 - TRD
+            </a>
+          </li>
+
+          <li>
+            <a href="03-APP-FLOW.html" style="">
+              03 - App Flow
+            </a>
+          </li>
+
+          <li>
+            <a href="04-UI-UX-DESIGN.html" style="">
+              04 - UI/UX Design
+            </a>
+          </li>
+
+          <li>
+            <a href="05-BACKEND-SCHEMA.html" style="">
+              05 - Backend Schema
+            </a>
+          </li>
+
+          <li>
+            <a href="06-IMPLEMENTATION-PLAN.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
+              06 - Implementation Plan
+            </a>
+          </li>
+
+      </ul>
+    </div>
+
+        <div class="main-content">
+
+    <div class="nav">
+      <a href="00-INDEX.html">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+        Documentation Hub
+      </a>
+    </div>
+    <div class="header">
+      <h1>IMPLEMENTATION PLAN</h1>
+      <div class="meta-info">
+        <div class="meta-item">
+          <span class="meta-label">Branch</span>
+          <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Commit</span>
+          <span class="meta-value">7a71a56</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Generated Date</span>
+          <span class="meta-value">2026-09-25</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Repository</span>
+          <span class="meta-value">AtlasGR</span>
+        </div>
+      </div>
+    </div>
+
+
+          <h2>Execution Strategy</h2>
+          <p>This plan addresses the technical debt, feature gaps, and architectural evolution required for AtlasGR. All new development must follow the sequence: 1. Audit 2. Verify 3. Refactor 4. Integrate Open Source 5. Code 6. Test 7. Document.</p>
+
+          <h2>Phase 1: TECHNICAL DEBT & CLEANUP</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Priority</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>TD-01</td>
+                <td>Refactor legacy enrichment services. Migrate older implementations to the unified <code>MergeEngineService</code> cascade.</td>
+                <td><span class="badge" style="background: rgba(234,179,8,0.2); color: #eab308; border: 1px solid rgba(234,179,8,0.5)">HIGH</span></td>
+                <td>PENDING</td>
+              </tr>
+              <tr>
+                <td>TD-02</td>
+                <td>Eliminate simulated/mocked functionality (Onda 1 directive). Replace <code>setTimeout</code> mocks with real async DB calls.</td>
+                <td><span class="badge" style="background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.5)">CRITICAL</span></td>
+                <td>IN PROGRESS</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Phase 2: FEATURE COMPLETION</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Priority</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>FEAT-01</td>
+                <td>Implement actual email parsing for inbound webhooks (<code>/api/webhooks/email/inbound</code>) currently marked as stubs.</td>
+                <td><span class="badge" style="background: rgba(234,179,8,0.2); color: #eab308; border: 1px solid rgba(234,179,8,0.5)">HIGH</span></td>
+                <td>PENDING</td>
+              </tr>
+              <tr>
+                <td>FEAT-02</td>
+                <td>Complete Autonomous Swarm Scheduler logic to utilize BullMQ for 24/7 engagement routing.</td>
+                <td><span class="badge" style="background: rgba(59,130,246,0.2); color: #3b82f6; border: 1px solid rgba(59,130,246,0.5)">MEDIUM</span></td>
+                <td><span class="badge partial">PARCIAL</span></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h2>Phase 3: INFRASTRUCTURE & OBSERVABILITY</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Task</th>
+                <th>Priority</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>INF-01</td>
+                <td>Validate OpenTelemetry traces integration with Grafana dashboard configuration.</td>
+                <td><span class="badge" style="background: rgba(59,130,246,0.2); color: #3b82f6; border: 1px solid rgba(59,130,246,0.5)">MEDIUM</span></td>
+                <td>PENDING</td>
+              </tr>
+              <tr>
+                <td>INF-02</td>
+                <td>Verify OCI deployment scripts strictly block on failed <code>/health/live</code> responses.</td>
+                <td><span class="badge" style="background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.5)">CRITICAL</span></td>
+                <td><span class="badge implemented">IMPLEMENTADO</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </body>
+    </html>
