@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitest/config';
 import { fileURLToPath } from 'node:url';
+import react from '@vitejs/plugin-react';
 
 // Permite override local via `VITEST_MAX_WORKERS=8 npm run test:unit` para quem não tem outros
 // worktrees do enxame disputando CPU no momento, sem precisar editar este arquivo toda vez. Vazio,
@@ -9,6 +10,7 @@ const parsedMaxWorkers = Number.parseInt(process.env.VITEST_MAX_WORKERS ?? '', 1
 const maxWorkers = Number.isFinite(parsedMaxWorkers) && parsedMaxWorkers > 0 ? parsedMaxWorkers : 2;
 
 export default defineConfig({
+  plugins: [react()],
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),

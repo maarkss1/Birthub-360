@@ -203,6 +203,7 @@
     "zod": "^4.4.3"
   },
   "overrides": {
+    "deepmerge-ts": "^8.0.2",
     "brace-expansion": "^2.0.1",
     "uuid": "^14.0.1",
     "fast-uri": "^3.1.7",
