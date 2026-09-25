@@ -1,8 +1,16 @@
+DROP POLICY IF EXISTS "Global Read Integration" ON "Integration";
 CREATE POLICY "Global Read Integration" ON "Integration" FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Global Write Integration" ON "Integration";
 CREATE POLICY "Global Write Integration" ON "Integration" FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Global Read Plan" ON "Plan";
 CREATE POLICY "Global Read Plan" ON "Plan" FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Global Write Plan" ON "Plan";
 CREATE POLICY "Global Write Plan" ON "Plan" FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Global Read Integration" ON "Integration";
 CREATE POLICY "Global Read Integration" ON "Integration" FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Global Write Integration" ON "Integration";
 CREATE POLICY "Global Write Integration" ON "Integration" FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Global Read Plan" ON "Plan";
 CREATE POLICY "Global Read Plan" ON "Plan" FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Global Write Plan" ON "Plan";
 CREATE POLICY "Global Write Plan" ON "Plan" FOR ALL USING (true) WITH CHECK (true);
