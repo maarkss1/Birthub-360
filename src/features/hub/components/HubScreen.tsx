@@ -23,7 +23,7 @@ import { SoundFX } from '../../../lib/soundEffects.js';
 import { CommercialAgentCellPanel } from './CommercialAgentCellPanel.js';
 import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas.js';
 import { HubTaskWidget } from './HubTaskWidget.js';
-import '../hub-orbit.css.js';
+import '../hub-orbit.css';
 
 import { HubIcons } from './HubIcons.js';
 

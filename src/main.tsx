@@ -8,7 +8,7 @@ import { initPostHogClient } from './lib/analytics/posthog-client.js';
 
 initSentry(false);
 initPostHogClient();
-import './styles/globals.css.js';
+import './styles/globals.css';
 import { registerSW } from 'virtual:pwa-register';
 
 registerSW({ immediate: true });

@@ -7,7 +7,7 @@ import type { Request, Response, NextFunction } from 'express';
 // quem estava chamando — POST /api/db/query, GET /users e toda rota de
 // gestão de lead/campanha eram efetivamente públicas para quem tivesse a URL
 // da API. Este módulo implementa sessão via cookie assinado (HMAC-SHA256,
-// sem dependência nova — só `node:crypto`) + middleware que popula `req.user`.
+// sem dependência nova — só `node:crypto`) + middleware que popula `req.outboundUser`.
 //
 // Por que HMAC assinado em vez de `express-session`/JWT de biblioteca: o
 // servidor já tem `crypto.scryptSync` para senha (ver server/routes.ts) sem
@@ -168,18 +168,18 @@ export function buildLogoutCookie(): string {
 
 // --- Middleware Express -------------------------------------------------
 
-// Popula req.user quando o cookie existe e é válido; nunca lança e nunca
+// Popula req.outboundUser quando o cookie existe e é válido; nunca lança e nunca
 // bloqueia a requisição — rotas que continuam públicas (ex: /auth/login,
-// /health) simplesmente seguem com req.user undefined. Aplicado globalmente
+// /health) simplesmente seguem com req.outboundUser undefined. Aplicado globalmente
 // no router (ver apiRouter.use(attachUser) em server/routes.ts) para que
-// qualquer rota possa checar req.user sem precisar montar o middleware de
+// qualquer rota possa checar req.outboundUser sem precisar montar o middleware de
 // novo em cada uma.
 export function attachUser(req: Request, _res: Response, next: NextFunction) {
   const cookies = parseCookies(req.headers.cookie);
   const token = cookies[SESSION_COOKIE_NAME];
   const user = verifySessionToken(token);
   if (user) {
-    (req as Request & { user?: AuthenticatedUser }).user = user;
+    (req as Request & { outboundUser?: AuthenticatedUser }).outboundUser = user;
   }
   next();
 }
@@ -187,7 +187,7 @@ export function attachUser(req: Request, _res: Response, next: NextFunction) {
 // Exige qualquer sessão válida (não checa role). Usar em rotas que só
 // precisam saber "alguém autenticado está chamando" — ex: GET /users.
 export function requireAuth(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
+  if (!req.outboundUser) {
     return res.status(401).json({ error: 'Sessão ausente ou expirada. Faça login novamente.' });
   }
   next();
@@ -198,10 +198,10 @@ export function requireAuth(req: Request, res: Response, next: NextFunction) {
 // quando a sessão é válida mas a role não autoriza (autenticado, mas sem
 // permissão) — distinção padrão HTTP entre "quem é você" e "o que você pode".
 export function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
+  if (!req.outboundUser) {
     return res.status(401).json({ error: 'Sessão ausente ou expirada. Faça login novamente.' });
   }
-  if (req.user.role !== 'admin') {
+  if (req.outboundUser.role !== 'admin') {
     return res.status(403).json({ error: 'Acesso restrito a administradores.' });
   }
   next();
@@ -211,10 +211,10 @@ export function requireAdmin(req: Request, res: Response, next: NextFunction) {
 // gerencial que não são sensíveis como o SQL Explorer (ex: painel consolidado
 // de tarefas de todos os vendedores), mas que um vendedor comum não deve ver.
 export function requireManager(req: Request, res: Response, next: NextFunction) {
-  if (!req.user) {
+  if (!req.outboundUser) {
     return res.status(401).json({ error: 'Sessão ausente ou expirada. Faça login novamente.' });
   }
-  if (req.user.role !== 'admin' && req.user.role !== 'gestor') {
+  if (req.outboundUser.role !== 'admin' && req.outboundUser.role !== 'gestor') {
     return res.status(403).json({ error: 'Acesso restrito a administradores e gestores.' });
   }
   next();

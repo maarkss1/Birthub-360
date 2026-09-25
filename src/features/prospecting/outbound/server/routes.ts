@@ -75,10 +75,10 @@ const integrationLimiter = rateLimit({ windowMs: 60_000, max: 30, message: 'Muit
 
 export const apiRouter = Router();
 
-// Auth & RBAC (CPI follow-up): popula req.user a partir do cookie de sessão
+// Auth & RBAC (CPI follow-up): popula req.outboundUser a partir do cookie de sessão
 // assinado em TODA requisição desta API, sem bloquear nenhuma — rotas que
 // continuam públicas (login, health, etc.) simplesmente seguem com
-// req.user undefined; rotas sensíveis usam requireAuth/requireAdmin abaixo.
+// req.outboundUser undefined; rotas sensíveis usam requireAuth/requireAdmin abaixo.
 apiRouter.use(attachUser);
 
 // --- Senhas: hash com scrypt (sem dependência externa). Contas antigas com
@@ -471,7 +471,7 @@ apiRouter.post('/auth/logout', async (_req: Request, res: Response) => {
 // cookie ainda é válida (ex: ao recarregar a página) sem repetir login nem
 // tocar no banco — só reflete o que o middleware attachUser já decodificou.
 apiRouter.get('/auth/me', async (req: Request, res: Response) => {
-  res.json({ user: req.user ?? null });
+  res.json({ user: req.outboundUser ?? null });
 });
 
 apiRouter.get('/users', requireAuth, async (_req: Request, res: Response) => {
@@ -1489,14 +1489,14 @@ apiRouter.post('/prospect', heavyAiLimiter, requireAuth, async (req: Request, re
     const { pitch, aiConfig, googleApiKey, apolloApiKey, hunterApiKey, company: bodyCompany, bitrixWebhook } = req.body;
 
     // Auth & RBAC (CPI follow-up) - escopo por marca: para uma sessão não-admin, a
-    // marca vem SEMPRE da sessão (req.user.company), nunca do corpo da requisição -
+    // marca vem SEMPRE da sessão (req.outboundUser.company), nunca do corpo da requisição -
     // sem isso, um vendedor autenticado da Total Trac poderia mandar company:'atlas'
     // no body e gerar/atribuir leads no pool errado. Admin continua podendo escolher
     // a marca livremente (mesmo padrão de "admin gerencia as duas marcas" já usado
     // no login, ver normalizeCompany acima). Sem sessão, requireAuth já bloqueou a
     // rota antes de chegar aqui.
-    const company = (req.user && req.user.role !== 'admin' && req.user.company)
-      ? req.user.company
+    const company = (req.outboundUser && req.outboundUser.role !== 'admin' && req.outboundUser.company)
+      ? req.outboundUser.company
       : bodyCompany;
 
     // Wave 9 (CPI) - Cost/Cache/Resiliência: orçamento por execução de busca.
