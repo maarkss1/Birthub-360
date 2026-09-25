@@ -1,5 +1,4 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from '../../../../../../lib/prisma.js';
 import {
   CallAttempt,
   TERMINAL_CALL_ATTEMPT_STATUSES,

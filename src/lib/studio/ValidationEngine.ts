@@ -11,7 +11,7 @@ export interface ValidationResult {
 }
 
 export const validationEngine = {
-  validate: (nodes: any[], edges: any[]): ValidationResult => {
+  validate: (_nodes: any[], _edges: any[]): ValidationResult => {
     return {
       isValid: true,
       issues: []

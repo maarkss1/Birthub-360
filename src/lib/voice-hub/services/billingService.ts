@@ -196,7 +196,7 @@ export async function changePlan(
   }
 
   const plan = await findPlanById(newPlanId);
-  if (!plan || !plan.active) {
+  if (!plan?.active) {
     throw new PlanNotFoundError(newPlanId);
   }
 

@@ -19,7 +19,7 @@ import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 import { contactsDB } from '../../../lib/db.js';
 import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap.js';
 import { getWhatsAppLink } from '../../../shared/utils/contact-links.js';
-import type { Contact } from '../../../types.js';
+import type { Contact } from '../../../types/index.js';
 
 interface ContactDetailProps {
   /** `null` mantém a gaveta fechada — o próprio componente controla o fetch a partir do id. */

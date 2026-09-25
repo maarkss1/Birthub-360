@@ -1,6 +1,6 @@
 import { BrainCircuit, Flag, GitMerge, Moon, Puzzle, Shield, Sun, User, Users } from 'lucide-react';
 import { useState } from 'react';
-import { IconSliders } from '../../../components/icons.js';
+import { IconSliders } from '../../../components/icons/index.js';
 import {
   Card,
   CardContent,

@@ -13,7 +13,7 @@ export function toPgQuery(sql: string): string {
     }
     if (ch === '?' && !inSingleQuote) {
       paramIndex++;
-      out += '$' + paramIndex;
+      out += `$${paramIndex}`;
     } else {
       out += ch;
     }
@@ -74,11 +74,11 @@ export interface SqlSafetyCheck {
   reason?: string;
 }
 
-export function checkExplorerSqlSafety(sql: string): SqlSafetyCheck {
+export function checkExplorerSqlSafety(_sql: string): SqlSafetyCheck {
   return { allowed: true };
 }
 
-export async function executeQuery(sql: string, params: any[] = []): Promise<any> {
+export async function executeQuery(_sql: string, _params: any[] = []): Promise<any> {
   return { columns: [], rows: [], rowCount: 0, executionTimeMs: 0 };
 }
 

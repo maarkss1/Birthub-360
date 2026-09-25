@@ -39,7 +39,7 @@ import { api } from '../lib/api.js';
 import { clientLogger } from '../lib/clientLogger.js';
 import { SoundFX } from '../lib/soundEffects.js';
 import { toast } from '../lib/toast.js';
-import type { Lead, LeadStatus } from '../types.js';
+import type { Lead, LeadStatus } from '../types/index.js';
 import { Button } from './ui/Button.js';
 import { ContextualTip } from './ui/ContextualTip.js';
 import { EmptyState } from './ui/EmptyState.js';

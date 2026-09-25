@@ -114,7 +114,7 @@ export function checkExportEligibility(
   }
 
   // Regra 2 — e-mail do decisor verificado (quando existe e-mail para checar).
-  const email = lead.decision_maker_email || (lead.decision_maker_emails && lead.decision_maker_emails[0]) || '';
+  const email = lead.decision_maker_email || (lead.decision_maker_emails?.[0]) || '';
   if (email) {
     const status = lead.email_verification_status || 'unverified';
     if (!VERIFIED_EMAIL_STATUSES.has(status)) {

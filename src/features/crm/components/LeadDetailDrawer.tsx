@@ -35,7 +35,7 @@ import { toast } from '../../../lib/toast.js';
 // LEAD_STATUS é reexportado como tipo em ../../../types (export type {...}) — o array em
 // runtime só existe na fonte original.
 import { LEAD_STATUS } from '../../../lib/zod.js';
-import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types.js';
+import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types/index.js';
 // Mesmo raciocínio do WhatsAppChatPanel acima: o CRM só decide QUANDO oferecer a entrada, não
 // COMO o Copiloto Comercial IA funciona (Onda 7 — UI/UX, ver src/features/copiloto-ia/AGENTS.md).
 import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel.js';

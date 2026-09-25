@@ -12,7 +12,7 @@ import { clientLogger } from '../../../lib/clientLogger.js';
 import { companiesDB } from '../../../lib/db.js';
 import { toast } from '../../../lib/toast.js';
 import { COMPANY_STATUS, companySchema } from '../../../lib/zod.js';
-import type { Company } from '../../../types.js';
+import type { Company } from '../../../types/index.js';
 
 interface CompanyFormProps {
   company?: Company | null;

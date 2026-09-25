@@ -11,7 +11,7 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BarChart, LineChart } from '../../../components/charts.js';
+import { BarChart, LineChart } from '../../../components/charts/index.js';
 import { Button } from '../../../components/ui/Button.js';
 import { Card } from '../../../components/ui/Card.js';
 import { PageHeader } from '../../../components/ui/PageHeader.js';

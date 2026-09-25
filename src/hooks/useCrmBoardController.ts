@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { api } from '../lib/api.js';
 import { clientLogger } from '../lib/clientLogger.js';
 import { toast } from '../lib/toast.js';
-import type { Lead } from '../types.js';
+import type { Lead } from '../types/index.js';
 
 export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
   const [leads, setLeads] = useState<Lead[]>([]);

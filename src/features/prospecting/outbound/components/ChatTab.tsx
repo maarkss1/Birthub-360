@@ -1,15 +1,11 @@
 import type React from 'react';
 import { useState, useEffect, useRef } from 'react';
 import type { AIConfig, ChatMessage, ChatSession, ThemeMode } from '../types.js';
-import { AtlasLogo } from './AtlasLogo.js';
 import { 
   Send, 
   Bot, 
   User, 
-  Sparkles, 
-  RotateCcw, 
   Loader2, 
-  Terminal, 
   MessageSquare, 
   Plus, 
   Database,
@@ -44,7 +40,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ aiConfig, theme = 'dark' }) =>
   // Load sessions on mount
   useEffect(() => {
     loadSessions();
-  }, []);
+  }, [loadSessions]);
 
   const loadSessions = async () => {
     try {
@@ -100,7 +96,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ aiConfig, theme = 'dark' }) =>
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+  }, []);
 
   const handleSendMessage = async (customText?: string) => {
     const textToSend = customText || inputPrompt;

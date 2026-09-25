@@ -23,7 +23,7 @@ import type { StudioNode, StudioEdge } from '../../lib/studio/types.js';
 import { 
   StartNode, EndNode, PromptNode, ConditionNode, ToolNode, LlmNode, VoiceNode, 
   QuestionNode, SwitchNode, MemoryNode, KnowledgeNode, HumanHandoffNode 
-} from './nodes.js';
+} from './nodes/index.js';
 import { StudioEdge as CustomStudioEdge } from './edges/StudioEdge.js';
 import { TopBar } from './panels/TopBar.js';
 import { LayersPanel } from './panels/LayersPanel.js';
@@ -74,7 +74,7 @@ function CanvasInner() {
 
   useEffect(() => {
     // loadWorkflowFromServer();
-  }, [loadWorkflowFromServer]);
+  }, []);
 
   useEffect(() => {
     // Only save if there are actual nodes
@@ -84,7 +84,7 @@ function CanvasInner() {
       }, 3000);
       return () => clearTimeout(timer);
     }
-  }, [nodes, edges, saveWorkflowToServer]);
+  }, [nodes, saveWorkflowToServer]);
 
   useEffect(() => {
     // Auto-dismiss the publish result banner; the outcome is still visible afterwards via the

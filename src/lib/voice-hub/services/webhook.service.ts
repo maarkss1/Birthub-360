@@ -1,4 +1,4 @@
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { Queue } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
 import { logger } from '@/lib/logger';

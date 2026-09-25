@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar.js';
 import { Header } from './components/Header.js';
 import { ProspectorTab } from './components/ProspectorTab.js';
@@ -63,7 +63,7 @@ export default function App() {
       });
     return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [handleLogout, user]);
 
   // Theme state with local persistence
   const [theme, setTheme] = useState<ThemeMode>(() => {
@@ -188,7 +188,7 @@ export default function App() {
     fetchDbStats();
     checkOllamaStatus();
     loadInitialCampaign();
-  }, []);
+  }, [loadInitialCampaign, fetchDbStats, checkOllamaStatus]);
 
   const fetchDbStats = async () => {
     try {
@@ -215,7 +215,7 @@ export default function App() {
       });
       const data = await res.json();
       setOllamaStatus(data);
-    } catch (err: any) {
+    } catch (_err: any) {
       setOllamaStatus({
         online: false,
         message: 'Não foi possível conectar ao Ollama local'
@@ -424,7 +424,7 @@ export default function App() {
 
   // Export functions
   const handleExportJSON = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(leads, null, 2));
+    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(leads, null, 2))}`;
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', dataStr);
     dlAnchor.setAttribute('download', `atlas_outbound_leads_${new Date().toISOString().slice(0, 10)}.json`);
@@ -450,7 +450,7 @@ export default function App() {
       csv += `"${l.name}","${l.address}","${l.phone}","${l.website}","${l.rating}","${dm.name}","${dm.title}","${dm.email}","${dm.linkedin}","${cc}","${ce}","${wpp}","${lk}"\n`;
     });
 
-    const blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\ufeff${csv}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const dlAnchor = document.createElement('a');
     dlAnchor.setAttribute('href', url);

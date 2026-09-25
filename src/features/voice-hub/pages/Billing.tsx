@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CreditCard, Zap, History, AlertTriangle, Lock, Check } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore.js';
 import { logger } from '../../../lib/logger.js';

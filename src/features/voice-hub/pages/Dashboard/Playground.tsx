@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Play, Mic, MicOff, Save, RotateCcw } from 'lucide-react';
 import { logger } from '../../../../lib/logger.js';
 

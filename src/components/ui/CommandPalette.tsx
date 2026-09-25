@@ -19,7 +19,7 @@ import {
   type PaletteIntent,
 } from '../../lib/paletteIntent.js';
 import { SoundFX } from '../../lib/soundEffects.js';
-import type { Company, Contact, PaginatedResponse } from '../../types.js';
+import type { Company, Contact, PaginatedResponse } from '../../types/index.js';
 import type { TabType } from '../layout/tabMeta.js';
 import { TAB_META } from '../layout/tabMeta.js';
 import { BorderBeam } from './BorderBeam.js';

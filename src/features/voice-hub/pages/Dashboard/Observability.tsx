@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, Badge, Spinner, Table, TableHead, TableRow, TableCell } from '../../components/design-system.js';
+import { useState, useEffect } from 'react';
+import { Card, Badge, Spinner, Table, TableHead, TableRow, TableCell } from '../../components/design-system/index.js';
 import { Activity, BarChart2, Server, Zap, Shield, Terminal, RefreshCw, Layers } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from 'recharts';
 import type { Attributes } from '@opentelemetry/api';
@@ -49,7 +49,7 @@ export default function ObservabilityPage() {
     if (!autoRefresh) return;
     const interval = setInterval(fetchTelemetry, 3000);
     return () => clearInterval(interval);
-  }, [autoRefresh]);
+  }, [autoRefresh, fetchTelemetry]);
 
   // Aggregate stats
   const totalSpans = spans.length;
@@ -202,7 +202,7 @@ export default function ObservabilityPage() {
                           paddingAngle={3}
                           dataKey="value"
                         >
-                          {emotionChartData.map((entry, index) => (
+                          {emotionChartData.map((_entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                           ))}
                         </Pie>
@@ -232,7 +232,7 @@ export default function ObservabilityPage() {
                         <YAxis tick={{ fontSize: 10 }} />
                         <Tooltip />
                         <Bar dataKey="value" name="Frequência" fill="#10b981">
-                          {intentChartData.map((entry, index) => (
+                          {intentChartData.map((_entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[(index + 1) % COLORS.length]} />
                           ))}
                         </Bar>

@@ -16,13 +16,13 @@ export async function createApiKeyHandler(req: Request, res: Response) {
   const parsed = createApiKeySchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const apiKey = await createApiKeyForTenant(req.organizationId!, req.user!.id, {
+  const apiKey = await createApiKeyForTenant(req.organizationId!, req.user?.id, {
     name: parsed.data.name,
     expiresAt: parsed.data.expiresAt ? new Date(parsed.data.expiresAt) : null,
   });
 
   // Audit the creation event itself, never the secret value.
-  writeAuditLog(req.organizationId, req.user!.id, 'API_KEY_CREATE', { apiKeyId: apiKey.id, name: apiKey.name });
+  writeAuditLog(req.organizationId, req.user?.id, 'API_KEY_CREATE', { apiKeyId: apiKey.id, name: apiKey.name });
 
   return res.status(201).json({
     apiKey: {
@@ -47,7 +47,7 @@ export async function listApiKeysHandler(req: Request, res: Response) {
 export async function revokeApiKeyHandler(req: Request, res: Response) {
   try {
     const apiKey = await revokeApiKeyForTenant(req.organizationId!, String(req.params.id));
-    writeAuditLog(req.organizationId, req.user!.id, 'API_KEY_REVOKE', { apiKeyId: apiKey.id });
+    writeAuditLog(req.organizationId, req.user?.id, 'API_KEY_REVOKE', { apiKeyId: apiKey.id });
     return res.json({ success: true, apiKey });
   } catch (err: any) {
     if (err instanceof ApiKeyServiceError) return res.status(err.status).json({ error: err.message });

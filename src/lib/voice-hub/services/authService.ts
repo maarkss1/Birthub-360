@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { hashPassword, verifyPassword, generateToken, generateRefreshToken, verifyRefreshToken, type TokenPayload } from '../lib/auth-tokens.js';
 import { findUserByEmail, findUserById, createUser, createMembership, findMembershipWithRole } from '../repositories/userRepository.js';
 import { createTenant } from '../repositories/organizationRepository.js';
@@ -61,7 +61,7 @@ export async function refreshSession(refreshToken: string) {
   if (!decoded) return null;
 
   const user = await findUserById(decoded.id);
-  if (!user || !user.organizationId) return null;
+  if (!user?.organizationId) return null;
 
   const membership = await findMembershipWithRole(user.id, user.organizationId);
   const role = membership?.role.name || 'user';

@@ -2,7 +2,7 @@ import { useDroppable } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import React from 'react';
 import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap.js';
-import type { Lead, LeadStatus } from '../../../types.js';
+import type { Lead, LeadStatus } from '../../../types/index.js';
 import { KanbanCard } from './KanbanCard.js';
 
 interface KanbanColumnProps {

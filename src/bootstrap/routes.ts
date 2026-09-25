@@ -194,9 +194,9 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/outbound', authenticateToken, requireTenant, (req, res, next) => {
     import('../features/prospecting/outbound/server/routes.js').then((m) => m.apiRouter(req, res, next)).catch(next);
   });
-  app.use('/api/dialer-3cx', authenticateToken, requireTenant, (req, res, next) => {
+  app.use('/api/dialer-3cx', authenticateToken, requireTenant, (_req, _res, next) => {
     // Dialer exposes campaigns, dnc, leads
-    import('../features/cadence/dialer/interface/http/server.js').then((m) => {
+    import('../features/cadence/dialer/interface/http/server.js').then((_m) => {
       // It's a full express app, but we can mount its router if exported, or just mock it here.
       // This is a placeholder for the actual dialer routes.
       next();

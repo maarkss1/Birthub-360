@@ -83,7 +83,7 @@ export function buildLeadEvidenceContext(
   }
 
   const dm = decisionMaker || lead.decision_makers?.[0];
-  const resolvedDecisionMaker = dm && dm.name && dm.name.trim() !== ''
+  const resolvedDecisionMaker = dm?.name && dm.name.trim() !== ''
     ? { name: dm.name, title: dm.title && dm.title.trim() !== '' ? dm.title : undefined }
     : undefined;
 

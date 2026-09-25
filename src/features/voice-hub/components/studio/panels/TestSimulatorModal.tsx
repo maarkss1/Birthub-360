@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { X, Mic, MicOff, PhoneOff, User, Bot, Loader2, AlertTriangle } from 'lucide-react';
 import { logger } from '../../../../../lib/logger.js';
 import { useStudioStore } from '../../../store/useStudioStore.js';
@@ -46,7 +46,7 @@ export function TestSimulatorModal({ onClose }: TestSimulatorModalProps) {
       if (recognitionRef.current) recognitionRef.current.stop();
       if (window.speechSynthesis) window.speechSynthesis.cancel();
     };
-  }, []);
+  }, [stopAudioWave]);
 
   const drawWaveform = () => {
     const canvas = canvasRef.current;

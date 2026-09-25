@@ -150,7 +150,7 @@ export interface DetectSignalsOptions {
  * qualquer volume de `Signal[]`.
  */
 export function detectSignalsForLead(
-  lead: { name: string },
+  _lead: { name: string },
   opts: DetectSignalsOptions = {}
 ): Signal[] {
   const signals: Signal[] = [];

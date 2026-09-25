@@ -666,7 +666,7 @@ function applyToolFallback(state: WorkflowRuntimeState, node: RuntimeNode, reaso
   state.variables.tool_ok = 'false';
   state.variables.tool_status = reason;
   state.variables.tool_error = reason;
-  delete state.variables.tool_result;
+  state.variables.tool_result = undefined;
   state.variables[`tool_${node.id}_ok`] = 'false';
   state.variables[`tool_${node.id}_error`] = reason;
 }
@@ -731,7 +731,7 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
     state.variables.tool_ok = 'true';
     state.variables.tool_status = String(result.status ?? '');
     state.variables.tool_result = result.body ?? '';
-    delete state.variables.tool_error;
+    state.variables.tool_error = undefined;
     state.variables[`tool_${node.id}_ok`] = 'true';
     state.variables[`tool_${node.id}_result`] = result.body ?? '';
     logger.info('Workflow tool node executed successfully', {
@@ -988,7 +988,7 @@ function advancePastCurrent(state: WorkflowRuntimeState, current: RuntimeNode, h
 
 function questionText(state: WorkflowRuntimeState): string | undefined {
   const current = nodeById(state, state.currentNodeId);
-  if (!current || current.type !== 'question') return undefined;
+  if (current?.type !== 'question') return undefined;
   const text = renderTemplate(asString(current.config.questionText), state.variables);
   return text || undefined;
 }
@@ -1233,7 +1233,7 @@ export async function resumeAfterTool(state: WorkflowRuntimeState, node: Workflo
   const next = cloneState(state);
   const toolNode = nodeById(next, node.id);
 
-  if (!toolNode || toolNode.type !== 'tool') {
+  if (toolNode?.type !== 'tool') {
     logger.error('resumeAfterTool called without a matching pending tool node', {
       workflowId: next.workflowId,
       nodeId: node.id,

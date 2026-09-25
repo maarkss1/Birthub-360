@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { X, History, RotateCcw, Loader2, ShieldAlert, Clock, CheckCircle2 } from 'lucide-react';
 import { useStudioStore } from '../../../store/useStudioStore.js';
 import { ValidationIssuesList } from './ValidationIssuesList.js';

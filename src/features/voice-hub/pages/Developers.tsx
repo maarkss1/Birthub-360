@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Key, Webhook, Copy, Check, Plus, Trash2, RefreshCw, X, AlertTriangle, Lock, ShieldOff, CloudOff } from 'lucide-react';
 import { useDeveloperSettings } from '../../hooks/useDeveloperSettings.js';
 import { Badge, Button, EmptyState, Skeleton } from '../../components/design-system.js';
@@ -347,7 +347,6 @@ export default function DevelopersPage() {
                                     onChange={(e) => setNewKeyName(e.target.value)}
                                     className="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm font-sans"
                                     required
-                                    autoFocus
                                     disabled={isCreating}
                                 />
                             </div>
@@ -412,7 +411,6 @@ export default function DevelopersPage() {
                                     onChange={(e) => setNewWebhookUrl(e.target.value)}
                                     className="w-full p-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent text-sm font-mono"
                                     required
-                                    autoFocus
                                     disabled={isCreatingWebhook}
                                 />
                                 <p className="text-xs text-slate-400 mt-1.5">

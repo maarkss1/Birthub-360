@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Users, Building2 } from 'lucide-react';
 import type { User } from '../types.js';
 
@@ -66,7 +66,7 @@ export function LeadDistributionTab({ isDark }: LeadDistributionTabProps) {
 
   useEffect(() => {
     fetchDistribution();
-  }, []);
+  }, [fetchDistribution]);
 
   const fetchDistribution = async () => {
     setLoading(true);

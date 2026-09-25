@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Phone, Globe, Shield, Search, Music, Play, Loader2, Download } from 'lucide-react';
 
 export default function TelephonyPage() {

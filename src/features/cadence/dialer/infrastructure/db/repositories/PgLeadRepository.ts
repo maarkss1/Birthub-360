@@ -1,5 +1,4 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from '../../../../../../lib/prisma.js';
 import { Lead, type LeadProps, type LeadStatus } from "../../../domain/entities/Lead.js";
 import { PhoneNumber } from "../../../domain/value-objects/PhoneNumber.js";
 import type { LeadRepository } from "../../../application/ports/LeadRepository.js";
@@ -66,9 +65,6 @@ export class PgLeadRepository implements LeadRepository {
         await this.upsertMany(chunk, client);
       }
       // await client.query("COMMIT");
-    } catch (error: any) {
-      // await client.query("ROLLBACK");
-      throw error;
     } finally {
       // client.release();
     }

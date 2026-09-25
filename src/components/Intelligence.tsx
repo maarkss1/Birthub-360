@@ -35,7 +35,7 @@ import { useBrandAccent } from '../hooks/useBrandAccent.js';
 import { api } from '../lib/api.js';
 import { clientLogger } from '../lib/clientLogger.js';
 import { PIC_OPTIONS } from '../shared/constants/icp-options.js';
-import type { Lead } from '../types.js';
+import type { Lead } from '../types/index.js';
 import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon.js';
 
 type ToolType =

@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext.js';
 import { api } from '../../lib/api.js';
 import { toast } from '../../lib/toast.js';
-import type { Note } from '../../types.js';
+import type { Note } from '../../types/index.js';
 
 type NoteEntityType = 'lead' | 'company' | 'contact';
 

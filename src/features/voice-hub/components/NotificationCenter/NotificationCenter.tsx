@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Bell, Check, CheckCheck, RefreshCw } from 'lucide-react';
 import { logger } from '../../../../lib/logger.js';
 import { formatRelativeTime } from './formatRelativeTime.js';

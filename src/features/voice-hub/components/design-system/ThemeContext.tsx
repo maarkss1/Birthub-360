@@ -19,7 +19,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     fetch('/api/settings')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data && data.settings && data.settings.theme) {
+        if (data?.settings?.theme) {
           setThemeState(data.settings.theme);
         }
       })

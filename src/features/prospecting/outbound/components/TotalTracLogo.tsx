@@ -24,7 +24,7 @@ export const TotalTracLogo: React.FC<TotalTracLogoProps> = ({
 
   // Colors based on Total Trac Brand Manual
   const primaryBlue = '#374898';
-  const secondaryBlue = '#93DBF2'; // For the map pin icon inside
+  const _secondaryBlue = '#93DBF2'; // For the map pin icon inside
   const textFill = theme === 'light' ? '#374898' : '#FFFFFF';
   const subtitleColor = theme === 'light' ? '#666666' : '#94A3B8';
 

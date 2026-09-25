@@ -25,7 +25,7 @@ export function dncRoutes(deps: { dncRepository: DncRepository }): Router {
   router.get(
     "/dnc/:phone",
     asyncHandler(async (req, res) => {
-      const rawPhone = z.string().min(1).parse(req.params["phone"]);
+      const rawPhone = z.string().min(1).parse(req.params.phone);
       const phone = PhoneNumber.create(rawPhone);
       const blocked = await deps.dncRepository.isBlocked(phone.toE164());
       res.json({ phone: phone.toE164(), blocked });

@@ -10,9 +10,9 @@ import {
 import { auth } from '../lib/auth.js';
 import { useSessionStore } from '../store/useSessionStore.js';
 import { useTheme } from './design-system/ThemeContext.js';
-import { useToast, AtlasLogo } from './design-system.js';
+import { useToast, AtlasLogo } from './design-system/index.js';
 import { getAccessibleTextOnBrand } from './design-system/tokens.js';
-import { NotificationCenter } from './NotificationCenter.js';
+import { NotificationCenter } from './NotificationCenter/index.js';
 
 export function Sidebar() {
   const location = useLocation();
@@ -38,7 +38,7 @@ export function Sidebar() {
     fetch('/api/settings')
       .then(res => res.ok ? res.json() : null)
       .then(data => {
-        if (data && data.settings) {
+        if (data?.settings) {
           if (data.settings.favorites) {
             setFavorites(data.settings.favorites);
           }
@@ -53,7 +53,7 @@ export function Sidebar() {
   // Track recent pages when location changes
   useEffect(() => {
     const currentPath = location.pathname;
-    if (currentPath && currentPath.startsWith('/dashboard')) {
+    if (currentPath?.startsWith('/dashboard')) {
       setRecents(prev => {
         const filtered = prev.filter(p => p !== currentPath);
         const updated = [currentPath, ...filtered].slice(0, 4);
@@ -91,7 +91,7 @@ export function Sidebar() {
     }).catch(() => {});
   };
 
-  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + '/');
+  const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const navItemClass = (path: string) =>
     `flex items-center justify-between group/item p-2.5 rounded-lg transition-all text-xs font-semibold ${

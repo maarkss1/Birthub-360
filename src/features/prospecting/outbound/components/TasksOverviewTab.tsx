@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Calendar, Circle, Building2, ListChecks } from 'lucide-react';
 import type { LeadTask } from '../types.js';
 
@@ -17,7 +17,7 @@ export function TasksOverviewTab({ isDark }: TasksOverviewTabProps) {
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
   const fetchTasks = async () => {
     setLoading(true);
@@ -46,7 +46,7 @@ export function TasksOverviewTab({ isDark }: TasksOverviewTabProps) {
     if (!bySeller.has(key)) {
       bySeller.set(key, { userName: task.user_name || 'Sem vendedor atribuído', tasks: [] });
     }
-    bySeller.get(key)!.tasks.push(task);
+    bySeller.get(key)?.tasks.push(task);
   }
   // Vendedores com mais tarefas pendentes/atrasadas primeiro — é quem o gestor mais precisa olhar.
   const sellers = Array.from(bySeller.values()).sort((a, b) => {

@@ -62,7 +62,7 @@ export async function domainSearch(domain: string, apiKey?: string, timeoutMs = 
 
   try {
     const response = await withTimeout(signal =>
-      fetch(`https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${encodeURIComponent(apiKey!.trim())}&limit=10`, { signal }),
+      fetch(`https://api.hunter.io/v2/domain-search?domain=${encodeURIComponent(domain)}&api_key=${encodeURIComponent(apiKey?.trim())}&limit=10`, { signal }),
     timeoutMs);
     const latencyMs = Date.now() - startedAt;
 
@@ -107,7 +107,7 @@ export async function verifyEmail(email: string, apiKey?: string, timeoutMs = 80
 
   try {
     const response = await withTimeout(signal =>
-      fetch(`https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${encodeURIComponent(apiKey!.trim())}`, { signal }),
+      fetch(`https://api.hunter.io/v2/email-verifier?email=${encodeURIComponent(email)}&api_key=${encodeURIComponent(apiKey?.trim())}`, { signal }),
     timeoutMs);
     const latencyMs = Date.now() - startedAt;
 

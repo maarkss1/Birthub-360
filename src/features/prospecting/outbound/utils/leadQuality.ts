@@ -22,15 +22,13 @@ export function calculateLeadQuality(lead: Lead): LeadQualityMetric {
   );
 
   const hasEmail = Boolean(
-    mainDm.email && 
-    mainDm.email.includes('@') && 
+    mainDm.email?.includes('@') && 
     !mainDm.email.toLowerCase().includes('não revelado') &&
     !mainDm.email.startsWith('contato@')
   );
 
   const hasLinkedin = Boolean(
-    mainDm.linkedin && 
-    mainDm.linkedin.includes('linkedin.com') && 
+    mainDm.linkedin?.includes('linkedin.com') && 
     mainDm.linkedin.length > 15
   );
 

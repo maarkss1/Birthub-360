@@ -1,8 +1,8 @@
 import { Router, type Request, type Response } from 'express';
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { getDatabase, executeQuery, getStats, saveDatabase, logActivity, checkExplorerSqlSafety } from './db.js';
 import { checkOllamaConnection, generateCopiesWithEngine, chatWithLLaMA3, enrichLeadWithPublicNewsAndScripts } from './ai.js';
-import { resolveAndEnrichCnpjForLead, fetchCnpjPublicData, formatCnpj, type CnpjData } from './cnpj.js';
+import { resolveAndEnrichCnpjForLead, fetchCnpjPublicData, type CnpjData } from './cnpj.js';
 import { parseSearchIntent, validateSearchIntent } from './searchIntent.js';
 import { buildRequirementsFromSearchIntent, evaluateRequirements } from './requirementEngine.js';
 import { planSearch } from './queryPlanner.js';
@@ -40,7 +40,7 @@ import {
   attachUser, requireAuth, requireAdmin, requireManager,
   createSessionToken, buildSessionCookie, buildLogoutCookie
 } from './auth.js';
-import { type Lead, AIConfig, type DecisionMaker } from '../src/types.js';
+import type { Lead, DecisionMaker } from '../src/types.js';
 
 // Só valida um campo quando ele está sendo de fato alterado para um valor novo —
 // nunca quando é reenviado sem mudança (o botão "Salvar" manda o lead inteiro de
@@ -135,7 +135,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (Array.isArray(leadObj.tags)) {
       tags = leadObj.tags;
     }
-  } catch (e: any) {
+  } catch (_e: any) {
     tags = [];
   }
 
@@ -146,7 +146,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (leadObj.news_dossier) {
       newsDossier = leadObj.news_dossier;
     }
-  } catch (e: any) {
+  } catch (_e: any) {
     newsDossier = null;
   }
 
@@ -155,7 +155,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     if (leadObj.decision_maker_emails) {
       dmEmails = typeof leadObj.decision_maker_emails === 'string' ? JSON.parse(leadObj.decision_maker_emails) : leadObj.decision_maker_emails;
     }
-  } catch (e: any) {
+  } catch (_e: any) {
     dmEmails = leadObj.decision_maker_email ? [leadObj.decision_maker_email] : [];
   }
   if (dmEmails.length === 0 && leadObj.decision_maker_email) {
@@ -167,7 +167,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     if (leadObj.decision_maker_phones) {
       dmPhones = typeof leadObj.decision_maker_phones === 'string' ? JSON.parse(leadObj.decision_maker_phones) : leadObj.decision_maker_phones;
     }
-  } catch (e: any) {
+  } catch (_e: any) {
     dmPhones = leadObj.decision_maker_phone ? [leadObj.decision_maker_phone] : [];
   }
   if (dmPhones.length === 0 && leadObj.decision_maker_phone) {
@@ -181,7 +181,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (Array.isArray(leadObj.qsa)) {
       qsa = leadObj.qsa;
     }
-  } catch (e: any) {
+  } catch (_e: any) {
     qsa = [];
   }
 
@@ -226,7 +226,7 @@ async function upsertMessageWithVersioning(
     if (existingRes.length > 0 && existingRes[0].values.length > 0) {
       existing = { content: existingRes[0].values[0][0], status: existingRes[0].values[0][1] };
     }
-  } catch (err: any) {
+  } catch (_err: any) {
     existing = null;
   }
 
@@ -234,7 +234,7 @@ async function upsertMessageWithVersioning(
     return { content: existing.content, skipped: true };
   }
 
-  if (existing && existing.content && existing.content.trim().length > 10 && existing.content !== content) {
+  if (existing?.content && existing.content.trim().length > 10 && existing.content !== content) {
     try {
       await db.run(
         `INSERT INTO message_versions (message_id, lead_id, channel, content, engine_used) VALUES (?, ?, ?, ?, ?)`,
@@ -251,7 +251,7 @@ async function upsertMessageWithVersioning(
       VALUES (?, ?, ?, ?, 'assistant', ?, 'reviewed', ?, ?)
       ON CONFLICT(id) DO UPDATE SET content = excluded.content, status = 'reviewed', engine_used = excluded.engine_used
     `, [msgId, campaignId, leadId, channel, content, engineUsed || null, new Date().toISOString()]);
-  } catch (err: any) {
+  } catch (_err: any) {
     await db.run(`UPDATE messages SET content = ?, status = 'reviewed', engine_used = ? WHERE id = ?`, [content, engineUsed || null, msgId]);
   }
 
@@ -259,14 +259,14 @@ async function upsertMessageWithVersioning(
 }
 
 // 1. Health check & DB Stats
-apiRouter.get('/health', async (req: Request, res: Response) => {
+apiRouter.get('/health', async (_req: Request, res: Response) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // Wave 4 (CPI) - Provider Registry: expõe o catálogo real de providers, suas
 // capacidades declaradas e status de configuração/saúde - nenhum provider
 // "some" do catálogo, incluindo os ainda não migrados a adapter formal.
-apiRouter.get('/providers/health', async (req: Request, res: Response) => {
+apiRouter.get('/providers/health', async (_req: Request, res: Response) => {
   try {
     const snapshot = await Promise.all(providerRegistry.map(async p => ({
       name: p.name,
@@ -303,11 +303,11 @@ apiRouter.get('/search-runs/:searchId', async (req: Request, res: Response) => {
 // de descarte mais comuns. Calculado só a partir do que foi de fato
 // registrado nesta instância do processo desde que ela subiu - nunca uma
 // métrica estimada (custo/cache ficam `null`: dependem da Wave 9).
-apiRouter.get('/observability/summary', async (req: Request, res: Response) => {
+apiRouter.get('/observability/summary', async (_req: Request, res: Response) => {
   res.json(getObservabilitySummary());
 });
 
-apiRouter.get('/db/stats', async (req: Request, res: Response) => {
+apiRouter.get('/db/stats', async (_req: Request, res: Response) => {
   try {
     const stats = await getStats();
     res.json(stats);
@@ -462,7 +462,7 @@ apiRouter.post('/auth/login', async (req: Request, res: Response) => {
 // Auth & RBAC (CPI follow-up): limpa o cookie de sessão. Idempotente e sem
 // exigir sessão válida — chamar /auth/logout sem estar logado (cookie já
 // ausente/expirado) não é um erro, só um no-op seguro.
-apiRouter.post('/auth/logout', async (req: Request, res: Response) => {
+apiRouter.post('/auth/logout', async (_req: Request, res: Response) => {
   res.setHeader('Set-Cookie', buildLogoutCookie());
   res.json({ success: true });
 });
@@ -474,7 +474,7 @@ apiRouter.get('/auth/me', async (req: Request, res: Response) => {
   res.json({ user: req.user ?? null });
 });
 
-apiRouter.get('/users', requireAuth, async (req: Request, res: Response) => {
+apiRouter.get('/users', requireAuth, async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
     const result = await db.exec(`SELECT id, email, name, role FROM users`);
@@ -571,7 +571,7 @@ apiRouter.get('/users/:userId/leads', async (req: Request, res: Response) => {
 // Distribuição agrupada por marca: Kauê e Jonathan (company='totaltrac') só aparecem
 // no grupo Total Trac, João (company='atlas') só no grupo Atlas — a separação vem do
 // cadastro do vendedor, não de nome hardcoded em lugar nenhum do código.
-apiRouter.get('/leads/distribution', async (req: Request, res: Response) => {
+apiRouter.get('/leads/distribution', async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
 
@@ -912,7 +912,7 @@ apiRouter.post('/leads/:id/save', requireAuth, async (req: Request, res: Respons
           const msgId = `msg-${id}-${ch}`;
           try {
             await db.run(`UPDATE messages SET content = ? WHERE id = ?`, [leadData.copies[ch], msgId]);
-          } catch(e: any) {}
+          } catch(_e: any) {}
         }
       }
     }
@@ -947,7 +947,7 @@ apiRouter.post('/leads/:id/enrich-news', heavyAiLimiter, requireAuth, async (req
       if (rawLead.decision_maker_emails) {
         dmEmails = JSON.parse(rawLead.decision_maker_emails);
       }
-    } catch(e: any) {
+    } catch(_e: any) {
       dmEmails = [rawLead.decision_maker_email];
     }
     if (dmEmails.length === 0 && rawLead.decision_maker_email) {
@@ -959,7 +959,7 @@ apiRouter.post('/leads/:id/enrich-news', heavyAiLimiter, requireAuth, async (req
       if (rawLead.decision_maker_phones) {
         dmPhones = JSON.parse(rawLead.decision_maker_phones);
       }
-    } catch(e: any) {
+    } catch(_e: any) {
       dmPhones = [rawLead.decision_maker_phone || rawLead.phone].filter(Boolean);
     }
     if (dmPhones.length === 0 && (rawLead.decision_maker_phone || rawLead.phone)) {
@@ -1057,7 +1057,7 @@ apiRouter.post('/leads/:id/generate-copies', heavyAiLimiter, requireAuth, async 
       if (rawLead.decision_maker_emails) {
         dmEmails = JSON.parse(rawLead.decision_maker_emails);
       }
-    } catch(e: any) {
+    } catch(_e: any) {
       dmEmails = [rawLead.decision_maker_email];
     }
 
@@ -1066,7 +1066,7 @@ apiRouter.post('/leads/:id/generate-copies', heavyAiLimiter, requireAuth, async 
       if (rawLead.decision_maker_phones) {
         dmPhones = JSON.parse(rawLead.decision_maker_phones);
       }
-    } catch(e: any) {
+    } catch(_e: any) {
       dmPhones = [rawLead.decision_maker_phone || rawLead.phone].filter(Boolean);
     }
 
@@ -1299,7 +1299,7 @@ apiRouter.get('/users/:userId/tasks', requireAuth, async (req: Request, res: Res
 
 // Painel gerencial: tarefas de TODOS os vendedores, agrupáveis por vendedor no
 // front — restrito a admin/gestor (um vendedor comum só vê as próprias em /users/:userId/tasks).
-apiRouter.get('/tasks', requireManager, async (req: Request, res: Response) => {
+apiRouter.get('/tasks', requireManager, async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
     const result = await db.exec(
@@ -1404,7 +1404,7 @@ apiRouter.get('/leads/:id/evidence', async (req: Request, res: Response) => {
 // server/feedbackLoop.ts para a decisão de design completa. Quando não há
 // dado suficiente para uma seção, ela vem com `insufficientData: true` em
 // vez de uma estatística inventada.
-apiRouter.get('/feedback/summary', async (req: Request, res: Response) => {
+apiRouter.get('/feedback/summary', async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
 
@@ -1545,8 +1545,8 @@ apiRouter.post('/prospect', heavyAiLimiter, requireAuth, async (req: Request, re
     finishIntentStep({ status: 'ok' });
 
     const { segment, companyType, employeeCount, annualRevenue, decisionMakerRole, decisionMakerTitles } = searchIntent;
-    const region = searchIntent.location.state;
-    const city = searchIntent.location.city;
+    const _region = searchIntent.location.state;
+    const _city = searchIntent.location.city;
 
     // Marca (Atlas ou Total Trac) de quem está prospectando: decide para qual pool
     // de vendedores o lead cai e qual Bitrix ele é conferido/enviado — nunca mais
@@ -2235,7 +2235,7 @@ apiRouter.post('/chat', heavyAiLimiter, requireAuth, async (req: Request, res: R
 });
 
 // 8. Chat Sessions & Messages List
-apiRouter.get('/chat/sessions', async (req: Request, res: Response) => {
+apiRouter.get('/chat/sessions', async (_req: Request, res: Response) => {
   try {
     const db = await getDatabase();
     const result = await db.exec(`
@@ -2347,7 +2347,7 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
   try {
     const effectiveWebhook = (webhookUrl || resolveBitrixWebhookForCompany(lead?.company) || process.env.BITRIX_TOTALTRAC_WEBHOOK || '').replace(/\/$/, '');
 
-    if (!lead || !lead.name) {
+    if (!lead?.name) {
       return res.status(400).json({ error: 'Dados do lead são obrigatórios.' });
     }
 
@@ -2408,9 +2408,9 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
       }
     }
 
-    const dmName = lead.decision_maker_name || (lead.decision_makers && lead.decision_makers[0]?.name) || 'Decisor';
-    const dmTitle = lead.decision_maker_title || (lead.decision_makers && lead.decision_makers[0]?.title) || 'Liderança';
-    const dmEmail = lead.decision_maker_email || (lead.decision_makers && lead.decision_makers[0]?.email) || '';
+    const dmName = lead.decision_maker_name || (lead.decision_makers?.[0]?.name) || 'Decisor';
+    const dmTitle = lead.decision_maker_title || (lead.decision_makers?.[0]?.title) || 'Liderança';
+    const dmEmail = lead.decision_maker_email || (lead.decision_makers?.[0]?.email) || '';
     const dmPhone = lead.phone || '';
 
     const { primarySource, lastVerifiedAt } = summarizeVerification(lead);
@@ -2785,7 +2785,7 @@ export async function findLeads(opts: {
     return [];
   }
 
-  const mapped = result.data!.map((p, idx) => {
+  const mapped = result.data?.map((p, idx) => {
     const domain = cleanDomain(p.website) || `${slugify(p.name || 'empresa')}.com.br`;
 
     return {
@@ -2848,10 +2848,10 @@ function normalizeLinkedInUrl(url?: string): string {
   let clean = url.trim();
   if (!clean) return '';
   if (clean.startsWith('http://')) {
-    clean = 'https://' + clean.slice(7);
+    clean = `https://${clean.slice(7)}`;
   }
   if (!clean.startsWith('http://') && !clean.startsWith('https://')) {
-    clean = 'https://' + clean;
+    clean = `https://${clean}`;
   }
   clean = clean.replace('https://linkedin.com', 'https://www.linkedin.com');
   return clean;
@@ -2890,7 +2890,7 @@ export async function enrichLeadWithApollo(
     source: orgResult.source,
     errorMessage: orgResult.errorMessage
   });
-  const companyLinkedin = orgResult.status === 'ok' ? normalizeLinkedInUrl(orgResult.data!.linkedinUrl) : '';
+  const companyLinkedin = orgResult.status === 'ok' ? normalizeLinkedInUrl(orgResult.data?.linkedinUrl) : '';
 
   if (orgResult.status === 'error' || orgResult.status === 'timeout' || orgResult.status === 'rate_limited') {
     console.warn(`[apollo:organization/enrich] ${orgResult.status}: ${orgResult.errorMessage || orgResult.httpStatus}`);
@@ -2913,7 +2913,7 @@ export async function enrichLeadWithApollo(
   });
 
   if (peopleResult.status === 'ok') {
-    const dms: DecisionMaker[] = peopleResult.data!.map(p => ({
+    const dms: DecisionMaker[] = peopleResult.data?.map(p => ({
       name: p.name,
       title: p.title || preferredRole || '',
       email: p.email,

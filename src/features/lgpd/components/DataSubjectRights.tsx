@@ -12,7 +12,7 @@ import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
 import { api } from '../../../lib/api.js';
 import { contactsDB } from '../../../lib/db.js';
 import { toast } from '../../../lib/toast.js';
-import type { Contact } from '../../../types.js';
+import type { Contact } from '../../../types/index.js';
 
 function contactLabel(contact: Contact): string {
   const company = contact.company?.tradeName || contact.company?.legalName;

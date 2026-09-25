@@ -105,7 +105,6 @@ export function ReportErrorButton({ user, page, isDark = true }: ReportErrorButt
                   Conta o que aconteceu — a tela em que você está já vai junto no relato.
                 </p>
                 <textarea
-                  autoFocus
                   required
                   value={message}
                   onChange={e => setMessage(e.target.value)}

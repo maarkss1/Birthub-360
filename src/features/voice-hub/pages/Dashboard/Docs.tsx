@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Code, Palette, Play,
   Layers
@@ -7,7 +7,7 @@ import {
   Card, Button, Badge,
   Tabs, Avatar,
   Alert, Checkbox, Switch, Input, Select
-} from '../../components/design-system.js';
+} from '../../components/design-system/index.js';
 
 export default function DesignSystemDocs() {
   const [activeTab, setActiveTab] = useState('tokens');

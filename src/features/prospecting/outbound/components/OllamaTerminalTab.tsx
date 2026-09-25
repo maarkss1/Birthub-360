@@ -7,14 +7,9 @@ import {
   CheckCircle2, 
   XCircle, 
   RefreshCw, 
-  Cpu, 
   Server, 
-  Download, 
   Copy, 
   Check, 
-  ExternalLink,
-  Code,
-  ShieldCheck
 } from 'lucide-react';
 
 interface OllamaTerminalTabProps {

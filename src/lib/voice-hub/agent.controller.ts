@@ -17,7 +17,7 @@ export async function createAgentHandler(req: Request, res: Response) {
   const parsed = agentSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
-  const agent = await createAgent(req.organizationId!, req.user!.id, parsed.data);
+  const agent = await createAgent(req.organizationId!, req.user?.id, parsed.data);
   return res.json({ success: true, agent });
 }
 

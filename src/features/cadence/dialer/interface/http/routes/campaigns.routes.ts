@@ -34,7 +34,7 @@ export function campaignsRoutes(deps: {
   router.get(
     "/campaigns/:id",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const campaign = await deps.manageCampaign.getById(id);
       res.json(campaign.toProps());
     }),
@@ -43,7 +43,7 @@ export function campaignsRoutes(deps: {
   router.get(
     "/campaigns/:id/stats",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const stats = await deps.manageCampaign.getStats(id);
       res.json(stats);
     }),
@@ -52,7 +52,7 @@ export function campaignsRoutes(deps: {
   router.post(
     "/campaigns/:id/start",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const campaign = await deps.manageCampaign.start(id);
       res.json(campaign.toProps());
     }),
@@ -61,7 +61,7 @@ export function campaignsRoutes(deps: {
   router.post(
     "/campaigns/:id/pause",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const campaign = await deps.manageCampaign.pause(id);
       res.json(campaign.toProps());
     }),
@@ -70,7 +70,7 @@ export function campaignsRoutes(deps: {
   router.post(
     "/campaigns/:id/resume",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const campaign = await deps.manageCampaign.resume(id);
       res.json(campaign.toProps());
     }),
@@ -79,7 +79,7 @@ export function campaignsRoutes(deps: {
   router.post(
     "/campaigns/:id/finish",
     asyncHandler(async (req, res) => {
-      const id = z.string().uuid().parse(req.params["id"]);
+      const id = z.string().uuid().parse(req.params.id);
       const campaign = await deps.manageCampaign.finish(id);
       res.json(campaign.toProps());
     }),

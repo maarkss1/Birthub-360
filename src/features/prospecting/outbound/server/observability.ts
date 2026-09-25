@@ -31,7 +31,7 @@
 // processo, e não são compartilhados entre múltiplas instâncias do servidor
 // rodando atrás de um load balancer. Documentado, não escondido.
 
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import type { SearchIntent } from './searchIntent.js';
 import type { SearchPlan } from './queryPlanner.js';
 import type { ProviderResultStatus } from './search/providers/types.js';

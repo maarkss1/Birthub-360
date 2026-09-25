@@ -77,9 +77,9 @@ export const SearchCombobox: React.FC<SearchComboboxProps> = ({
     const term = searchTerm.toLowerCase();
     return (
       opt.label.toLowerCase().includes(term) ||
-      (opt.description && opt.description.toLowerCase().includes(term)) ||
-      (opt.badge && opt.badge.toLowerCase().includes(term)) ||
-      (opt.group && opt.group.toLowerCase().includes(term))
+      (opt.description?.toLowerCase().includes(term)) ||
+      (opt.badge?.toLowerCase().includes(term)) ||
+      (opt.group?.toLowerCase().includes(term))
     );
   });
 
@@ -173,7 +173,6 @@ export const SearchCombobox: React.FC<SearchComboboxProps> = ({
                 }
               }}
               placeholder={searchPlaceholder}
-              autoFocus
               className={`w-full bg-transparent text-xs outline-none ${
                 isDark ? 'text-white placeholder-slate-500' : 'text-slate-900 placeholder-slate-400'
               }`}

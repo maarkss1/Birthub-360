@@ -2,7 +2,7 @@ import { Download, Loader2, Paperclip, Trash2, Upload } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { api } from '../../lib/api.js';
 import { toast } from '../../lib/toast.js';
-import type { Attachment } from '../../types.js';
+import type { Attachment } from '../../types/index.js';
 import { Button } from '../ui/Button.js';
 
 type AttachmentEntityType = 'lead' | 'company' | 'contact';

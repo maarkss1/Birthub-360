@@ -30,13 +30,9 @@ import {
   Square,
   Newspaper,
   Terminal,
-  ExternalLink,
   ChevronDown,
   ChevronUp,
-  Building2,
-  FileText,
   FileSearch,
-  Clock,
   Hash,
   Zap,
   RefreshCw,
@@ -129,10 +125,10 @@ export const LeadCard: React.FC<LeadCardProps> = ({
   const [isRefreshingCnpj, setIsRefreshingCnpj] = useState(false);
   const [cnpjSuccessMsg, setCnpjSuccessMsg] = useState<string | null>(null);
 
-  const [leadPhone, setLeadPhone] = useState(lead.phone || '');
-  const [leadCorporateEmail, setLeadCorporateEmail] = useState(lead.corporate_email || '');
-  const [leadWebsite, setLeadWebsite] = useState(lead.website || '');
-  const [leadAddress, setLeadAddress] = useState(lead.address || '');
+  const [leadPhone, _setLeadPhone] = useState(lead.phone || '');
+  const [leadCorporateEmail, _setLeadCorporateEmail] = useState(lead.corporate_email || '');
+  const [leadWebsite, _setLeadWebsite] = useState(lead.website || '');
+  const [leadAddress, _setLeadAddress] = useState(lead.address || '');
 
   // Main Decision Maker Info
   const mainDm = lead.decision_makers?.[0] || {
@@ -162,7 +158,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
 
   // Second stage enrichment state
   const [isEnrichingNews, setIsEnrichingNews] = useState<boolean>(false);
-  const [enrichStatusMsg, setEnrichStatusMsg] = useState<string>('');
+  const [_enrichStatusMsg, setEnrichStatusMsg] = useState<string>('');
   const [enrichAbortCtrl, setEnrichAbortCtrl] = useState<AbortController | null>(null);
 
   // On-Demand Copywriting State
@@ -227,7 +223,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
         stream.getTracks().forEach(track => track.stop());
         
         // Transcribe
-        setActivityNotes(prev => prev + (prev ? '\n' : '') + '[Transcrevendo áudio com LLaMA3...]');
+        setActivityNotes(prev => `${prev + (prev ? '\n' : '')}[Transcrevendo áudio com LLaMA3...]`);
         
         try {
           const formData = new FormData();
@@ -246,14 +242,14 @@ export const LeadCard: React.FC<LeadCardProps> = ({
           } else {
             setActivityNotes(prev => prev.replace('[Transcrevendo áudio com LLaMA3...]', '[Erro na transcrição]'));
           }
-        } catch (err: any) {
+        } catch (_err: any) {
           setActivityNotes(prev => prev.replace('[Transcrevendo áudio com LLaMA3...]', '[Erro na conexão]'));
         }
       };
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (err: any) {
+    } catch (_err: any) {
       alert('Permissão de microfone negada ou indisponível.');
     }
   };
@@ -276,13 +272,13 @@ export const LeadCard: React.FC<LeadCardProps> = ({
         })
       });
       const data = await res.json();
-      if (res.ok && data.copies && data.copies.cold_call) {
+      if (res.ok && data.copies?.cold_call) {
         navigator.clipboard.writeText(data.copies.cold_call);
         alert('Script de Cold Call copiado para a área de transferência!');
       } else {
         alert('Erro ao gerar script');
       }
-    } catch(err: any) {
+    } catch(_err: any) {
       alert('Erro de conexão ao gerar script rápido');
     } finally {
       setIsFastGenerating(false);
@@ -648,7 +644,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
           result: 'unknown'
         });
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       setHunterResult({
         status: 'unknown',
         score: 0,

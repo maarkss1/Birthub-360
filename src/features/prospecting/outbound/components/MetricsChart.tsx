@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { 
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  BarChart, Bar, Legend, LineChart, Line
+  BarChart, Bar, 
 } from 'recharts';
 import type { Lead } from '../types.js';
 
@@ -20,7 +20,7 @@ export function MetricsChart({ leads, isDark }: MetricsChartProps) {
       { name: 'Qui', contatados: 8, atividades: 20 },
       { name: 'Sex', contatados: 7, atividades: 18 },
     ];
-  }, [leads]);
+  }, []);
 
   const textColor = isDark ? '#94A3B8' : '#64748B';
   const gridColor = isDark ? '#334155' : '#E2E8F0';

@@ -4,16 +4,10 @@ import type { DatabaseStats, QueryResult, ThemeMode } from '../types.js';
 import { 
   Database, 
   Play, 
-  Terminal, 
   Table, 
-  Layers, 
-  Clock, 
-  Download, 
   RefreshCw, 
-  CheckCircle, 
   AlertCircle,
   Code2,
-  ListFilter
 } from 'lucide-react';
 
 interface DatabaseExplorerTabProps {
@@ -27,7 +21,7 @@ export const DatabaseExplorerTab: React.FC<DatabaseExplorerTabProps> = ({
   onRefreshStats,
   theme = 'dark'
 }) => {
-  const [selectedTable, setSelectedTable] = useState('messages');
+  const [_selectedTable, _setSelectedTable] = useState('messages');
   const [customSql, setCustomSql] = useState('SELECT m.id, l.name as lead, m.channel, m.status, m.content FROM messages m LEFT JOIN leads l ON m.lead_id = l.id LIMIT 25;');
   const [queryResult, setQueryResult] = useState<QueryResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
@@ -73,7 +67,7 @@ export const DatabaseExplorerTab: React.FC<DatabaseExplorerTabProps> = ({
 
   useEffect(() => {
     runQuery();
-  }, []);
+  }, [runQuery]);
 
   return (
     <div className="space-y-6">

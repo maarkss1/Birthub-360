@@ -29,7 +29,7 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
 
   try {
     const endpoint = await createWebhookEndpointForTenant(req.organizationId!, parsed.data);
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_CREATE', {
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_CREATE', {
       webhookEndpointId: endpoint.id,
       url: endpoint.url,
       events: endpoint.events,
@@ -67,7 +67,7 @@ export async function listWebhookEndpointsHandler(req: Request, res: Response) {
 export async function deleteWebhookEndpointHandler(req: Request, res: Response) {
   try {
     await deleteWebhookEndpointForTenant(req.organizationId!, String(req.params.id));
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
     return res.json({ success: true });
   } catch (err: any) {
     if (handleKnownError(err, res)) return;
@@ -80,7 +80,7 @@ export async function deleteWebhookEndpointHandler(req: Request, res: Response) 
 export async function regenerateWebhookEndpointSecretHandler(req: Request, res: Response) {
   try {
     const endpoint = await regenerateWebhookEndpointSecret(req.organizationId!, String(req.params.id));
-    writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_REGENERATE_SECRET', {
+    writeAuditLog(req.organizationId, req.user?.id, 'WEBHOOK_ENDPOINT_REGENERATE_SECRET', {
       webhookEndpointId: endpoint.id,
     });
     return res.json({

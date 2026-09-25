@@ -28,7 +28,7 @@ import { contactsDB } from '../../../lib/db.js';
 import type { PaletteIntent } from '../../../lib/paletteIntent.js';
 import { toast } from '../../../lib/toast.js';
 import { getWhatsAppLink } from '../../../shared/utils/contact-links.js';
-import type { Contact } from '../../../types.js';
+import type { Contact } from '../../../types/index.js';
 import { ContactDetail } from './ContactDetail.js';
 import { ContactForm } from './ContactForm.js';
 

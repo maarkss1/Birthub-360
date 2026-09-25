@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { CreditCard, Zap, History, AlertTriangle, Lock, Check } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore.js';
 import { logger } from '../../../../lib/logger.js';
-import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system.js';
+import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system/index.js';
 
 interface WalletSummary {
   organizationId: string;

@@ -141,7 +141,7 @@ export async function startCall(params: { callSid: string; from: string; to: str
 /** Opens the conversation on a call we placed ourselves. */
 export async function startOutboundCall(params: { sessionId: string; callSid: string }) {
   const session = await sessionRepository.findSessionById(params.sessionId);
-  if (!session || !session.agentId) return { found: false as const };
+  if (!session?.agentId) return { found: false as const };
 
   const agent = await agentRepository.findAgentById(session.agentId);
   if (!agent) return { found: false as const };
@@ -259,7 +259,7 @@ export async function handleTurn(
   params: { sessionId: string; speechResult: string },
 ): Promise<HandleTurnResult> {
   const session = await sessionRepository.findSessionById(params.sessionId);
-  if (!session || !session.agentId) return { found: false as const };
+  if (!session?.agentId) return { found: false as const };
 
   const agent = await agentRepository.findAgentById(session.agentId);
   if (!agent) return { found: false as const };

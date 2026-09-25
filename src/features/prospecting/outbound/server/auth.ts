@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import type { Request, Response, NextFunction } from 'express';
 
 // Auth & RBAC (CPI follow-up) — recomendação registrada na Wave 11 (Security
@@ -174,7 +174,7 @@ export function buildLogoutCookie(): string {
 // no router (ver apiRouter.use(attachUser) em server/routes.ts) para que
 // qualquer rota possa checar req.user sem precisar montar o middleware de
 // novo em cada uma.
-export function attachUser(req: Request, res: Response, next: NextFunction) {
+export function attachUser(req: Request, _res: Response, next: NextFunction) {
   const cookies = parseCookies(req.headers.cookie);
   const token = cookies[SESSION_COOKIE_NAME];
   const user = verifySessionToken(token);

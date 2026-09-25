@@ -770,7 +770,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         edgeData.category = 'Branch';
       } else if (sourceNode?.type === 'switch') {
         const handleId = connection.sourceHandle || 'out-0';
-        const index = parseInt(handleId.split('-')[1]) || 0;
+        const index = parseInt(handleId.split('-')[1], 10) || 0;
         const variable = sourceNode.data.config?.variableToCheck || 'userIntent';
         const value = sourceNode.data.config?.[`path${index}`] || `Caminho ${index}`;
         edgeData.condition = `${variable} == ${value}`;
@@ -1151,7 +1151,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       }
 
       const data = await response.json();
-      if (data && data.nodes) {
+      if (data?.nodes) {
         set({ nodes: data.nodes });
         get().addSimulationLog({
           type: 'success',
@@ -1222,7 +1222,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
       }
 
       const data = await response.json();
-      if (data && data.nodes && data.edges) {
+      if (data?.nodes && data.edges) {
         const lifecycles: Record<string, NodeLifecycleState> = {};
         data.nodes.forEach((n: { id: string }) => {
           lifecycles[n.id] = 'Ready';

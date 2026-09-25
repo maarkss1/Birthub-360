@@ -1,5 +1,5 @@
 import type React from 'react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, } from 'react';
 import type { Lead, AIConfig, ThemeMode, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from '../types.js';
 import { LeadCard } from './LeadCard.js';
 import { resolveBitrixWebhook } from '../utils/bitrix.js';
@@ -24,9 +24,6 @@ import {
   Users,
   DollarSign,
   Square,
-  RefreshCw,
-  SlidersHorizontal,
-  Briefcase
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 

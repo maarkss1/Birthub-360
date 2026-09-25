@@ -6,7 +6,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { analyticsApi } from '../features/analytics/analytics.api.js';
 import { activitiesDB, analyticsDB, companiesDB, contactsDB, leadsDB } from '../lib/db.js';
-import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types.js';
+import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types/index.js';
 
 // ─── Generic fetch hook ────────────────────────────────────────────────────────
 function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {

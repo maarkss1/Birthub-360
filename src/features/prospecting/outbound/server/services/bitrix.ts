@@ -1,4 +1,4 @@
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import { isUrlSafeForOutboundWebhook } from '../validators.js';
 
 export type BitrixCheckStatus = 'existing_client' | 'existing_lead' | 'new' | 'unchecked';
@@ -78,7 +78,7 @@ export async function checkBitrixDuplicate(
       (result.LEAD || []).forEach((id: any) => leadIds.add(id));
       (result.CONTACT || []).forEach((id: any) => contactIds.add(id));
       (result.COMPANY || []).forEach((id: any) => companyIds.add(id));
-    } catch (err: any) {
+    } catch (_err: any) {
       // Bitrix indisponível/timeout — segue sem bloquear a prospecção.
     } finally {
       clearTimeout(timeoutId);

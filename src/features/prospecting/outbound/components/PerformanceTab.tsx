@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, Legend, AreaChart, Area, PieChart, Pie, Cell
+  LineChart, Line, Legend, Cell
 } from 'recharts';
 import type { Lead } from '../types.js';
 import { TrendingUp, Target, Activity, CheckCircle2, User } from 'lucide-react';
@@ -138,7 +138,7 @@ export function PerformanceTab({ leads, isDark }: PerformanceTabProps) {
                   contentStyle={{ backgroundColor: isDark ? '#1E293B' : '#FFF', borderColor: isDark ? '#334155' : '#E2E8F0', borderRadius: '12px', color: isDark ? '#F8FAFC' : '#0F172A' }}
                 />
                 <Bar dataKey="value" name="Leads" radius={[0, 4, 4, 0]}>
-                  {funnelData.map((entry, index) => (
+                  {funnelData.map((_entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Bar>

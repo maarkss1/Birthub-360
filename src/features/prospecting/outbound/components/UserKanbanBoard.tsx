@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import type { Lead, User } from '../types.js';
 import { LeadCard } from './LeadCard.js';
 import { Loader2 } from 'lucide-react';
@@ -15,7 +15,7 @@ export function UserKanbanBoard({ user, isDark }: UserKanbanBoardProps) {
 
   useEffect(() => {
     fetchLeads();
-  }, [user.id]);
+  }, [fetchLeads]);
 
   const fetchLeads = async () => {
     setLoading(true);

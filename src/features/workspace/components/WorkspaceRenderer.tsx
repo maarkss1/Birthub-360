@@ -95,7 +95,7 @@ const WIDGET_REGISTRY: Record<string, React.ComponentType<any>> = {
 // ============================================================================
 
 export function WorkspaceRenderer({ layout }: { layout: WorkspaceLayoutDef }) {
-  if (!layout || !layout.sections) return null;
+  if (!layout?.sections) return null;
 
   return (
     <div className="w-full max-w-[92rem] space-y-8">

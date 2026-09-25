@@ -93,7 +93,7 @@ export function LoginScreen({ onLogin, isDark, setTheme }: LoginScreenProps) {
       } else {
         setError(data.error || 'Falha ao autenticar.');
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       setError('Erro de conexão ao servidor.');
     } finally {
       setLoading(false);

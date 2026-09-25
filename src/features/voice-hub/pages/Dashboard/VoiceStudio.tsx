@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { VisualCanvas } from '../../components/studio/Canvas.js';
 import { VersionHistoryPanel } from '../../components/studio/panels/VersionHistoryPanel.js';
 

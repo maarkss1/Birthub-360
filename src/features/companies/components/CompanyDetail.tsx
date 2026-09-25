@@ -31,7 +31,7 @@ import { api } from '../../../lib/api.js';
 import { clientLogger } from '../../../lib/clientLogger.js';
 import { formatCnpj } from '../../../lib/cnpj.js';
 import { toast } from '../../../lib/toast.js';
-import type { Company } from '../../../types.js';
+import type { Company } from '../../../types/index.js';
 
 interface CompanyDetailProps {
   companyId: string;

@@ -192,7 +192,7 @@ Gere as abordagens comerciais:
           error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
         });
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       console.info('Ollama offline, acionando próximo motor...');
     }
   }
@@ -247,7 +247,7 @@ Gere as abordagens comerciais:
           error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
         });
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       console.info('Groq offline, acionando próximo motor...');
     }
   }
@@ -326,7 +326,7 @@ function formatParsedCopies(parsed: Partial<Record<CopiesStringField, string>>, 
   };
 }
 
-function generateFallbackCopies(lead: Lead, pitch: string, dm: DecisionMaker): OutreachCopies {
+function generateFallbackCopies(lead: Lead, _pitch: string, dm: DecisionMaker): OutreachCopies {
   const dmRef = dm.name ? ` ${dm.name}` : '';
   const dmRoleRef = dm.title ? ` como ${dm.title}` : '';
   return {
@@ -450,7 +450,7 @@ Gere o dossiê e os roteiros com base apenas nos dados acima. Retorne o JSON com
         error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
       });
     }
-  } catch (err: any) {
+  } catch (_err: any) {
     console.info("Gemini enrichment com alta demanda, usando fallback.");
   }
 
@@ -505,7 +505,7 @@ Gere o dossiê e os roteiros com base apenas nos dados acima. Retorne o JSON com
         });
       }
     }
-  } catch (err: any) {
+  } catch (_err: any) {
     console.info("Groq enrichment offline, usando fallback.");
   }
 
@@ -595,7 +595,7 @@ Este chat é um assistente de apoio de uso geral (não gera copy final vinculado
           tokensEstimated: Math.round(reply.length / 4)
         };
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       console.info("Ollama chat indisponível, usando fallback.");
     }
   }
@@ -635,7 +635,7 @@ Este chat é um assistente de apoio de uso geral (não gera copy final vinculado
           tokensEstimated: tokenUsage.totalTokens ?? Math.round(reply.length / 4)
         };
       }
-    } catch (err: any) {
+    } catch (_err: any) {
       console.info("Groq chat indisponível, usando fallback.");
     }
   }

@@ -4,7 +4,6 @@ import { AtlasLogo } from './AtlasLogo.js';
 import type { AIConfig, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig } from '../types.js';
 import { RecentSearchModal } from './RecentSearchModal.js';
 import { 
-  Settings, 
   Cpu, 
   Key, 
   Target, 
@@ -13,19 +12,12 @@ import {
   XCircle, 
   RefreshCw, 
   Terminal, 
-  Sparkles,
-  Layers,
   ChevronDown,
   ChevronUp,
   Info,
   ShieldCheck,
   History,
   Trash2,
-  ExternalLink,
-  PhoneCall,
-  MailCheck,
-  Send,
-  Sliders,
   Check,
   Eye
 } from 'lucide-react';

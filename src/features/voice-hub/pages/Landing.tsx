@@ -11,7 +11,7 @@ import {
   LockKeyhole, Server, UserCheck, Sun, Moon, Mic
 } from 'lucide-react';
 import { useTheme } from '../components/design-system/ThemeContext.js';
-import { Card, Button, Badge, Progress, useToast, ToastContainer, AtlasLogo } from '../components/design-system.js';
+import { Card, Button, Badge, Progress, useToast, ToastContainer, AtlasLogo } from '../components/design-system/index.js';
 import { getAccessibleTextOnBrand } from '../components/design-system/tokens.js';
 import { useSessionStore } from '../store/useSessionStore.js';
 
@@ -117,7 +117,7 @@ export default function LandingPage() {
       setVoicePlaying(false);
       setWaveformActive(false);
     }
-  }, [voicePlaying, transcriptionIndex]);
+  }, [voicePlaying, transcriptionIndex, transcriptionPhrases.length, transcriptionPhrases]);
 
   // Interactive FAQ items (20 questions)
   const faqData = [

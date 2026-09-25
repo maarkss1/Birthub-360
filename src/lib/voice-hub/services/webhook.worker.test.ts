@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { createHmac } from 'crypto';
+import { createHmac } from 'node:crypto';
 
 // vi.mock(...) factories are hoisted above every other top-level statement in this file, so
 // anything they reference (the class included — a plain `class Foo {}` declaration is not

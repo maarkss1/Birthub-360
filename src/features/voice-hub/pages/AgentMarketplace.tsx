@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Card, Button, Badge } from '../../components/design-system.js';
 import { Sparkles, DownloadCloud, Star, FlaskConical } from 'lucide-react';
 

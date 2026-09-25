@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createHmac, createHash } from 'crypto';
+import { createHmac, createHash } from 'node:crypto';
 
 vi.mock('../repositories/webhookEndpointRepository.js', () => ({
   countActiveEndpointsForTenant: vi.fn(),

@@ -35,7 +35,7 @@ import { leadsDB } from '../../../lib/db.js';
 import type { PaletteIntent } from '../../../lib/paletteIntent.js';
 import { SoundFX } from '../../../lib/soundEffects.js';
 import { toast } from '../../../lib/toast.js';
-import type { Activity, Lead } from '../../../types.js';
+import type { Activity, Lead } from '../../../types/index.js';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,

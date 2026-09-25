@@ -819,7 +819,7 @@ export function Tooltip({ text, children }: { text: string, children: React.Reac
   // reader, as it does on hover.
   const tooltipId = useId();
   return (
-    <div tabIndex={0} aria-describedby={tooltipId} className="relative group inline-block outline-none rounded-md focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
+    <div aria-describedby={tooltipId} className="relative group inline-block outline-none rounded-md focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 dark:focus-visible:ring-offset-slate-900">
       {children}
       <div
         id={tooltipId}

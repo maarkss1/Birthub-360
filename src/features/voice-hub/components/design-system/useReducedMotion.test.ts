@@ -17,7 +17,7 @@ describe('usePrefersReducedMotion', () => {
   it('does not throw in an environment without window.matchMedia (e.g. jsdom-lite/SSR-ish setups)', () => {
     const original = window.matchMedia;
     // @ts-expect-error -- simulate an environment where matchMedia is unavailable
-    delete window.matchMedia;
+    window.matchMedia = undefined;
 
     expect(() => renderHook(() => usePrefersReducedMotion())).not.toThrow();
 

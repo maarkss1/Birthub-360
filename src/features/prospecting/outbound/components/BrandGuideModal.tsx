@@ -2,13 +2,11 @@ import React from 'react';
 import { AtlasLogo } from './AtlasLogo.js';
 import { 
   X, 
-  ShieldCheck, 
   Sparkles, 
   Target, 
   HeartHandshake, 
   Check, 
   Copy,
-  Layers,
   Palette,
   Type
 } from 'lucide-react';

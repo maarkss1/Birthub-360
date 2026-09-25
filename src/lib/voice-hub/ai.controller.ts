@@ -60,13 +60,13 @@ export async function setAiConsentHandler(req: Request, res: Response) {
   }
 
   const consent = granted
-    ? await grantAiConsent(req.organizationId!, req.user!.id)
-    : await revokeAiConsent(req.organizationId!, req.user!.id);
+    ? await grantAiConsent(req.organizationId!, req.user?.id)
+    : await revokeAiConsent(req.organizationId!, req.user?.id);
 
   return res.json({ success: true, consent });
 }
 
-export async function ttsHandler(req: Request, res: Response) {
+export async function ttsHandler(_req: Request, res: Response) {
   // Retorna um áudio vazio para evitar erros de decodificação no frontend do MVP
   return res.json({ audioBase64: "" });
 }
@@ -156,7 +156,7 @@ export async function videoDownloadHandler(req: Request, res: Response) {
     const videoRes = await fetch(uri, { headers: { 'x-goog-api-key': apiKey } });
 
     res.setHeader('Content-Type', 'video/mp4');
-    videoRes.body!.pipeTo(
+    videoRes.body?.pipeTo(
       new WritableStream({
         write(chunk) {
           res.write(chunk);

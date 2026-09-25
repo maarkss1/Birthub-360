@@ -24,7 +24,7 @@ function parsePagination(rawPage: unknown, rawPageSize: unknown): { page: number
 // notifications by changing an id in the request.
 export async function listNotificationsHandler(req: Request, res: Response) {
   const { page, pageSize } = parsePagination(req.query.page, req.query.pageSize);
-  const result = await listNotifications(req.user!.id, { page, pageSize });
+  const result = await listNotifications(req.user?.id, { page, pageSize });
   return res.json({
     items: result.items,
     unreadCount: result.unreadCount,
@@ -41,7 +41,7 @@ export async function listNotificationsHandler(req: Request, res: Response) {
 // convention — never reveal that a resource exists in someone else's account).
 export async function markNotificationReadHandler(req: Request, res: Response) {
   try {
-    const notification = await markAsRead(String(req.params.id), req.user!.id);
+    const notification = await markAsRead(String(req.params.id), req.user?.id);
     return res.json({ notification });
   } catch (err: any) {
     if (err instanceof NotificationNotFoundError) {
@@ -53,6 +53,6 @@ export async function markNotificationReadHandler(req: Request, res: Response) {
 
 // POST /api/notifications/read-all — bulk "mark all as read" for the panel header action.
 export async function markAllNotificationsReadHandler(req: Request, res: Response) {
-  const result = await markAllAsRead(req.user!.id);
+  const result = await markAllAsRead(req.user?.id);
   return res.json(result);
 }

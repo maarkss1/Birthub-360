@@ -13,7 +13,7 @@ export async function addCommentHandler(req: Request, res: Response) {
     const { nodeId, text } = req.body;
     if (!nodeId || !text) return res.status(400).json({ error: 'nodeId e text são obrigatórios.' });
 
-    const workflow = await addComment(req.organizationId!, req.user!.id, nodeId, text);
+    const workflow = await addComment(req.organizationId!, req.user?.id, nodeId, text);
     return res.json({ success: true, workflow });
   } catch (err: any) {
     handleCollabError(err, res);
@@ -25,7 +25,7 @@ export async function resolveCommentHandler(req: Request, res: Response) {
     const { commentId } = req.body;
     if (!commentId) return res.status(400).json({ error: 'commentId é obrigatório.' });
 
-    const workflow = await resolveComment(req.organizationId!, req.user!.id, commentId);
+    const workflow = await resolveComment(req.organizationId!, req.user?.id, commentId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
     handleCollabError(err, res);
@@ -37,7 +37,7 @@ export async function lockNodeHandler(req: Request, res: Response) {
     const { nodeId } = req.body;
     if (!nodeId) return res.status(400).json({ error: 'nodeId é obrigatório.' });
 
-    const workflow = await lockNode(req.organizationId!, req.user!.id, nodeId);
+    const workflow = await lockNode(req.organizationId!, req.user?.id, nodeId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
     handleCollabError(err, res);
@@ -49,7 +49,7 @@ export async function unlockNodeHandler(req: Request, res: Response) {
     const { nodeId } = req.body;
     if (!nodeId) return res.status(400).json({ error: 'nodeId é obrigatório.' });
 
-    const workflow = await unlockNode(req.organizationId!, req.user!.id, nodeId);
+    const workflow = await unlockNode(req.organizationId!, req.user?.id, nodeId);
     return res.json({ success: true, workflow });
   } catch (err: any) {
     handleCollabError(err, res);

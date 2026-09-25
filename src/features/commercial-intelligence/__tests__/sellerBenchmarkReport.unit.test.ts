@@ -162,7 +162,7 @@ class FakeRepository implements CommercialIntelligenceRepository {
     return new Map();
   }
   async upsertGoal(
-    organizationId: string,
+    _organizationId: string,
     period: string,
     metric: GoalMetric,
     amount: number,

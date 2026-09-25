@@ -29,7 +29,7 @@ import { formatCnpj } from '../../../lib/cnpj.js';
 import { companiesDB } from '../../../lib/db.js';
 import type { PaletteIntent } from '../../../lib/paletteIntent.js';
 import { toast } from '../../../lib/toast.js';
-import type { Company } from '../../../types.js';
+import type { Company } from '../../../types/index.js';
 import { CompanyDetail } from './CompanyDetail.js';
 import { CompanyForm } from './CompanyForm.js';
 

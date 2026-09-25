@@ -157,7 +157,7 @@ export function summarizeCopyFeedbackByChannel(
 }
 
 function summarizeReasons(reasons: (string | null | undefined)[]): ReasonSummary {
-  const clean = reasons.filter((r): r is string => Boolean(r && r.trim()));
+  const clean = reasons.filter((r): r is string => Boolean(r?.trim()));
   const total = clean.length;
 
   const counts = new Map<string, number>();
@@ -195,7 +195,7 @@ function summarizeConversionByKey(
 
   for (const lead of decided) {
     const key = keyOf(lead);
-    if (!key || !key.trim()) continue; // sem chave conhecida — não agrupa sob um rótulo inventado
+    if (!key?.trim()) continue; // sem chave conhecida — não agrupa sob um rótulo inventado
     const bucket = groups.get(key) || { won: 0, lost: 0 };
     if (lead.stage === 'ganho') bucket.won += 1;
     else bucket.lost += 1;

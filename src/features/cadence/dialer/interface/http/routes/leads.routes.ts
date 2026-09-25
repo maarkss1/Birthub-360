@@ -21,7 +21,7 @@ export function leadsRoutes(deps: { importLeads: ImportLeads }): Router {
   router.post(
     "/campaigns/:campaignId/leads/import",
     asyncHandler(async (req, res) => {
-      const campaignId = z.string().uuid().parse(req.params["campaignId"]);
+      const campaignId = z.string().uuid().parse(req.params.campaignId);
       const body = importLeadsSchema.parse(req.body);
       const result = await deps.importLeads.execute(campaignId, body.leads);
       res.status(201).json(result);

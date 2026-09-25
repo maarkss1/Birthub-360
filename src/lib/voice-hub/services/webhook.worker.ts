@@ -1,4 +1,4 @@
-import { createHmac } from 'crypto';
+import { createHmac } from 'node:crypto';
 import { Worker, type Job, UnrecoverableError } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
 import { logger } from '@/lib/logger';

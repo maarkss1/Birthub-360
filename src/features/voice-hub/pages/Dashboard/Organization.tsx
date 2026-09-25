@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Save, Upload, Shield, Video, Loader2, AlertTriangle, Lock } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore.js';
 import { logger } from '../../../../lib/logger.js';
-import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system.js';
+import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system/index.js';
 
 interface TenantUser {
   id: string;

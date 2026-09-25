@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'motion/react';
 import {
@@ -10,7 +10,7 @@ import {
 import {
   Card, Button, Badge, Progress, Spinner, Skeleton, EmptyState, Alert,
   Tooltip, Modal, useToast, ToastContainer
-} from '../../components/design-system.js';
+} from '../../components/design-system/index.js';
 import { logger } from '../../../../lib/logger.js';
 
 interface CallLogEntry {
@@ -76,7 +76,7 @@ function formatMs(value: number): string {
 // Names which real component(s) failed on a given platform_ready_check sample, from its `tags`
 // (`{ database: 'ok'|'error', redis: 'ok'|'error' }`). Returns null when the sample was healthy.
 function describeSlaFailure(sample: MetricEntry | undefined): string | null {
-  if (!sample || sample.value !== 0) return null;
+  if (sample?.value !== 0) return null;
   const tags = sample.tags ?? {};
   const failed: string[] = [];
   if (tags.database && tags.database !== 'ok') failed.push('banco de dados');

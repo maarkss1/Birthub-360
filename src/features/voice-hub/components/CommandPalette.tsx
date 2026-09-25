@@ -49,7 +49,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
       fetch('/api/settings')
         .then(res => res.ok ? res.json() : null)
         .then(data => {
-          if (data && data.settings && data.settings.savedAgents) {
+          if (data?.settings?.savedAgents) {
             setSavedAgents(data.settings.savedAgents);
           }
         })
@@ -222,7 +222,7 @@ export function CommandPalette({ isOpen, onClose }: CommandPaletteProps) {
             placeholder="Digite um comando, página ou nome de agente..."
           />
           <div className="flex items-center gap-1">
-            <kbd aria-hidden="true" className="px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded">ESC</kbd>
+            <kbd className="px-1.5 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded">ESC</kbd>
             <button onClick={onClose} aria-label="Fechar paleta de comandos" className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600">
               <X aria-hidden="true" className="h-4 w-4" />
             </button>

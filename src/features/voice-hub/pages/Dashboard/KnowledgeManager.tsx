@@ -14,7 +14,7 @@ import {
   Sparkles,
   Bot,
 } from 'lucide-react';
-import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system.js';
+import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system/index.js';
 import { logger } from '../../../../lib/logger.js';
 
 interface KnowledgeDoc {

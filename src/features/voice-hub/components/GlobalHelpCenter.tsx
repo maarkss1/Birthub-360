@@ -5,7 +5,7 @@ import {
   Sparkles, X, Send, ArrowRight,
   Lightbulb, ShieldCheck
 } from 'lucide-react';
-import { Card, Button, Spinner } from './design-system.js';
+import { Card, Button, Spinner } from './design-system/index.js';
 import { getAccessibleTextOnBrand } from './design-system/tokens.js';
 import { useSessionStore } from '../store/useSessionStore.js';
 import { logger } from '../../../lib/logger.js';
@@ -38,7 +38,7 @@ export function GlobalHelpCenter() {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages, isTyping]);
+  }, []);
 
   // Context-aware tip generator based on current page route
   const getContextualTip = () => {

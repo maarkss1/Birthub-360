@@ -9,7 +9,6 @@ import {
   ChevronDown, 
   Check, 
   Layers, 
-  Filter, 
   Flame, 
   CheckCircle2, 
   Clock, 
@@ -144,7 +143,7 @@ export const LeadStageAndTags: React.FC<LeadStageAndTagsProps> = ({
   const [isStageOpen, setIsStageOpen] = useState(false);
   const [isTagPopoverOpen, setIsTagPopoverOpen] = useState(false);
   const [customTagInput, setCustomTagInput] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
+  const [_isSaving, setIsSaving] = useState(false);
   const [isPickingLossReason, setIsPickingLossReason] = useState(false);
   const [isPickingWinReason, setIsPickingWinReason] = useState(false);
 
@@ -435,7 +434,6 @@ export const LeadStageAndTags: React.FC<LeadStageAndTagsProps> = ({
                     }
                   }}
                   placeholder="Nova tag personalizada..."
-                  autoFocus
                   className={`w-full px-2.5 py-1 text-xs rounded-lg border outline-none ${
                     isDark 
                       ? 'bg-slate-950 border-slate-700 text-white placeholder-slate-500 focus:border-[var(--brand-primary)]' 

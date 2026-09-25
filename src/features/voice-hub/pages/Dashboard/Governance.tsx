@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system.js';
+import { useEffect, useState } from 'react';
+import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system/index.js';
 import { useSessionStore } from '../../store/useSessionStore.js';
 import { logger } from '../../../../lib/logger.js';
 import { Shield, Users, Lock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';

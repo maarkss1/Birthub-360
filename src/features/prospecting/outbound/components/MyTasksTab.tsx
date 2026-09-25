@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Loader2, Calendar, CheckCircle2, Circle, Building2 } from 'lucide-react';
 import type { LeadTask, User } from '../types.js';
 
@@ -27,7 +27,7 @@ export function MyTasksTab({ user, isDark }: MyTasksTabProps) {
 
   useEffect(() => {
     fetchTasks();
-  }, [user.id]);
+  }, [fetchTasks]);
 
   const fetchTasks = async () => {
     setLoading(true);

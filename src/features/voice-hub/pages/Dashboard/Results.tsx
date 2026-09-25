@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Download, FileText, Clock, MessageSquare, Search, Music } from 'lucide-react';
 
 interface CallLogEntry {
@@ -84,7 +84,7 @@ const filteredSessions = sessions.filter(s =>
     ].join('\n');
     
     // Download prompt with UTF-8 byte order mark to parse Portuguese accents correctly
-    const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([`\ufeff${csvContent}`], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.setAttribute("href", url);

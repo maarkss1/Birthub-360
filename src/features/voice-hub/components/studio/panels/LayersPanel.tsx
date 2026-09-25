@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   Component, ChevronDown, ChevronRight,
   Database, Mic, Headphones, Play, Square, MessageSquare, GitBranch,

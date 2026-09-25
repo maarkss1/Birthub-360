@@ -32,7 +32,7 @@ vi.mock('./design-system/ThemeContext.js', () => ({
 }));
 
 vi.mock('./design-system.js', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('./design-system.js')>();
+  const actual = await importOriginal<typeof import('./design-system/index.js')>();
   return {
     ...actual,
     useToast: () => ({ toasts: [], showToast: mockShowToast })

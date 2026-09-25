@@ -13,7 +13,7 @@ import { clientLogger } from '../../../lib/clientLogger.js';
 import { companiesDB, contactsDB } from '../../../lib/db.js';
 import { toast } from '../../../lib/toast.js';
 import { contactSchema } from '../../../lib/zod.js';
-import type { Company, Contact } from '../../../types.js';
+import type { Company, Contact } from '../../../types/index.js';
 
 interface ContactFormProps {
   contact?: Contact | null;

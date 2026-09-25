@@ -55,7 +55,7 @@ export function getOutboundConfig(): OutboundConfig {
   return {
     client: clientFor(accountSid!, authToken!),
     fromNumber: fromNumber!,
-    baseUrl: baseUrl!.replace(/\/$/, ''),
+    baseUrl: baseUrl?.replace(/\/$/, ''),
   };
 }
 

@@ -77,7 +77,7 @@ export default function AdminPage() {
   useEffect(() => {
     loadSessions();
     loadAgentCount();
-  }, []);
+  }, [loadSessions, loadAgentCount]);
 
   return (
     <div className="space-y-8">

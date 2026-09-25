@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Lead, ThemeMode } from '../types.js';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import type { Lead, ThemeMode } from '../types.js';
 import { calculateLeadQuality } from '../utils/leadQuality.js';
 import { 
   ShieldCheck, 

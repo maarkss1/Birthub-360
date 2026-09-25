@@ -21,7 +21,7 @@
 // - Every list/read path returns only WebhookEndpointMetadata (built by `toMetadata` below), which
 //   has no field for secret or secretHash — there is no code path in this service that could leak
 //   either, even by accident.
-import crypto from 'crypto';
+import crypto from 'node:crypto';
 import * as webhookEndpointRepository from '../repositories/webhookEndpointRepository.js';
 
 export class WebhookEndpointServiceError extends Error {

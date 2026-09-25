@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Settings, Globe, Bell, Keyboard, LayoutGrid,
   SlidersHorizontal, ArrowRight, AlertTriangle
 } from 'lucide-react';
-import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system.js';
+import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system/index.js';
 import { logger } from '../../../../lib/logger.js';
 
 const PREFERENCES_DEFAULTS = {

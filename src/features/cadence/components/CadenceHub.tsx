@@ -28,7 +28,7 @@ import { useAuth } from '../../../contexts/AuthContext.js';
 import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 import { leadsDB } from '../../../lib/db.js';
 import { toast } from '../../../lib/toast.js';
-import type { Lead } from '../../../types.js';
+import type { Lead } from '../../../types/index.js';
 import {
   type CadenceChannel,
   type CadenceRunDTO,

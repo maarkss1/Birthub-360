@@ -539,7 +539,6 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
                           aria-label="E-mail"
                           placeholder="executivo@birthhub360.com.br"
                           required
-                          autoFocus
                         />
                       </div>
                       <button

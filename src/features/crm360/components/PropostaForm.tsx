@@ -12,7 +12,7 @@ import { Textarea } from '../../../components/ui/Textarea.js';
 import { clientLogger } from '../../../lib/clientLogger.js';
 import { companiesDB } from '../../../lib/db.js';
 import { toast } from '../../../lib/toast.js';
-import type { Company } from '../../../types.js';
+import type { Company } from '../../../types/index.js';
 import { crm360Api } from '../crm360.api.js';
 import type { CrmCommercialDocument, CrmProduct } from '../crm360.types.js';
 

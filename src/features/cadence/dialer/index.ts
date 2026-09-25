@@ -18,10 +18,6 @@ import { createServer } from "./interface/http/server.js";
 import { startDialerLoop } from "./interface/scheduler/dialerLoop.js";
 
 async function main(): Promise<void> {
-  const env = loadEnv();
-  const logger = createLogger(env.logLevel);
-
-  const pool = createPool(env.databaseUrl);
 
   // --- Infraestrutura ---
   const campaignRepository = new PgCampaignRepository(prisma);
