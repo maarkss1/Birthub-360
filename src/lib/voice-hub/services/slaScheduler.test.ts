@@ -50,7 +50,7 @@ vi.mock('../lib/logger.js', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
-import { startSlaScheduler, stopSlaScheduler, PLATFORM_READY_METRIC_NAME } from './slaScheduler';
+import { startSlaScheduler, stopSlaScheduler, PLATFORM_READY_METRIC_NAME } from './slaScheduler.js';
 import { logger } from '@/lib/logger';
 
 beforeEach(() => {

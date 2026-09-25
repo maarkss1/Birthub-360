@@ -1,4 +1,4 @@
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma.js';
 
 /**
  * Formato de usuário do Bitrix já normalizado (id/nome/e-mail) — definido aqui, não em `deals.ts`,

@@ -1,6 +1,6 @@
 import { Meilisearch } from 'meilisearch';
-import { env } from '../../config/env';
-import { logger } from '../logger';
+import { env } from '../../config/env.js';
+import { logger } from '../logger.js';
 
 function resolveMeiliApiKey(): string {
   if (env.MEILI_MASTER_KEY) return env.MEILI_MASTER_KEY;

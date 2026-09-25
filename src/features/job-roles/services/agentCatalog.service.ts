@@ -4,8 +4,8 @@ import type {
   AgentVersionStatus,
   Prisma,
 } from '@prisma/client';
-import { AuditService } from '../../../lib/audit/audit.service';
-import { prisma } from '../../../lib/prisma';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export class AgentCatalogServiceError extends Error {
   constructor(

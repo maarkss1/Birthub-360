@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   connectStripe,
   createStripeCharge,
@@ -10,7 +10,7 @@ import {
   listStripeConnections,
   setStripeWebhookSecret,
   testStripeConnection,
-} from './stripe.service';
+} from './stripe.service.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

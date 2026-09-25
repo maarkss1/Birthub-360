@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { getAiConsent } from '../services/settingService';
+import { getAiConsent } from '../services/settingService.js';
 import { logger } from '@/lib/logger';
 
 /**

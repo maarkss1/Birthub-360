@@ -39,8 +39,8 @@ vi.mock('../repositories/webhookEndpointRepository.js', () => ({
   recordDeliveryResult: (...args: unknown[]) => mockRecordDeliveryResult(...args),
 }));
 
-import { startWebhookWorker } from './webhook.worker';
-import type { WebhookPayload } from './webhook.service';
+import { startWebhookWorker } from './webhook.worker.js';
+import type { WebhookPayload } from './webhook.service.js';
 
 const ORIGINAL_ENV = { ...process.env };
 const mockFetch = vi.fn();

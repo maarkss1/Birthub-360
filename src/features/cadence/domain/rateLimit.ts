@@ -1,4 +1,4 @@
-import type { CadenceChannel } from './optOut';
+import type { CadenceChannel } from './optOut.js';
 
 /**
  * Rate limit de cadência — auditoria transversal do Agente 17: o módulo já tinha opt-out

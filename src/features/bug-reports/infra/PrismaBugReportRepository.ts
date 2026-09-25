@@ -1,12 +1,12 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   BugReport,
   BugReportRepository,
   BugReportStatus,
   CreateBugReportData,
-} from '../domain/BugReport';
-import { VALID_BUG_REPORT_STATUSES } from '../domain/BugReport';
+} from '../domain/BugReport.js';
+import { VALID_BUG_REPORT_STATUSES } from '../domain/BugReport.js';
 
 export class PrismaBugReportRepository implements BugReportRepository {
   async create(data: CreateBugReportData): Promise<BugReport> {

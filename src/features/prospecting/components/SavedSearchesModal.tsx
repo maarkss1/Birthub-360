@@ -3,9 +3,9 @@ import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
 import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
 import { Dialog } from '../../../components/ui/Dialog';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
-import type { ProspectCandidate, ProspectCriteria } from '../domain/prospectTypes';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
+import type { ProspectCandidate, ProspectCriteria } from '../domain/prospectTypes.js';
 
 export interface SavedSearchItem {
   id: string;

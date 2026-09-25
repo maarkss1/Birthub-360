@@ -1,14 +1,14 @@
-import { env } from '../../../config/env';
-import { AuditService } from '../../../lib/audit/audit.service';
-import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
+import { env } from '../../../config/env.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   parseRetryAfterMs,
   retryWithBackoff,
   TransientHttpError,
-} from '../../../shared/http/retryWithBackoff';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+} from '../../../shared/http/retryWithBackoff.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 // api.stripe.com é destino FIXO do próprio código (não uma URL de tenant) — usa fetchWithTimeout
 // com allowlist (src/lib/http.ts), não o guard de SSRF de URL de usuário/tenant

@@ -1,6 +1,6 @@
-import type { StudioGenerationRequest } from '../schema';
-import { ocrExtractResultSchema } from '../schema';
-import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared';
+import type { StudioGenerationRequest } from '../schema.js';
+import { ocrExtractResultSchema } from '../schema.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 export async function generateOcrExtract(
   request: Extract<StudioGenerationRequest, { kind: 'ocr_extract' }>,

@@ -1,4 +1,4 @@
-import type { CadenceChannel } from '../domain/optOut';
+import type { CadenceChannel } from '../domain/optOut.js';
 import {
   type CadenceRateLimitPolicy,
   DEFAULT_RATE_LIMIT_POLICY,
@@ -6,7 +6,7 @@ import {
   extractEmailDomain,
   type LastSentTouch,
   type RateLimitBlockReason,
-} from '../domain/rateLimit';
+} from '../domain/rateLimit.js';
 
 /**
  * Porta de contagem para o rate limit de cadência (auditoria transversal, Agente 17). Deliberadamente

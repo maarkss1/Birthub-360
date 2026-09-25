@@ -1,6 +1,6 @@
-import type { StudioGenerationRequest } from '../schema';
-import { callScriptResultSchema } from '../schema';
-import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared';
+import type { StudioGenerationRequest } from '../schema.js';
+import { callScriptResultSchema } from '../schema.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 export async function generateCallScript(
   request: Extract<StudioGenerationRequest, { kind: 'call_script' }>,

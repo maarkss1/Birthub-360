@@ -1,14 +1,14 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   connectOmie,
   disconnectOmie,
   listOmieConnections,
   testOmieConnection,
   upsertOmieCustomer,
-} from './omie.service';
+} from './omie.service.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

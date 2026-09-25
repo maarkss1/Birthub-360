@@ -1,16 +1,16 @@
 import type { NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
 
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import { getAccountIntelligence } from './accountIntelligence.service';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { getAccountIntelligence } from './accountIntelligence.service.js';
 import {
   approveToPipeline,
   CompanyCatalogValidationError,
   listMarketIntelligenceCompanies,
   parseCompanyCatalogQuery,
-} from './marketIntelligenceCompany.service';
+} from './marketIntelligenceCompany.service.js';
 
 /**
  * Expõe o catálogo global de inteligência de CNPJ (LDR) sob `/api/companies/market-intelligence`

@@ -1,7 +1,7 @@
 import { logger } from '@/lib/logger';
-import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema';
-import { buildAtlasGROutboundIdempotencyKey, claimIdempotencyKey } from '../lib/webhookIdempotency';
-import { getAiConsent } from '../../../services/settingService';
+import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema.js';
+import { buildAtlasGROutboundIdempotencyKey, claimIdempotencyKey } from '../lib/webhookIdempotency.js';
+import { getAiConsent } from '../../../services/settingService.js';
 
 export interface TriggerOutboundCallResult {
   success: boolean;

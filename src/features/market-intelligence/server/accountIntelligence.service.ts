@@ -1,20 +1,20 @@
 import { createHash } from 'node:crypto';
 import { Prisma } from '@prisma/client';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import type {
   DecisionMakerQuery,
   EvidenceQuery,
   RecommendationQuery,
   RelationshipQuery,
   SignalQuery,
-} from './accountIntelligence.schemas';
+} from './accountIntelligence.schemas.js';
 import {
   computeDataQualityReport,
   type DataQualityReport,
   fetchDataQualityReportInputs,
-} from './dataQualityReport.service';
-import { getMarketIntelligenceCompany } from './marketIntelligenceCompany.service';
+} from './dataQualityReport.service.js';
+import { getMarketIntelligenceCompany } from './marketIntelligenceCompany.service.js';
 
 export type TenantDb = NonNullable<AuthRequest['db']>;
 type KnowledgeType = 'FACT' | 'INFERENCE' | 'RECOMMENDATION';

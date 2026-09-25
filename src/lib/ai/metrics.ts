@@ -1,5 +1,5 @@
 import client from 'prom-client';
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 /**
  * Métricas Prometheus de custo/orçamento de IA, expostas em `/metrics` (montado

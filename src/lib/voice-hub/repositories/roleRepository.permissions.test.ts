@@ -17,7 +17,7 @@ import {
   getPermissionsForRoleName,
   PERMISSIONS,
   SYSTEM_ROLE_DEFAULT_PERMISSIONS,
-} from './roleRepository';
+} from './roleRepository.js';
 
 beforeEach(() => vi.clearAllMocks());
 

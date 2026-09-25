@@ -1,7 +1,7 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac';
-import { createRateLimiter } from '../middlewares/rateLimit';
-import { listAgentsHandler, createAgentHandler, deleteAgentHandler, getAgentHandler, updateAgentConfigHandler } from '../controllers/agent.controller';
+import { requireTenant } from '../middlewares/rbac.js';
+import { createRateLimiter } from '../middlewares/rateLimit.js';
+import { listAgentsHandler, createAgentHandler, deleteAgentHandler, getAgentHandler, updateAgentConfigHandler } from '../controllers/agent.controller.js';
 
 const router = express.Router();
 
@@ -12,7 +12,7 @@ router.put('/agents/:id/config', requireTenant, updateAgentConfigHandler);
 router.delete('/agents/:id', requireTenant, deleteAgentHandler);
 
 
-import { addKnowledgeDocumentHandler, testRagQueryHandler, uploadKnowledgeDocumentHandler } from '../controllers/knowledge.controller';
+import { addKnowledgeDocumentHandler, testRagQueryHandler, uploadKnowledgeDocumentHandler } from '../controllers/knowledge.controller.js';
 
 // Additional per-IP limiter on top of server.ts's general 200 req/min, same shape already used
 // for apiKey.routes.ts/billing.routes.ts/webhookEndpoint.routes.ts/workflow.routes.ts (Onda 3-5).

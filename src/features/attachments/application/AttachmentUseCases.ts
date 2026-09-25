@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { getDownloadUrl, getUploadUrl } from '../../../lib/storage/index';
+import { getDownloadUrl, getUploadUrl } from '../../../lib/storage/index.js';
 import { attachmentCompleteSchema, attachmentUploadUrlSchema } from '../../../lib/zod';
 import { AppError } from '../../../shared/middlewares/errorHandler';
 import type { AttachmentEntityType, AttachmentRepository } from '../domain/Attachment';

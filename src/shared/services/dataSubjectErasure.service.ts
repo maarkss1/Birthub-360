@@ -1,7 +1,7 @@
-import { requestContext } from '../../lib/async-context';
-import { logger } from '../../lib/logger';
-import { prisma } from '../../lib/prisma';
-import { deleteObject } from '../../lib/storage/index';
+import { requestContext } from '../../lib/async-context.js';
+import { logger } from '../../lib/logger.js';
+import { prisma } from '../../lib/prisma.js';
+import { deleteObject } from '../../lib/storage/index.js';
 
 export interface ErasureTarget {
   organizationId: string;

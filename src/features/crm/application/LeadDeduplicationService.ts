@@ -1,6 +1,6 @@
-import { requestContext } from '../../../lib/async-context';
+import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 
 /**
  * CRM-002 (auditoria de débito técnico, `docs/audits/repository-debt-audit/agents/CRM.md`) —

@@ -1,6 +1,6 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { vectorStore } from '../../../lib/ai/vectorStore';
+import { vectorStore } from '../../../lib/ai/vectorStore.js';
 
 /** Abaixo disso, um trecho encontrado só por similaridade semântica não é confiável o bastante para citar. */
 const MIN_SEMANTIC_SIMILARITY = 0.7;

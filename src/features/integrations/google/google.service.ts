@@ -1,10 +1,10 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import { OAuth2Client } from 'google-auth-library';
-import { env } from '../../../config/env';
-import { fetchWithTimeout, withTimeout } from '../../../lib/http';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import { env } from '../../../config/env.js';
+import { fetchWithTimeout, withTimeout } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 /** Mesmo teto usado nas chamadas REST diretas (fetchWithTimeout) — google-auth-library não expõe
  * timeout próprio para getToken()/refreshAccessToken(), então sem isto uma travada no endpoint de

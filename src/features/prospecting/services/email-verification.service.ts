@@ -1,6 +1,6 @@
 import dns from 'node:dns/promises';
 import disposableDomains from 'disposable-email-domains';
-import { withTimeout } from '../../../lib/http';
+import { withTimeout } from '../../../lib/http.js';
 import { logger } from '../../../lib/logger';
 
 // `dns.resolveMx`/`resolveTxt` (API de Promise do Node) não aceitam AbortSignal nem têm timeout

@@ -34,7 +34,7 @@ import {
   findNotificationsForUser,
   markAllAsReadForUser,
   markNotificationAsRead as markNotificationAsReadRow,
-} from '../repositories/notificationRepository';
+} from '../repositories/notificationRepository.js';
 
 export interface NotificationSummary {
   id: string;

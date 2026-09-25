@@ -36,8 +36,8 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { authenticateApiKey } from '../services/apiKeyService';
-import { attachAuthIfPresent, getAuthUser } from './index';
+import { authenticateApiKey } from '../services/apiKeyService.js';
+import { attachAuthIfPresent, getAuthUser } from './index.js';
 
 beforeEach(() => {
   vi.clearAllMocks();

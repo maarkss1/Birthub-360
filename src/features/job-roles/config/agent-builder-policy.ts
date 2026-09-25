@@ -1,4 +1,4 @@
-import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization';
+import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization.js';
 
 // PROMPT 10 — Agent Builder / Fábrica de Agentes. Política como código (mesma decisão de
 // `access-request-policy.ts`/`memory-policy.ts`): nunca uma tabela nova só para configuração fixa.

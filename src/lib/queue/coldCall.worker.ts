@@ -2,11 +2,11 @@ import { type Job, Queue, Worker } from 'bullmq';
 import {
   enabledOrganizations,
   runColdCallCampaign,
-} from '../../features/integrations/birth-voice/coldCall.service';
-import { logger } from '../logger';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
-import { connection } from './redis';
+} from '../../features/integrations/birth-voice/coldCall.service.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection } from './redis.js';
 
 export const COLD_CALL_QUEUE_NAME = 'sdr-cold-call';
 

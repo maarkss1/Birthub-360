@@ -1,6 +1,6 @@
 import express from 'express';
-import { registerHandler, loginHandler, meHandler, logoutHandler, refreshHandler } from '../controllers/auth.controller';
-import { requireTenant } from '../middlewares/rbac';
+import { registerHandler, loginHandler, meHandler, logoutHandler, refreshHandler } from '../controllers/auth.controller.js';
+import { requireTenant } from '../middlewares/rbac.js';
 
 const router = express.Router();
 

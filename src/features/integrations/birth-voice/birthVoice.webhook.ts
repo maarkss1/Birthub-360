@@ -1,18 +1,18 @@
 import { randomUUID } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
 import express, { type Request, type Response, Router } from 'express';
-import { env } from '../../../config/env';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import type { CopilotoVoiceIngestionPort } from '../../../shared/contracts/copilotoVoiceIngestion.contract';
-import { container } from '../../../shared/di/container';
+import { env } from '../../../config/env.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import type { CopilotoVoiceIngestionPort } from '../../../shared/contracts/copilotoVoiceIngestion.contract.js';
+import { container } from '../../../shared/di/container.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
   validateWebhookTimestamp,
-} from '../../../shared/security/webhookReplayGuard';
-import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service';
+} from '../../../shared/security/webhookReplayGuard.js';
+import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service.js';
 import {
   buildObservations,
   type CallEndedData,
@@ -23,8 +23,8 @@ import {
   detectRecordingConsent,
   isValidSignature,
   pickCallablePhone,
-} from './birthVoice.helpers';
-import { recordOptOut } from './callSuppression.service';
+} from './birthVoice.helpers.js';
+import { recordOptOut } from './callSuppression.service.js';
 
 type RecordOutcome = 'recorded' | 'duplicate' | 'lead-not-found';
 

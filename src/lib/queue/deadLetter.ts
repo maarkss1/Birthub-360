@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
-import { logger } from '../logger';
-import { prisma } from '../prisma';
+import { logger } from '../logger.js';
+import { prisma } from '../prisma.js';
 
 const SENSITIVE_KEY = /(authorization|api[-_]?key|token|secret|password|webhook|cookie)/i;
 const MAX_STRING_LENGTH = 500;

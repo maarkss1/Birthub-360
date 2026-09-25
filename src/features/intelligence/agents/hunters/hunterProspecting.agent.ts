@@ -1,4 +1,4 @@
-import { getAiModel } from '../../../../lib/ai/gateway';
+import { getAiModel } from '../../../../lib/ai/gateway.js';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 
 export interface ProspectingQuery {

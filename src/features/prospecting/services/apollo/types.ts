@@ -1,6 +1,6 @@
 // Ver domain/prospectTypes.ts para o porquê deste import vir de domain/, não de
 // ../prospecting.service (quebra um ciclo real com services/apollo/*, ARCH-009 2026-08-28).
-import type { DecisionMaker } from '../../domain/prospectTypes';
+import type { DecisionMaker } from '../../domain/prospectTypes.js';
 
 export interface DecisionMakerCriteria {
   cargos?: string;

@@ -4,16 +4,16 @@ import {
   voiceProspectingService,
   BlandConfigurationError,
   ExternalAiConsentRequiredError,
-} from '../services/voice.service';
-import { atlasGROutboundPayloadSchema, blandCallResultSchema } from '../validators/atlasgr.schema';
-import { safeEqual } from '../lib/safeCompare';
+} from '../services/voice.service.js';
+import { atlasGROutboundPayloadSchema, blandCallResultSchema } from '../validators/atlasgr.schema.js';
+import { safeEqual } from '../lib/safeCompare.js';
 import {
   beginBlandCallbackProcessing,
   completeBlandCallbackProcessing,
   IdempotencyCheckFailedError,
   releaseBlandCallbackProcessing,
-} from '../lib/webhookIdempotency';
-import { upsertAtlasGRCallResult } from '../../../repositories/atlasGRCallResultRepository';
+} from '../lib/webhookIdempotency.js';
+import { upsertAtlasGRCallResult } from '../../../repositories/atlasGRCallResultRepository.js';
 
 const router = express.Router();
 

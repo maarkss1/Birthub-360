@@ -1,8 +1,8 @@
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   CadenceSequenceRepository,
   CadenceSequenceRow,
-} from '../application/sequenceService';
+} from '../application/sequenceService.js';
 
 /**
  * Adaptador Prisma real de `CadenceSequenceRepository` (tabela `CadenceSequence`, ver

@@ -1,31 +1,31 @@
 import { type ConnectionOptions, type Job, Queue, Worker } from 'bullmq';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics';
-import { connection } from '../../../lib/queue/redis';
-import { container } from '../../../shared/di/container';
-import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy';
-import { type AdvanceCadenceRunDeps, advanceCadenceRun } from '../application/cadenceService';
-import { loadCadenceRateLimitPolicy } from '../application/rateLimitConfig';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
+import { connection } from '../../../lib/queue/redis.js';
+import { container } from '../../../shared/di/container.js';
+import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
+import { type AdvanceCadenceRunDeps, advanceCadenceRun } from '../application/cadenceService.js';
+import { loadCadenceRateLimitPolicy } from '../application/rateLimitConfig.js';
 import {
   applyPolicyGuardrailFailure,
   type CadenceChannel,
   type CadenceSequenceDefinition,
   type CadenceTouch,
   validateSequence,
-} from '../domain/cadence';
+} from '../domain/cadence.js';
 import {
   buildProductionCadenceDispatcher,
   type VoiceCallPort,
-} from '../infra/dispatchers/CadenceDispatchers';
-import { hasLeadReplied } from '../infra/hasLeadReplied';
-import { prismaCadenceRateLimitPort } from '../infra/PrismaCadenceRateLimitPort';
-import { prismaCadenceRunRepository } from '../infra/PrismaCadenceRunRepository';
-import { prismaLeadSubjectResolver } from '../infra/PrismaLeadSubjectResolver';
-import { prismaOptOutRepository } from '../infra/PrismaOptOutRepository';
-import { redisCadenceRunLock } from '../infra/RedisCadenceRunLock';
+} from '../infra/dispatchers/CadenceDispatchers.js';
+import { hasLeadReplied } from '../infra/hasLeadReplied.js';
+import { prismaCadenceRateLimitPort } from '../infra/PrismaCadenceRateLimitPort.js';
+import { prismaCadenceRunRepository } from '../infra/PrismaCadenceRunRepository.js';
+import { prismaLeadSubjectResolver } from '../infra/PrismaLeadSubjectResolver.js';
+import { prismaOptOutRepository } from '../infra/PrismaOptOutRepository.js';
+import { redisCadenceRunLock } from '../infra/RedisCadenceRunLock.js';
 
 // VoiceCallPort resolvido via container DI (no-cross-feature-imports): evita importar internals
 // de src/features/integrations/birth-voice/** diretamente. Registrado em src/shared/di/setup.ts.

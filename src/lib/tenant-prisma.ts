@@ -1,5 +1,5 @@
-import { prisma } from './prisma';
-import { MODELS_WITH_ORGANIZATION_ID } from './tenant-scoping-registry';
+import { prisma } from './prisma.js';
+import { MODELS_WITH_ORGANIZATION_ID } from './tenant-scoping-registry.js';
 
 export { MODELS_WITH_ORGANIZATION_ID };
 

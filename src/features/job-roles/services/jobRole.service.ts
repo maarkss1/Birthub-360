@@ -1,6 +1,6 @@
-import { isJobRoleCode } from '../../../config/job-role-catalog';
-import { AuditService } from '../../../lib/audit/audit.service';
-import { prisma } from '../../../lib/prisma';
+import { isJobRoleCode } from '../../../config/job-role-catalog.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export class JobRoleServiceError extends Error {
   constructor(

@@ -19,14 +19,14 @@ vi.mock('../../../repositories/atlasGRCallResultRepository.js', () => ({
   upsertAtlasGRCallResult: vi.fn(),
 }));
 
-import { voiceProspectingService } from '../services/voice.service';
+import { voiceProspectingService } from '../services/voice.service.js';
 import {
   beginBlandCallbackProcessing,
   completeBlandCallbackProcessing,
   releaseBlandCallbackProcessing,
-} from '../lib/webhookIdempotency';
-import { upsertAtlasGRCallResult } from '../../../repositories/atlasGRCallResultRepository';
-import atlasgrRoutes from './atlasgr.routes';
+} from '../lib/webhookIdempotency.js';
+import { upsertAtlasGRCallResult } from '../../../repositories/atlasGRCallResultRepository.js';
+import atlasgrRoutes from './atlasgr.routes.js';
 
 const mockTrigger = vi.mocked(voiceProspectingService.triggerOutboundCall);
 const mockBeginCallback = vi.mocked(beginBlandCallbackProcessing);

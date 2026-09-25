@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { prisma } from '../../../lib/prisma';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { prisma } from '../../../lib/prisma.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 
 /**
  * Leitura de `EmailMessage` (persistida por `emailReply.webhook.ts`, entrega 3 do Agente 17 —

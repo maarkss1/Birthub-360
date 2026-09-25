@@ -1,10 +1,10 @@
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   UsageByModelRow,
   UsageByPromptRow,
   UsageLogRow,
   UsageRepository,
-} from '../domain/Usage';
+} from '../domain/Usage.js';
 
 export class PrismaUsageRepository implements UsageRepository {
   async findLogsSince(organizationId: string, since: Date): Promise<UsageLogRow[]> {

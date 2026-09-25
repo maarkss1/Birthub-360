@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import type { BugReportController } from '../presentation/BugReportController';
+import { container } from '../../../shared/di/container.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import type { BugReportController } from '../presentation/BugReportController.js';
 
 export const bugReportRouter = Router();
 

@@ -1,5 +1,5 @@
-import { logger } from '../logger';
-import { prisma } from '../prisma';
+import { logger } from '../logger.js';
+import { prisma } from '../prisma.js';
 
 export type AuditAction =
   | 'LOGIN'

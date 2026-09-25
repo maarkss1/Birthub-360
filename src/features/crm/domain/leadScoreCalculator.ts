@@ -1,4 +1,4 @@
-import type { PlaybookKey } from '../../../config/playbooks';
+import type { PlaybookKey } from '../../../config/playbooks.js';
 
 export interface BantQualificationData {
   budget?: 'aprovado' | 'em_planejamento' | 'indefinido' | 'sem_verba' | string;

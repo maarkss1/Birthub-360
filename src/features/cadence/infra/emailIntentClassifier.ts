@@ -1,10 +1,10 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 import type {
   IntentClassificationResult,
   IntentClassifierPort,
-} from '../../../shared/domain/replyTracking';
+} from '../../../shared/domain/replyTracking.js';
 
 /**
  * Implementação real do `IntentClassifierPort` (CYC-003, onda 26) para réplica de e-mail — mesma

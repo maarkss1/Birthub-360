@@ -1,10 +1,10 @@
-import { BaseAgent } from './base.agent';
+import { BaseAgent } from './base.agent.js';
 import {
   appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants';
+} from './swarm.constants.js';
 
 /**
  * Agente Contratos & Assinatura (Célula Comercial, pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0,

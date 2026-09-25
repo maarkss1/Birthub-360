@@ -1,6 +1,6 @@
 import { QdrantClient } from '@qdrant/js-client-rest';
-import { env } from '../../config/env';
-import { logger } from '../logger';
+import { env } from '../../config/env.js';
+import { logger } from '../logger.js';
 
 /**
  * Cliente Qdrant (OS-5, docker-compose.services.yml) — registrado seguindo o mesmo formato de

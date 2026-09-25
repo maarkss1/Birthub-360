@@ -1,12 +1,12 @@
 import type { LeadStatus } from '@prisma/client';
-import { env } from '../../../config/env';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { enqueueSdrOutboundDraft } from '../../../lib/queue/agent.worker';
-import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy';
-import { type AutonomyRole, runAutonomyRole } from './autonomyRoleRunner.service';
-import { draftNegotiatorReply } from './negotiatorReply.service';
+import { env } from '../../../config/env.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { enqueueSdrOutboundDraft } from '../../../lib/queue/agent.worker.js';
+import { isWithinCallWindow } from '../../integrations/birth-voice/coldCall.policy.js';
+import { type AutonomyRole, runAutonomyRole } from './autonomyRoleRunner.service.js';
+import { draftNegotiatorReply } from './negotiatorReply.service.js';
 
 const CLOSED_STATUSES: LeadStatus[] = [
   'Negocios_Ganhos',

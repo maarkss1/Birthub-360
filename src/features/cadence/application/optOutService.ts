@@ -1,4 +1,4 @@
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import {
   anyRecordBlocksChannel,
   type CadenceChannel,
@@ -8,7 +8,7 @@ import {
   type OptOutRepository,
   type OptOutSubject,
   type RecordOptOutInput,
-} from '../domain/optOut';
+} from '../domain/optOut.js';
 
 /**
  * Camada de aplicação do opt-out unificado: orquestra a porta `OptOutRepository` em cima das

@@ -1,10 +1,10 @@
-import { getPaidProspectingKey } from '../../../../config/prospecting-integrations';
-import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch';
-import { assertProspectingBudgetNotExceeded } from '../providerBudget';
-import { recordProviderCallCost } from '../providerCostMetrics';
-import { checkProviderRateLimit } from '../providerRateLimit';
-import { APOLLO_ORG_ENRICH_URL } from './client';
-import type { ApolloOrganization } from './types';
+import { getPaidProspectingKey } from '../../../../config/prospecting-integrations.js';
+import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
+import { assertProspectingBudgetNotExceeded } from '../providerBudget.js';
+import { recordProviderCallCost } from '../providerCostMetrics.js';
+import { checkProviderRateLimit } from '../providerRateLimit.js';
+import { APOLLO_ORG_ENRICH_URL } from './client.js';
+import type { ApolloOrganization } from './types.js';
 
 /**
  * Enriquecimento firmográfico completo de UMA empresa via domínio (Apollo Organization Enrich).

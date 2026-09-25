@@ -3,8 +3,8 @@ import type {
   DecisionMakerInfo,
   GiselleStrategyPlan,
   TransparentScore,
-} from './triad.types';
-import { getAiModel } from '../../../../lib/ai/gateway';
+} from './triad.types.js';
+import { getAiModel } from '../../../../lib/ai/gateway.js';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 
 export interface GiselleStrategyInput {

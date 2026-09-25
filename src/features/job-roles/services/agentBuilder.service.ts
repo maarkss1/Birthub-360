@@ -9,16 +9,16 @@
 // nunca marca um binding `VERIFIED`, nunca cria credencial, nunca aprova a própria proposta. O
 // único efeito de `decideAgentBuildProposal` é mudar `status` — nunca ativar nada de verdade.
 import type { AgentBuildProposalStatus } from '@prisma/client';
-import { isJobRoleCode } from '../../../config/job-role-catalog';
-import { AuditService } from '../../../lib/audit/audit.service';
-import { prisma } from '../../../lib/prisma';
+import { isJobRoleCode } from '../../../config/job-role-catalog.js';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 import normalizedBirthHubCatalog from '../catalog/agents.normalized.json';
 import {
   isEligibleReviewer,
   RISK_REVIEW_DIMENSIONS,
   type RiskReviewDimension,
-} from '../config/agent-builder-policy';
-import { TOOL_BINDINGS } from '../config/tool-bindings';
+} from '../config/agent-builder-policy.js';
+import { TOOL_BINDINGS } from '../config/tool-bindings.js';
 
 export class AgentBuilderServiceError extends Error {
   constructor(

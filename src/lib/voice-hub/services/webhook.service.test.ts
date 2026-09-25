@@ -28,7 +28,7 @@ vi.mock('./webhookEndpointService.js', () => ({
   resolveActiveEndpointsForEvent: (...args: unknown[]) => mockResolveActiveEndpointsForEvent(...args),
 }));
 
-import { WebhookService } from './webhook.service';
+import { WebhookService } from './webhook.service.js';
 
 const ORIGINAL_ENV = { ...process.env };
 

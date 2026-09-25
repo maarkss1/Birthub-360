@@ -1,18 +1,31 @@
 
+import { spawnSync } from 'child_process';
 import { execSync } from 'child_process';
 
 function run(cmd, name, optional = false) {
   try {
     process.stdout.write('Executando ' + name + '... ');
-    execSync(cmd, { stdio: 'ignore' });
-    console.log('APROVADO');
-    return { name, status: 'PASS', critical: !optional };
+    const [command, ...args] = cmd.split(' ');
+    const result = spawnSync(command, args, { stdio: 'ignore', shell: true });
+    
+    if (result.status === 0) {
+      console.log('APROVADO');
+      return { name, status: 'PASS', critical: !optional };
+    } else {
+      if (optional) {
+        console.log('WARNING (Nao bloqueante)');
+        return { name, status: 'WARN', critical: false };
+      } else {
+        console.log('FALHOU');
+        return { name, status: 'FAIL', critical: true };
+      }
+    }
   } catch (e) {
     if (optional) {
       console.log('WARNING (Nao bloqueante)');
       return { name, status: 'WARN', critical: false };
     } else {
-      console.log('FALHOU');
+      console.log('FALHOU (Error: ' + e.message + ')');
       return { name, status: 'FAIL', critical: true };
     }
   }

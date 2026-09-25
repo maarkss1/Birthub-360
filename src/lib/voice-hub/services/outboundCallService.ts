@@ -1,8 +1,8 @@
 import { Prisma } from '@prisma/client';
-import * as agentRepository from '../repositories/agentRepository';
-import * as sessionRepository from '../repositories/sessionRepository';
-import { getTelephonyProvider } from './telephonyProvider';
-import type { PhoneSessionMetadata } from './telephonyService';
+import * as agentRepository from '../repositories/agentRepository.js';
+import * as sessionRepository from '../repositories/sessionRepository.js';
+import { getTelephonyProvider } from './telephonyProvider.js';
+import type { PhoneSessionMetadata } from './telephonyService.js';
 import { logger } from '@/lib/logger';
 
 export class AgentNotFoundError extends Error {}

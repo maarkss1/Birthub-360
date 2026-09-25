@@ -10,17 +10,17 @@
  * (`invokeStructured`), que depende de ler a resposta inteira para validar/reparar o formato.
  */
 import type { BaseMessage } from '@langchain/core/messages';
-import { requestContext } from '../../async-context';
-import { assertAiBudgetNotExceeded } from '../budget';
-import { recordAiUsageCost } from '../metrics';
-import { isCircuitOpen, recordCircuitFailure, recordCircuitSuccess } from './circuit-breaker';
-import { normalizeTemperature, resolveFallbackTimeoutMs } from './http-client';
-import { resolveGroqModelName, resolveModelName } from './model-routing';
-import { toChatCompletionMessages } from './parsing';
-import { estimateCostUsd } from './pricing';
-import { readProviderError } from './redaction';
-import { traceAiGeneration } from './telemetry';
-import type { AiStreamChunk, AiStreamResult, ChatCompletionResponse } from './types';
+import { requestContext } from '../../async-context.js';
+import { assertAiBudgetNotExceeded } from '../budget.js';
+import { recordAiUsageCost } from '../metrics.js';
+import { isCircuitOpen, recordCircuitFailure, recordCircuitSuccess } from './circuit-breaker.js';
+import { normalizeTemperature, resolveFallbackTimeoutMs } from './http-client.js';
+import { resolveGroqModelName, resolveModelName } from './model-routing.js';
+import { toChatCompletionMessages } from './parsing.js';
+import { estimateCostUsd } from './pricing.js';
+import { readProviderError } from './redaction.js';
+import { traceAiGeneration } from './telemetry.js';
+import type { AiStreamChunk, AiStreamResult, ChatCompletionResponse } from './types.js';
 
 export async function* streamChatCompletion(
   messages: BaseMessage[],

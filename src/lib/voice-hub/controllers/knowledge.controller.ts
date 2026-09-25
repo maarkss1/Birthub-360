@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { getAgent, updateAgentConfig } from '../services/agentService';
-import { knowledgeConfidenceEngine } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine';
-import { AgentConfiguration } from '../types/agent';
-import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus';
+import { getAgent, updateAgentConfig } from '../services/agentService.js';
+import { knowledgeConfidenceEngine } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
+import { AgentConfiguration } from '../types/agent.js';
+import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus.js';
 import { logger } from '@/lib/logger';
 
 export async function addKnowledgeDocumentHandler(req: Request, res: Response) {

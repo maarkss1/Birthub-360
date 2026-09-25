@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { logger } from '../logger';
+import { logger } from '../logger.js';
 
 /**
  * Embeddings gerados localmente, sem chave de API e sem chamada de rede.

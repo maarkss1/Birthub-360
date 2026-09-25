@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   ASSIGNABLE_ROLES,
   createTeamMember,
@@ -11,7 +11,7 @@ import {
   resetTeamMemberPassword,
   TeamServiceError,
   unlockTeamMember,
-} from '../services/team.service';
+} from '../services/team.service.js';
 
 const router = Router();
 

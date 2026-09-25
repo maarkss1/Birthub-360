@@ -1,8 +1,8 @@
 import { randomUUID } from 'crypto';
 import { Queue } from 'bullmq';
-import { getRedisConnectionOptions } from '../lib/env';
+import { getRedisConnectionOptions } from '../lib/env.js';
 import { logger } from '@/lib/logger';
-import { resolveActiveEndpointsForEvent } from './webhookEndpointService';
+import { resolveActiveEndpointsForEvent } from './webhookEndpointService.js';
 
 /**
  * Envelope documented in docs/webhooks/index.md — consumers verify the signature over exactly

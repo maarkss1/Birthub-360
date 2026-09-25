@@ -5,8 +5,8 @@
  * garante timeout, normalização de payload e leitura de erro padronizados entre provedores
  * (critério de aceite: "erros e respostas padronizados entre providers").
  */
-import { readProviderError } from './redaction';
-import type { ChatCompletionMessage, ChatCompletionResponse } from './types';
+import { readProviderError } from './redaction.js';
+import type { ChatCompletionMessage, ChatCompletionResponse } from './types.js';
 
 const DEFAULT_GATEWAY_TIMEOUT_MS = 30_000;
 const DEFAULT_FALLBACK_TIMEOUT_MS = 60_000;

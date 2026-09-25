@@ -1,6 +1,6 @@
-import { logger } from '../../../../lib/logger';
-import { BITRIX_FIELD_MAP, type BitrixFieldMapping } from '../bitrixFieldMap';
-import { callBitrix } from './client';
+import { logger } from '../../../../lib/logger.js';
+import { BITRIX_FIELD_MAP, type BitrixFieldMapping } from '../bitrixFieldMap.js';
+import { callBitrix } from './client.js';
 
 export type BitrixEntityKind = 'lead' | 'deal';
 

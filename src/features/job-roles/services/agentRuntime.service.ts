@@ -12,10 +12,10 @@
 // aqui, não só na camada de autorização.
 
 import type { AgentExecutionStatus } from '@prisma/client';
-import { prisma } from '../../../lib/prisma';
-import { authorizeCapability, type CapabilityDecision } from './capabilityAuthorization.service';
-import { getPrimaryActiveJobRoleForUser } from './jobRole.service';
-import { getToolExecutor, type ToolExecutionOutput } from './toolExecutors';
+import { prisma } from '../../../lib/prisma.js';
+import { authorizeCapability, type CapabilityDecision } from './capabilityAuthorization.service.js';
+import { getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
+import { getToolExecutor, type ToolExecutionOutput } from './toolExecutors.js';
 
 export interface AgentExecutionRequest {
   actorId: string;

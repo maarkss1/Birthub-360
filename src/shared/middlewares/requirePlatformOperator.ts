@@ -1,6 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 const HEADER_NAME = 'x-platform-operator-token';
 const QUERY_NAME = 'operator_token';

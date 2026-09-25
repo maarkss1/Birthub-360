@@ -1,11 +1,11 @@
-import { env } from '../../../config/env';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard';
-import { assertPiiExternalConsent } from '../../intelligence/services/guardrails.service';
-import { pickCallablePhone } from './birthVoice.helpers';
-import { isSuppressed } from './callSuppression.service';
-import { buildVoicePromptForLead, type VoiceScriptConfig } from './voiceScript';
+import { env } from '../../../config/env.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
+import { assertPiiExternalConsent } from '../../intelligence/services/guardrails.service.js';
+import { pickCallablePhone } from './birthVoice.helpers.js';
+import { isSuppressed } from './callSuppression.service.js';
+import { buildVoicePromptForLead, type VoiceScriptConfig } from './voiceScript.js';
 
 /** Caminho do webhook que o Birth Voices Hub chama com o resultado da ligação. */
 export const CALL_RESULT_WEBHOOK_PATH = '/api/integrations/birth-voice/webhook';

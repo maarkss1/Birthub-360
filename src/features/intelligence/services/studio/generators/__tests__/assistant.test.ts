@@ -8,7 +8,7 @@ vi.mock('../../shared.js', () => ({
   streamText: (...args: unknown[]) => streamTextMock(...args),
 }));
 
-import { buildAssistantPrompt, generateAssistant, generateAssistantStream } from '../assistant';
+import { buildAssistantPrompt, generateAssistant, generateAssistantStream } from '../assistant.js';
 
 function buildRequest(
   overrides: Partial<{

@@ -21,7 +21,7 @@ import {
   findTransactionsForTenant,
   findWalletByTenant,
   upsertWalletPlan,
-} from '../repositories/billingRepository';
+} from '../repositories/billingRepository.js';
 import {
   canStartNewSession,
   changePlan,
@@ -32,7 +32,7 @@ import {
   ProrationNotSupportedError,
   recordTransaction,
   WalletNotFoundError,
-} from './billingService';
+} from './billingService.js';
 
 beforeEach(() => vi.clearAllMocks());
 

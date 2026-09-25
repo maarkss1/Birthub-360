@@ -4,10 +4,10 @@
  * módulo só cuida do trace estruturado (input/output/latência/tokens) enviado ao Langfuse, quando
  * configurado.
  */
-import { requestContext } from '../../async-context';
-import { getLangfuseClient } from '../../langfuse';
-import { logger } from '../../logger';
-import type { ChatCompletionMessage, ChatCompletionResponse } from './types';
+import { requestContext } from '../../async-context.js';
+import { getLangfuseClient } from '../../langfuse.js';
+import { logger } from '../../logger.js';
+import type { ChatCompletionMessage, ChatCompletionResponse } from './types.js';
 
 /**
  * Envia um trace de observabilidade para o Langfuse (se LANGFUSE_PUBLIC_KEY/SECRET_KEY estiverem

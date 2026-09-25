@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
-import { observabilityMetricsHandler } from './observability.controller';
-import { otelCollector } from '../../lib/voice-runtime/otel';
+import { observabilityMetricsHandler } from './observability.controller.js';
+import { otelCollector } from '../../lib/voice-runtime/otel.js';
 
 vi.mock('../../lib/voice-runtime/otel.js', () => ({
   otelCollector: {

@@ -46,14 +46,14 @@ vi.mock('../birthVoice.service.js', () => ({
   BirthVoiceNotConfiguredError: class BirthVoiceNotConfiguredError extends Error {},
 }));
 
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma.js';
 import {
   BirthVoiceNotConfiguredError,
   callLead,
   NoPhoneNumberError,
   SuppressedNumberError,
-} from '../birthVoice.service';
-import { enabledOrganizations, runColdCallCampaign } from '../coldCall.service';
+} from '../birthVoice.service.js';
+import { enabledOrganizations, runColdCallCampaign } from '../coldCall.service.js';
 
 const leadMock = prisma.lead as unknown as {
   findMany: ReturnType<typeof vi.fn>;

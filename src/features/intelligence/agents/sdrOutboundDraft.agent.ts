@@ -3,18 +3,18 @@ import {
   cleanAndParseJson,
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
   wrapUntrustedContent,
-} from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { AgentService } from '../services/agent.service';
-import { executeAndRecord } from '../services/aiPendingAction.service';
+} from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { AgentService } from '../services/agent.service.js';
+import { executeAndRecord } from '../services/aiPendingAction.service.js';
 import {
   hasPiiExternalConsent,
   minimizePii,
   type PiiToken,
   rehydratePii,
-} from '../services/guardrails.service';
-import { vectorService } from '../services/vector.service';
+} from '../services/guardrails.service.js';
+import { vectorService } from '../services/vector.service.js';
 
 const emailDraftSchema = z.object({
   subject: z.string().trim().min(1).max(160),

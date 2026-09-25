@@ -6,19 +6,19 @@
 // grava um snapshot append-only (nunca sobrescreve — permite comparar previsto-vs-realizado
 // depois, ver forecastAccuracy.ts).
 import { type ConnectionOptions, Queue, Worker } from 'bullmq';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics';
-import { connection } from '../../../lib/queue/redis';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
+import { connection } from '../../../lib/queue/redis.js';
 import {
   CommercialIntelligenceUseCases,
   currentPeriod,
-} from '../application/CommercialIntelligenceUseCases';
-import { buildForecastSnapshot } from '../application/forecastSnapshot';
-import { PrismaCommercialIntelligenceRepository } from '../infra/PrismaCommercialIntelligenceRepository';
-import { PrismaForecastSnapshotStore } from '../infra/PrismaForecastSnapshotStore';
+} from '../application/CommercialIntelligenceUseCases.js';
+import { buildForecastSnapshot } from '../application/forecastSnapshot.js';
+import { PrismaCommercialIntelligenceRepository } from '../infra/PrismaCommercialIntelligenceRepository.js';
+import { PrismaForecastSnapshotStore } from '../infra/PrismaForecastSnapshotStore.js';
 
 export const FORECAST_SNAPSHOT_QUEUE_NAME = 'forecast-snapshot-weekly-queue';
 

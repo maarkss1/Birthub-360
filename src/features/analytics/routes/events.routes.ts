@@ -1,7 +1,7 @@
 import { type Request, type Response, Router } from 'express';
-import { type CrmEvent, crmEventBus } from '../../../lib/eventsBus';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
+import { type CrmEvent, crmEventBus } from '../../../lib/eventsBus.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 
 const router = Router();
 const readRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

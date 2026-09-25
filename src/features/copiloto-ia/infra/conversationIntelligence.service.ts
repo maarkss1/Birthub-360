@@ -16,7 +16,7 @@
  * qualquer falha marcando a conversa `FAILED` com o motivo real.
  */
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 
 export interface ObjectionSignal {
   text: string;

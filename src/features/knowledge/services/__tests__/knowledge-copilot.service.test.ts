@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { SearchHit } from '../../search.service';
+import type { SearchHit } from '../../search.service.js';
 
 /**
  * AI-010 (onda 34): prova o núcleo do "gate de citação real" — o LLM só pode apontar o ÍNDICE de

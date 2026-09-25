@@ -9,18 +9,18 @@
 // `CROSS_ROLE_REQUEST_REQUIRED`/`APPROVAL_REQUIRED`. Nunca decide autorização de execução aqui —
 // isso continua 100% em `authorizeCapability`.
 import type { AccessRequestCategory, AccessRequestStatus } from '@prisma/client';
-import { AuditService } from '../../../lib/audit/audit.service';
-import { prisma } from '../../../lib/prisma';
+import { AuditService } from '../../../lib/audit/audit.service.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   getAccessRequestCategory,
   getApprovalPolicy,
   isEligibleApprover,
   resolveAutoApproval,
-} from '../config/access-request-policy';
-import { getCapabilityDefinitionByCode } from './capability.service';
-import { authorizeCapability } from './capabilityAuthorization.service';
-import { getPrimaryActiveJobRoleForUser } from './jobRole.service';
-import { selectAgentForCapability } from './roleSupervisor.service';
+} from '../config/access-request-policy.js';
+import { getCapabilityDefinitionByCode } from './capability.service.js';
+import { authorizeCapability } from './capabilityAuthorization.service.js';
+import { getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
+import { selectAgentForCapability } from './roleSupervisor.service.js';
 
 export class AccessRequestServiceError extends Error {
   constructor(

@@ -1,5 +1,5 @@
 import { LeadFunnel, LeadStatus } from '@prisma/client';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   CommercialGoalDTO,
   CommercialIntelligenceRepository,

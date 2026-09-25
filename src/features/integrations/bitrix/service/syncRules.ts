@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { requestContext } from '../../../../lib/async-context';
-import { AuditService } from '../../../../lib/audit/audit.service';
-import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma';
-import { AppError } from '../../../../shared/middlewares/errorHandler';
-import { findUnimportedBitrixDealIds, importSelectedBitrixDeals } from './deals';
-import { findUnimportedBitrixLeadIds, importSelectedBitrixLeads } from './leads';
-import { bitrixSyncFailuresTotal } from './metrics';
+import { requestContext } from '../../../../lib/async-context.js';
+import { AuditService } from '../../../../lib/audit/audit.service.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
+import { findUnimportedBitrixDealIds, importSelectedBitrixDeals } from './deals.js';
+import { findUnimportedBitrixLeadIds, importSelectedBitrixLeads } from './leads.js';
+import { bitrixSyncFailuresTotal } from './metrics.js';
 
 // ── Sincronização automática (regras) — ver bitrixSync.worker.ts ───────────────────────────────
 //

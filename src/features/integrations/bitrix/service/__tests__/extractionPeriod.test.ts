@@ -3,7 +3,7 @@ import {
   EXTRACTION_PERIODS,
   InvalidExtractionPeriodError,
   resolvePeriodRange,
-} from '../extractionPeriod';
+} from '../extractionPeriod.js';
 
 // "now" fixo para todo o arquivo: 15/08/2026 14:30 UTC = 11:30 em Brasília (UTC-03:00) — meio do
 // dia, meio do mês, meio do 3º trimestre (Q3 = jul/ago/set) e do 2º semestre, escolhido de

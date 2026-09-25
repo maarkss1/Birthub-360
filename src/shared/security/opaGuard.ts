@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { logger } from '../../lib/logger';
-import type { AuthRequest } from '../middlewares/authenticateToken';
+import { logger } from '../../lib/logger.js';
+import type { AuthRequest } from '../middlewares/authenticateToken.js';
 
 /**
  * Guard de enforcement OPA (SEC-006). Consulta um servidor OPA externo e nega por padrão:

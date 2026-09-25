@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 
 export interface AccountHealthIndicators {
   clientName: string;

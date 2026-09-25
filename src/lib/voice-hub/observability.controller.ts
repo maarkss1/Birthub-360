@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { otelCollector } from '../../lib/voice-runtime/otel';
+import { otelCollector } from '../../lib/voice-runtime/otel.js';
 
 // Tenant isolation: requireTenant (see observability.routes.ts) only proves the caller is
 // authenticated for *some* tenant, not that they own the data — the actual isolation happens

@@ -1,16 +1,16 @@
 import { logger } from '@/lib/logger';
 import { Request, Response } from 'express';
-import { loginSchema, registerSchema } from '../validators/index';
+import { loginSchema, registerSchema } from '../validators/index.js';
 import { z } from 'zod';
 
 const tokenSchema = z.object({
   token: z.string().optional()
 });
-import { register, login, refreshSession, AuthError } from '../services/authService';
-import { writeAuditLog } from '../services/audit';
-import { createMetric } from '../repositories/metricRepository';
-import { getPermissionsForRoleName } from '../repositories/roleRepository';
-import { setCookie, setLoggedInCookie, ACCESS_TOKEN_MAX_AGE_MS, REFRESH_TOKEN_MAX_AGE_MS } from '../lib/cookies';
+import { register, login, refreshSession, AuthError } from '../services/authService.js';
+import { writeAuditLog } from '../services/audit.js';
+import { createMetric } from '../repositories/metricRepository.js';
+import { getPermissionsForRoleName } from '../repositories/roleRepository.js';
+import { setCookie, setLoggedInCookie, ACCESS_TOKEN_MAX_AGE_MS, REFRESH_TOKEN_MAX_AGE_MS } from '../lib/cookies.js';
 
 export async function registerHandler(req: Request, res: Response) {
   const parsed = registerSchema.safeParse(req.body);

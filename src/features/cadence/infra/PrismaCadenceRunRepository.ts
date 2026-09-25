@@ -1,5 +1,5 @@
-import { prisma } from '../../../lib/prisma';
-import type { CadenceRunListFilter, CadenceRunRepository } from '../application/cadenceService';
+import { prisma } from '../../../lib/prisma.js';
+import type { CadenceRunListFilter, CadenceRunRepository } from '../application/cadenceService.js';
 import type {
   CadenceChannel,
   CadenceRunState,
@@ -8,7 +8,7 @@ import type {
   CadenceStopReason,
   CadenceTouchAttempt,
   CadenceTouchResult,
-} from '../domain/cadence';
+} from '../domain/cadence.js';
 
 /**
  * Adaptador Prisma real de `CadenceRunRepository` (tabelas `CadenceRun`/`CadenceTouchAttempt`, ver

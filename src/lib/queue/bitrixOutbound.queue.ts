@@ -1,10 +1,10 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { pushLeadToBitrix } from '../../features/integrations/bitrix/service/outboundSync';
-import { requestContext } from '../async-context';
-import { logger } from '../logger';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
-import { connection, queuesEnabled } from './redis';
+import { pushLeadToBitrix } from '../../features/integrations/bitrix/service/outboundSync.js';
+import { requestContext } from '../async-context.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection, queuesEnabled } from './redis.js';
 
 export const BITRIX_OUTBOUND_QUEUE_NAME = 'bitrix-outbound-sync';
 

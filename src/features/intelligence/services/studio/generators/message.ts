@@ -1,6 +1,6 @@
-import type { StudioGenerationRequest } from '../schema';
-import { messageResultSchema } from '../schema';
-import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared';
+import type { StudioGenerationRequest } from '../schema.js';
+import { messageResultSchema } from '../schema.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 export async function generateMessage(
   request: Extract<StudioGenerationRequest, { kind: 'message' }>,

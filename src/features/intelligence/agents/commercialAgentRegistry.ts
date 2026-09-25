@@ -2,7 +2,7 @@ import type {
   CommercialAgentId,
   CommercialAgentRisk,
   CommercialAgentStatus,
-} from './commercialAgentTypes';
+} from './commercialAgentTypes.js';
 
 /**
  * Catálogo dos 12 agentes do pacote BIRTHHUB360_COMMERCIAL_AGENT_CELL v1.1.0

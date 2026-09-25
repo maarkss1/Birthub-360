@@ -1,10 +1,10 @@
-import { BaseAgent } from './base.agent';
+import { BaseAgent } from './base.agent.js';
 import {
   appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants';
+} from './swarm.constants.js';
 
 /**
  * BDR (Business Development Rep) Autônomo de Elite: Prospecção Outbound B2B de Ultra-Performance.

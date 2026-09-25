@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { UNTRUSTED_CONTENT_GUARD_INSTRUCTION, wrapUntrustedContent } from '../prompt-safety';
+import { UNTRUSTED_CONTENT_GUARD_INSTRUCTION, wrapUntrustedContent } from '../prompt-safety.js';
 
 /**
  * Defesa estrutural contra prompt injection (ver comentário de topo de `prompt-safety.ts`): prova

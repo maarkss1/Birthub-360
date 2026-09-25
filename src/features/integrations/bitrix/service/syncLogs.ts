@@ -1,4 +1,4 @@
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma.js';
 
 // ── Histórico real de sincronização Bitrix24 (inbound + outbound) ──────────────────────────────
 //

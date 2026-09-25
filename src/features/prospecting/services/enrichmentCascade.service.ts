@@ -1,17 +1,17 @@
 import type { Prisma } from '@prisma/client';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { filterNewContacts } from '../utils/contactDedupe';
-import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service';
-import { fetchCnpjData } from './enrichment/cnpjLookup';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { filterNewContacts } from '../utils/contactDedupe.js';
+import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service.js';
+import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
   extractDomainFromWebsite,
   guessDomainAndEmails,
   resolveEmailStatus,
-} from './enrichment/domainGuess';
-import { findEmailViaHunter, findPeopleViaDomainSearch } from './hunter.service';
-import { searchGooglePlaceDetailed } from './places.service';
+} from './enrichment/domainGuess.js';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from './hunter.service.js';
+import { searchGooglePlaceDetailed } from './places.service.js';
 
 export interface CascadeEnrichmentOptions {
   cnpj?: string;

@@ -1,4 +1,4 @@
-import { logger } from '../lib/logger';
+import { logger } from '../lib/logger.js';
 
 // Débito conhecido (ver docs/audits/repository-debt-audit): GROQ_API_KEY, OPENAI_API_KEY,
 // TAVILY_API_KEY, SERPER_API_KEY e as chaves de storage de objetos (STORAGE_ACCESS_KEY_ID/

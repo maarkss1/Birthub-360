@@ -1,6 +1,6 @@
-import type { ProspectingProviderMode } from '../../../config/prospecting-integrations';
-import { getCostPerCallUsd } from '../services/providerCostMetrics';
-import { getRateLimitPerMinute } from '../services/providerRateLimit';
+import type { ProspectingProviderMode } from '../../../config/prospecting-integrations.js';
+import { getCostPerCallUsd } from '../services/providerCostMetrics.js';
+import { getRateLimitPerMinute } from '../services/providerRateLimit.js';
 
 /**
  * CPI DEC-12 (opção A) — camada `ProviderCapabilities`.

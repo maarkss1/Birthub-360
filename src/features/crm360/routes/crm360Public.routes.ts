@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container';
-import type { Crm360Controller } from '../presentation/Crm360Controller';
+import { container } from '../../../shared/di/container.js';
+import type { Crm360Controller } from '../presentation/Crm360Controller.js';
 
 /**
  * CYC-005 (onda 25) — rota pública de visualização de proposta. Nunca passa por

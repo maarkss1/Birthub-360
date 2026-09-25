@@ -1,11 +1,11 @@
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   GrantModuleAccessInput,
   ModuleAccessGrantRow,
   ModuleAccessRepository,
   ModuleAccessUserRow,
   RevokeModuleAccessInput,
-} from '../domain/ModuleAccess';
+} from '../domain/ModuleAccess.js';
 
 /** Adaptador Prisma real de `ModuleAccessRepository` — mesmas queries que viviam antes direto em `moduleAccess.service.ts`. */
 export class PrismaModuleAccessRepository implements ModuleAccessRepository {

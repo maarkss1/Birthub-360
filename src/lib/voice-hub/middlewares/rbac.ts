@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
-import { attachAuthIfPresent } from './index';
-import { getPermissionsForRoleName } from '../repositories/roleRepository';
+import { attachAuthIfPresent } from './index.js';
+import { getPermissionsForRoleName } from '../repositories/roleRepository.js';
 
 export const requireTenant = async (req: Request, res: Response, next: NextFunction) => {
   await attachAuthIfPresent(req, res, () => {

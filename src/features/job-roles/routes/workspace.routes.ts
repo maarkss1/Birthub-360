@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { getWorkspaceForUser } from '../services/workspace.service';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { getWorkspaceForUser } from '../services/workspace.service.js';
 
 const router = Router();
 

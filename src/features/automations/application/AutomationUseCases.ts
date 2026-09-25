@@ -4,12 +4,12 @@ import {
   type DryRunOptions,
   type DryRunResult,
   dryRunAutomation,
-} from '../automation-dry-run.service';
+} from '../automation-dry-run.service.js';
 import {
   type AutomationVersionActor,
   type AutomationVersionTimeline,
   automationVersioningService,
-} from '../automation-versioning.service';
+} from '../automation-versioning.service.js';
 import type { Automation, AutomationRepository } from '../domain/Automation';
 
 // 'Lead estagnado' faltava aqui (achado do Piloto 018) apesar de já existir no enum Prisma

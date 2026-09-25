@@ -1,6 +1,6 @@
-import type { CadenceRateLimitPort } from '../application/rateLimitService';
-import { extractEmailDomain, type LastSentTouch } from '../domain/rateLimit';
-import type { InMemoryCadenceRunRepository } from './InMemoryCadenceRunRepository';
+import type { CadenceRateLimitPort } from '../application/rateLimitService.js';
+import { extractEmailDomain, type LastSentTouch } from '../domain/rateLimit.js';
+import type { InMemoryCadenceRunRepository } from './InMemoryCadenceRunRepository.js';
 
 /**
  * Implementação em memória de `CadenceRateLimitPort`, usada nos testes — deriva as contagens

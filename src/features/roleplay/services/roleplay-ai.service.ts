@@ -5,8 +5,8 @@ import {
   logAiUsage,
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
   wrapUntrustedContent,
-} from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
+} from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 
 export interface RoleplayPersona {
   name: string;

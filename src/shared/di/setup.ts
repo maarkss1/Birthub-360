@@ -28,10 +28,10 @@ import { BugReportController } from '../../features/bug-reports/presentation/Bug
 // comentário acima: `intelligence/**` não pode importar `cadence/**` diretamente
 // (no-cross-feature-imports), então a rota resolve este repositório via container com um tipo
 // estrutural local (mesmo padrão de `ChurnPredictionService`/`CommercialIntelligenceAiService`).
-import { prismaSignatureRequestRepository } from '../../features/cadence/infra/PrismaSignatureRequestRepository';
+import { prismaSignatureRequestRepository } from '../../features/cadence/infra/PrismaSignatureRequestRepository.js';
 import { MeetingSynthesisService } from '../../features/chatbook/services/meeting-synthesis.service';
 import { CommercialIntelligenceUseCases } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases';
-import { currentPeriod } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases';
+import { currentPeriod } from '../../features/commercial-intelligence/application/CommercialIntelligenceUseCases.js';
 import { CommercialIntelligenceAiService } from '../../features/commercial-intelligence/infra/CommercialIntelligenceAiService';
 import { PrismaCommercialIntelligenceRepository } from '../../features/commercial-intelligence/infra/PrismaCommercialIntelligenceRepository';
 import { PrismaForecastSnapshotStore } from '../../features/commercial-intelligence/infra/PrismaForecastSnapshotStore';
@@ -61,13 +61,13 @@ import { FeatureFlagsUseCases } from '../../features/feature-flags/application/F
 import { PrismaFeatureFlagRepository } from '../../features/feature-flags/infra/PrismaFeatureFlagRepository';
 import { FeatureFlagsController } from '../../features/feature-flags/presentation/FeatureFlagsController';
 import { BitrixLeadWritebackAdapter } from '../../features/integrations/bitrix/infra/BitrixLeadWritebackAdapter';
-import { testBitrixConnection } from '../../features/integrations/bitrix/service/connections';
+import { testBitrixConnection } from '../../features/integrations/bitrix/service/connections.js';
 // Meeting Hub (Google Meet no agendamento público) — mesmo motivo do comentário da Onda 43 acima:
 // `src/features/calendar/routes/booking.routes.ts` não pode importar
 // `integrations/google/google.service.ts` diretamente (no-cross-feature-imports). Registrado aqui
 // e resolvido via `container.resolve<GoogleCalendarServiceContract>('GoogleCalendarService')` com
 // o tipo estrutural local já usado por `agent.routes.ts`.
-import { createCalendarEvent } from '../../features/integrations/google/google.service';
+import { createCalendarEvent } from '../../features/integrations/google/google.service.js';
 import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/StripeChargeAdapter';
 // Negociador de IA em segundo plano (item 3 da IA Agêntica de Vendas, onda de 2026-09-15) — mesmo
 // motivo do comentário da Onda 43 acima: `intelligence/services/aiPendingAction.service.ts` não
@@ -75,15 +75,15 @@ import { StripeChargeAdapter } from '../../features/integrations/stripe/infra/St
 // (no-cross-feature-imports). Registrado aqui e resolvido via
 // `container.resolve<WhatsAppSenderPort>('WhatsAppSenderPort')`, mesmo padrão de
 // `GoogleCalendarService` logo acima.
-import { callLead } from '../../features/integrations/birth-voice/birthVoice.service';
-import { sendWhatsAppMessage } from '../../features/integrations/whatsapp/whatsapp.service';
-import { CloserAgent } from '../../features/intelligence/agents/closer.agent';
-import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent';
+import { callLead } from '../../features/integrations/birth-voice/birthVoice.service.js';
+import { sendWhatsAppMessage } from '../../features/integrations/whatsapp/whatsapp.service.js';
+import { CloserAgent } from '../../features/intelligence/agents/closer.agent.js';
+import { SDRQualificationAgent } from '../../features/intelligence/agents/sdrQualification.agent.js';
 // Agent Runtime Genérico (PROMPT 4) — mesmo motivo do comentário da Onda 43 acima:
 // `src/features/job-roles/**` (dono do CapabilityAuthorizationService/AgentRuntime) não pode
 // importar `knowledge`/`intelligence/agents`/`integrations/bitrix` diretamente. Registrados aqui e
 // resolvidos via `container.resolve<T>(name)` em `toolExecutors.ts`, com tipos estruturais locais.
-import { searchService } from '../../features/knowledge/search.service';
+import { searchService } from '../../features/knowledge/search.service.js';
 // AIAGENT-004 (onda 6): motor real por trás do Agente LDR — Inteligência de Leads da Célula
 // Comercial (`src/features/intelligence/agents/ldrIntelligence.agent.ts`). Mesmo motivo do
 // comentário da Onda 43 acima: `intelligence/**` não pode importar `market-intelligence/**`
@@ -92,7 +92,7 @@ import { searchService } from '../../features/knowledge/search.service';
 // escopado por tenant, `req.db`, e o `organizationId` da sessão autenticada), então o que vai para
 // o container é uma FÁBRICA — registrar uma instância aqui vazaria o tenant da primeira requisição
 // para todas as seguintes.
-import { AccountIntelligenceService } from '../../features/market-intelligence/server/accountIntelligence.service';
+import { AccountIntelligenceService } from '../../features/market-intelligence/server/accountIntelligence.service.js';
 // Use Cases
 import { NoteUseCases } from '../../features/notes/application/NoteUseCases';
 // Repositories
@@ -106,8 +106,8 @@ import { ObjectionMatrixController } from '../../features/playbook/objection-mat
 import { QualificationMatrixUseCases } from '../../features/playbook/qualification-matrix/application/QualificationMatrixUseCases';
 import { PrismaQualificationMatrixRepository } from '../../features/playbook/qualification-matrix/infra/PrismaQualificationMatrixRepository';
 import { QualificationMatrixController } from '../../features/playbook/qualification-matrix/presentation/QualificationMatrixController';
-import { InMemoryEventBus } from '../infra/events/InMemoryEventBus';
-import { container } from './container';
+import { InMemoryEventBus } from '../infra/events/InMemoryEventBus.js';
+import { container } from './container.js';
 
 export function setupDI() {
   // 1. Shared

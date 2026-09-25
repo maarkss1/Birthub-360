@@ -1,9 +1,9 @@
 import { randomBytes } from 'node:crypto';
 import type { VoiceHubConnection } from '@prisma/client';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
 
 /**
  * CRUD da conexão com o Birth Voices Hub por organização — mesmo padrão de

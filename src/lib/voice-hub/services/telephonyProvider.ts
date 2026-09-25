@@ -1,4 +1,4 @@
-import { getOutboundConfig } from './twilioClient';
+import { getOutboundConfig } from './twilioClient.js';
 
 export class TelephonyProviderNotSupportedError extends Error {}
 

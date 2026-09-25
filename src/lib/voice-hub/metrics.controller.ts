@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { metricSchema } from '../validators/index';
-import { listMetrics, createMetric, clearMetrics } from '../services/metricService';
+import { metricSchema } from '../validators/index.js';
+import { listMetrics, createMetric, clearMetrics } from '../services/metricService.js';
 
 export async function listMetricsHandler(req: Request, res: Response) {
   const metrics = await listMetrics(req.organizationId!, req.user!.id);

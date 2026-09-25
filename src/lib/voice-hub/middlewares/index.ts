@@ -1,10 +1,10 @@
 import express from 'express';
 import { Redis } from 'ioredis';
-import { verifyToken, TokenPayload } from '../lib/auth-tokens';
-import { refreshSession } from '../services/authService';
-import { setCookie, ACCESS_TOKEN_MAX_AGE_MS } from '../lib/cookies';
-import { authenticateApiKey, isApiKeyFormat } from '../services/apiKeyService';
-import { getRedisUrl, getRedisRetryStrategy } from '../lib/env';
+import { verifyToken, TokenPayload } from '../lib/auth-tokens.js';
+import { refreshSession } from '../services/authService.js';
+import { setCookie, ACCESS_TOKEN_MAX_AGE_MS } from '../lib/cookies.js';
+import { authenticateApiKey, isApiKeyFormat } from '../services/apiKeyService.js';
+import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
 import { logger } from '@/lib/logger';
 
 export const csrfProtection = (req: express.Request, res: express.Response, next: express.NextFunction) => {

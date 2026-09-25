@@ -1,10 +1,10 @@
-import { getPaidProspectingKey } from '../../../config/prospecting-integrations';
-import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch';
+import { getPaidProspectingKey } from '../../../config/prospecting-integrations.js';
+import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
 import { logger } from '../../../lib/logger';
-import { assertProspectingBudgetNotExceeded } from './providerBudget';
-import { buildProviderCacheKey, withProviderCache } from './providerCache';
-import { recordProviderCallCost } from './providerCostMetrics';
-import { checkProviderRateLimit } from './providerRateLimit';
+import { assertProspectingBudgetNotExceeded } from './providerBudget.js';
+import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
+import { recordProviderCallCost } from './providerCostMetrics.js';
+import { checkProviderRateLimit } from './providerRateLimit.js';
 
 export interface HunterEmailResult {
   email: string | null;

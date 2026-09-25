@@ -1,4 +1,4 @@
-import { toE164BR } from '../../../lib/phone';
+import { toE164BR } from '../../../lib/phone.js';
 
 /**
  * Registro único de opt-out — protege os três canais de contato externo (e-mail, WhatsApp, voz)

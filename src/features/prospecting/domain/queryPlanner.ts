@@ -1,10 +1,10 @@
-import type { ProspectingProviderMode } from '../../../config/prospecting-integrations';
+import type { ProspectingProviderMode } from '../../../config/prospecting-integrations.js';
 import {
   type DiscoveryProviderId,
   isProviderAvailable,
   PROVIDER_CAPABILITIES,
-} from './providerCapabilities';
-import type { SearchIntent } from './searchIntent';
+} from './providerCapabilities.js';
+import type { SearchIntent } from './searchIntent.js';
 
 /**
  * CPI DEC-12 (opção A) — camada `QueryPlanner`.

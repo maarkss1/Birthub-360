@@ -7,7 +7,7 @@ import {
   type GoldenDatasetFile,
   goldenDatasetFileSchema,
   type ToolUseGoldenCase,
-} from './goldenDataset.types';
+} from './goldenDataset.types.js';
 
 /**
  * AI-005 (onda 36): ponto único de leitura do Golden Dataset. Importa o JSON como módulo (não

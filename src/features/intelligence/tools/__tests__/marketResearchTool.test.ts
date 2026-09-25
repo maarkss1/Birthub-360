@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { marketResearchTool } from '../marketResearchTool';
+import { marketResearchTool } from '../marketResearchTool.js';
 
 describe('marketResearchTool', () => {
   beforeEach(() => {

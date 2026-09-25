@@ -1,8 +1,8 @@
 import { createId } from '@paralleldrive/cuid2';
 import type { Prisma } from '@prisma/client';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { getCostPerCallUsd, type ProspectingCostProvider } from './providerCostMetrics';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { getCostPerCallUsd, type ProspectingCostProvider } from './providerCostMetrics.js';
 
 /**
  * Onda 42 (dossiê CPI, DEC-13, opção A): hoje não existe um identificador de EXECUÇÃO de busca que

@@ -1,17 +1,17 @@
 import { randomUUID } from 'node:crypto';
-import { requestContext } from '../../lib/async-context';
-import { fromPrismaAutomationAction, toPrismaAutomationTrigger } from '../../lib/enumMap';
-import { logger } from '../../lib/logger';
-import { prisma } from '../../lib/prisma';
+import { requestContext } from '../../lib/async-context.js';
+import { fromPrismaAutomationAction, toPrismaAutomationTrigger } from '../../lib/enumMap.js';
+import { logger } from '../../lib/logger.js';
+import { prisma } from '../../lib/prisma.js';
 import {
   type NotificationKind,
   notificationService,
-} from '../notifications/notification.service';
-import { automationHistoryService } from './automation-history.service';
+} from '../notifications/notification.service.js';
+import { automationHistoryService } from './automation-history.service.js';
 import {
   buildTriggerIdempotencyKey,
   claimAutomationTrigger,
-} from './automation-idempotency.service';
+} from './automation-idempotency.service.js';
 
 export type AutomationTrigger =
   | 'Lead criado'

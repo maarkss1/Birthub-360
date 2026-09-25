@@ -1,10 +1,10 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { Prisma } from '@prisma/client';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
 
 // Mensagens antigas demais (fora da janela) não entram no prompt — o objetivo é ler a conversa
 // recente, não reprocessar o histórico inteiro a cada nova mensagem.

@@ -1,13 +1,13 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import {
   getCapabilityDefinitionByCode,
   listCapabilityDefinitions,
-} from '../services/capability.service';
-import { authorizeCapability } from '../services/capabilityAuthorization.service';
+} from '../services/capability.service.js';
+import { authorizeCapability } from '../services/capabilityAuthorization.service.js';
 
 const router = Router();
 

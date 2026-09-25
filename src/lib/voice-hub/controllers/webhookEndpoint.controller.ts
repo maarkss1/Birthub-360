@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
-import { createWebhookEndpointSchema } from '../validators/index';
-import { writeAuditLog } from '../services/audit';
+import { createWebhookEndpointSchema } from '../validators/index.js';
+import { writeAuditLog } from '../services/audit.js';
 import {
   WebhookEndpointServiceError,
   createWebhookEndpointForTenant,
   listWebhookEndpointsForTenant,
   deleteWebhookEndpointForTenant,
   regenerateWebhookEndpointSecret,
-} from '../services/webhookEndpointService';
+} from '../services/webhookEndpointService.js';
 
 // Shared by every handler below: WebhookEndpointServiceError carries the right HTTP status for a
 // business-rule rejection (limit reached, not found). Returns true when it handled the error

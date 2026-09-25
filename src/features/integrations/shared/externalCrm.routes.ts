@@ -6,9 +6,9 @@
 import { Router } from 'express';
 import express from 'express';
 import { z } from 'zod';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import { ExternalCrmService } from './ExternalCrmService';
-import { logger } from '../../../lib/logger';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { ExternalCrmService } from './ExternalCrmService.js';
+import { logger } from '../../../lib/logger.js';
 import type { Request, Response } from 'express';
 
 export const externalCrmRoutes = Router();

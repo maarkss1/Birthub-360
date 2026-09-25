@@ -6,20 +6,20 @@
  * um provedor novo, ou trocar a política de orçamento nunca deve exigir tocar nos outros módulos.
  */
 import type { BaseMessage } from '@langchain/core/messages';
-import { requestContext } from '../../async-context';
-import { assertAiBudgetNotExceeded } from '../budget';
-import { recordAiUsageCost } from '../metrics';
-import { resolveFallbackTimeoutMs } from './http-client';
-import { resolveModelName } from './model-routing';
-import { toChatCompletionMessages } from './parsing';
-import { estimateCostUsd } from './pricing';
-import { groqProvider } from './providers/groq.provider';
-import { litellmProvider } from './providers/litellm.provider';
-import { openaiProvider } from './providers/openai.provider';
-import type { ProviderAdapter } from './providers/types';
-import { sanitizeProviderMessage } from './redaction';
-import { traceAiGeneration } from './telemetry';
-import type { AiChatModel, AiInvokeResult, ChatCompletionResponse } from './types';
+import { requestContext } from '../../async-context.js';
+import { assertAiBudgetNotExceeded } from '../budget.js';
+import { recordAiUsageCost } from '../metrics.js';
+import { resolveFallbackTimeoutMs } from './http-client.js';
+import { resolveModelName } from './model-routing.js';
+import { toChatCompletionMessages } from './parsing.js';
+import { estimateCostUsd } from './pricing.js';
+import { groqProvider } from './providers/groq.provider.js';
+import { litellmProvider } from './providers/litellm.provider.js';
+import { openaiProvider } from './providers/openai.provider.js';
+import type { ProviderAdapter } from './providers/types.js';
+import { sanitizeProviderMessage } from './redaction.js';
+import { traceAiGeneration } from './telemetry.js';
+import type { AiChatModel, AiInvokeResult, ChatCompletionResponse } from './types.js';
 
 // Ordem de fallback: Groq primeiro (rápido, sem o gargalo de concorrência do modelo local),
 // OpenAI como segunda opção só se configurado, LiteLLM/Ollama por último (ver comentário em

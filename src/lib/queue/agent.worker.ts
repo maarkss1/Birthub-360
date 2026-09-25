@@ -1,10 +1,10 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { SDROutboundDraftAgent } from '../../features/intelligence/agents/sdrOutboundDraft.agent';
-import { requestContext } from '../async-context';
-import { logger } from '../logger';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
-import { connection } from './redis';
+import { SDROutboundDraftAgent } from '../../features/intelligence/agents/sdrOutboundDraft.agent.js';
+import { requestContext } from '../async-context.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection } from './redis.js';
 
 export const AGENT_QUEUE_NAME = 'intelligence-agents';
 export const agentQueue = new Queue(AGENT_QUEUE_NAME, { connection });

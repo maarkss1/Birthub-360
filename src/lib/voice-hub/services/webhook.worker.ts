@@ -1,11 +1,11 @@
 import { createHmac } from 'crypto';
 import { Worker, Job, UnrecoverableError } from 'bullmq';
-import { getRedisConnectionOptions } from '../lib/env';
+import { getRedisConnectionOptions } from '../lib/env.js';
 import { logger } from '@/lib/logger';
-import { isPrivateOrReservedHost } from '../validators/index';
-import { WebhookPayload } from './webhook.service';
-import { findActiveSigningSecretHash } from './webhookEndpointService';
-import { recordDeliveryResult } from '../repositories/webhookEndpointRepository';
+import { isPrivateOrReservedHost } from '../validators/index.js';
+import { WebhookPayload } from './webhook.service.js';
+import { findActiveSigningSecretHash } from './webhookEndpointService.js';
+import { recordDeliveryResult } from '../repositories/webhookEndpointRepository.js';
 
 /** Matches the 5s timeout published in docs/webhooks/index.md. */
 const DELIVERY_TIMEOUT_MS = 5000;

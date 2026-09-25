@@ -1,13 +1,13 @@
-import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
+import { DisallowedHostError, fetchWithTimeout, HttpTimeoutError } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 import {
   parseRetryAfterMs,
   retryWithBackoff,
   TransientHttpError,
-} from '../../../shared/http/retryWithBackoff';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard';
+} from '../../../shared/http/retryWithBackoff.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
 
 // INTEGRATION-002: mesma estratégia de retry/backoff do Bitrix/Stripe/Omie (src/shared/http/
 // retryWithBackoff.ts) — rede/timeout/429/5xx é recuperável; qualquer outra resposta HTTP é

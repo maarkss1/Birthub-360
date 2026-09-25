@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex';
+import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
 import { prisma } from '../../../lib/prisma';
 import type { Contact, ContactRepository } from '../domain/Contact';
 

@@ -1,5 +1,5 @@
-import { logger } from '../../../../lib/logger';
-import { callBitrix } from './client';
+import { logger } from '../../../../lib/logger.js';
+import { callBitrix } from './client.js';
 
 /**
  * Resolução de contato/empresa reais por trás de atividades e tarefas do Bitrix24 — extraído de

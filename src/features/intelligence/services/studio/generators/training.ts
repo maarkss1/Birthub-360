@@ -1,6 +1,6 @@
-import type { StudioGenerationRequest } from '../schema';
-import { trainingResultSchema } from '../schema';
-import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared';
+import type { StudioGenerationRequest } from '../schema.js';
+import { trainingResultSchema } from '../schema.js';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
 
 export async function generateTraining(
   request: Extract<StudioGenerationRequest, { kind: 'training' }>,

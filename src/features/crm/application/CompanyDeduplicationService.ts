@@ -1,6 +1,6 @@
-import { requestContext } from '../../../lib/async-context';
+import { requestContext } from '../../../lib/async-context.js';
 import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 
 /**
  * Item 13 (Inteligência de Dados & Enriquecimento) — de-duplicação de `Company`, mesmo padrão de

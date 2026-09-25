@@ -1,28 +1,28 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import multer from 'multer';
 import { z } from 'zod';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import { validateRequest } from '../../../shared/middlewares/validateRequest';
-import { rntrcRiskByUf } from '../../../shared/services/rntrcTerritorialRisk.service';
-import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
-import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema';
-import { checkApolloConnection } from '../services/apollo.service';
-import { fetchCnpjData } from '../services/enrichment.service';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { rntrcRiskByUf } from '../../../shared/services/rntrcTerritorialRisk.service.js';
+import { IcebreakerService } from '../../intelligence/services/IcebreakerService.js';
+import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
+import { checkApolloConnection } from '../services/apollo.service.js';
+import { fetchCnpjData } from '../services/enrichment.service.js';
 import {
   extractTextFromImage,
   OcrValidationError,
   structureOcrCandidate,
-} from '../services/ocr.service';
+} from '../services/ocr.service.js';
 import {
   discoverCandidates,
   discoverDecisionMakers,
   promoteToCrm,
   rejectCandidate,
-} from '../services/prospecting.service';
-import { findSearchExecution } from '../services/searchExecution.service';
-import { normalizeCompanyDomain } from '../utils/domain';
+} from '../services/prospecting.service.js';
+import { findSearchExecution } from '../services/searchExecution.service.js';
+import { normalizeCompanyDomain } from '../utils/domain.js';
 
 const icebreakerService = new IcebreakerService();
 
@@ -219,7 +219,7 @@ router.post(
 );
 
 // Import the cold email service
-import { type ColdEmailCampaign, sendColdEmail } from '../services/cold-email.service';
+import { type ColdEmailCampaign, sendColdEmail } from '../services/cold-email.service.js';
 
 // Envia um cold email (ex: template de prospecção) com rotulagem LGPD
 router.post(
@@ -248,12 +248,12 @@ router.post(
   },
 );
 
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { enrichmentCascadeQueue } from '../../../lib/queue/enrichmentCascade.worker';
-import { connection as bullmqRedisConnection, pingRedis } from '../../../lib/queue/redis';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { enrichmentCascadeQueue } from '../../../lib/queue/enrichmentCascade.worker.js';
+import { connection as bullmqRedisConnection, pingRedis } from '../../../lib/queue/redis.js';
 // ───────────────────── Enriquecimento em Cascata (Apollo ➔ Hunter ➔ Google Places) ─────────────────────
-import { runEnrichmentCascade } from '../services/enrichmentCascade.service';
+import { runEnrichmentCascade } from '../services/enrichmentCascade.service.js';
 
 // queuesEnabled (redis.ts) só confere se REDIS_URL está presente, não se o Redis está de fato
 // acessível em runtime. Se a env aponta pra um Redis inatingível, enrichmentCascadeQueue.add()

@@ -14,8 +14,8 @@ vi.mock('../repositories/userRepository.js', () => ({
   findMembershipWithRole: vi.fn(),
 }));
 
-import * as apiKeyRepository from '../repositories/apiKeyRepository';
-import * as userRepository from '../repositories/userRepository';
+import * as apiKeyRepository from '../repositories/apiKeyRepository.js';
+import * as userRepository from '../repositories/userRepository.js';
 import {
   ApiKeyServiceError,
   API_KEY_PREFIX,
@@ -24,7 +24,7 @@ import {
   isApiKeyFormat,
   listApiKeysForTenant,
   revokeApiKeyForTenant,
-} from './apiKeyService';
+} from './apiKeyService.js';
 
 beforeEach(() => {
   vi.clearAllMocks();

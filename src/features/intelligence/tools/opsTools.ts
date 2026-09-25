@@ -8,14 +8,14 @@
 
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { getTenantId } from '../../../lib/async-context';
-import { prisma } from '../../../lib/prisma';
-import { ACTIVITY_TYPE } from '../../../lib/zod';
-import { activityService } from '../../activities/services/activity.service';
+import { getTenantId } from '../../../lib/async-context.js';
+import { prisma } from '../../../lib/prisma.js';
+import { ACTIVITY_TYPE } from '../../../lib/zod.js';
+import { activityService } from '../../activities/services/activity.service.js';
 import {
   type NotificationKind,
   notificationService,
-} from '../../notifications/notification.service';
+} from '../../notifications/notification.service.js';
 
 // ATENÇÃO — módulo MORTO em produção, mantido no repo de propósito (histórico/referência), NÃO é
 // mais a fonte de verdade para nada que precise refletir o comportamento real do OpsAgent.

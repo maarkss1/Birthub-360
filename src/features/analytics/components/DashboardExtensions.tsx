@@ -1,5 +1,5 @@
 import { SERIES } from '../../../shared/constants/chartPalette';
-import type { AnalyticsDashboard } from '../analytics.api';
+import type { AnalyticsDashboard } from '../analytics.api.js';
 
 const DAY_NAMES = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 

@@ -2,7 +2,7 @@ import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
   fromPrismaLeadStatus,
-} from '../../../lib/enumMap';
+} from '../../../lib/enumMap.js';
 import {
   type AnalyticsDashboard,
   type AnalyticsRepository,

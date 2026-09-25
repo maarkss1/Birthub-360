@@ -1,9 +1,9 @@
 import client from 'prom-client';
-import { getTenantId } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { cacheConnection, redisConfigured } from '../../../lib/queue/redis';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import { getTenantId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { cacheConnection, redisConfigured } from '../../../lib/queue/redis.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 
 /** Providers de prospecção faturáveis — definido aqui (não em `providerCostMetrics.ts`) para
  * evitar um ciclo de import: `providerCostMetrics.ts` já depende deste arquivo em runtime

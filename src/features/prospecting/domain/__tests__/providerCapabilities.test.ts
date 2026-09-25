@@ -5,9 +5,9 @@
  * decide corretamente o portão de modo pago/gratuito.
  */
 import { describe, expect, it } from 'vitest';
-import { getCostPerCallUsd } from '../../services/providerCostMetrics';
-import { getRateLimitPerMinute } from '../../services/providerRateLimit';
-import { isProviderAvailable, PROVIDER_CAPABILITIES } from '../providerCapabilities';
+import { getCostPerCallUsd } from '../../services/providerCostMetrics.js';
+import { getRateLimitPerMinute } from '../../services/providerRateLimit.js';
+import { isProviderAvailable, PROVIDER_CAPABILITIES } from '../providerCapabilities.js';
 
 describe('PROVIDER_CAPABILITIES', () => {
   it('declara os 4 providers do domínio (Apollo, Google Places, Hunter, Nominatim)', () => {

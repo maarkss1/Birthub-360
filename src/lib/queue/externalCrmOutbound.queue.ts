@@ -1,10 +1,10 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { ExternalCrmService } from '../../features/integrations/shared/ExternalCrmService';
-import { requestContext } from '../async-context';
-import { logger } from '../logger';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
-import { connection, queuesEnabled } from './redis';
+import { ExternalCrmService } from '../../features/integrations/shared/ExternalCrmService.js';
+import { requestContext } from '../async-context.js';
+import { logger } from '../logger.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection, queuesEnabled } from './redis.js';
 
 export const EXTERNAL_CRM_OUTBOUND_QUEUE_NAME = 'external-crm-outbound-sync';
 

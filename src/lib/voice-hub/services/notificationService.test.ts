@@ -14,14 +14,14 @@ import {
   countUnreadForUser,
   markNotificationAsRead as markNotificationAsReadRow,
   markAllAsReadForUser,
-} from '../repositories/notificationRepository';
+} from '../repositories/notificationRepository.js';
 import {
   createNotification,
   listNotifications,
   markAllAsRead,
   markAsRead,
   NotificationNotFoundError,
-} from './notificationService';
+} from './notificationService.js';
 
 beforeEach(() => vi.clearAllMocks());
 

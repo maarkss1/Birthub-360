@@ -47,12 +47,12 @@ const { mockEnv } = vi.hoisted(() => ({
 }));
 vi.mock('../../../config/env.js', () => ({ env: mockEnv }));
 
-import { requestContext } from '../../async-context';
+import { requestContext } from '../../async-context.js';
 import {
   __resetOrgAiBudgetCacheForTests,
   AiOrgBudgetExceededError,
   assertAiBudgetNotExceeded,
-} from '../budget';
+} from '../budget.js';
 
 function mockOrgBudget(byOrgId: Record<string, number | null>): void {
   findUniqueMock.mockImplementation(async ({ where }: { where: { id: string } }) => {

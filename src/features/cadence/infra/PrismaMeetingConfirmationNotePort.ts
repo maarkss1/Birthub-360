@@ -1,5 +1,5 @@
-import { prisma } from '../../../lib/prisma';
-import type { MeetingConfirmationNotePort } from '../application/scheduleMeeting';
+import { prisma } from '../../../lib/prisma.js';
+import type { MeetingConfirmationNotePort } from '../application/scheduleMeeting.js';
 
 /** CYC-004 (onda 27) — mesmo padrão de `PrismaDealClosureGate.createConfirmationNote`: a Note é a
  * evidência real e auditável de que um humano confirmou o horário, nunca um resumo gerado por IA. */

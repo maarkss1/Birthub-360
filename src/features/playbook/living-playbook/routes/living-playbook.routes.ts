@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { container } from '../../../../shared/di/container';
-import { requireRole } from '../../../../shared/middlewares/requireRole';
-import type { LivingPlaybookController } from '../presentation/LivingPlaybookController';
+import { container } from '../../../../shared/di/container.js';
+import { requireRole } from '../../../../shared/middlewares/requireRole.js';
+import type { LivingPlaybookController } from '../presentation/LivingPlaybookController.js';
 
 const router = Router();
 // Item 42: envolve comparar desempenho entre vendedores e anunciar pro time inteiro — gate mais

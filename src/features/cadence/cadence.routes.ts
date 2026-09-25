@@ -1,13 +1,13 @@
 import { randomUUID } from 'node:crypto';
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { prisma } from '../../lib/prisma';
-import type { AuthRequest } from '../../shared/middlewares/authenticateToken';
-import { AppError } from '../../shared/middlewares/errorHandler';
-import { requireRole } from '../../shared/middlewares/requireRole';
-import { validateRequest } from '../../shared/middlewares/validateRequest';
-import { scheduleVerifiedMeeting } from './application/scheduleMeeting';
-import { deactivateCadenceSequence } from './application/sequenceService';
+import { prisma } from '../../lib/prisma.js';
+import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../shared/middlewares/errorHandler.js';
+import { requireRole } from '../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../shared/middlewares/validateRequest.js';
+import { scheduleVerifiedMeeting } from './application/scheduleMeeting.js';
+import { deactivateCadenceSequence } from './application/sequenceService.js';
 import {
   type CadenceRunStatus,
   pauseCadenceRun,
@@ -15,13 +15,13 @@ import {
   startCadenceRun,
   stopCadenceManually,
   validateSequence,
-} from './domain/cadence';
-import { prismaCadenceRunRepository } from './infra/PrismaCadenceRunRepository';
-import { prismaCadenceSequenceRepository } from './infra/PrismaCadenceSequenceRepository';
-import { prismaCalendarSchedulerPort } from './infra/PrismaCalendarSchedulerPort';
-import { prismaMeetingConfirmationNotePort } from './infra/PrismaMeetingConfirmationNotePort';
-import { prismaOptOutRepository } from './infra/PrismaOptOutRepository';
-import { parseCadenceSequenceDefinition } from './jobs/cadenceRun.worker';
+} from './domain/cadence.js';
+import { prismaCadenceRunRepository } from './infra/PrismaCadenceRunRepository.js';
+import { prismaCadenceSequenceRepository } from './infra/PrismaCadenceSequenceRepository.js';
+import { prismaCalendarSchedulerPort } from './infra/PrismaCalendarSchedulerPort.js';
+import { prismaMeetingConfirmationNotePort } from './infra/PrismaMeetingConfirmationNotePort.js';
+import { prismaOptOutRepository } from './infra/PrismaOptOutRepository.js';
+import { parseCadenceSequenceDefinition } from './jobs/cadenceRun.worker.js';
 
 /**
  * Router de cadência multicanal e opt-out unificado. Leitura (opt-outs/runs) desde a Onda 10;
@@ -128,8 +128,8 @@ router.get('/runs', async (req: Request, res: Response, next: NextFunction): Pro
   }
 });
 
-import { routeParam } from '../../shared/http/routeParams';
-import { CADENCE_JOURNEY_TEMPLATES } from './domain/cadenceTemplates';
+import { routeParam } from '../../shared/http/routeParams.js';
+import { CADENCE_JOURNEY_TEMPLATES } from './domain/cadenceTemplates.js';
 
 router.get('/templates', (_req: Request, res: Response): void => {
   res.json({ success: true, data: CADENCE_JOURNEY_TEMPLATES });

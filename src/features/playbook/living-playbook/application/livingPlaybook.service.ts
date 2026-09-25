@@ -1,8 +1,8 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../../lib/ai/gateway';
-import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma';
-import { notificationService } from '../../../notifications/notification.service';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../../lib/ai/gateway.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { notificationService } from '../../../notifications/notification.service.js';
 
 /**
  * Playbook Vivo (item 42 do roadmap): quando um vendedor descobre uma abordagem que converte

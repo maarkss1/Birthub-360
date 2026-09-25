@@ -39,8 +39,8 @@ vi.mock('@google/genai', () => {
   };
 });
 
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway';
-import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService';
+import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
 import {
   chatHandler,
   getAiConsentHandler,
@@ -51,7 +51,7 @@ import {
   videoStatusHandler,
   refactorWorkflowHandler,
   generateWorkflowHandler,
-} from './ai.controller';
+} from './ai.controller.js';
 
 function fakeResponse() {
   const res = {

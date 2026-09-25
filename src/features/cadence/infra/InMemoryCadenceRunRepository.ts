@@ -1,5 +1,5 @@
-import type { CadenceRunListFilter, CadenceRunRepository } from '../application/cadenceService';
-import type { CadenceRunState } from '../domain/cadence';
+import type { CadenceRunListFilter, CadenceRunRepository } from '../application/cadenceService.js';
+import type { CadenceRunState } from '../domain/cadence.js';
 
 /**
  * Implementação em memória usada em testes — o adaptador Prisma real

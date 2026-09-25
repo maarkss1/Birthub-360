@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { companySchema } from '../../../lib/zod';
+import { companySchema } from '../../../lib/zod.js';
 import { container } from '../../../shared/di/container';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import type { CompanyController } from '../presentation/CompanyController';
 
 const router = Router();

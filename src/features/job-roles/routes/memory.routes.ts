@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
 import {
   createLearningCandidateFromExecution,
   decideLearningCandidate,
@@ -13,7 +13,7 @@ import {
   listCandidates,
   MemoryServiceError,
   rollbackMemory,
-} from '../services/memory.service';
+} from '../services/memory.service.js';
 
 const router = Router();
 

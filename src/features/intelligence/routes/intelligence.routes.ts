@@ -26,48 +26,48 @@ import {
   summarizeLead,
   summarizeMeetingNotes,
   translateText,
-} from '../../../lib/ai/features';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { leadsQueue } from '../../../lib/queue/index';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requirePlatformOperator } from '../../../shared/middlewares/requirePlatformOperator';
-import { requireRole } from '../../../shared/middlewares/requireRole';
-import { validateRequest } from '../../../shared/middlewares/validateRequest';
-import { aiService } from '../services/ai.service';
-import { listAiSettings, saveAiSettings } from '../services/ai-settings.service';
+} from '../../../lib/ai/features.js';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { leadsQueue } from '../../../lib/queue/index.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requirePlatformOperator } from '../../../shared/middlewares/requirePlatformOperator.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
+import { aiService } from '../services/ai.service.js';
+import { listAiSettings, saveAiSettings } from '../services/ai-settings.service.js';
 import {
   appendAssistantTurn,
   listAssistantHistory,
-} from '../services/assistant-history.service';
+} from '../services/assistant-history.service.js';
 import {
   assertPiiExternalConsent,
   PiiConsentRequiredError,
   redactAndTrackPiiLeak,
-} from '../services/guardrails.service';
+} from '../services/guardrails.service.js';
 import {
   approvePendingAction,
   discardPendingAction,
   listActionsAwaitingOutcome,
   listPendingActions,
   recordActionOutcome,
-} from '../services/pending-actions.service';
+} from '../services/pending-actions.service.js';
 import {
   finishRoleplaySession,
   listRoleplaySessions,
-} from '../services/roleplay-session.service';
-import { generateAssistantStream } from '../services/studio/generators/assistant';
-import { SYSTEM_RULES, streamText } from '../services/studio/shared';
+} from '../services/roleplay-session.service.js';
+import { generateAssistantStream } from '../services/studio/generators/assistant.js';
+import { SYSTEM_RULES, streamText } from '../services/studio/shared.js';
 import {
   assistantRequestSchema,
   type StudioGenerationRequest,
   studioGenerationSchema,
   studioService,
-} from '../services/studio.service';
-import { analyzeOrgWinLoss, persistWinLossReport } from '../services/winLossAnalysis.worker';
-import { aiSuiteRouter } from './ai-suite.routes';
+} from '../services/studio.service.js';
+import { analyzeOrgWinLoss, persistWinLossReport } from '../services/winLossAnalysis.worker.js';
+import { aiSuiteRouter } from './ai-suite.routes.js';
 
 const router = Router();
 
@@ -322,8 +322,8 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
   }
 });
 
-import { loadAgentMemory } from '../agents/agentMemory.store';
-import { SDRQualificationAgent } from '../agents/sdrQualification.agent';
+import { loadAgentMemory } from '../agents/agentMemory.store.js';
+import { SDRQualificationAgent } from '../agents/sdrQualification.agent.js';
 
 router.post(
   '/agents/sdr/qualify',
@@ -392,7 +392,7 @@ router.get(
   },
 );
 
-import { VectorSearchService } from '../services/vector-search.service';
+import { VectorSearchService } from '../services/vector-search.service.js';
 
 router.get('/search', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

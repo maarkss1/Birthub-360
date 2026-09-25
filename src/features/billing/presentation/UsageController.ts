@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { UsageUseCases } from '../application/UsageUseCases';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { UsageUseCases } from '../application/UsageUseCases.js';
 
 const MIN_DAYS = 7;
 const MAX_DAYS = 90;

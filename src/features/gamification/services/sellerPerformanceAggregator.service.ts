@@ -2,8 +2,8 @@ import type {
   AggregatedSellerPerformance,
   SellerPerformancePeriod,
   SellerPerformanceRepository,
-} from '../domain/SellerPerformance';
-import { prismaSellerPerformanceRepository } from '../infra/PrismaSellerPerformanceRepository';
+} from '../domain/SellerPerformance.js';
+import { prismaSellerPerformanceRepository } from '../infra/PrismaSellerPerformanceRepository.js';
 
 export type { AggregatedSellerPerformance, SellerPerformancePeriod };
 

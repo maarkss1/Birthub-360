@@ -10,22 +10,22 @@ import makeWASocket, {
 } from '@whiskeysockets/baileys';
 import pino from 'pino';
 import qrcode from 'qrcode';
-import { requestContext } from '../../../lib/async-context';
-import { withTimeout } from '../../../lib/http';
-import { logger } from '../../../lib/logger';
-import { toE164BR } from '../../../lib/phone';
-import { recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { requestContext } from '../../../lib/async-context.js';
+import { withTimeout } from '../../../lib/http.js';
+import { logger } from '../../../lib/logger.js';
+import { toE164BR } from '../../../lib/phone.js';
+import { recordDeadLetter } from '../../../lib/queue/deadLetter.js';
 import {
   acquireDistributedLock,
   type DistributedLock,
-} from '../../../lib/queue/distributedLock';
-import { cacheConnection, isDedicatedWorkerProcess } from '../../../lib/queue/redis';
-import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { isOptedOut } from '../../cadence/application/optOutService';
-import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository';
-import { useRedisAuthState } from './useRedisAuthState';
-import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service';
+} from '../../../lib/queue/distributedLock.js';
+import { cacheConnection, isDedicatedWorkerProcess } from '../../../lib/queue/redis.js';
+import { enqueueWhatsAppCommand } from '../../../lib/queue/whatsappCommand.queue.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { isOptedOut } from '../../cadence/application/optOutService.js';
+import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
+import { useRedisAuthState } from './useRedisAuthState.js';
+import { extractMessageText, persistWhatsAppMessage } from './whatsappMessage.service.js';
 
 const BAILEYS_CALL_TIMEOUT_MS = 15_000;
 

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { saveWorkflowSchema } from '../validators/index';
-import { getWorkflow, saveWorkflow, updateWorkflow, removeWorkflow, getWorkflowHistory, restoreWorkflowVersion, duplicateWorkflow, publishWorkflow, listWorkflowVersions, rollbackToVersion, NotFoundError, ValidationFailedError } from '../services/workflowService';
-import { writeAuditLog } from '../services/audit';
+import { saveWorkflowSchema } from '../validators/index.js';
+import { getWorkflow, saveWorkflow, updateWorkflow, removeWorkflow, getWorkflowHistory, restoreWorkflowVersion, duplicateWorkflow, publishWorkflow, listWorkflowVersions, rollbackToVersion, NotFoundError, ValidationFailedError } from '../services/workflowService.js';
+import { writeAuditLog } from '../services/audit.js';
 
 export async function getWorkflowHandler(req: Request, res: Response) {
   const workflow = await getWorkflow(req.organizationId!);

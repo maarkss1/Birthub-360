@@ -1,6 +1,6 @@
-import type { PlaybookKey } from '../../../config/playbooks';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
+import type { PlaybookKey } from '../../../config/playbooks.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
 
 export interface AssistantHistoryMessage {
   id: string;

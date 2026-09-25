@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../shared/middlewares/authenticateToken';
-import { requestContext } from '../async-context';
-import { AuditService } from '../audit/audit.service';
+import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
+import { requestContext } from '../async-context.js';
+import { AuditService } from '../audit/audit.service.js';
 
 /**
  * Middleware Express para trilha de auditoria genérica por rota (AuditLog).

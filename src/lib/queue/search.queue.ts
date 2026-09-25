@@ -1,9 +1,9 @@
 import { type Job, Queue, QueueEvents, Worker } from 'bullmq';
-import { logger } from '../logger';
-import { meili } from '../search/index';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
-import { connection, queuesEnabled } from './redis';
+import { logger } from '../logger.js';
+import { meili } from '../search/index.js';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
+import { connection, queuesEnabled } from './redis.js';
 
 export const SEARCH_QUEUE_NAME = 'search-indexing';
 

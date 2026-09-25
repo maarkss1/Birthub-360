@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { container } from '../../../../shared/di/container';
-import { requireRole } from '../../../../shared/middlewares/requireRole';
-import { validateRequest } from '../../../../shared/middlewares/validateRequest';
-import { qualificationMatrixItemSchema } from '../../playbook.schema';
-import type { QualificationMatrixController } from '../presentation/QualificationMatrixController';
+import { container } from '../../../../shared/di/container.js';
+import { requireRole } from '../../../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../../../shared/middlewares/validateRequest.js';
+import { qualificationMatrixItemSchema } from '../../playbook.schema.js';
+import type { QualificationMatrixController } from '../presentation/QualificationMatrixController.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

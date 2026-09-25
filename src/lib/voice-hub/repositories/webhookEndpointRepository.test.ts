@@ -24,7 +24,7 @@ import {
   deleteEndpoint,
   regenerateSecret,
   recordDeliveryResult,
-} from './webhookEndpointRepository';
+} from './webhookEndpointRepository.js';
 
 beforeEach(() => vi.clearAllMocks());
 

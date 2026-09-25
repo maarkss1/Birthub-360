@@ -21,7 +21,7 @@ import {
   listApiKeysForTenant,
   revokeApiKey,
   touchLastUsed,
-} from './apiKeyRepository';
+} from './apiKeyRepository.js';
 
 beforeEach(() => vi.clearAllMocks());
 

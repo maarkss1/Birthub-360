@@ -30,7 +30,7 @@ import {
   DEFAULT_PROVIDER_CACHE_TTL_SECONDS,
   resetProviderCacheForTests,
   withProviderCache,
-} from '../providerCache';
+} from '../providerCache.js';
 
 beforeEach(async () => {
   vi.clearAllMocks();

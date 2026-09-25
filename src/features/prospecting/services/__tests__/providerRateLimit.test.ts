@@ -14,7 +14,7 @@ import {
   type ProspectingRateLimitedProvider,
   resetProviderRateLimitersForTests,
   tryConsumeToken,
-} from '../providerRateLimit';
+} from '../providerRateLimit.js';
 
 beforeEach(() => {
   resetProviderRateLimitersForTests();

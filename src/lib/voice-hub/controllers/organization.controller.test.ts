@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
-import { listOrganizationsHandler } from './organization.controller';
-import { findTenantById } from '../repositories/organizationRepository';
+import { listOrganizationsHandler } from './organization.controller.js';
+import { findTenantById } from '../repositories/organizationRepository.js';
 
 vi.mock('../repositories/organizationRepository.js', () => ({
   findTenantById: vi.fn(),

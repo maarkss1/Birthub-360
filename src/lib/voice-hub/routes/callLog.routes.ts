@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac';
-import { listCallLogsHandler, createCallLogHandler, updateCallLogHandler, deleteCallLogHandler } from '../controllers/callLog.controller';
+import { requireTenant } from '../middlewares/rbac.js';
+import { listCallLogsHandler, createCallLogHandler, updateCallLogHandler, deleteCallLogHandler } from '../controllers/callLog.controller.js';
 
 const router = express.Router();
 

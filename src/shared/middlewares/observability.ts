@@ -1,8 +1,8 @@
 import { context, trace } from '@opentelemetry/api';
 import type { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../../lib/logger';
-import type { AuthRequest } from './authenticateToken';
+import { logger } from '../../lib/logger.js';
+import type { AuthRequest } from './authenticateToken.js';
 
 export interface IObservabilityRequest extends Request {
   observability?: {

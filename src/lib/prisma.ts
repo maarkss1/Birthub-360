@@ -2,20 +2,20 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { Pool } from 'pg';
 import client from 'prom-client';
-import { env } from '../config/env';
-import { requestContext } from './async-context';
-import { type AuditAction, AuditService } from './audit/audit.service';
+import { env } from '../config/env.js';
+import { requestContext } from './async-context.js';
+import { type AuditAction, AuditService } from './audit/audit.service.js';
 import {
   decryptSensitiveResult,
   ENCRYPTED_MODEL_FIELDS as ENCRYPTED_FIELDS,
   encryptSensitiveFields,
-} from './crypto/piiFields';
-import { computeContactPiiIndexes } from './crypto/piiIndex';
-import { tryDecryptField } from './crypto/secretFields';
-import { logger } from './logger';
-import { queuesEnabled } from './queue/redis';
-import { searchQueue } from './queue/search.queue';
-import { TENANT_INJECTED_MODELS } from './tenant-scoping-registry';
+} from './crypto/piiFields.js';
+import { computeContactPiiIndexes } from './crypto/piiIndex.js';
+import { tryDecryptField } from './crypto/secretFields.js';
+import { logger } from './logger.js';
+import { queuesEnabled } from './queue/redis.js';
+import { searchQueue } from './queue/search.queue.js';
+import { TENANT_INJECTED_MODELS } from './tenant-scoping-registry.js';
 
 export { TENANT_INJECTED_MODELS };
 

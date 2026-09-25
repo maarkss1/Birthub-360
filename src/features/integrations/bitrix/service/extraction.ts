@@ -1,17 +1,17 @@
 import { randomUUID } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
-import { AuditService } from '../../../../lib/audit/audit.service';
-import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma';
-import { AppError } from '../../../../shared/middlewares/errorHandler';
-import { BITRIX_FIELD_MAP_VERSION } from '../bitrixFieldMap';
-import { callBitrix, getConnectionWebhookUrl } from './client';
+import { AuditService } from '../../../../lib/audit/audit.service.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
+import { BITRIX_FIELD_MAP_VERSION } from '../bitrixFieldMap.js';
+import { callBitrix, getConnectionWebhookUrl } from './client.js';
 import {
   ALL_EXTRACTION_ENTITIES,
   type BitrixExtractionEntity,
   EXTRACTION_ENTITY_SPECS,
   isExtractionEntity,
-} from './extractionEntities';
+} from './extractionEntities.js';
 import {
   buildXlsxWorkbook,
   deleteExtractionRunFiles,
@@ -21,15 +21,15 @@ import {
   toCsv,
   toJson,
   writeExtractionFile,
-} from './extractionFiles';
+} from './extractionFiles.js';
 import {
   type BitrixExtractionPeriod,
   EXTRACTION_PERIODS,
   InvalidExtractionPeriodError,
   type PeriodRange,
   resolvePeriodRange,
-} from './extractionPeriod';
-import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from './metrics';
+} from './extractionPeriod.js';
+import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from './metrics.js';
 
 // ── Serviço real de Extrações Bitrix (Onda 7, Agente 06/06A) ───────────────────────────────────
 //

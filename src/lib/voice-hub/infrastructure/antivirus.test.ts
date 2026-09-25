@@ -11,7 +11,7 @@ vi.mock('clamscan', () => ({
   },
 }));
 
-import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from './antivirus';
+import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from './antivirus.js';
 
 beforeEach(() => {
   vi.clearAllMocks();

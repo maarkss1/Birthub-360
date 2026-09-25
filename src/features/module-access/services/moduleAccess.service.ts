@@ -1,11 +1,11 @@
-import { isModuleKey, MODULE_KEYS } from '../../../config/module-catalog';
+import { isModuleKey, MODULE_KEYS } from '../../../config/module-catalog.js';
 import type {
   GrantModuleAccessInput,
   ModuleAccessMatrixUser,
   ModuleAccessRepository,
   RevokeModuleAccessInput,
-} from '../domain/ModuleAccess';
-import { prismaModuleAccessRepository } from '../infra/PrismaModuleAccessRepository';
+} from '../domain/ModuleAccess.js';
+import { prismaModuleAccessRepository } from '../infra/PrismaModuleAccessRepository.js';
 
 export class ModuleAccessServiceError extends Error {
   constructor(

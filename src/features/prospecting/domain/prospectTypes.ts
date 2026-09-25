@@ -15,7 +15,7 @@
  * volta para `services/` quebra o ciclo pela raiz, em vez de só reposicioná-lo.
  */
 
-import type { DiscoveryProviderId } from './providerCapabilities';
+import type { DiscoveryProviderId } from './providerCapabilities.js';
 
 /** Tipos do Requirement Engine (`domain/requirementEngine.ts`) — vivem aqui, não lá, pelo mesmo
  * motivo do resto deste arquivo: `ProspectCandidate.requirementEvaluations` precisa do tipo

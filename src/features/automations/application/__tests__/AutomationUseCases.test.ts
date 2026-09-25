@@ -23,7 +23,7 @@ vi.mock('../../automation-dry-run.service.js', () => ({
   dryRunAutomation: (...args: unknown[]) => dryRunAutomationMock(...args),
 }));
 
-import { AutomationUseCases } from '../AutomationUseCases';
+import { AutomationUseCases } from '../AutomationUseCases.js';
 
 function buildAutomation(overrides: Partial<Automation> = {}): Automation {
   return {

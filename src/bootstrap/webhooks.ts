@@ -1,13 +1,13 @@
 import type { Express } from 'express';
-import { crm360PublicRoutes } from '../features/crm360/routes/crm360Public.routes';
-import { birthVoiceWebhookRoutes } from '../features/integrations/birth-voice/birthVoice.webhook';
-import { voiceResultWebhookRoutes } from '../features/integrations/birth-voice/voiceResult.webhook';
-import { bitrixWebhookRoutes } from '../features/integrations/bitrix/bitrix.webhook';
-import { chatwootWebhookRoutes } from '../features/integrations/chatwoot/chatwoot.webhook';
-import { emailReplyWebhookRoutes } from '../features/integrations/email/emailReply.webhook';
-import { signatureStatusWebhookRoutes } from '../features/integrations/signature/signatureStatus.webhook';
-import { stripeWebhookRoutes } from '../features/integrations/stripe/stripe.webhook';
-import { threecxWebhookRouter } from '../features/integrations/threecx/threecx.routes';
+import { crm360PublicRoutes } from '../features/crm360/routes/crm360Public.routes.js';
+import { birthVoiceWebhookRoutes } from '../features/integrations/birth-voice/birthVoice.webhook.js';
+import { voiceResultWebhookRoutes } from '../features/integrations/birth-voice/voiceResult.webhook.js';
+import { bitrixWebhookRoutes } from '../features/integrations/bitrix/bitrix.webhook.js';
+import { chatwootWebhookRoutes } from '../features/integrations/chatwoot/chatwoot.webhook.js';
+import { emailReplyWebhookRoutes } from '../features/integrations/email/emailReply.webhook.js';
+import { signatureStatusWebhookRoutes } from '../features/integrations/signature/signatureStatus.webhook.js';
+import { stripeWebhookRoutes } from '../features/integrations/stripe/stripe.webhook.js';
+import { threecxWebhookRouter } from '../features/integrations/threecx/threecx.routes.js';
 
 /**
  * Monta as rotas que precisam ficar ANTES do `express.json()` global (webhooks cuja autenticidade

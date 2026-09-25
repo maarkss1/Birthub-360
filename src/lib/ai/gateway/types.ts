@@ -5,7 +5,7 @@
  * contrato, nunca da implementação de outro módulo irmão.
  */
 import type { BaseMessage } from '@langchain/core/messages';
-import type { PromptId } from './prompt-registry';
+import type { PromptId } from './prompt-registry.js';
 
 export type ChatCompletionRole = 'system' | 'user' | 'assistant';
 

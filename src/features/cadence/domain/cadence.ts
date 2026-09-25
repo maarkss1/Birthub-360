@@ -18,8 +18,8 @@
  * - pausa e retomada manual disponíveis para o vendedor (`pauseCadenceRun`/`resumeCadenceRun`).
  */
 
-import type { CadenceChannel } from './optOut';
-import type { RateLimitBlockReason } from './rateLimit';
+import type { CadenceChannel } from './optOut.js';
+import type { RateLimitBlockReason } from './rateLimit.js';
 
 export type { CadenceChannel, RateLimitBlockReason };
 

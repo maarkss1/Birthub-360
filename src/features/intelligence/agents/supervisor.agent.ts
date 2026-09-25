@@ -2,14 +2,14 @@ import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from '@langc
 import { Annotation, StateGraph } from '@langchain/langgraph';
 import type { ChatOpenAI } from '@langchain/openai';
 import { z } from 'zod';
-import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { getTenantId } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { assertPiiExternalConsent } from '../services/guardrails.service';
-import { BDRAgent } from './bdr.agent';
-import { CloserAgent } from './closer.agent';
-import { CRMAgent } from './crm.agent';
+import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { getTenantId } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { assertPiiExternalConsent } from '../services/guardrails.service.js';
+import { BDRAgent } from './bdr.agent.js';
+import { CloserAgent } from './closer.agent.js';
+import { CRMAgent } from './crm.agent.js';
 // Lazy + memoizado: monta o cliente só no primeiro uso real, nunca na carga do módulo —
 // process.env.GROQ_API_KEY lido numa const de topo de arquivo ficava congelado como vazio se este
 // módulo fosse importado antes de `dotenv/config` terminar de rodar. Motor local (Ollama via
@@ -18,14 +18,14 @@ import { CRMAgent } from './crm.agent';
 // gargalo. Usar ChatOpenAI "cru" (em vez do wrapper AiChatModel do gateway) é o que habilita
 // tool-calling/structured output — o wrapper só devolve texto livre, e a decisão de roteamento
 // precisa ser JSON confiável.
-import { buildModelWithFallback } from './fallback.util';
-import { OpsAgent } from './ops.agent';
-import { SDRQualificationAgent } from './sdrQualification.agent';
+import { buildModelWithFallback } from './fallback.util.js';
+import { OpsAgent } from './ops.agent.js';
+import { SDRQualificationAgent } from './sdrQualification.agent.js';
 import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants';
+} from './swarm.constants.js';
 
 let cachedSupervisorLlm: ReturnType<typeof buildModelWithFallback> | null = null;
 function getSupervisorLlm() {

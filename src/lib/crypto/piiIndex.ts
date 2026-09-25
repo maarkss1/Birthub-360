@@ -1,6 +1,6 @@
 import { createHash, createHmac } from 'node:crypto';
-import { env } from '../../config/env';
-import { logger } from '../logger';
+import { env } from '../../config/env.js';
+import { logger } from '../logger.js';
 
 // Índice cego (blind index) para permitir busca exata sobre PII de Contact cifrada em repouso
 // (ver src/lib/crypto/piiFields.ts e src/lib/crypto/secretFields.ts) sem expor o texto puro.

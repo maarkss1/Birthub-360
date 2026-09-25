@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../../shared/middlewares/requireRole';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../../shared/middlewares/requireRole.js';
 import {
   cancelExtractionRun,
   connectBitrix,
@@ -34,9 +34,9 @@ import {
   setInboundEventsEnabled,
   setSyncRuleActive,
   testBitrixConnection,
-} from './bitrix.service';
-import { dailyPlanRoutes } from './dailyPlanRoutes';
-import type { ExtractionFileFormat } from './service/extractionFiles';
+} from './bitrix.service.js';
+import { dailyPlanRoutes } from './dailyPlanRoutes.js';
+import type { ExtractionFileFormat } from './service/extractionFiles.js';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

@@ -1,25 +1,25 @@
-import { env } from '../../../config/env';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import type { CallOutcomeState } from './birthVoice.helpers';
+import { env } from '../../../config/env.js';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import type { CallOutcomeState } from './birthVoice.helpers.js';
 import {
   BirthVoiceNotConfiguredError,
   callLead,
   NoPhoneNumberError,
   SuppressedNumberError,
-} from './birthVoice.service';
+} from './birthVoice.service.js';
 import {
   computeHourlyAnswerRates,
   prioritizeDialCandidates,
   scoreDialCandidate,
-} from './coldCall.scoring';
+} from './coldCall.scoring.js';
 import {
   type CallWindow,
   type DialPolicy,
   evaluateLead,
   isWithinCallWindow,
-} from './coldCall.policy';
+} from './coldCall.policy.js';
 
 /**
  * Etapa do funil que a campanha fria ataca. Leads mais adiante já têm um humano conduzindo — uma

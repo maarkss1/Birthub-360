@@ -1,4 +1,4 @@
-import { KnowledgeDocument } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine';
+import { KnowledgeDocument } from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
 
 /**
  * Shape of the Agent.configuration Prisma `Json` field.

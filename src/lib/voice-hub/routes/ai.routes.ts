@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac';
-import { requireAiProviderConsent } from '../middlewares/aiConsent';
+import { requireTenant } from '../middlewares/rbac.js';
+import { requireAiProviderConsent } from '../middlewares/aiConsent.js';
 import {
   chatHandler,
   generateMusicHandler,
@@ -11,7 +11,7 @@ import {
   generateWorkflowHandler,
   getAiConsentHandler,
   setAiConsentHandler,
-} from '../controllers/ai.controller';
+} from '../controllers/ai.controller.js';
 
 const router = express.Router();
 

@@ -25,7 +25,7 @@ vi.mock('../../lib/logger.js', () => ({
   },
 }));
 
-import { handleLiveness, handleReadiness, handleVersion } from '../healthchecks';
+import { handleLiveness, handleReadiness, handleVersion } from '../healthchecks.js';
 
 function createMockResponse() {
   const res: Partial<Response> = {};

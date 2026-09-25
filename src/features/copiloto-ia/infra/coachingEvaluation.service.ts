@@ -9,7 +9,7 @@
  * (`computeOverallScore`), determinística sobre os números que a IA atribuiu por dimensão.
  */
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
 
 export interface RubricDimension {
   score: number;

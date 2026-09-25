@@ -1,8 +1,8 @@
-import { emailDomainIndexOf } from '../../../lib/crypto/piiIndex';
-import { prisma } from '../../../lib/prisma';
-import type { CadenceRateLimitPort } from '../application/rateLimitService';
-import type { CadenceChannel } from '../domain/optOut';
-import type { LastSentTouch } from '../domain/rateLimit';
+import { emailDomainIndexOf } from '../../../lib/crypto/piiIndex.js';
+import { prisma } from '../../../lib/prisma.js';
+import type { CadenceRateLimitPort } from '../application/rateLimitService.js';
+import type { CadenceChannel } from '../domain/optOut.js';
+import type { LastSentTouch } from '../domain/rateLimit.js';
 
 /** `CadenceChannel` do Prisma ('Email'/'WhatsApp'/'Voice') → domínio ('email'/'whatsapp'/'voice'). Só usado aqui — nenhum outro adapter deste módulo precisou de um mapa genérico até agora (ver `countDistinctEmailRecipientsForDomain` abaixo, que compara direto contra o literal `'Email'`). */
 function fromPrismaCadenceChannel(value: string): CadenceChannel {

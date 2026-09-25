@@ -8,14 +8,14 @@ import mammoth from 'mammoth';
 // dependência for instalada pelo dono do package.json, este arquivo compila sem outra mudança.
 import pdfParse from 'pdf-parse';
 import { z } from 'zod';
-import { getAiModel } from '../../lib/ai/gateway';
-import { logger } from '../../lib/logger';
-import { routeParam } from '../../shared/http/routeParams';
-import type { AuthRequest } from '../../shared/middlewares/authenticateToken';
-import { requireRole } from '../../shared/middlewares/requireRole';
-import { validateRequest } from '../../shared/middlewares/validateRequest';
-import { ingestionService } from './ingestion.service';
-import { searchService } from './search.service';
+import { getAiModel } from '../../lib/ai/gateway.js';
+import { logger } from '../../lib/logger.js';
+import { routeParam } from '../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
+import { requireRole } from '../../shared/middlewares/requireRole.js';
+import { validateRequest } from '../../shared/middlewares/validateRequest.js';
+import { ingestionService } from './ingestion.service.js';
+import { searchService } from './search.service.js';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

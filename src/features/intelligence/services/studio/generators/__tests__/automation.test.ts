@@ -11,7 +11,7 @@ vi.mock('../../shared.js', () => ({
       .trim(),
 }));
 
-import { generateAutomation } from '../automation';
+import { generateAutomation } from '../automation.js';
 
 const request = {
   kind: 'automation' as const,

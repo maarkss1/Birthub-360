@@ -1,5 +1,5 @@
-import { env } from '../../../config/env';
-import { logger } from '../../../lib/logger';
+import { env } from '../../../config/env.js';
+import { logger } from '../../../lib/logger.js';
 
 /**
  * Disparo genérico de webhook de saída para o n8n (OS-4, docker-compose.services.yml) — mesmo

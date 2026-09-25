@@ -19,7 +19,7 @@
 import express from 'express';
 import request from 'supertest';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { errorHandler } from '../../../../shared/middlewares/errorHandler';
+import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
 
 // `vi.mock` é hoisted para o topo do arquivo — antes até do `import { errorHandler }` acima, que
 // puxa `config/env.js` na sua própria cadeia estática de imports. Sem `vi.hoisted`, o factory do

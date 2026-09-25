@@ -21,7 +21,7 @@ vi.mock('@/lib/logger', () => ({
   logger: { warn: (...args: unknown[]) => loggerWarnMock(...args), error: vi.fn(), info: vi.fn() },
 }));
 
-import { finishRoleplaySession, listRoleplaySessions } from '../roleplay-session.service';
+import { finishRoleplaySession, listRoleplaySessions } from '../roleplay-session.service.js';
 
 const evaluation = {
   overallScore: 72,

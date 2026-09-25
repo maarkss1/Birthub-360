@@ -1,5 +1,5 @@
-import { acquireDistributedLock } from '../../../lib/queue/distributedLock';
-import type { CadenceRunLockPort } from '../application/cadenceService';
+import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
+import type { CadenceRunLockPort } from '../application/cadenceService.js';
 
 /**
  * Implementação real de `CadenceRunLockPort` (CYC-008, onda-19) — reusa a mesma trava distribuída

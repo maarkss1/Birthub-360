@@ -1,7 +1,7 @@
 import { PostgresSaver } from '@langchain/langgraph-checkpoint-postgres';
 import { Pool } from 'pg';
-import { env } from '../../config/env';
-import { logger } from '../logger';
+import { env } from '../../config/env.js';
+import { logger } from '../logger.js';
 
 /**
  * AI-002 (onda 32): checkpointer real de LangGraph, compartilhado pelos 3 grafos que hoje usam

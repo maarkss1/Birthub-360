@@ -1,6 +1,6 @@
-import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex';
-import { prisma } from '../../../lib/prisma';
-import { parseLeadLookupQuery } from '../application/leadLookup';
+import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
+import { prisma } from '../../../lib/prisma.js';
+import { parseLeadLookupQuery } from '../application/leadLookup.js';
 import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
 import type {
   AddTranscriptSegmentInput,

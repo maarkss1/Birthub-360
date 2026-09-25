@@ -15,8 +15,8 @@ vi.mock('../../shared.js', () => ({
   },
 }));
 
-import { superagentAiResultSchema } from '../../schema';
-import { generateSuperagent } from '../superagent';
+import { superagentAiResultSchema } from '../../schema.js';
+import { generateSuperagent } from '../superagent.js';
 
 function buildRequest(name: string) {
   return {

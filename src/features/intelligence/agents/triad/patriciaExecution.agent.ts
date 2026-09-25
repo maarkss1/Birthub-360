@@ -3,9 +3,9 @@ import type {
   GiselleStrategyPlan,
   NextBestAction,
   PatriciaExecutionPlan,
-} from './triad.types';
+} from './triad.types.js';
 
-import { getAiModel } from '../../../../lib/ai/gateway';
+import { getAiModel } from '../../../../lib/ai/gateway.js';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
 
 export class PatriciaExecutionAgent {

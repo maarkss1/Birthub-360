@@ -1,6 +1,6 @@
 import type { Company } from '@prisma/client';
-import { prisma, withRlsContext } from '../../../lib/prisma';
-import { toDeterministicCnpj } from './cnpj.util';
+import { prisma, withRlsContext } from '../../../lib/prisma.js';
+import { toDeterministicCnpj } from './cnpj.util.js';
 
 /**
  * Resolução de identidade de empresa (dossiê CPI, DEC-16, opção A).

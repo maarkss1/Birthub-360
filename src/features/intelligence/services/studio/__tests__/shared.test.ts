@@ -49,7 +49,7 @@ import {
   safeIdentifier,
   streamText,
   stripCodeFence,
-} from '../shared';
+} from '../shared.js';
 
 function aiResult(content: string, model = 'local-llama3') {
   return {

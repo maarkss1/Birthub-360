@@ -1,7 +1,7 @@
 import { ArrowRight, Building2, GitBranch, Loader2, MapPin, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 export interface BranchCompanyItem {
   cnpj: string;

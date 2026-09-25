@@ -1,12 +1,12 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { redactAndTrackPiiLeak } from '../../intelligence/services/guardrails.service';
-import { notificationService } from '../../notifications/notification.service';
-import type { CommercialIntelligenceUseCases } from '../application/CommercialIntelligenceUseCases';
-import { classifyLossReason, LOSS_REASON_TAXONOMY } from '../application/lossTaxonomy';
-import { buildForecastRange, computeTrendMomentum } from '../application/predictiveForecast';
+import { cleanAndParseJson, getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { redactAndTrackPiiLeak } from '../../intelligence/services/guardrails.service.js';
+import { notificationService } from '../../notifications/notification.service.js';
+import type { CommercialIntelligenceUseCases } from '../application/CommercialIntelligenceUseCases.js';
+import { classifyLossReason, LOSS_REASON_TAXONOMY } from '../application/lossTaxonomy.js';
+import { buildForecastRange, computeTrendMomentum } from '../application/predictiveForecast.js';
 import type {
   CommercialIntelligenceFilter,
   DealDrillDownRow,
@@ -14,7 +14,7 @@ import type {
   LossReasonAiAnalysisResult,
   MentorPlaybookResult,
   MentorRecommendation,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 /**
  * Camada de IA do Comercial Inteligente — deliberadamente SEPARADA de `AIService`

@@ -1,7 +1,7 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { wrapUntrustedContent } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
+import { wrapUntrustedContent } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 
 interface SearchResultItem {
   title: string;

@@ -1,13 +1,13 @@
 import express, { type Request, type Response, Router } from 'express';
-import { requestContext } from '../../../lib/async-context';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { routeParam } from '../../../shared/http/routeParams';
+import { requestContext } from '../../../lib/async-context.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
-} from '../../../shared/security/webhookReplayGuard';
-import { isValidStripeSignature, type StripeWebhookEvent } from './stripe.helpers';
+} from '../../../shared/security/webhookReplayGuard.js';
+import { isValidStripeSignature, type StripeWebhookEvent } from './stripe.helpers.js';
 
 // ── Webhook de ENTRADA da Stripe (BILLING-007) ──────────────────────────────────────────────────
 //

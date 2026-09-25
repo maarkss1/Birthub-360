@@ -1,9 +1,9 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { LeadStatus } from '@prisma/client';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { notificationService } from '../../notifications/notification.service';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { notificationService } from '../../notifications/notification.service.js';
 
 /**
  * Detecção de deal em risco (item 5 de "IA Agêntica de Vendas"): três sinais — silêncio do lead,

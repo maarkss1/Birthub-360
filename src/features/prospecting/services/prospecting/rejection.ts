@@ -1,5 +1,5 @@
-import { prisma } from '../../../../lib/prisma';
-import type { RejectCandidateInput } from './types';
+import { prisma } from '../../../../lib/prisma.js';
+import type { RejectCandidateInput } from './types.js';
 
 /**
  * Registra um candidato como "Não é esse perfil" — passa a ser excluído de futuras descobertas

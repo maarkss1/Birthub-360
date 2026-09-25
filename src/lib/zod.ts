@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { sanitizeCnpj } from './cnpj';
+import { sanitizeCnpj } from './cnpj.js';
 
 // ─── Enums de Domínio ───────────────────────────────────────────────────────
 // Ao invés de strings livres, definimos os valores aceitos explicitamente.

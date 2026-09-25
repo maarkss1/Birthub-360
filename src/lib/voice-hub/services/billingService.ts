@@ -17,7 +17,7 @@ import {
   isUniqueConstraintViolation,
   upsertWalletPlan,
   WalletWithPlan,
-} from '../repositories/billingRepository';
+} from '../repositories/billingRepository.js';
 
 export type PlanStatus = 'inactive' | 'active' | 'past_due' | 'canceled' | 'trialing';
 

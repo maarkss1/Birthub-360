@@ -9,7 +9,7 @@
  * revisões quando o snapshot semanal roda mais de uma vez no mesmo período.
  */
 
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import type {
   ForecastSnapshotRecord,
   ForecastSnapshotStore,

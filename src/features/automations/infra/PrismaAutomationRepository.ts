@@ -4,8 +4,8 @@ import {
   fromPrismaAutomationTrigger,
   toPrismaAutomationAction,
   toPrismaAutomationTrigger,
-} from '../../../lib/enumMap';
-import { prisma } from '../../../lib/prisma';
+} from '../../../lib/enumMap.js';
+import { prisma } from '../../../lib/prisma.js';
 import type { Automation, AutomationRepository } from '../domain/Automation';
 
 /**

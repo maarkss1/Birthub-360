@@ -12,8 +12,8 @@ vi.mock('../services/telephonyService.js', () => ({
   messages: { reprompt: 'Pode repetir?', goodbye: 'Até logo.' },
 }));
 
-import { handleTurn } from '../services/telephonyService';
-import { gatherHandler } from './telephony.controller';
+import { handleTurn } from '../services/telephonyService.js';
+import { gatherHandler } from './telephony.controller.js';
 
 const mockHandleTurn = vi.mocked(handleTurn);
 

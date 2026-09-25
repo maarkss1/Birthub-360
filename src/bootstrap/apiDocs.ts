@@ -3,8 +3,8 @@ import path from 'node:path';
 import type { Express } from 'express';
 import swaggerUi from 'swagger-ui-express';
 import { parse as parseYaml } from 'yaml';
-import { env } from '../config/env';
-import { logger } from '../lib/logger';
+import { env } from '../config/env.js';
+import { logger } from '../lib/logger.js';
 
 /**
  * DOC-002: a API não tinha nenhuma documentação além do código-fonte das rotas. Montada em dev

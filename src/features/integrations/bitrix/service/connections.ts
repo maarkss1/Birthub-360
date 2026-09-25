@@ -1,11 +1,11 @@
 import { randomBytes } from 'node:crypto';
-import { env } from '../../../../config/env';
-import { AuditService } from '../../../../lib/audit/audit.service';
-import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma';
-import { AppError } from '../../../../shared/middlewares/errorHandler';
-import { assertSafeExternalUrl } from '../../../../shared/security/urlGuard';
-import { getConnectionWebhookUrl, hostnameOf, normalizeWebhookUrl, testWebhook } from './client';
+import { env } from '../../../../config/env.js';
+import { AuditService } from '../../../../lib/audit/audit.service.js';
+import { logger } from '../../../../lib/logger.js';
+import { prisma } from '../../../../lib/prisma.js';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
+import { assertSafeExternalUrl } from '../../../../shared/security/urlGuard.js';
+import { getConnectionWebhookUrl, hostnameOf, normalizeWebhookUrl, testWebhook } from './client.js';
 
 export interface BitrixConnectionSummary {
   id: string;

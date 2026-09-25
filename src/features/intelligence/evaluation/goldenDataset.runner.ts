@@ -1,13 +1,13 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
-import { generateEmailDraft, generateObjectionHandling } from '../../../lib/ai/features';
-import { cleanAndParseJson, getAiModel } from '../../../lib/ai/gateway';
-import { NextBestActionService } from '../../activities/services/next-best-action.service';
-import { MeetingSynthesisService } from '../../chatbook/services/meeting-synthesis.service';
-import { KnowledgeCopilotService } from '../../knowledge/services/knowledge-copilot.service';
-import { compileLeadGraph } from '../graphs/leadQualification';
-import { generateRoleplay } from '../services/studio/generators/roleplay';
-import { GOLDEN_TOOL_NAMES, type GoldenCase } from './goldenDataset.types';
+import { generateEmailDraft, generateObjectionHandling } from '../../../lib/ai/features.js';
+import { cleanAndParseJson, getAiModel } from '../../../lib/ai/gateway.js';
+import { NextBestActionService } from '../../activities/services/next-best-action.service.js';
+import { MeetingSynthesisService } from '../../chatbook/services/meeting-synthesis.service.js';
+import { KnowledgeCopilotService } from '../../knowledge/services/knowledge-copilot.service.js';
+import { compileLeadGraph } from '../graphs/leadQualification.js';
+import { generateRoleplay } from '../services/studio/generators/roleplay.js';
+import { GOLDEN_TOOL_NAMES, type GoldenCase } from './goldenDataset.types.js';
 
 // Achado da auditoria (PR #328, item fora de escopo original): sem este schema, um "tool" fora de
 // GOLDEN_TOOL_NAMES (nome inventado, ou a mais provável falha real: um typo do LLM) passava para o

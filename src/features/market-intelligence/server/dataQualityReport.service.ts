@@ -26,7 +26,7 @@
  */
 import type { Prisma } from '@prisma/client';
 
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 
 type TenantDb = NonNullable<AuthRequest['db']>;
 

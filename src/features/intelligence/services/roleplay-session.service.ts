@@ -1,8 +1,8 @@
 import type { Prisma } from '@prisma/client';
-import type { PlaybookKey } from '../../../config/playbooks';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { generateRoleplayEvaluation } from './studio/generators/roleplay';
+import type { PlaybookKey } from '../../../config/playbooks.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { generateRoleplayEvaluation } from './studio/generators/roleplay.js';
 
 export interface RoleplayFinishTranscriptMessage {
   sender: 'bot' | 'user';

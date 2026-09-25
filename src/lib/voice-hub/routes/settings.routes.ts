@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac';
-import { getSettingsHandler, createSettingsHandler, updateSettingsHandler, resetSettingsHandler } from '../controllers/settings.controller';
+import { requireTenant } from '../middlewares/rbac.js';
+import { getSettingsHandler, createSettingsHandler, updateSettingsHandler, resetSettingsHandler } from '../controllers/settings.controller.js';
 
 const router = express.Router();
 

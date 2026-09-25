@@ -24,30 +24,30 @@
 // há mais nada pra "migrar para consumir".
 
 import type { Prisma } from '@prisma/client';
-import type { PlaybookKey } from '../../../config/playbooks';
+import type { PlaybookKey } from '../../../config/playbooks.js';
 import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
-import { logger } from '../../../lib/logger';
-import type { prisma } from '../../../lib/prisma';
+import { logger } from '../../../lib/logger.js';
+import type { prisma } from '../../../lib/prisma.js';
 import {
   defaultEnrichmentRepository,
   type IEnrichmentRepository,
-} from '../infra/PrismaEnrichmentRepository';
+} from '../infra/PrismaEnrichmentRepository.js';
 export { defaultEnrichmentRepository, type IEnrichmentRepository };
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
-import { filterNewContacts } from '../utils/contactDedupe';
+import { filterNewContacts } from '../utils/contactDedupe.js';
 import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service';
 import { discoverCnpjByName, isValidCnpj, sanitizeCnpj } from './cnpj.util';
 import { checkEmailDeliverability } from './email-verification.service';
-import { fetchCnpjData } from './enrichment/cnpjLookup';
+import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
   type DomainGuess,
   extractDomainFromWebsite,
   guessDomainAndEmails,
   guessWhatsappFromPhone,
   resolveEmailStatus,
-} from './enrichment/domainGuess';
-import { computeFitScore } from './enrichment/fitScore';
+} from './enrichment/domainGuess.js';
+import { computeFitScore } from './enrichment/fitScore.js';
 import {
   computeLookalikeScore,
   type LookalikeMatch,
@@ -62,14 +62,14 @@ export {
   type CnpjLookupResult,
   fetchCepData,
   fetchCnpjData,
-} from './enrichment/cnpjLookup';
-export { type DomainGuess, guessDomainAndEmails } from './enrichment/domainGuess';
+} from './enrichment/cnpjLookup.js';
+export { type DomainGuess, guessDomainAndEmails } from './enrichment/domainGuess.js';
 export {
   computeFitScore,
   type FitScoreInput,
   type FitScoreResult,
   type ScoreBreakdownItem,
-} from './enrichment/fitScore';
+} from './enrichment/fitScore.js';
 
 export interface EnrichCompanyOptions {
   cnpj?: string;

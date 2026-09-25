@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
-import { logger } from '../../../lib/logger';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { logger } from '../../../lib/logger.js';
 
 export interface PlaybookChapterInput {
   topic: string; // ex: 'Como Contornar a Objeção "Já tenho Seguro e não preciso de Rastreamento"'

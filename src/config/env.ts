@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import 'dotenv/config';
-import { logger } from '../lib/logger';
+import { logger } from '../lib/logger.js';
 
 const envSchema = z
   .object({

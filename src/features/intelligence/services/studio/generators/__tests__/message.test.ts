@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { messageResultSchema } from '../../schema';
-import { generateMessage } from '../message';
+import { messageResultSchema } from '../../schema.js';
+import { generateMessage } from '../message.js';
 
 const request = {
   kind: 'message' as const,

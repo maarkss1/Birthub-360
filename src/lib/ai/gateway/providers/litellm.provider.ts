@@ -5,11 +5,11 @@
  * terceira nunca terminar), então só vale a pena pagar esse gargalo depois de Groq/OpenAI já
  * terem falhado, nunca antes. Ver ../chat-model.ts para a ordem completa.
  */
-import { env } from '../../../../config/env';
-import { callProvider } from '../circuit-breaker';
-import { normalizeApiBaseUrl, requestChatCompletion } from '../http-client';
-import type { ChatCompletionResponse } from '../types';
-import type { ProviderAdapter, ProviderChatParams } from './types';
+import { env } from '../../../../config/env.js';
+import { callProvider } from '../circuit-breaker.js';
+import { normalizeApiBaseUrl, requestChatCompletion } from '../http-client.js';
+import type { ChatCompletionResponse } from '../types.js';
+import type { ProviderAdapter, ProviderChatParams } from './types.js';
 
 function resolveBaseUrl(): string | undefined {
   const url = process.env.OLLAMA_BASE_URL || process.env.LITELLM_URL;

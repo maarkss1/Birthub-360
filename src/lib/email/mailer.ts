@@ -1,5 +1,5 @@
 import nodemailer, { type Transporter } from 'nodemailer';
-import { env } from '../../config/env';
+import { env } from '../../config/env.js';
 
 /** SMTP_HOST ausente — sem isto, o transporte real não existe; quem chamou decide o fallback. */
 export class MailerNotConfiguredError extends Error {}

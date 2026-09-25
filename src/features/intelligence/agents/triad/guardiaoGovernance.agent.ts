@@ -1,4 +1,4 @@
-import type { GuardiaoPolicyVerdict } from './triad.types';
+import type { GuardiaoPolicyVerdict } from './triad.types.js';
 
 export interface DiscountPolicyInput {
   userRole: 'SDR' | 'CLOSER' | 'GERENTE' | 'DIRETOR' | 'ADMIN';

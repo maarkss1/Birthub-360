@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
-import { createApiKeySchema } from '../validators/index';
-import { writeAuditLog } from '../services/audit';
+import { createApiKeySchema } from '../validators/index.js';
+import { writeAuditLog } from '../services/audit.js';
 import {
   ApiKeyServiceError,
   createApiKeyForTenant,
   listApiKeysForTenant,
   revokeApiKeyForTenant,
-} from '../services/apiKeyService';
+} from '../services/apiKeyService.js';
 
 // POST /api/developers/keys — issues a new tenant API key. The plaintext `key` is present in this
 // response ONLY: it is never stored, never logged and never retrievable again afterwards

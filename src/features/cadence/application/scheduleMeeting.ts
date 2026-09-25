@@ -4,7 +4,7 @@ import {
   isVerifiableConfirmation,
   type ScheduleMeetingResult,
   scheduleMeetingIfConfirmed,
-} from '../domain/scheduling';
+} from '../domain/scheduling.js';
 
 /**
  * CYC-004 (onda 27) — conecta `scheduling.ts` (domínio puro, guardrails contra confirmação

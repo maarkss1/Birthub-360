@@ -1,4 +1,4 @@
-import * as callLogRepository from '../repositories/callLogRepository';
+import * as callLogRepository from '../repositories/callLogRepository.js';
 import { logger } from '@/lib/logger';
 
 export class NotFoundError extends Error {}

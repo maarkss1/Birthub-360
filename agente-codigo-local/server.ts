@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const server = http.createServer(app);
-const PORT = Number(process.env.PORT) || 4050;
+const PORT = Number(process.env.PORT) || 4000;
 
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb' }));

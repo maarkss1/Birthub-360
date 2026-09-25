@@ -4,7 +4,7 @@ import type {
   CrmDocumentSignatureRequestInput,
   CrmDocumentUpdateInput,
   CrmProductInput,
-} from '../crm360.schema';
+} from '../crm360.schema.js';
 import type {
   CrmCommercialDocument,
   CrmCommercialDocumentVersionDTO,
@@ -13,7 +13,7 @@ import type {
   CrmPipeline,
   CrmProduct,
   CrmPublicDocumentView,
-} from '../crm360.types';
+} from '../crm360.types.js';
 
 export interface ICrm360Repository {
   getOverviewData(organizationId: string): Promise<CrmOverviewData>;

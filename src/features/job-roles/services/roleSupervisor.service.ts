@@ -23,14 +23,14 @@
 //     `capability.service.ts` (funções de escrita) nem toca infraestrutura.
 //   - "maxSteps e loop guard obrigatórios" → `planSupervisorSteps` (puro, testável sem banco).
 import type { AgentExecutionStatus } from '@prisma/client';
-import { prisma } from '../../../lib/prisma';
+import { prisma } from '../../../lib/prisma.js';
 import {
   getSupervisorProfile,
   type RoleSupervisorProfile,
   type SupervisorStopCondition,
-} from '../config/role-supervisor-profiles';
-import { type AgentExecutionResultDto, runAgentExecution } from './agentRuntime.service';
-import { getPrimaryActiveJobRoleForUser } from './jobRole.service';
+} from '../config/role-supervisor-profiles.js';
+import { type AgentExecutionResultDto, runAgentExecution } from './agentRuntime.service.js';
+import { getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
 
 export interface RoleSupervisorRequest {
   actorId: string;

@@ -1,5 +1,5 @@
-import { logger } from '../../../lib/logger';
-import { searchService } from '../../knowledge/search.service';
+import { logger } from '../../../lib/logger.js';
+import { searchService } from '../../knowledge/search.service.js';
 
 export interface SearchResult {
   id: string;

@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from '../../../lib/http';
+import { fetchWithTimeout } from '../../../lib/http.js';
 
 // AUDITORIA (27/08/2026): infraestrutura pronta, sem consumidor ativo hoje.
 //
