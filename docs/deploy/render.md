@@ -1,3 +1,5 @@
+> **[ARCHIVED / NOT ACTIVE]** Esta arquitetura est depreciada. A nica fonte de verdade cannica atual  docs/operations/PRODUCTION_ARCHITECTURE.md. 
+
 # Deploy no Render
 
 > [!WARNING]
@@ -65,3 +67,4 @@ existe em planos pagos do Render — enquanto o serviço estiver em `plan: free`
 dentro do `startCommand`; ver comentário em `render.yaml` e `producao.md` seção 2.2 para o plano
 de migração ao trocar para `plan: starter`. Detalhes e o gate de CI recomendado (branch protection
 em `main`) em [`producao.md`](producao.md#23-gate-de-qualidade-antes-do-deploy).
+

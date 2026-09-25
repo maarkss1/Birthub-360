@@ -11,6 +11,11 @@ global:
 # (`/alerts`) e via datasource no Grafana, mas não notificam ninguém até um receptor ser
 # adicionado (decisão de operação, não coberta nesta rodada). Ver
 # infrastructure/observability/alert.rules.yml para o detalhamento por grupo.
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
 rule_files:
   - alert.rules.yml
 

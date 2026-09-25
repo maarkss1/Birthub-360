@@ -1,3 +1,5 @@
+> **[ARCHIVED / NOT ACTIVE]** Esta arquitetura est depreciada. A nica fonte de verdade cannica atual  docs/operations/PRODUCTION_ARCHITECTURE.md. 
+
 # Guia de Produção — Birth Hub 360 / Prospector-Atlas
 
 > [!WARNING]
@@ -300,3 +302,4 @@ GitHub Actions Secret, nunca hardcoded em `render.yaml`/workflow YAML.
 8. **Ativar o add-on de PITR no Neon** se o time decidir que backup diário (incluso, seção 1) não
    é suficiente — US$100-400/mês adicionais dependendo da retenção, ver seção de custos discutida
    com o dono do repositório.
+

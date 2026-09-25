@@ -410,7 +410,7 @@ export default function App() {
                         }
                       />
                       <Route path="/" element={<WelcomeScreen />} />
-                      <Route path="/welcome" element={<WelcomeScreen />} />
+                      <Route path="/welcome" element={<WelcomeScreen />} />`n                        <Route path="/privacy" element={<PrivacyPolicy />} />`n                        <Route path="/terms" element={<TermsOfUse />} />
                       {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
                         única a tela deixou de existir; a rota permanece como redirecionamento
                         para não quebrar link salvo, atalho de app instalado ou bookmark. */}

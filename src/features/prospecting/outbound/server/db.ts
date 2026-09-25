@@ -59,7 +59,7 @@ export async function logActivity(
 ): Promise<void> {
   try {
     await db.run(
-      INSERT INTO activity_log (lead_id, user_id, action, from_value, to_value) VALUES (?, ?, ?, ?, ?),
+      'INSERT INTO activity_log (lead_id, user_id, action, from_value, to_value) VALUES (?, ?, ?, ?, ?)',
       [entry.leadId || null, entry.userId || null, entry.action, entry.fromValue ?? null, entry.toValue ?? null]
     );
   } catch (err) {

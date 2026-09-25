@@ -1,3 +1,5 @@
+> **[ARCHIVED / NOT ACTIVE]** Esta arquitetura est depreciada. A nica fonte de verdade cannica atual  docs/operations/PRODUCTION_ARCHITECTURE.md. 
+
 # charts/ — status real
 
 Estes manifests Helm (`prospector-atlas/`) são **aspiracionais/legados**, não são o caminho de
@@ -104,3 +106,4 @@ Achado novo corrigido nesta rodada:
   correspondente acima descreviam o gap da CLI do `prisma` na imagem como um caveat aberto. O
   handoff já está `Status: resolvido` e o `Dockerfile` atual já reinstala a CLI no estágio final
   — atualizado para refletir o estado real em vez de repetir um bloqueador já corrigido.
+

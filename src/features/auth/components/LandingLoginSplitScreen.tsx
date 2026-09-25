@@ -73,8 +73,8 @@ function CountUp({ to, suffix = '', delay = 0 }: { to: number; suffix?: string; 
 
 const HERO_STATS = [
   { Icon: DatabaseZap, to: 50, suffix: '+', lines: ['Sistemas', 'Integrados'] },
-  { Icon: BrainCircuit, to: 100, suffix: '+', lines: ['Empresas', 'Que Confiam'] },
-  { Icon: Rocket, to: 3, suffix: 'x', lines: ['Mais Eficiência', 'Comercial'] },
+  { Icon: BrainCircuit, to: 24, suffix: '/7', lines: ['Operação', 'Contínua'] },
+  { Icon: Rocket, to: 100, suffix: '%', lines: ['Governança', 'de Dados'] },
   { Icon: Target, to: 360, suffix: '°', lines: ['Visão Da', 'Operação'] },
 ];
 
