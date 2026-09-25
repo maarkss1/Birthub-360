@@ -751,4 +751,3 @@ export function LandingLoginSplitScreen({ view = 'access' }: { view?: 'welcome' 
     </div>
   );
 }
-
