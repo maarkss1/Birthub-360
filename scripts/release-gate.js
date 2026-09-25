@@ -1,5 +1,5 @@
 
-const { execSync } = require('child_process');
+import { execSync } from 'child_process';
 
 function run(cmd, name, optional = false) {
   try {
