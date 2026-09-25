@@ -24,31 +24,31 @@
 // instância real (`new MeetingSynthesisService()`) é a composição root de cada processo
 // (`worker.ts`/`src/bootstrap/workers.ts`), passada para `createCopilotoTranscriptionWorker(...)`.
 import { type ConnectionOptions, type Job, Queue, Worker } from 'bullmq';
-import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { connection, queuesEnabled } from '../../../lib/queue/redis.js';
-import { getDownloadUrl } from '../../../lib/storage/index.js';
-import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
-import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
+import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget';
+import { requestContext } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics';
+import { connection, queuesEnabled } from '../../../lib/queue/redis';
+import { getDownloadUrl } from '../../../lib/storage/index';
+import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service';
+import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases';
 import {
   computeChurnRiskScore,
   computeDealHealthScore,
   type SentimentScore,
-} from '../application/dealHealthScoring.js';
-import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment.js';
-import { evaluateConversationCoaching } from '../infra/coachingEvaluation.service.js';
-import { extractConversationIntelligence } from '../infra/conversationIntelligence.service.js';
-import { PrismaCopilotoIaRepository } from '../infra/PrismaCopilotoIaRepository.js';
+} from '../application/dealHealthScoring';
+import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment';
+import { evaluateConversationCoaching } from '../infra/coachingEvaluation.service';
+import { extractConversationIntelligence } from '../infra/conversationIntelligence.service';
+import { PrismaCopilotoIaRepository } from '../infra/PrismaCopilotoIaRepository';
 import {
   isWhisperConfigured,
   transcribeAudioWithWhisper,
   WHISPER_USD_PER_MINUTE,
-} from '../infra/whisperTranscription.service.js';
+} from '../infra/whisperTranscription.service';
 
 export const COPILOTO_TRANSCRIPTION_QUEUE_NAME = 'copiloto-ia-transcription-queue';
 

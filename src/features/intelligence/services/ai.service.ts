@@ -1,16 +1,16 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway.js';
-import { getTenantId } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { compileLeadGraph } from '../graphs/leadQualification.js';
+import { getAiModel, logAiUsage, withRetry } from '../../../lib/ai/gateway';
+import { getTenantId } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { compileLeadGraph } from '../graphs/leadQualification';
 import {
   hasPiiExternalConsent,
   minimizePii,
   type PiiToken,
   redactAndTrackPiiLeak,
   rehydratePii,
-} from './guardrails.service.js';
+} from './guardrails.service';
 
 export type ContentTool =
   | 'script_call'

@@ -1,5 +1,5 @@
-import { logger } from '../../lib/logger.js';
-import { prisma } from '../../lib/prisma.js';
+import { logger } from '../../lib/logger';
+import { prisma } from '../../lib/prisma';
 
 /**
  * Detecta se o Postgres conectado tem a extensão pgvector ativa.

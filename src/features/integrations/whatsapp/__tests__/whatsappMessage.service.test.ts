@@ -28,12 +28,12 @@ vi.mock('../../../../lib/logger.js', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { prisma } from '../../../../lib/prisma.js';
+import { prisma } from '../../../../lib/prisma';
 import {
   extractMessageText,
   listConversations,
   persistWhatsAppMessage,
-} from '../whatsappMessage.service.js';
+} from '../whatsappMessage.service';
 
 const messageMock = prisma.whatsAppMessage as unknown as {
   findUnique: ReturnType<typeof vi.fn>;

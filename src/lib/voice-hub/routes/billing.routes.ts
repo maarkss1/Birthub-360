@@ -1,12 +1,12 @@
 import express from 'express';
-import { requireTenant, requireRole } from '../middlewares/rbac.js';
-import { createRateLimiter } from '../middlewares/rateLimit.js';
+import { requireTenant, requireRole } from '../middlewares/rbac';
+import { createRateLimiter } from '../middlewares/rateLimit';
 import {
   changePlanHandler,
   getWalletSummaryHandler,
   listPlansHandler,
   listTransactionsHandler,
-} from '../controllers/billing.controller.js';
+} from '../controllers/billing.controller';
 
 const router = express.Router();
 

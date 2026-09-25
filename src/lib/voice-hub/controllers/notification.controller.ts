@@ -4,7 +4,7 @@ import {
   markAllAsRead,
   markAsRead,
   NotificationNotFoundError,
-} from '../services/notificationService.js';
+} from '../services/notificationService';
 
 const NOTIFICATIONS_DEFAULT_PAGE_SIZE = 20;
 const NOTIFICATIONS_MAX_PAGE_SIZE = 100;

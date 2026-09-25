@@ -1,14 +1,14 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { searchService } from '../../knowledge/search.service.js';
-import { aiSuite } from '../services/CentralAISuiteService.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { searchService } from '../../knowledge/search.service';
+import { aiSuite } from '../services/CentralAISuiteService';
 import {
   assertPiiExternalConsent,
   PiiConsentRequiredError,
-} from '../services/guardrails.service.js';
+} from '../services/guardrails.service';
 
 export const aiSuiteRouter = Router();
 

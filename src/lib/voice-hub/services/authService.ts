@@ -1,8 +1,8 @@
 import crypto from 'crypto';
-import { hashPassword, verifyPassword, generateToken, generateRefreshToken, verifyRefreshToken, TokenPayload } from '../lib/auth-tokens.js';
-import { findUserByEmail, findUserById, createUser, createMembership, findMembershipWithRole } from '../repositories/userRepository.js';
-import { createTenant } from '../repositories/organizationRepository.js';
-import { getOrCreateSystemRole } from '../repositories/roleRepository.js';
+import { hashPassword, verifyPassword, generateToken, generateRefreshToken, verifyRefreshToken, TokenPayload } from '../lib/auth-tokens';
+import { findUserByEmail, findUserById, createUser, createMembership, findMembershipWithRole } from '../repositories/userRepository';
+import { createTenant } from '../repositories/organizationRepository';
+import { getOrCreateSystemRole } from '../repositories/roleRepository';
 
 export class AuthError extends Error {
   status: number;

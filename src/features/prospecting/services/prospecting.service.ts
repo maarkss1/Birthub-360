@@ -21,17 +21,17 @@
 // de volta de `services/` — `apollo/*` importa de lá diretamente agora. Ver o comentário em
 // `domain/prospectTypes.ts` para o racional completo.
 
-export { discoverDecisionMakers } from './prospecting/decisionMakers.js';
+export { discoverDecisionMakers } from './prospecting/decisionMakers';
 
 export {
   buildLocationLabel,
   discoverCandidates,
   discoverViaGooglePlaces,
   fetchKnownExclusions,
-} from './prospecting/discovery.js';
-export { promoteToCrm } from './prospecting/promote.js';
-export { enrichCandidatesWithQualityData } from './prospecting/qualityEnrichment.js';
-export { rejectCandidate } from './prospecting/rejection.js';
+} from './prospecting/discovery';
+export { promoteToCrm } from './prospecting/promote';
+export { enrichCandidatesWithQualityData } from './prospecting/qualityEnrichment';
+export { rejectCandidate } from './prospecting/rejection';
 export type {
   DecisionMaker,
   DecisionMakerCriteria,
@@ -43,4 +43,4 @@ export type {
   RequirementEvaluation,
   RequirementStatus,
   RequirementType,
-} from './prospecting/types.js';
+} from './prospecting/types';

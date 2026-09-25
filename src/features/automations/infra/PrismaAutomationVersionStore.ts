@@ -16,8 +16,8 @@ import {
   fromPrismaAutomationTrigger,
   toPrismaAutomationAction,
   toPrismaAutomationTrigger,
-} from '../../../lib/enumMap.js';
-import { prisma } from '../../../lib/prisma.js';
+} from '../../../lib/enumMap';
+import { prisma } from '../../../lib/prisma';
 import type {
   AutomationVersionInput,
   AutomationVersionRecord,

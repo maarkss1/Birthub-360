@@ -1,9 +1,9 @@
-import { prisma } from '../../../lib/prisma.js';
+import { prisma } from '../../../lib/prisma';
 import type {
   SellerPerformancePeriod,
   SellerPerformanceRawMetrics,
   SellerPerformanceRepository,
-} from '../domain/SellerPerformance.js';
+} from '../domain/SellerPerformance';
 
 // Mesmo recorte de "qualificado" de PrismaAnalyticsRepository.groupQualifiedLeadsByOwner: saiu das
 // duas primeiras etapas do funil e não foi desqualificado. Deliberadamente NÃO escopado ao período

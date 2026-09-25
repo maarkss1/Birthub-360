@@ -1,7 +1,7 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { createRateLimiter } from '../middlewares/rateLimit.js';
-import { getWorkflowHandler, saveWorkflowHandler, updateWorkflowHandler, deleteWorkflowHandler, getWorkflowHistoryHandler, restoreWorkflowVersionHandler, duplicateWorkflowHandler, publishWorkflowHandler, listWorkflowVersionsHandler, rollbackWorkflowVersionHandler } from '../controllers/workflow.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { createRateLimiter } from '../middlewares/rateLimit';
+import { getWorkflowHandler, saveWorkflowHandler, updateWorkflowHandler, deleteWorkflowHandler, getWorkflowHistoryHandler, restoreWorkflowVersionHandler, duplicateWorkflowHandler, publishWorkflowHandler, listWorkflowVersionsHandler, rollbackWorkflowVersionHandler } from '../controllers/workflow.controller';
 
 const router = express.Router();
 
@@ -26,7 +26,7 @@ router.get('/workflow/:id/versions', requireTenant, workflowVersionsRateLimiter,
 router.post('/workflow/:id/versions/:version/rollback', requireTenant, workflowVersionsRateLimiter, rollbackWorkflowVersionHandler);
 
 
-import { addCommentHandler, resolveCommentHandler, lockNodeHandler, unlockNodeHandler } from '../controllers/workflowCollab.controller.js';
+import { addCommentHandler, resolveCommentHandler, lockNodeHandler, unlockNodeHandler } from '../controllers/workflowCollab.controller';
 
 router.post('/workflow/comments', requireTenant, addCommentHandler);
 router.post('/workflow/comments/resolve', requireTenant, resolveCommentHandler);

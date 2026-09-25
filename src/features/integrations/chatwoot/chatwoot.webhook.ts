@@ -1,11 +1,11 @@
 import express, { type Request, type Response, Router } from 'express';
-import { env } from '../../../config/env.js';
-import { logger } from '../../../lib/logger.js';
+import { env } from '../../../config/env';
+import { logger } from '../../../lib/logger';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
-} from '../../../shared/security/webhookReplayGuard.js';
-import { type ChatwootWebhookEvent, isValidChatwootSignature } from './chatwoot.helpers.js';
+} from '../../../shared/security/webhookReplayGuard';
+import { type ChatwootWebhookEvent, isValidChatwootSignature } from './chatwoot.helpers';
 
 /**
  * Webhook de ENTRADA do Chatwoot (OS-6, docker-compose.services.yml) — hoje só valida a

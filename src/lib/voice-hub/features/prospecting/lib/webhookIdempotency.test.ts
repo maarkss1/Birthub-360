@@ -38,7 +38,7 @@ import {
   buildAtlasGROutboundIdempotencyKey,
   claimIdempotencyKey,
   IdempotencyCheckFailedError,
-} from './webhookIdempotency.js';
+} from './webhookIdempotency';
 
 beforeEach(() => {
   __setIdempotencyClientForTests(null);

@@ -5,11 +5,11 @@
 // arquivo (dentro de `prospecting/`) violaria `no-cross-feature-imports`
 // (.dependency-cruiser.cjs). Reexportado aqui para não quebrar os imports já existentes que
 // apontam para `prospecting/services/cnpj.util`.
-export { formatCnpj, isValidCnpj, sanitizeCnpj, toDeterministicCnpj } from '../../../lib/cnpj.js';
+export { formatCnpj, isValidCnpj, sanitizeCnpj, toDeterministicCnpj } from '../../../lib/cnpj';
 
-import { isValidCnpj } from '../../../lib/cnpj.js';
-import { fetchWithTimeout } from '../../../lib/http.js';
-import { logger } from '../../../lib/logger.js';
+import { isValidCnpj } from '../../../lib/cnpj';
+import { fetchWithTimeout } from '../../../lib/http';
+import { logger } from '../../../lib/logger';
 
 const DUCKDUCKGO_HTML_HOST = 'html.duckduckgo.com';
 const DUCKDUCKGO_USER_AGENT =

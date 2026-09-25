@@ -1,7 +1,7 @@
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { NegotiatorDraftAgent } from '../agents/negotiatorDraft.agent.js';
-import { searchPlaybookTool } from '../tools/playbookTool.js';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { NegotiatorDraftAgent } from '../agents/negotiatorDraft.agent';
+import { searchPlaybookTool } from '../tools/playbookTool';
 
 const RECENT_MESSAGES_LOOKBACK = 6;
 

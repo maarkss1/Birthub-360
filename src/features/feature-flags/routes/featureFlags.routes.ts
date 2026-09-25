@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import type { FeatureFlagsController } from '../presentation/FeatureFlagsController.js';
+import { container } from '../../../shared/di/container';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import type { FeatureFlagsController } from '../presentation/FeatureFlagsController';
 
 export const featureFlagsRouter = Router();
 

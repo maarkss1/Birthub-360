@@ -1,7 +1,7 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { createSavedView, deleteSavedView, listSavedViews } from '../services/savedView.service.js';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { createSavedView, deleteSavedView, listSavedViews } from '../services/savedView.service';
 
 const router = Router();
 

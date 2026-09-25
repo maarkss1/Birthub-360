@@ -1,11 +1,11 @@
 import { tool } from '@langchain/core/tools';
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
-import { getTenantId } from '../../../lib/async-context.js';
+import { getTenantId } from '../../../lib/async-context';
 import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap';
-import { prisma } from '../../../lib/prisma.js';
-import { LEAD_STATUS, type LeadStatus } from '../../../lib/zod.js';
-import { minimizePii } from '../services/guardrails.service.js';
+import { prisma } from '../../../lib/prisma';
+import { LEAD_STATUS, type LeadStatus } from '../../../lib/zod';
+import { minimizePii } from '../services/guardrails.service';
 
 /**
  * Ferramenta para o agente ENCONTRAR o(s) Lead(s) certo(s) quando a instrução menciona uma

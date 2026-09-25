@@ -1,11 +1,11 @@
 import type { Prisma } from '@prisma/client';
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { hasRequiredRole } from '../../../lib/auth/authorization.js';
-import { prisma } from '../../../lib/prisma.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { prisma } from '../../../lib/prisma';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import { requireRole } from '../../../shared/middlewares/requireRole';
 import {
   exportLeadToBitrixNow,
   findUnimportedBitrixLeadIds,
@@ -15,8 +15,8 @@ import {
   postCommentToBitrix,
   resolveAtlasUserIdByEmail,
   resolveOwnBitrixUserId,
-} from '../../integrations/bitrix/bitrix.service.js';
-import { resolveLossReasonLabel } from '../constants/lossReasons.js';
+} from '../../integrations/bitrix/bitrix.service';
+import { resolveLossReasonLabel } from '../constants/lossReasons';
 import {
   buildDailyActivity,
   buildOutcomeCounts,
@@ -24,8 +24,8 @@ import {
   type DashboardPeriod,
   periodDayWindow,
   periodStartDate,
-} from '../mesaTratamento.dashboard.js';
-import { computeQueuePriorityScore, rankLeadsForQueue } from '../mesaTratamento.priority.js';
+} from '../mesaTratamento.dashboard';
+import { computeQueuePriorityScore, rankLeadsForQueue } from '../mesaTratamento.priority';
 
 const router = Router();
 const mesaRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

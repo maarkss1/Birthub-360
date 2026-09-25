@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { runRoleSupervisor } from '../services/roleSupervisor.service.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { runRoleSupervisor } from '../services/roleSupervisor.service';
 
 const router = Router();
 

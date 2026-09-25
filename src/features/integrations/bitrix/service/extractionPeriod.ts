@@ -2,7 +2,7 @@ import {
   brazilDateParts,
   brazilEndOfDayUtc,
   brazilMidnightUtc,
-} from '../../../../shared/time/brazilCalendar.js';
+} from '../../../../shared/time/brazilCalendar';
 
 /**
  * Resolução de período para o serviço real de Extrações Bitrix (Onda 7, Agente 06/06A) — puro,

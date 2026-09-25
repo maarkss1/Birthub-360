@@ -1,6 +1,6 @@
-import { getAiModel } from '../../../../lib/ai/gateway.js';
+import { getAiModel } from '../../../../lib/ai/gateway';
 import { SystemMessage, HumanMessage } from '@langchain/core/messages';
-import type { DecisionMakerInfo } from '../triad/triad.types.js';
+import type { DecisionMakerInfo } from '../triad/triad.types';
 
 export interface EnrichmentResult {
   companyName: string;

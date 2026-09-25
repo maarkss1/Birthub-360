@@ -1,6 +1,6 @@
 import type { Company, Prisma, Contact, EnrichmentLog } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
-import type { IEnrichmentRepository } from '../domain/IEnrichmentRepository.js';
+import { prisma } from '../../../lib/prisma';
+import type { IEnrichmentRepository } from '../domain/IEnrichmentRepository';
 export type { IEnrichmentRepository };
 
 export class PrismaEnrichmentRepository implements IEnrichmentRepository {

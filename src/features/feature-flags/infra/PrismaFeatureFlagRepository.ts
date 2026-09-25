@@ -1,10 +1,10 @@
-import { prisma } from '../../../lib/prisma.js';
+import { prisma } from '../../../lib/prisma';
 import type {
   FeatureFlagDefinition,
   FeatureFlagRecord,
   FeatureFlagRepository,
   OrganizationOverride,
-} from '../domain/FeatureFlag.js';
+} from '../domain/FeatureFlag';
 
 export class PrismaFeatureFlagRepository implements FeatureFlagRepository {
   async upsertCatalogEntry(flag: FeatureFlagDefinition): Promise<void> {

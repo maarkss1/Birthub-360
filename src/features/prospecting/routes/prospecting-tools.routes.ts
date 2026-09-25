@@ -3,23 +3,23 @@ import { z } from 'zod';
 import {
   getPaidProspectingKey,
   getProspectingProviderMode,
-} from '../../../config/prospecting-integrations.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema.js';
-import { fetchApolloCandidates } from '../services/apollo.service.js';
+} from '../../../config/prospecting-integrations';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { discoverCriteriaSchema } from '../schemas/discoverCriteria.schema';
+import { fetchApolloCandidates } from '../services/apollo.service';
 import {
   getGithubOrganizationProfile,
   searchGithubOrganizations,
-} from '../services/github.service.js';
-import { findEmailViaHunter, findPeopleViaDomainSearch } from '../services/hunter.service.js';
-import { searchCompanyNews } from '../services/news.service.js';
-import type { ProspectCriteria } from '../services/prospecting.service.js';
-import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service.js';
-import { getYoutubeVideoInfo } from '../services/youtube.service.js';
-import { normalizeCompanyDomain } from '../utils/domain.js';
-import type { ExclusionSet } from '../utils/exclusionSet.js';
+} from '../services/github.service';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from '../services/hunter.service';
+import { searchCompanyNews } from '../services/news.service';
+import type { ProspectCriteria } from '../services/prospecting.service';
+import { discoverViaGooglePlaces, fetchKnownExclusions } from '../services/prospecting.service';
+import { getYoutubeVideoInfo } from '../services/youtube.service';
+import { normalizeCompanyDomain } from '../utils/domain';
+import type { ExclusionSet } from '../utils/exclusionSet';
 
 const router = Router();
 

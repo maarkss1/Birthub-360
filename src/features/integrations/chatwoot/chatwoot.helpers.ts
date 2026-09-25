@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { validateWebhookTimestamp } from '../../../shared/security/webhookReplayGuard.js';
+import { validateWebhookTimestamp } from '../../../shared/security/webhookReplayGuard';
 
 /**
  * Verificação de assinatura do Chatwoot — lógica pura, sem env/rede, mesmo raciocínio de

@@ -1,24 +1,24 @@
 import { createHash } from 'node:crypto';
 import { type ConnectionOptions, type Job, Queue, Worker } from 'bullmq';
-import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { classifyBuyingRole } from '../domain/accountDecisionMakers.js';
+import { requestContext } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics';
+import { connection } from '../../../lib/queue/redis';
+import { classifyBuyingRole } from '../domain/accountDecisionMakers';
 import {
   type EconomicGroupCompanyInputExtended,
   matchEconomicGroupByCnpjRoot,
   matchEconomicGroupCamada2e3,
-} from '../domain/accountEconomicGroup.js';
+} from '../domain/accountEconomicGroup';
 import {
   ACCOUNT_SCORE_VERSION,
   type AccountScoreDecisionMakerInput,
   type AccountScoreSignalInput,
   computeAccountScore,
   decideNextBestAction,
-} from '../domain/accountInsights.js';
+} from '../domain/accountInsights';
 
 /**
  * D.1/D.5 do audit da Fase 0 (`.agents/runs/ldr-fase-0-auditoria.md`): até aqui nada persistia

@@ -1,5 +1,5 @@
 import type { LeadFunnel, LeadStatus as PrismaLeadStatus, Prisma } from '@prisma/client';
-import { recordStageTransition } from '../../../shared/services/leadStageHistory.service.js';
+import { recordStageTransition } from '../../../shared/services/leadStageHistory.service';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
@@ -9,9 +9,9 @@ import {
   toPrismaLeadStatus,
 } from '../../../lib/enumMap';
 import { prisma } from '../../../lib/prisma';
-import { searchLeadIds } from '../../../lib/search/index.js';
+import { searchLeadIds } from '../../../lib/search/index';
 import type { LeadStatus } from '../../../lib/zod';
-import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
+import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service';
 import type { Lead, LeadRepository } from '../domain/Lead';
 
 /**

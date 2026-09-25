@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { outboundCallSchema } from '../validators/index.js';
-import { initiateOutboundCall, AgentNotFoundError, DuplicateCallError } from '../services/outboundCallService.js';
-import { TwilioNotConfiguredError } from '../services/twilioClient.js';
+import { outboundCallSchema } from '../validators/index';
+import { initiateOutboundCall, AgentNotFoundError, DuplicateCallError } from '../services/outboundCallService';
+import { TwilioNotConfiguredError } from '../services/twilioClient';
 import { logger } from '@/lib/logger';
 
 export async function initiateOutboundCallHandler(req: Request, res: Response) {

@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { hasRequiredRole } from '../../lib/auth/authorization.js';
-import { routeParam } from '../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
-import { notificationService } from './notification.service.js';
+import { hasRequiredRole } from '../../lib/auth/authorization';
+import { routeParam } from '../../shared/http/routeParams';
+import type { AuthRequest } from '../../shared/middlewares/authenticateToken';
+import { notificationService } from './notification.service';
 
 const router = Router();
 

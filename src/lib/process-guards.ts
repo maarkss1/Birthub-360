@@ -1,4 +1,4 @@
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 // Sem REDIS_URL (ou com ENABLE_QUEUES=false) o ioredis encerra a conexao depois das retries e
 // rejeita os comandos pendentes com "Error: Connection is closed.". Boa parte desses comandos e

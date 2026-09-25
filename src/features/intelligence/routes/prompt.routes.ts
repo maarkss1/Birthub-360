@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { z } from 'zod';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { createPrompt, listPrompts, updatePromptVariables } from '../services/prompt.service.js';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { createPrompt, listPrompts, updatePromptVariables } from '../services/prompt.service';
 
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);
 

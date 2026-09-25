@@ -1,24 +1,24 @@
-import { env } from '../../../../config/env.js';
-import { logger } from '../../../../lib/logger.js';
-import { prisma } from '../../../../lib/prisma.js';
+import { env } from '../../../../config/env';
+import { logger } from '../../../../lib/logger';
+import { prisma } from '../../../../lib/prisma';
 import type {
   DailyPlanItem,
   DailyPlanItemChannel,
   DailyPlanItemOrigin,
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
-} from '../../../../shared/contracts/dailyPlan.contract.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
-import { callBitrix, getConnectionWebhookUrl } from './client.js';
-import { listBitrixConnections } from './connections.js';
-import type { CrmEnrichedInfo, CrmEntityType } from './dailyPlanEnrichment.service.js';
+} from '../../../../shared/contracts/dailyPlan.contract';
+import { AppError } from '../../../../shared/middlewares/errorHandler';
+import { callBitrix, getConnectionWebhookUrl } from './client';
+import { listBitrixConnections } from './connections';
+import type { CrmEnrichedInfo, CrmEntityType } from './dailyPlanEnrichment.service';
 import {
   crmEntityFromTaskLink,
   crmEntityTypeFromOwnerTypeId,
   resolveCrmEnrichment,
-} from './dailyPlanEnrichment.service.js';
-import { getBitrixUsers } from './deals.js';
-import { resolveOwnBitrixUserId } from './userMapping.js';
+} from './dailyPlanEnrichment.service';
+import { getBitrixUsers } from './deals';
+import { resolveOwnBitrixUserId } from './userMapping';
 
 export type {
   DailyPlanItem,
@@ -26,7 +26,7 @@ export type {
   DailyPlanItemOrigin,
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
-} from '../../../../shared/contracts/dailyPlan.contract.js';
+} from '../../../../shared/contracts/dailyPlan.contract';
 
 function deriveTacticalGuidance(
   channel: DailyPlanItemChannel,

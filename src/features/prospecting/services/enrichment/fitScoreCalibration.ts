@@ -41,8 +41,8 @@
 // depois, o score recalculado reflete o dado mais recente, não um snapshot histórico (não existe
 // snapshot de fit score persistido hoje — registrar isso é o item de handoff mais honesto que esta
 // missão pode deixar, não fingir uma reconstrução perfeita).
-import { prisma } from '../../../../lib/prisma.js';
-import { computeFitScore, type FitScoreResult } from './fitScore.js';
+import { prisma } from '../../../../lib/prisma';
+import { computeFitScore, type FitScoreResult } from './fitScore';
 
 export type FitScoreCalibrationQuality = 'INSUFICIENTE' | 'BAIXA' | 'MEDIA' | 'ALTA';
 

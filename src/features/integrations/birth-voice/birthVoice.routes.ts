@@ -1,28 +1,28 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { prisma } from '../../../lib/prisma.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { PiiConsentRequiredError } from '../../intelligence/services/guardrails.service.js';
+import { prisma } from '../../../lib/prisma';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { PiiConsentRequiredError } from '../../intelligence/services/guardrails.service';
 import {
   BirthVoiceNotConfiguredError,
   callLead,
   NoPhoneNumberError,
   SuppressedNumberError,
-} from './birthVoice.service.js';
+} from './birthVoice.service';
 import {
   listSuppressions,
   normalizeSuppressionKey,
   recordOptOut,
-} from './callSuppression.service.js';
-import { callWindowFromEnv, dialPolicyFromEnv, enabledOrganizations } from './coldCall.service.js';
+} from './callSuppression.service';
+import { callWindowFromEnv, dialPolicyFromEnv, enabledOrganizations } from './coldCall.service';
 import {
   connectVoiceHub,
   disconnectVoiceHub,
   listVoiceHubConnections,
   testVoiceHubConnection,
-} from './voiceHubConnection.service.js';
+} from './voiceHubConnection.service';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

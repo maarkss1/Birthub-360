@@ -50,8 +50,8 @@ vi.mock('../google.service.js', async (importOriginal) => {
   };
 });
 
-import { googleRoutes } from '../google.routes.js';
-import { GoogleNotConfiguredError, GoogleNotConnectedError } from '../google.service.js';
+import { googleRoutes } from '../google.routes';
+import { GoogleNotConfiguredError, GoogleNotConnectedError } from '../google.service';
 
 function buildApp(withUser = true) {
   const app = express();

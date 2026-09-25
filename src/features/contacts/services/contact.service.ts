@@ -1,6 +1,6 @@
 import type { Prisma } from '@prisma/client';
 import type { z } from 'zod';
-import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
+import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex';
 import { prisma } from '../../../lib/prisma';
 import { contactSchema } from '../../../lib/zod';
 import { enrichCompany } from '../../prospecting/services/enrichment.service';

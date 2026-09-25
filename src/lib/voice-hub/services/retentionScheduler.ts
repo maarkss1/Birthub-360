@@ -1,7 +1,7 @@
 import { Queue, Worker } from 'bullmq';
-import { getRedisConnectionOptions } from '../lib/env.js';
+import { getRedisConnectionOptions } from '../lib/env';
 import { logger } from '@/lib/logger';
-import { purgeExpiredCallLogs } from './callLogService.js';
+import { purgeExpiredCallLogs } from './callLogService';
 
 /**
  * Schedules the daily CallLog retention purge described in

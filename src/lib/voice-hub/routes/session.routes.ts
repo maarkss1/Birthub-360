@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { listSessionsHandler, createSessionHandler, updateSessionHandler, deleteSessionHandler } from '../controllers/session.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { listSessionsHandler, createSessionHandler, updateSessionHandler, deleteSessionHandler } from '../controllers/session.controller';
 
 const router = express.Router();
 

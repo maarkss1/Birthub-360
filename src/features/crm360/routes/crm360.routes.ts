@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { container } from '../../../shared/di/container';
+import { requireRole } from '../../../shared/middlewares/requireRole';
 import {
   crmDealItemSchema,
   crmDocumentSchema,
@@ -9,8 +9,8 @@ import {
   crmProductSchema,
   crmReconcileFaturaStripePaymentSchema,
   moveCrmRecordSchema,
-} from '../crm360.schema.js';
-import type { Crm360Controller } from '../presentation/Crm360Controller.js';
+} from '../crm360.schema';
+import type { Crm360Controller } from '../presentation/Crm360Controller';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

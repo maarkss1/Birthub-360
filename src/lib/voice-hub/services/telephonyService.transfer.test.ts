@@ -33,16 +33,16 @@ vi.mock('./workflowRuntimeService.js', () => ({
   resumeAfterTool: vi.fn(),
 }));
 
-import { findAgentById } from '../repositories/agentRepository.js';
-import { findSessionById, updateSession } from '../repositories/sessionRepository.js';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import { findAgentById } from '../repositories/agentRepository';
+import { findSessionById, updateSession } from '../repositories/sessionRepository';
+import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway';
 import {
   prepareWorkflowTurn,
   resumeAfterTool,
   type WorkflowNode,
   type WorkflowRuntimeState,
-} from './workflowRuntimeService.js';
-import { handleTurn } from './telephonyService.js';
+} from './workflowRuntimeService';
+import { handleTurn } from './telephonyService';
 
 const mockFindById = vi.mocked(findAgentById);
 const mockFindSessionById = vi.mocked(findSessionById);

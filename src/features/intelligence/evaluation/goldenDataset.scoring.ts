@@ -1,5 +1,5 @@
-import { loadGoldenDataset } from './goldenDataset.service.js';
-import type { GoldenCase, GoldenCaseCategory } from './goldenDataset.types.js';
+import { loadGoldenDataset } from './goldenDataset.service';
+import type { GoldenCase, GoldenCaseCategory } from './goldenDataset.types';
 
 export interface SemanticJudgeResult {
   semanticScore: number;

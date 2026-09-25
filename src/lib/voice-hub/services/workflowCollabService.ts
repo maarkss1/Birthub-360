@@ -1,5 +1,5 @@
-import * as workflowRepository from '../repositories/workflowRepository.js';
-import { NotFoundError } from './workflowService.js';
+import * as workflowRepository from '../repositories/workflowRepository';
+import { NotFoundError } from './workflowService';
 
 export class ConflictError extends Error {}
 

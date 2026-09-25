@@ -1,11 +1,11 @@
 import { fromNodeHeaders } from 'better-auth/node';
 import type { NextFunction, Request, Response } from 'express';
-import { isAuthorizedLoginEmail } from '../../config/access-policy.js';
-import { requestContext } from '../../lib/async-context.js';
-import { UNVERIFIED_ROLE } from '../../lib/auth/authorization.js';
-import { auth } from '../../lib/auth.js';
-import { logger } from '../../lib/logger.js';
-import type { getTenantPrisma } from '../../lib/tenant-prisma.js';
+import { isAuthorizedLoginEmail } from '../../config/access-policy';
+import { requestContext } from '../../lib/async-context';
+import { UNVERIFIED_ROLE } from '../../lib/auth/authorization';
+import { auth } from '../../lib/auth';
+import { logger } from '../../lib/logger';
+import type { getTenantPrisma } from '../../lib/tenant-prisma';
 
 export interface AuthUser {
   id: string;
@@ -14,7 +14,7 @@ export interface AuthUser {
   organizationId: string;
 }
 
-export interface AuthRequest extends Request {
+export type AuthRequest = Omit<Request, 'user'> & {
   user: AuthUser;
   db?: ReturnType<typeof getTenantPrisma>;
 }
@@ -57,7 +57,7 @@ export const authenticateToken = async (
       return;
     }
 
-    (req as AuthRequest).user = {
+    (req as unknown as AuthRequest).user = {
       id: user.id,
       email: user.email,
       // 'GUEST' era um papel do sistema de permissões divergente já removido (ver

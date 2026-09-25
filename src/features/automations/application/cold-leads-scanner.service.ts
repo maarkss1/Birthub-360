@@ -1,9 +1,9 @@
-import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
-import { enabledOrganizations } from '../../intelligence/services/swarmScheduler.service.js';
-import { VectorSearchService } from '../../intelligence/services/vector-search.service.js';
+import { requestContext } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { acquireDistributedLock } from '../../../lib/queue/distributedLock';
+import { enabledOrganizations } from '../../intelligence/services/swarmScheduler.service';
+import { VectorSearchService } from '../../intelligence/services/vector-search.service';
 
 /**
  * AUTO-001: correções de confiabilidade sobre a primeira versão deste serviço.
@@ -152,9 +152,9 @@ export async function runColdLeadsScan(): Promise<{
 }
 
 import { type ConnectionOptions, Queue, Worker } from 'bullmq';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { connection } from '../../../lib/queue/redis.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics';
+import { connection } from '../../../lib/queue/redis';
 
 export const COLD_LEADS_SCANNER_QUEUE_NAME = 'cold-leads-scanner-queue';
 

@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { hasRequiredRole } from '../../lib/auth/authorization.js';
-import type { AuthRequest } from './authenticateToken.js';
+import { hasRequiredRole } from '../../lib/auth/authorization';
+import type { AuthRequest } from './authenticateToken';
 
 /**
  * RBAC middleware — garante que o usuário autenticado possui pelo menos um dos
@@ -15,7 +15,7 @@ import type { AuthRequest } from './authenticateToken.js';
  */
 export function requireRole(allowedRoles: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const authReq = req as AuthRequest;
+    const authReq = req as unknown as AuthRequest;
 
     // authenticateToken deve ter sido chamado antes deste middleware
     if (!authReq.user) {

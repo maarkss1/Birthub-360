@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { logger } from '../../lib/logger.js';
-import { getTenantPrisma } from '../../lib/tenant-prisma.js';
-import type { AuthRequest } from './authenticateToken.js';
+import { logger } from '../../lib/logger';
+import { getTenantPrisma } from '../../lib/tenant-prisma';
+import type { AuthRequest } from './authenticateToken';
 // Nota de RBAC: este arquivo já teve `requirePermission`/`requireAnyPermission`, baseados num
 // sistema de permissões (SUPER_ADMIN/TENANT_OWNER/.../GUEST) que nunca esteve conectado a nenhuma
 // rota e divergia do papel realmente gravado no banco (User.role, ADMIN/GESTOR/CLOSER/SDR/
@@ -10,7 +10,7 @@ import type { AuthRequest } from './authenticateToken.js';
 // em `src/lib/auth/authorization.ts`.
 
 export const requireTenant = (req: Request, res: Response, next: NextFunction): void => {
-  const authReq = req as AuthRequest;
+  const authReq = req as unknown as AuthRequest;
   if (!authReq.user?.organizationId) {
     logger.warn({ userId: authReq.user?.id }, 'Access denied: Tenant ID missing');
     res

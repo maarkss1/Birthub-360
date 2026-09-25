@@ -4,9 +4,9 @@
  * provedor já falhou demais nos últimos segundos, nem tente mandar tráfego pra ele" — memória
  * entre chamadas, não dentro de uma chamada.
  */
-import { logger } from '../../logger.js';
-import { cacheConnection } from '../../queue/redis.js';
-import { MAX_ATTEMPTS_PER_LEG, RETRY_BASE_DELAY_MS, withRetry } from './retry.js';
+import { logger } from '../../logger';
+import { cacheConnection } from '../../queue/redis';
+import { MAX_ATTEMPTS_PER_LEG, RETRY_BASE_DELAY_MS, withRetry } from './retry';
 
 // Circuit breaker leve: depois de falhas consecutivas, um provedor fica "aberto" (pulado sem nova
 // tentativa de rede) por um período de resfriamento, evitando pagar o timeout inteiro em cada

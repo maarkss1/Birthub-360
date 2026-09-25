@@ -1,16 +1,16 @@
-import { logger } from '../../../lib/logger.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { logger } from '../../../lib/logger';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 import type {
   BugReportRepository,
   BugReportSeverity,
   BugReportStatus,
-} from '../domain/BugReport.js';
-import { VALID_BUG_REPORT_SEVERITIES, VALID_BUG_REPORT_STATUSES } from '../domain/BugReport.js';
+} from '../domain/BugReport';
+import { VALID_BUG_REPORT_SEVERITIES, VALID_BUG_REPORT_STATUSES } from '../domain/BugReport';
 import {
   sanitizeDescription,
   sanitizeRecentLogs,
   sanitizeTitle,
-} from '../domain/bugReport.sanitize.js';
+} from '../domain/bugReport.sanitize';
 
 export interface CreateBugReportInput {
   organizationId: string;

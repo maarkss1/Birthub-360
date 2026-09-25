@@ -1,9 +1,9 @@
 import { randomUUID } from 'node:crypto';
-import { requestContext } from '../async-context.js';
-import { logger } from '../logger.js';
-import { prisma } from '../prisma.js';
-import { estimateCostUsd } from './gateway/pricing.js';
-import type { AiUsageLogInput } from './gateway/types.js';
+import { requestContext } from '../async-context';
+import { logger } from '../logger';
+import { prisma } from '../prisma';
+import { estimateCostUsd } from './gateway/pricing';
+import type { AiUsageLogInput } from './gateway/types';
 
 /**
  * Persiste consumo de IA respeitando RLS.

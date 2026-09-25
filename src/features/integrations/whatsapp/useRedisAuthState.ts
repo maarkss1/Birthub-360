@@ -7,7 +7,7 @@ import {
   type SignalDataTypeMap,
 } from '@whiskeysockets/baileys';
 import type { Redis } from 'ioredis';
-import { decryptField, encryptField } from '../../../lib/crypto/secretFields.js';
+import { decryptField, encryptField } from '../../../lib/crypto/secretFields';
 
 /**
  * Adaptador de estado de autenticação do Baileys (WhatsApp) para o Redis.

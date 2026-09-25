@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { listOrganizationsHandler } from '../controllers/organization.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { listOrganizationsHandler } from '../controllers/organization.controller';
 
 const router = express.Router();
 

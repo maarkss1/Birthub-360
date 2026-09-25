@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { userSettingsSchema } from '../validators/index.js';
-import { getUserSettings, saveUserSettings, resetUserSettings } from '../services/settingService.js';
+import { userSettingsSchema } from '../validators/index';
+import { getUserSettings, saveUserSettings, resetUserSettings } from '../services/settingService';
 
 export async function getSettingsHandler(req: Request, res: Response) {
   const settings = await getUserSettings(req.organizationId!, req.user!.id);

@@ -11,7 +11,7 @@ vi.mock('../../shared.js', () => ({
       .trim(),
 }));
 
-import { generateScript } from '../script.js';
+import { generateScript } from '../script';
 
 const request = {
   kind: 'script' as const,

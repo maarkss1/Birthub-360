@@ -1,5 +1,5 @@
-import type { StudioGenerationRequest } from '../schema.js';
-import { invokeText, SYSTEM_RULES, streamText } from '../shared.js';
+import type { StudioGenerationRequest } from '../schema';
+import { invokeText, SYSTEM_RULES, streamText } from '../shared';
 
 type AssistantRequest = Extract<StudioGenerationRequest, { kind: 'assistant' }>;
 

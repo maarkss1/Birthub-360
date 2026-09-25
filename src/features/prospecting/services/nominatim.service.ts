@@ -1,4 +1,4 @@
-import { fetchWithTimeout } from '../../../lib/http.js';
+import { fetchWithTimeout } from '../../../lib/http';
 import { logger } from '../../../lib/logger';
 import type { PlaceCandidate, PlaceSearchResult } from './places.service';
 

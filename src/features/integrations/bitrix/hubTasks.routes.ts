@@ -1,12 +1,12 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import {
   createHubTask,
   listHubTaskAssignees,
   listHubTasks,
   toggleHubTask,
-} from './service/hubTasks.service.js';
+} from './service/hubTasks.service';
 
 /**
  * Widget "Tarefas pendentes" do Hub Executivo (Sincronizado com Bitrix24) — pedido explícito do

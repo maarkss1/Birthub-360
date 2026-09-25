@@ -1,25 +1,25 @@
 import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { MessagesAnnotation, StateGraph } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
-import { logAiUsage } from '../../../lib/ai/gateway.js';
-import { getTenantId, getUserId } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { assertPiiExternalConsent, rehydratePii } from '../services/guardrails.service.js';
-import { copywriterTool } from '../tools/copywriterTool.js';
-import { getLeadContextTool, updateLeadQualificationTool } from '../tools/crmTools.js';
-import { marketResearchTool } from '../tools/marketResearchTool.js';
-import { searchPlaybookTool } from '../tools/playbookTool.js';
-import { summarizeLeadTool } from '../tools/summarizeLeadTool.js';
-import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
-import { getLearningProfile } from './learning.agent.js';
+import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer';
+import { logAiUsage } from '../../../lib/ai/gateway';
+import { getTenantId, getUserId } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { assertPiiExternalConsent, rehydratePii } from '../services/guardrails.service';
+import { copywriterTool } from '../tools/copywriterTool';
+import { getLeadContextTool, updateLeadQualificationTool } from '../tools/crmTools';
+import { marketResearchTool } from '../tools/marketResearchTool';
+import { searchPlaybookTool } from '../tools/playbookTool';
+import { summarizeLeadTool } from '../tools/summarizeLeadTool';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store';
+import { getLearningProfile } from './learning.agent';
 import {
   appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants.js';
+} from './swarm.constants';
 
 // As ferramentas que o SDR Autônomo tem acesso
 const tools = [
@@ -32,7 +32,7 @@ const tools = [
 ];
 const toolNode = new ToolNode(tools);
 
-import { buildModelWithFallbackAndTools } from './fallback.util.js';
+import { buildModelWithFallbackAndTools } from './fallback.util';
 
 // Lazy + memoizado: monta o cliente só no primeiro uso real, nunca na carga do módulo —
 // process.env.GROQ_API_KEY lido numa const de topo de arquivo ficava congelado como vazio se este

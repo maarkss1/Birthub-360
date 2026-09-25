@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { hasRequiredRole } from '../../../lib/auth/authorization.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import {
   addDailyPlanItemNote,
   completeDailyPlanItem,
@@ -10,7 +10,7 @@ import {
   fetchDailyPlanItemNotes,
   fetchUserDailyPlan,
   getPendingDailyClosing,
-} from './bitrix.service.js';
+} from './bitrix.service';
 
 /**
  * Rotas do Plano Diário Operacional (sincronizado com Bitrix24) — extraídas de `bitrix.routes.ts`

@@ -1,5 +1,5 @@
-import { prisma } from '../../../lib/prisma.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { prisma } from '../../../lib/prisma';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 
 const VALID_FUNNELS = new Set(['Lead', 'Negocio']);
 

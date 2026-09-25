@@ -1,5 +1,5 @@
-import * as settingRepository from '../repositories/settingRepository.js';
-import * as organizationAiConsentRepository from '../repositories/organizationAiConsentRepository.js';
+import * as settingRepository from '../repositories/settingRepository';
+import * as organizationAiConsentRepository from '../repositories/organizationAiConsentRepository';
 
 const DEFAULT_SETTINGS = {
   theme: 'light',

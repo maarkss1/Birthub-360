@@ -2,7 +2,7 @@ import dns from 'node:dns/promises';
 import type { LookupFunction } from 'node:net';
 import net from 'node:net';
 import { Agent, fetch as undiciFetch } from 'undici';
-import { AppError } from '../middlewares/errorHandler.js';
+import { AppError } from '../middlewares/errorHandler';
 
 // Usamos o `RequestInit` do próprio `undici` (não o `RequestInit` global do lib "DOM" do
 // tsconfig, compartilhado com o frontend) porque só o tipo do undici já declara `dispatcher`

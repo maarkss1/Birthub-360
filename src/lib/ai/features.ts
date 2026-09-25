@@ -4,8 +4,8 @@ import {
   minimizePii,
   type PiiToken,
   rehydratePii,
-} from '../../features/intelligence/services/guardrails.service.js';
-import { getAiModel } from './gateway.js';
+} from '../../features/intelligence/services/guardrails.service';
+import { getAiModel } from './gateway';
 
 /**
  * Valor de PII opcional que o chamador pode fornecer (ex.: nome do contato de um lead) para que

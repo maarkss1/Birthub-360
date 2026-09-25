@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { getVoiceRuntimeHandler, createVoiceRuntimeHandler, updateVoiceRuntimeHandler, resetVoiceRuntimeHandler } from '../controllers/voiceRuntime.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { getVoiceRuntimeHandler, createVoiceRuntimeHandler, updateVoiceRuntimeHandler, resetVoiceRuntimeHandler } from '../controllers/voiceRuntime.controller';
 
 const router = express.Router();
 

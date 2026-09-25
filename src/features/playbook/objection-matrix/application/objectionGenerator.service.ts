@@ -1,7 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../../lib/ai/gateway.js';
-import { logger } from '../../../../lib/logger.js';
-import { prisma } from '../../../../lib/prisma.js';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../../lib/ai/gateway';
+import { logger } from '../../../../lib/logger';
+import { prisma } from '../../../../lib/prisma';
 
 /** Abaixo disso, um segmento vira sugestão a partir de um único caso anedótico — não um padrão
  * real observado. Mesmo espírito de `lossTaxonomy.ts`: nunca transformar um dado isolado em algo

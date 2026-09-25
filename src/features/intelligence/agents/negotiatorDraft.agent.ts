@@ -1,5 +1,5 @@
-import { BaseAgent } from './base.agent.js';
-import { SWARM_BRAND, SWARM_UNTRUSTED_CONTENT_GUARD } from './swarm.constants.js';
+import { BaseAgent } from './base.agent';
+import { SWARM_BRAND, SWARM_UNTRUSTED_CONTENT_GUARD } from './swarm.constants';
 
 /**
  * Negociador de IA em segundo plano (item 3 do pedido de IA Agêntica de Vendas): diferente do

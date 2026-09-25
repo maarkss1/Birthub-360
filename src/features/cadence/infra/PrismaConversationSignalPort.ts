@@ -1,9 +1,9 @@
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
 import type {
   ConversationSignalDraft,
   ConversationSignalPort,
-} from '../../../shared/domain/replyTracking.js';
+} from '../../../shared/domain/replyTracking';
 
 /**
  * Implementação real do `ConversationSignalPort` (CYC-003, onda 26) — grava `ConversationSignal`

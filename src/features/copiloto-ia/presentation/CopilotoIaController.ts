@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
 import { AuditService } from '../../../lib/audit/audit.service';
-import { getUploadUrl } from '../../../lib/storage/index.js';
+import { getUploadUrl } from '../../../lib/storage/index';
 import { routeParam } from '../../../shared/http/routeParams';
 import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 import { AppError } from '../../../shared/middlewares/errorHandler';
@@ -12,7 +12,7 @@ import type {
   CopilotoConversationStatus,
   CopilotoCrmEntityType,
 } from '../domain/CopilotoIa';
-import { enqueueTranscribeConversationJob } from '../jobs/transcribeConversation.worker.js';
+import { enqueueTranscribeConversationJob } from '../jobs/transcribeConversation.worker';
 
 const VALID_SOURCES: CopilotoConversationSource[] = ['MEET', 'CALL', 'WHATSAPP', 'MANUAL', 'OTHER'];
 const VALID_STATUSES: CopilotoConversationStatus[] = [

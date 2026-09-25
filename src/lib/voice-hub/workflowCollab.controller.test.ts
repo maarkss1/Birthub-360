@@ -5,15 +5,15 @@ import {
   resolveCommentHandler,
   lockNodeHandler,
   unlockNodeHandler,
-} from './workflowCollab.controller.js';
+} from './workflowCollab.controller';
 import {
   addComment,
   resolveComment,
   lockNode,
   unlockNode,
   ConflictError,
-} from '../services/workflowCollabService.js';
-import { NotFoundError } from '../services/workflowService.js';
+} from '../services/workflowCollabService';
+import { NotFoundError } from '../services/workflowService';
 
 vi.mock('../services/workflowCollabService.js', () => ({
   addComment: vi.fn(),

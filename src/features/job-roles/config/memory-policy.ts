@@ -1,5 +1,5 @@
 import type { MemoryCategory } from '@prisma/client';
-import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization.js';
+import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization';
 
 // PROMPT 9 — Memória + Aprendizado Contínuo Governado. `MemoryCategory` (a MATRIZ do prompt da
 // onda) é CÓDIGO, não tabela — mesma decisão de `access-request-policy.ts`/`tool-bindings.ts`:

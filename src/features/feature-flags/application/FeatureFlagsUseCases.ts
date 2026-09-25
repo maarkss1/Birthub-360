@@ -1,7 +1,7 @@
-import { logger } from '../../../lib/logger.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import type { FeatureFlagRepository, ResolvedFeatureFlag } from '../domain/FeatureFlag.js';
-import { FEATURE_FLAG_REGISTRY } from '../domain/FeatureFlag.js';
+import { logger } from '../../../lib/logger';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import type { FeatureFlagRepository, ResolvedFeatureFlag } from '../domain/FeatureFlag';
+import { FEATURE_FLAG_REGISTRY } from '../domain/FeatureFlag';
 
 function isTransactionAcquireTimeout(error: unknown): boolean {
   return (

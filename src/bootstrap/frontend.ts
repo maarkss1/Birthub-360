@@ -3,8 +3,8 @@ import type { Express } from 'express';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { createServer as createViteServer } from 'vite';
-import { env } from '../config/env.js';
-import { authenticateToken } from '../shared/middlewares/authenticateToken.js';
+import { env } from '../config/env';
+import { authenticateToken } from '../shared/middlewares/authenticateToken';
 
 // CodeQL (achado real de finalização, PR #344): `app.get('*', ...)` nunca era reconhecido pelo
 // analisador de rotas do Express 5/path-to-regexp v8 (o mesmo motivo do bug de boot corrigido

@@ -4,7 +4,7 @@
  * fuso; este arquivo só nomeia o wrapper usado pelos relatórios de Comercial Inteligente).
  */
 
-import { brazilMonthKey, brazilMonthRange } from '../../../../shared/time/brazilCalendar.js';
+import { brazilMonthKey, brazilMonthRange } from '../../../../shared/time/brazilCalendar';
 
 export function monthRange(period: string): { start: Date; end: Date; daysInMonth: number } {
   return brazilMonthRange(period);

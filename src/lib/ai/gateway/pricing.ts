@@ -3,9 +3,9 @@
  * atualizar preços/modelos aqui nunca deve exigir tocar em roteamento, retry ou telemetria.
  */
 
-import { logger } from '../../logger.js';
-import { recordAiPricingFallback } from '../metrics.js';
-import type { AiTokenUsage } from './types.js';
+import { logger } from '../../logger';
+import { recordAiPricingFallback } from '../metrics';
+import type { AiTokenUsage } from './types';
 
 // Preço aproximado por 1M de tokens (USD) — usado só para estimar custo no AILog e na métrica
 // ai_usage_cost_usd_total (metrics.ts), não é cobrança real.

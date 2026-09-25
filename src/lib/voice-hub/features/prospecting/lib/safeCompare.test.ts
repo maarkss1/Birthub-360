@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { safeEqual } from './safeCompare.js';
+import { safeEqual } from './safeCompare';
 
 describe('safeEqual', () => {
   it('returns true for identical strings', () => {

@@ -10,7 +10,7 @@
 // capabilities de domínio REALMENTE concedidas a esse cargo em
 // `scripts/capability-import/build-capability-catalog.ts` (`ROLE_DOMAIN_CAPABILITIES`) — nunca uma
 // capability inventada aqui. `mission` reaproveita a descrição real de `job-role-catalog.ts`.
-import { JOB_ROLE_CATALOG, type JobRoleCode } from '../../../config/job-role-catalog.js';
+import { JOB_ROLE_CATALOG, type JobRoleCode } from '../../../config/job-role-catalog';
 
 /** Sinal que interrompe o loop do supervisor quando um passo termina nesse estado — ver
  *  `classifyStepSignal` em `roleSupervisor.service.ts`. `DENIED` cobre qualquer negação que não

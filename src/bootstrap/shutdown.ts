@@ -1,5 +1,5 @@
 import type { Server } from 'node:http';
-import type { EmbeddedWorkersHandle } from './workers.js';
+import type { EmbeddedWorkersHandle } from './workers';
 
 export interface QuittableConnection {
   quit(): Promise<unknown>;

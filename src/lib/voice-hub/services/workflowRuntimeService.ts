@@ -1,15 +1,15 @@
 import type { Prisma } from '@prisma/client';
-import type { StudioEdge, StudioNode, ValidationIssue } from '../../lib/studio/types.js';
-import * as workflowRepository from '../repositories/workflowRepository.js';
-import * as agentRepository from '../repositories/agentRepository.js';
+import type { StudioEdge, StudioNode, ValidationIssue } from '../../lib/studio/types';
+import * as workflowRepository from '../repositories/workflowRepository';
+import * as agentRepository from '../repositories/agentRepository';
 import { logger } from '@/lib/logger';
 import {
   knowledgeConfidenceEngine,
   type KnowledgeDocument,
-} from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine.js';
-import { executeHttpTool } from '../../lib/voice-runtime/HttpToolExecutor.js';
-import type { AgentConfiguration } from '../types/agent.js';
-import { getAiConsent } from './settingService.js';
+} from '../../lib/voice-runtime/intelligence/KnowledgeConfidenceEngine';
+import { executeHttpTool } from '../../lib/voice-runtime/HttpToolExecutor';
+import type { AgentConfiguration } from '../types/agent';
+import { getAiConsent } from './settingService';
 
 export type RuntimeProvider = 'GoogleGemini' | 'OpenAI' | 'Claude';
 export type RuntimeNodeType =

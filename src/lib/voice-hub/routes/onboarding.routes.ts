@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { getChecklistHandler, saveChecklistHandler, resetChecklistHandler } from '../controllers/onboarding.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { getChecklistHandler, saveChecklistHandler, resetChecklistHandler } from '../controllers/onboarding.controller';
 
 const router = express.Router();
 

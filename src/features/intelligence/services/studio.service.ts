@@ -5,25 +5,25 @@
 // studio/schema.ts (contratos), studio/shared.ts (helpers de invocação de modelo compartilhados)
 // e studio/generators/*.ts (um gerador por "kind"). Este arquivo agora só orquestra.
 
-import { generateAssistant } from './studio/generators/assistant.js';
-import { generateAutomation } from './studio/generators/automation.js';
-import { generateB2bMatrix } from './studio/generators/b2bMatrix.js';
-import { generateCallScript } from './studio/generators/callScript.js';
-import { generateEmail } from './studio/generators/email.js';
-import { generateMessage } from './studio/generators/message.js';
-import { generateMethodology } from './studio/generators/methodology.js';
-import { generateOcrExtract } from './studio/generators/ocrExtract.js';
-import { generateRoleplay, generateRoleplayEvaluation } from './studio/generators/roleplay.js';
-import { generateScript } from './studio/generators/script.js';
-import { generateSuperagent } from './studio/generators/superagent.js';
-import { generateTraining } from './studio/generators/training.js';
-import type { StudioGenerationRequest } from './studio/schema.js';
+import { generateAssistant } from './studio/generators/assistant';
+import { generateAutomation } from './studio/generators/automation';
+import { generateB2bMatrix } from './studio/generators/b2bMatrix';
+import { generateCallScript } from './studio/generators/callScript';
+import { generateEmail } from './studio/generators/email';
+import { generateMessage } from './studio/generators/message';
+import { generateMethodology } from './studio/generators/methodology';
+import { generateOcrExtract } from './studio/generators/ocrExtract';
+import { generateRoleplay, generateRoleplayEvaluation } from './studio/generators/roleplay';
+import { generateScript } from './studio/generators/script';
+import { generateSuperagent } from './studio/generators/superagent';
+import { generateTraining } from './studio/generators/training';
+import type { StudioGenerationRequest } from './studio/schema';
 
 export {
   assistantRequestSchema,
   type StudioGenerationRequest,
   studioGenerationSchema,
-} from './studio/schema.js';
+} from './studio/schema';
 
 export class StudioService {
   async generate(request: StudioGenerationRequest): Promise<unknown> {

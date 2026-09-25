@@ -1,20 +1,20 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { env } from '../../../config/env.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { hasRequiredRole } from '../../../lib/auth/authorization.js';
-import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
-import { buildMeetingInviteEmail } from '../../../lib/email/meetingInvite.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { container } from '../../../shared/di/container.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
+import { env } from '../../../config/env';
+import { requestContext } from '../../../lib/async-context';
+import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer';
+import { buildMeetingInviteEmail } from '../../../lib/email/meetingInvite';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { container } from '../../../shared/di/container';
+import { routeParam } from '../../../shared/http/routeParams';
 import {
   type AuthRequest,
   authenticateToken,
-} from '../../../shared/middlewares/authenticateToken.js';
-import { requireTenant } from '../../../shared/middlewares/authorization.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
+} from '../../../shared/middlewares/authenticateToken';
+import { requireTenant } from '../../../shared/middlewares/authorization';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 
 // Estrutural, não importado de src/features/integrations/** (no-cross-feature-imports) — espelha
 // só o método que este router consome de `google.service.ts`, resolvido via DI container

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { changePlanSchema } from '../validators/index.js';
+import { changePlanSchema } from '../validators/index';
 import { logger } from '@/lib/logger';
-import { writeAuditLog } from '../services/audit.js';
+import { writeAuditLog } from '../services/audit';
 import {
   changePlan,
   getWalletSummary,
@@ -9,8 +9,8 @@ import {
   listTransactions,
   PlanNotFoundError,
   ProrationNotSupportedError,
-} from '../services/billingService.js';
-import { createNotification } from '../services/notificationService.js';
+} from '../services/billingService';
+import { createNotification } from '../services/notificationService';
 
 const BILLING_DEFAULT_PAGE_SIZE = 20;
 const BILLING_MAX_PAGE_SIZE = 100;

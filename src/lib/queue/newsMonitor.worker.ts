@@ -4,14 +4,14 @@ import {
   ACCOUNT_SIGNAL_TAXONOMY_VERSION,
   accountSignalTypeLabel,
   classifySignalType,
-} from '../../features/market-intelligence/domain/accountSignalTaxonomy.js';
-import { searchCompanyNews } from '../../features/prospecting/services/news.service.js';
-import { requestContext } from '../async-context.js';
-import { logger } from '../logger.js';
-import { prisma } from '../prisma.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { registerQueueForMetrics } from './metrics.js';
-import { connection } from './redis.js';
+} from '../../features/market-intelligence/domain/accountSignalTaxonomy';
+import { searchCompanyNews } from '../../features/prospecting/services/news.service';
+import { requestContext } from '../async-context';
+import { logger } from '../logger';
+import { prisma } from '../prisma';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { registerQueueForMetrics } from './metrics';
+import { connection } from './redis';
 
 /**
  * D.2 do audit da Fase 0 (`.agents/runs/ldr-fase-0-auditoria.md`): este worker já existia com

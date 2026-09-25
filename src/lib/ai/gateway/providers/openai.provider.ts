@@ -2,10 +2,10 @@
  * Adapter OpenAI — segunda opção na cadeia de fallback, só entra em jogo se Groq falhar (ou não
  * estiver configurado). Ver `../chat-model.ts` para a ordem completa.
  */
-import { callProvider } from '../circuit-breaker.js';
-import { requestChatCompletion } from '../http-client.js';
-import type { ChatCompletionResponse } from '../types.js';
-import type { ProviderAdapter, ProviderChatParams } from './types.js';
+import { callProvider } from '../circuit-breaker';
+import { requestChatCompletion } from '../http-client';
+import type { ChatCompletionResponse } from '../types';
+import type { ProviderAdapter, ProviderChatParams } from './types';
 
 const OPENAI_CHAT_URL = 'https://api.openai.com/v1/chat/completions';
 

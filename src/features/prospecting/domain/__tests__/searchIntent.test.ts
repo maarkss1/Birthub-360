@@ -6,8 +6,8 @@
  * comportamento observável, só nomeie e teste o que já era verdade.
  */
 import { describe, expect, it } from 'vitest';
-import type { ProspectCriteriaLike } from '../searchIntent.js';
-import { buildSearchIntent, MAX_LEADS_PER_SEARCH } from '../searchIntent.js';
+import type { ProspectCriteriaLike } from '../searchIntent';
+import { buildSearchIntent, MAX_LEADS_PER_SEARCH } from '../searchIntent';
 
 const baseCriteria: ProspectCriteriaLike = {
   segmento: 'Transportadora',

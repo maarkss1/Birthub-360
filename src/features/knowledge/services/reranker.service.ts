@@ -1,14 +1,14 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { env } from '../../../config/env.js';
+import { env } from '../../../config/env';
 import {
   cleanAndParseJson,
   getAiModel,
   logAiUsage,
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
   wrapUntrustedContent,
-} from '../../../lib/ai/gateway.js';
-import { logger } from '../../../lib/logger.js';
-import type { SearchHit } from '../knowledge.types.js';
+} from '../../../lib/ai/gateway';
+import { logger } from '../../../lib/logger';
+import type { SearchHit } from '../knowledge.types';
 
 /**
  * DEC-11 (dossiê CPI, opção A): estágio de reranking sobre o resultado já fundido por RRF

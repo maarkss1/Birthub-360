@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { SearchHit } from '../../search.service.js';
+import type { SearchHit } from '../../search.service';
 
 /**
  * DEC-11 (dossiê CPI, opção A): estágio de reranking via LLM sobre os candidatos já fundidos pelo

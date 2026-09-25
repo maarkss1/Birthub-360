@@ -4,7 +4,7 @@
  * sem saber nada específico de cada provedor — trocar de provedor, ou adicionar um novo, nunca
  * exige alterar `chat-model.ts` além de incluí-lo na lista de adapters.
  */
-import type { ChatCompletionMessage, ChatCompletionResponse, ProviderName } from '../types.js';
+import type { ChatCompletionMessage, ChatCompletionResponse, ProviderName } from '../types';
 
 export interface ProviderChatParams {
   messages: ChatCompletionMessage[];

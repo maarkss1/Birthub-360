@@ -1,6 +1,6 @@
 import Redis from 'ioredis';
-import { logger } from '../logger.js';
-import { recordRedisReconnect, registerRedisConnectionForMetrics } from './metrics.js';
+import { logger } from '../logger';
+import { recordRedisReconnect, registerRedisConnectionForMetrics } from './metrics';
 
 const configuredRedisUrl = process.env.REDIS_URL?.trim();
 const redisUrl = configuredRedisUrl || 'redis://localhost:6379';

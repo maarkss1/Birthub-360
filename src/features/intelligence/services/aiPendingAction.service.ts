@@ -1,15 +1,15 @@
 import type { AIPendingAction } from '@prisma/client';
-import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import type { ActivityType } from '../../../lib/zod.js';
-import { container } from '../../../shared/di/container.js';
-import { activityService } from '../../activities/services/activity.service.js';
-import type { NoteUseCases } from '../../notes/application/NoteUseCases.js';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import type { ActivityType } from '../../../lib/zod';
+import { container } from '../../../shared/di/container';
+import { activityService } from '../../activities/services/activity.service';
+import type { NoteUseCases } from '../../notes/application/NoteUseCases';
 import {
   type NotificationKind,
   notificationService,
-} from '../../notifications/notification.service.js';
+} from '../../notifications/notification.service';
 
 export interface ExecutionResult {
   /** Mantido como `sent` por compatibilidade com a API/UI: true significa que a ação foi executada. */

@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { BRAND } from '../../../config/brand.js';
-import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
-import { logger } from '../../../lib/logger.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { BRAND } from '../../../config/brand';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer';
+import { logger } from '../../../lib/logger';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
 
 const router = Router();
 

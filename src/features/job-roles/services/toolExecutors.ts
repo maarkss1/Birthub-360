@@ -13,10 +13,10 @@
 // `src/shared/di/setup.ts` para o racional completo e onde cada um é registrado).
 
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { getAiModel } from '../../../lib/ai/gateway.js';
-import { prisma } from '../../../lib/prisma.js';
-import { container } from '../../../shared/di/container.js';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
+import { getAiModel } from '../../../lib/ai/gateway';
+import { prisma } from '../../../lib/prisma';
+import { container } from '../../../shared/di/container';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service';
 
 export interface ToolExecutionContext {
   organizationId: string;

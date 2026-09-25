@@ -1,7 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import { logger } from '../../../lib/logger.js';
-import { redactResidualPii } from '../../../shared/security/piiRedaction.js';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { logger } from '../../../lib/logger';
+import { redactResidualPii } from '../../../shared/security/piiRedaction';
 
 export interface AnonymizationInput {
   rawText: string;

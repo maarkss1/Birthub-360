@@ -1,6 +1,6 @@
 import pino from 'pino';
 import { logs, SeverityNumber, type Logger as OtelLogger } from '@opentelemetry/api-logs';
-import { getRequestId } from './requestContext.js';
+import { getRequestId } from './requestContext';
 
 type LogMeta = Record<string, unknown> | unknown;
 

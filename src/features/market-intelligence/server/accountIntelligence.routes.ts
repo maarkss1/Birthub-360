@@ -2,9 +2,9 @@ import type { NextFunction, Request, Response } from 'express';
 import { Router } from 'express';
 import type { ZodType } from 'zod';
 
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import { requireRole } from '../../../shared/middlewares/requireRole';
 import {
   accountParamsSchema,
   decisionMakerQuerySchema,
@@ -13,12 +13,12 @@ import {
   recommendationQuerySchema,
   relationshipQuerySchema,
   signalQuerySchema,
-} from './accountIntelligence.schemas.js';
+} from './accountIntelligence.schemas';
 import {
   AccountIntelligenceService,
   type AccountIntelligenceServiceContract,
-} from './accountIntelligence.service.js';
-import { actionExecutorService } from './actionExecutor.service.js';
+} from './accountIntelligence.service';
+import { actionExecutorService } from './actionExecutor.service';
 
 export interface AccountIntelligenceRouterDependencies {
   serviceFactory?: (req: AuthRequest) => AccountIntelligenceServiceContract;

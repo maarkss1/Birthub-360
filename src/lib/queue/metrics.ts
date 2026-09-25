@@ -1,7 +1,7 @@
 import type { Job, Queue, Worker } from 'bullmq';
 import type Redis from 'ioredis';
 import client from 'prom-client';
-import { logger } from '../logger.js';
+import { logger } from '../logger';
 
 interface RegisteredQueue {
   name: string;

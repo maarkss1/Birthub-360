@@ -1,11 +1,11 @@
 import { type ConnectionOptions, Queue, Worker } from 'bullmq';
-import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { connection } from '../../../lib/queue/redis.js';
-import { eraseDataSubject } from '../../../shared/services/dataSubjectErasure.service.js';
+import { requestContext } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics';
+import { connection } from '../../../lib/queue/redis';
+import { eraseDataSubject } from '../../../shared/services/dataSubjectErasure.service';
 
 export const AUTO_ANONYMIZE_QUEUE_NAME = 'auto-anonymize-disqualified-queue';
 

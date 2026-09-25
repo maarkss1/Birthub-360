@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
 import { GoogleGenAI, GenerateVideosOperation } from '@google/genai';
 import { logger } from '@/lib/logger';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
-import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService.js';
+import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway';
+import { getAiConsent, grantAiConsent, revokeAiConsent } from '../services/settingService';
 
 function getGeminiClient(): GoogleGenAI | null {
   const apiKey = process.env.GEMINI_API_KEY;

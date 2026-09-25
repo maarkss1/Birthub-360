@@ -1,4 +1,4 @@
-import type { OverviewMetrics } from '../../../shared/contracts/analytics.contract.js';
+import type { OverviewMetrics } from '../../../shared/contracts/analytics.contract';
 
 /** Ordem real do funil comercial — usada para o gráfico e para a conversão etapa a etapa. */
 export const FUNNEL_STAGES = [

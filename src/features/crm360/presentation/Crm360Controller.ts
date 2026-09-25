@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import type { Crm360UseCases } from '../application/Crm360UseCases.js';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { Crm360UseCases } from '../application/Crm360UseCases';
 
 export class Crm360Controller {
   constructor(private crm360UseCases: Crm360UseCases) {}

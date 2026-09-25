@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CentralAISuiteService } from '../CentralAISuiteService.js';
+import { CentralAISuiteService } from '../CentralAISuiteService';
 
 // Mock do AI Gateway para testes unitários determinísticos
 vi.mock('../../../../lib/ai/gateway.js', () => ({

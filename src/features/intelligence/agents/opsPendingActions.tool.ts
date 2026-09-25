@@ -1,9 +1,9 @@
 import { tool } from '@langchain/core/tools';
 import { z } from 'zod';
-import { getTenantId } from '../../../lib/async-context.js';
-import { prisma } from '../../../lib/prisma.js';
-import { ACTIVITY_TYPE } from '../../../lib/zod.js';
-import type { NotificationKind } from '../../notifications/notification.service.js';
+import { getTenantId } from '../../../lib/async-context';
+import { prisma } from '../../../lib/prisma';
+import { ACTIVITY_TYPE } from '../../../lib/zod';
+import type { NotificationKind } from '../../notifications/notification.service';
 
 // GOV-13 (Agente 13 — enxame autônomo): substitui as ferramentas de `opsTools.ts` para o
 // OpsAgent especificamente. Diferente de SDR/BDR/Closer/CRM (que sempre passam recomendação

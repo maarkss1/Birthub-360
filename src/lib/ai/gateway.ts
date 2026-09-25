@@ -35,18 +35,18 @@
  * sem exigir tocar em nenhum dos pontos de chamada.
  */
 
-export { getAiModel } from './gateway/chat-model.js';
-export { __resetCircuitBreakerForTests } from './gateway/circuit-breaker.js';
-export { generateEmbedding } from './gateway/embeddings.js';
-export { LOCAL_MODEL } from './gateway/model-routing.js';
-export { cleanAndParseJson, toChatCompletionMessages } from './gateway/parsing.js';
-export { estimateCostUsd } from './gateway/pricing.js';
+export { getAiModel } from './gateway/chat-model';
+export { __resetCircuitBreakerForTests } from './gateway/circuit-breaker';
+export { generateEmbedding } from './gateway/embeddings';
+export { LOCAL_MODEL } from './gateway/model-routing';
+export { cleanAndParseJson, toChatCompletionMessages } from './gateway/parsing';
+export { estimateCostUsd } from './gateway/pricing';
 export {
   UNTRUSTED_CONTENT_GUARD_INSTRUCTION,
   wrapUntrustedContent,
-} from './gateway/prompt-safety.js';
-export { withRetry } from './gateway/retry.js';
-export { streamChatCompletion } from './gateway/streaming.js';
+} from './gateway/prompt-safety';
+export { withRetry } from './gateway/retry';
+export { streamChatCompletion } from './gateway/streaming';
 export type {
   AiChatModel,
   AiInvokeResult,
@@ -55,5 +55,5 @@ export type {
   AiTokenUsage,
   AiUsageLogInput,
   ChatCompletionMessage,
-} from './gateway/types.js';
-export { logAiUsage } from './usage-log.js';
+} from './gateway/types';
+export { logAiUsage } from './usage-log';

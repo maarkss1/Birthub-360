@@ -2,8 +2,8 @@ import compression from 'compression';
 import cors from 'cors';
 import type { Express } from 'express';
 import helmet from 'helmet';
-import { env } from '../config/env.js';
-import { csrfGuard } from '../shared/security/csrfGuard.js';
+import { env } from '../config/env';
+import { csrfGuard } from '../shared/security/csrfGuard';
 
 // Sem isto, esquecer de definir ALLOWED_ORIGINS em produção fazia o servidor subir "com sucesso"
 // mas só aceitando as origens de localhost do fallback abaixo — todo tráfego do frontend real de

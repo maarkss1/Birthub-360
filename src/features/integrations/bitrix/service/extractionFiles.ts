@@ -3,7 +3,7 @@ import path from 'node:path';
 // Named exports apenas (sem `export default`/`export =` no .d.ts do pacote) — import default
 // quebraria o typecheck (`npx tsc --noEmit`), já que este projeto não liga `esModuleInterop`.
 import * as ExcelJS from 'exceljs';
-import { env } from '../../../../config/env.js';
+import { env } from '../../../../config/env';
 
 /**
  * Geração/persistência dos arquivos exportados pelo serviço real de Extrações Bitrix. Guarda só o

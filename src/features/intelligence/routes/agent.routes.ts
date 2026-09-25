@@ -1,11 +1,11 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
 
-import { logger } from '../../../lib/logger.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { synthesizeSpeech } from '../services/voicebox.service.js';
+import { logger } from '../../../lib/logger';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { synthesizeSpeech } from '../services/voicebox.service';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);
@@ -36,12 +36,12 @@ import {
   LearningAgent,
   rejectLearningProfileVersion,
   rollbackLearningProfile,
-} from '../agents/learning.agent.js';
+} from '../agents/learning.agent';
 // --- SWARM & CONTINUOUS LEARNING ENDPOINTS ---
-import { SwarmOrchestrator } from '../agents/supervisor.agent.js';
-import { getDatasetSummary, validateToolUseCases } from '../evaluation/goldenDataset.service.js';
-import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service.js';
-import { getSwarmSloSnapshot } from '../services/swarmScheduler.service.js';
+import { SwarmOrchestrator } from '../agents/supervisor.agent';
+import { getDatasetSummary, validateToolUseCases } from '../evaluation/goldenDataset.service';
+import { getEvaluationMetricsSnapshot } from '../services/evaluationMetrics.service';
+import { getSwarmSloSnapshot } from '../services/swarmScheduler.service';
 
 const swarmMissionSchema = z.object({
   mission: z.string().trim().min(1, 'A missão é obrigatória.').max(4_000),
@@ -205,7 +205,7 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
 // Extraída para `commercialCell.routes.ts` na onda 6 — ver o cabeçalho daquele arquivo para o
 // motivo (gate de hotspot) e a garantia de que nenhuma URL pública mudou. Montado aqui como
 // sub-router, então os caminhos continuam `/api/agent/commercial-cell/...`.
-import { commercialCellRoutes } from './commercialCell.routes.js';
+import { commercialCellRoutes } from './commercialCell.routes';
 
 router.use(commercialCellRoutes);
 

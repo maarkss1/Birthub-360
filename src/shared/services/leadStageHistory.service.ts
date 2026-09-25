@@ -1,4 +1,4 @@
-import { prisma } from '../../lib/prisma.js';
+import { prisma } from '../../lib/prisma';
 
 /**
  * Ponto único de escrita de `LeadStageHistory` (ver comentário no schema). Chamado pelos pontos

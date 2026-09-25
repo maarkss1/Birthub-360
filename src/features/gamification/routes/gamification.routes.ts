@@ -1,9 +1,9 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { prisma } from '../../../lib/prisma.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { aiSuite } from '../../intelligence/services/CentralAISuiteService.js';
-import type { SellerPerformanceData } from '../services/seller-coaching.service.js';
-import { sellerPerformanceAggregator } from '../services/sellerPerformanceAggregator.service.js';
+import { prisma } from '../../../lib/prisma';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { aiSuite } from '../../intelligence/services/CentralAISuiteService';
+import type { SellerPerformanceData } from '../services/seller-coaching.service';
+import { sellerPerformanceAggregator } from '../services/sellerPerformanceAggregator.service';
 
 const router = Router();
 

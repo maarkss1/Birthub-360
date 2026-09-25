@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Request, Response } from 'express';
-import { initiateOutboundCallHandler } from './voiceOutbound.controller.js';
+import { initiateOutboundCallHandler } from './voiceOutbound.controller';
 import {
   initiateOutboundCall,
   AgentNotFoundError,
   DuplicateCallError,
-} from '../services/outboundCallService.js';
-import { TwilioNotConfiguredError } from '../services/twilioClient.js';
+} from '../services/outboundCallService';
+import { TwilioNotConfiguredError } from '../services/twilioClient';
 
 vi.mock('../services/outboundCallService.js', () => ({
   initiateOutboundCall: vi.fn(),

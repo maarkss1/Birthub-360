@@ -1,18 +1,18 @@
 import { timingSafeEqual } from 'node:crypto';
 import type { Prisma } from '@prisma/client';
 import express, { type Request, type Response, Router } from 'express';
-import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
+import { requestContext } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { routeParam } from '../../../shared/http/routeParams';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
   validateWebhookTimestamp,
-} from '../../../shared/security/webhookReplayGuard.js';
-import { callBitrix } from './service/client.js';
-import { applyInboundCustomFields, resolveEnumMaps } from './service/customFields.js';
-import { bitrixSyncFailuresTotal } from './service/metrics.js';
+} from '../../../shared/security/webhookReplayGuard';
+import { callBitrix } from './service/client';
+import { applyInboundCustomFields, resolveEnumMaps } from './service/customFields';
+import { bitrixSyncFailuresTotal } from './service/metrics';
 
 // ── Webhook de ENTRADA (Bitrix → Atlas, "исходящий вебхук" no admin do portal) ──────────────────
 //

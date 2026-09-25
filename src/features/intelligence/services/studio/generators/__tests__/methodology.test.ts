@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { methodologyResultSchema } from '../../schema.js';
-import { generateMethodology } from '../methodology.js';
+import { methodologyResultSchema } from '../../schema';
+import { generateMethodology } from '../methodology';
 
 function buildRequest(framework: 'spin' | 'meddpicc' | 'aida' | 'snap' | 'challenger') {
   return {

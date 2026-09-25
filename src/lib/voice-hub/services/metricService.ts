@@ -1,4 +1,4 @@
-import * as metricRepository from '../repositories/metricRepository.js';
+import * as metricRepository from '../repositories/metricRepository';
 
 export function listMetrics(organizationId: string, userId: string) {
   return metricRepository.listMetricsForUser(organizationId, userId);

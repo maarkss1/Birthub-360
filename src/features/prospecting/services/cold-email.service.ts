@@ -1,9 +1,9 @@
-import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
+import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer';
 import { logger } from '../../../lib/logger';
-import { toE164BR } from '../../../lib/phone.js';
-import { isOptedOut } from '../../cadence/application/optOutService.js';
-import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
-import { resolveEmailStatus } from './enrichment/domainGuess.js';
+import { toE164BR } from '../../../lib/phone';
+import { isOptedOut } from '../../cadence/application/optOutService';
+import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository';
+import { resolveEmailStatus } from './enrichment/domainGuess';
 
 export interface ColdEmailCampaign {
   id: string;

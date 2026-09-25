@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { container } from '../../../shared/di/container.js';
-import type { UsageController } from '../presentation/UsageController.js';
+import { container } from '../../../shared/di/container';
+import type { UsageController } from '../presentation/UsageController';
 
 const router = Router();
 

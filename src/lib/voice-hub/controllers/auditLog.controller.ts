@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { listAuditLog, parsePagination } from '../services/auditLogService.js';
+import { listAuditLog, parsePagination } from '../services/auditLogService';
 
 export async function listAuditLogHandler(req: Request, res: Response) {
   const { page, pageSize } = parsePagination(req.query.page, req.query.pageSize);

@@ -22,7 +22,7 @@ vi.mock('../../../../lib/prisma.js', () => ({
   },
 }));
 
-import { PrismaAutomationVersionStore } from '../PrismaAutomationVersionStore.js';
+import { PrismaAutomationVersionStore } from '../PrismaAutomationVersionStore';
 
 describe('PrismaAutomationVersionStore', () => {
   beforeEach(() => {

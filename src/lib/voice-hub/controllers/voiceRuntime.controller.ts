@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { voiceRuntimeSchema } from '../validators/index.js';
-import { getVoiceRuntimeConfig, saveVoiceRuntimeConfig, resetVoiceRuntimeConfig } from '../services/settingService.js';
+import { voiceRuntimeSchema } from '../validators/index';
+import { getVoiceRuntimeConfig, saveVoiceRuntimeConfig, resetVoiceRuntimeConfig } from '../services/settingService';
 
 export async function getVoiceRuntimeHandler(req: Request, res: Response) {
   const config = await getVoiceRuntimeConfig(req.organizationId!, req.user!.id);

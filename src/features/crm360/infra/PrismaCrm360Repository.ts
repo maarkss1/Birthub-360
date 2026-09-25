@@ -6,40 +6,40 @@ import {
   LeadStatus,
   Prisma,
 } from '@prisma/client';
-import { requestContext } from '../../../lib/async-context.js';
-import { AuditService } from '../../../lib/audit/audit.service.js';
+import { requestContext } from '../../../lib/async-context';
+import { AuditService } from '../../../lib/audit/audit.service';
 import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
   fromPrismaLeadStatus,
   LEAD_CLOSING_STATUSES,
   toPrismaLeadStatus,
-} from '../../../lib/enumMap.js';
-import { prisma } from '../../../lib/prisma.js';
-import type { StripeChargePort } from '../../../shared/contracts/stripeCharge.contract.js';
+} from '../../../lib/enumMap';
+import { prisma } from '../../../lib/prisma';
+import type { StripeChargePort } from '../../../shared/contracts/stripeCharge.contract';
 import {
   draftNextProposalVersion,
   type ProposalSnapshot,
   type ProposalVersion,
-} from '../../../shared/domain/proposal.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
-import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature.js';
-import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort.js';
-import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository.js';
-import { recordStageTransition } from '../../../shared/services/leadStageHistory.service.js';
+} from '../../../shared/domain/proposal';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service';
+import { requestDocumentSignature as requestDocumentSignatureUseCase } from '../../cadence/application/documentSignature';
+import { govBrSignatureProviderPort } from '../../cadence/infra/GovBrSignatureProviderPort';
+import { prismaSignatureRequestRepository } from '../../cadence/infra/PrismaSignatureRequestRepository';
+import { recordStageTransition } from '../../../shared/services/leadStageHistory.service';
 import {
   ensureDealClosureAllowed,
   ensureManualDealClosureAllowed,
-} from '../../crm/application/dealClosureGate.js';
-import { prismaDealClosureGate } from '../../crm/infra/PrismaDealClosureGate.js';
+} from '../../crm/application/dealClosureGate';
+import { prismaDealClosureGate } from '../../crm/infra/PrismaDealClosureGate';
 import type {
   CrmDealItemInput,
   CrmDocumentInput,
   CrmDocumentSignatureRequestInput,
   CrmDocumentUpdateInput,
   CrmProductInput,
-} from '../crm360.schema.js';
+} from '../crm360.schema';
 import type {
   CrmCommercialDocument,
   CrmCommercialDocumentVersionDTO,
@@ -48,8 +48,8 @@ import type {
   CrmPipeline,
   CrmProduct,
   CrmPublicDocumentView,
-} from '../crm360.types.js';
-import type { ICrm360Repository } from '../domain/ICrm360Repository.js';
+} from '../crm360.types';
+import type { ICrm360Repository } from '../domain/ICrm360Repository';
 
 type DefaultStage = {
   name: string;

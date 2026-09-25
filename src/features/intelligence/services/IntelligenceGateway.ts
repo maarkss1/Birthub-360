@@ -1,12 +1,12 @@
 import { AIMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import { getTenantId } from '../../../lib/async-context.js';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { getTenantId } from '../../../lib/async-context';
 import {
   loadAgentMemory,
   recordAgentFailure,
   saveAgentMemory,
-} from '../agents/agentMemory.store.js';
-import { redactAndTrackPiiLeak } from './guardrails.service.js';
+} from '../agents/agentMemory.store';
+import { redactAndTrackPiiLeak } from './guardrails.service';
 
 export interface GatewayCallConfig {
   /** ID da sessão para recuperar/salvar memória. Se omitido, a chamada será stateless. */

@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { activitySchema } from '../../../lib/zod.js';
-import { container } from '../../../shared/di/container.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import type { ActivityController } from '../presentation/ActivityController.js';
+import { activitySchema } from '../../../lib/zod';
+import { container } from '../../../shared/di/container';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import type { ActivityController } from '../presentation/ActivityController';
 
 const router = Router();
 const writeRoles = requireRole(['ADMIN', 'GESTOR', 'CLOSER', 'SDR']);

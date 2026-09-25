@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import { logger } from '../../lib/logger.js';
-import type { AuthRequest } from '../middlewares/authenticateToken.js';
+import { logger } from '../../lib/logger';
+import type { AuthRequest } from '../middlewares/authenticateToken';
 
 /**
  * Guard de enforcement OPA (SEC-006). Consulta um servidor OPA externo e nega por padrão:
@@ -21,7 +21,7 @@ export interface OpaInput {
 const DEFAULT_OPA_URL = 'http://localhost:8181/v1/data/birthhub/authz/allow';
 
 export const opaGuard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const user = (req as Partial<AuthRequest>).user;
+  const user = (req as unknown as Partial<AuthRequest>).user;
   const resourceId = req.params?.id;
 
   const input: OpaInput = {

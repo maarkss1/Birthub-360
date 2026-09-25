@@ -3,12 +3,12 @@ import {
   initWhatsApp,
   logoutWhatsApp,
   sendWhatsAppMessage,
-} from '../../features/integrations/whatsapp/whatsapp.service.js';
-import { logger } from '../logger.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted } from './metrics.js';
-import { connection } from './redis.js';
-import { WHATSAPP_COMMAND_QUEUE_NAME, type WhatsAppCommand } from './whatsappCommand.queue.js';
+} from '../../features/integrations/whatsapp/whatsapp.service';
+import { logger } from '../logger';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted } from './metrics';
+import { connection } from './redis';
+import { WHATSAPP_COMMAND_QUEUE_NAME, type WhatsAppCommand } from './whatsappCommand.queue';
 
 export function createWhatsAppCommandWorker(): Worker<WhatsAppCommand> {
   const worker = new Worker<WhatsAppCommand>(

@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { roleplayEvaluationResultSchema, roleplayResultSchema } from '../../schema.js';
-import { generateRoleplay, generateRoleplayEvaluation } from '../roleplay.js';
+import { roleplayEvaluationResultSchema, roleplayResultSchema } from '../../schema';
+import { generateRoleplay, generateRoleplayEvaluation } from '../roleplay';
 
 const request = {
   kind: 'roleplay' as const,

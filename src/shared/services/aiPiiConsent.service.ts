@@ -1,5 +1,5 @@
-import { env } from '../../config/env.js';
-import { AppError } from '../middlewares/errorHandler.js';
+import { env } from '../../config/env';
+import { AppError } from '../middlewares/errorHandler';
 
 /**
  * Erro específico (em vez de um `Error`/`AppError` genérico) para que quem chama consiga

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import type { BugReportUseCases } from '../application/BugReportUseCases.js';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import type { BugReportUseCases } from '../application/BugReportUseCases';
 
 export class BugReportController {
   constructor(private bugReportUseCases: BugReportUseCases) {}

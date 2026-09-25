@@ -1,12 +1,12 @@
 import express from 'express';
-import { requireTenant, requireRole } from '../middlewares/rbac.js';
-import { createRateLimiter } from '../middlewares/rateLimit.js';
+import { requireTenant, requireRole } from '../middlewares/rbac';
+import { createRateLimiter } from '../middlewares/rateLimit';
 import {
   createWebhookEndpointHandler,
   listWebhookEndpointsHandler,
   deleteWebhookEndpointHandler,
   regenerateWebhookEndpointSecretHandler,
-} from '../controllers/webhookEndpoint.controller.js';
+} from '../controllers/webhookEndpoint.controller';
 
 const router = express.Router();
 

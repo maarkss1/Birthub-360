@@ -1,6 +1,6 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { observabilityMetricsHandler } from '../controllers/observability.controller.js';
+import { requireTenant } from '../middlewares/rbac';
+import { observabilityMetricsHandler } from '../controllers/observability.controller';
 
 const router = express.Router();
 

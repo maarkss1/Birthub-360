@@ -1,22 +1,22 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import express, { type Request, type Response, Router } from 'express';
-import { env } from '../../../config/env.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { contactEmailIndex } from '../../../lib/crypto/piiIndex.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
+import { env } from '../../../config/env';
+import { requestContext } from '../../../lib/async-context';
+import { contactEmailIndex } from '../../../lib/crypto/piiIndex';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
 import {
   handleEmailReply,
   type InboundEmailReply,
   isGenuineLeadReply,
-} from '../../../shared/domain/replyTracking.js';
+} from '../../../shared/domain/replyTracking';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
   validateWebhookTimestamp,
-} from '../../../shared/security/webhookReplayGuard.js';
-import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier.js';
-import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort.js';
+} from '../../../shared/security/webhookReplayGuard';
+import { emailIntentClassifier } from '../../cadence/infra/emailIntentClassifier';
+import { prismaConversationSignalPort } from '../../cadence/infra/PrismaConversationSignalPort';
 
 /**
  * CYC-003 (onda 26) — transporte de ENTRADA de e-mail, hoje um stub: nenhum provedor real

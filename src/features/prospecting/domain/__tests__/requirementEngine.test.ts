@@ -4,12 +4,12 @@
  * pedido como se fosse confirmado — a fabricação sutil que este motor existe para evitar.
  */
 import { describe, expect, it } from 'vitest';
-import type { ProspectCandidate } from '../prospectTypes.js';
+import type { ProspectCandidate } from '../prospectTypes';
 import {
   buildRequirementsFromSearchIntent,
   evaluateCandidateRequirements,
-} from '../requirementEngine.js';
-import type { SearchIntent } from '../searchIntent.js';
+} from '../requirementEngine';
+import type { SearchIntent } from '../searchIntent';
 
 function baseIntent(overrides: Partial<SearchIntent> = {}): SearchIntent {
   return {

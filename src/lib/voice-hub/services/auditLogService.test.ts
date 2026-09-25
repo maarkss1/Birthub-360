@@ -4,8 +4,8 @@ vi.mock('../repositories/auditLogRepository.js', () => ({
   listAuditLogsForTenant: vi.fn(),
 }));
 
-import { listAuditLogsForTenant } from '../repositories/auditLogRepository.js';
-import { listAuditLog, parsePagination } from './auditLogService.js';
+import { listAuditLogsForTenant } from '../repositories/auditLogRepository';
+import { listAuditLog, parsePagination } from './auditLogService';
 
 beforeEach(() => vi.clearAllMocks());
 

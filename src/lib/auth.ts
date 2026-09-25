@@ -2,13 +2,13 @@ import { randomUUID } from 'node:crypto';
 import { betterAuth } from 'better-auth';
 import { prismaAdapter } from 'better-auth/adapters/prisma';
 import { APIError, createAuthMiddleware, isAPIError } from 'better-auth/api';
-import { isAuthorizedLoginEmail } from '../config/access-policy.js';
-import { env } from '../config/env.js';
-import { parseAllowedOrigins } from '../config/network.js';
-import { requestContext } from './async-context.js';
-import { MailerNotConfiguredError, sendEmail } from './email/mailer.js';
-import { logger } from './logger.js';
-import { prisma } from './prisma.js';
+import { isAuthorizedLoginEmail } from '../config/access-policy';
+import { env } from '../config/env';
+import { parseAllowedOrigins } from '../config/network';
+import { requestContext } from './async-context';
+import { MailerNotConfiguredError, sendEmail } from './email/mailer';
+import { logger } from './logger';
+import { prisma } from './prisma';
 
 const ACCESS_DENIED_MESSAGE = 'E-mail inválido.';
 

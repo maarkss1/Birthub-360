@@ -13,21 +13,21 @@
 // enrichment.service.ts, prospecting.service.ts, prospecting.routes.ts, DecisionMakerSearch.tsx
 // e ApolloAdapter.ts sem exigir nenhuma mudança neles.
 
-export type { ApolloConnectionStatus } from './apollo/client.js';
-export { checkApolloConnection } from './apollo/client.js';
-export { enrichOrganizationByDomain } from './apollo/organizationEnrich.js';
+export type { ApolloConnectionStatus } from './apollo/client';
+export { checkApolloConnection } from './apollo/client';
+export { enrichOrganizationByDomain } from './apollo/organizationEnrich';
 
-export { fetchApolloCandidates } from './apollo/organizationSearch.js';
+export { fetchApolloCandidates } from './apollo/organizationSearch';
 export {
   enrichCandidatesWithDecisionMakers,
   enrichOrganizationWithContacts,
   enrichPersonByName,
   searchDecisionMakersAdvanced,
-} from './apollo/people.js';
+} from './apollo/people';
 export type {
   ApolloContact,
   ApolloOrganization,
   ApolloPersonRaw,
   ApolloSearchResponse,
   DecisionMakerCriteria,
-} from './apollo/types.js';
+} from './apollo/types';

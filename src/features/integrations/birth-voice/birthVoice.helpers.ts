@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { toE164BR } from '../../../lib/phone.js';
+import { toE164BR } from '../../../lib/phone';
 
 /**
  * Lógica pura da integração do SDR de voz: sem env, sem prisma, sem rede.

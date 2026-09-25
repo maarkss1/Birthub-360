@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { b2bResultSchema } from '../../schema.js';
-import { generateB2bMatrix } from '../b2bMatrix.js';
+import { b2bResultSchema } from '../../schema';
+import { generateB2bMatrix } from '../b2bMatrix';
 
 const request = {
   kind: 'b2b_matrix' as const,

@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { updateLeadQualificationTool } from '../../tools/crmTools.js';
+import { updateLeadQualificationTool } from '../../tools/crmTools';
 import {
   __resetGoldenDatasetCacheForTests,
   getCasesByCategory,
   getDatasetSummary,
   loadGoldenDataset,
   validateToolUseCases,
-} from '../goldenDataset.service.js';
-import { GOLDEN_CASE_CATEGORIES, goldenDatasetFileSchema } from '../goldenDataset.types.js';
+} from '../goldenDataset.service';
+import { GOLDEN_CASE_CATEGORIES, goldenDatasetFileSchema } from '../goldenDataset.types';
 
 /**
  * AI-005 (onda 36): prova que o Golden Dataset real (`golden-dataset.json`) é estruturalmente

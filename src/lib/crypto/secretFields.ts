@@ -1,6 +1,6 @@
 import { createCipheriv, createDecipheriv, createHash, randomBytes } from 'node:crypto';
-import { env } from '../../config/env.js';
-import { logger } from '../logger.js';
+import { env } from '../../config/env';
+import { logger } from '../logger';
 
 // Criptografia em repouso de credenciais de integrações persistidas no banco (bloqueador do
 // AGENTS.md: "Credenciais armazenadas sem proteção adequada" — GoogleWorkspaceConnection.

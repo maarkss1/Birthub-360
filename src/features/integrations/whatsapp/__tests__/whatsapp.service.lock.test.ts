@@ -109,7 +109,7 @@ vi.mock('../../../../lib/queue/distributedLock.js', () => ({
   acquireDistributedLock: (...args: unknown[]) => acquireDistributedLockMock(...args),
 }));
 
-import { initWhatsApp, shutdownWhatsAppSessions } from '../whatsapp.service.js';
+import { initWhatsApp, shutdownWhatsAppSessions } from '../whatsapp.service';
 
 function fakeLock(overrides: { acquired: boolean; reason?: string }) {
   return {

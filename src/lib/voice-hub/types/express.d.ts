@@ -1,4 +1,4 @@
-import { TokenPayload } from '../lib/auth-tokens.js';
+import { TokenPayload } from '../lib/auth-tokens';
 
 declare global {
   namespace Express {

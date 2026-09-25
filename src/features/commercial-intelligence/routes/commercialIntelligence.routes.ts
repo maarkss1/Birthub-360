@@ -1,11 +1,11 @@
 import { Router } from 'express';
 import rateLimit, { ipKeyGenerator } from 'express-rate-limit';
-import { env } from '../../../config/env.js';
-import { COMMERCIAL_INTELLIGENCE_ROLES } from '../../../lib/auth/authorization.js';
-import { container } from '../../../shared/di/container.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import type { CommercialIntelligenceController } from '../presentation/CommercialIntelligenceController.js';
+import { env } from '../../../config/env';
+import { COMMERCIAL_INTELLIGENCE_ROLES } from '../../../lib/auth/authorization';
+import { container } from '../../../shared/di/container';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import type { CommercialIntelligenceController } from '../presentation/CommercialIntelligenceController';
 
 const router = Router();
 

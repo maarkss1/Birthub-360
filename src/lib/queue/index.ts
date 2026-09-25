@@ -1,12 +1,12 @@
 import type { Prisma } from '@prisma/client';
 import { type Job, Queue, QueueEvents, Worker } from 'bullmq';
-import { aiService } from '../../features/intelligence/services/ai.service.js';
-import { requestContext } from '../async-context.js';
-import { logger } from '../logger.js';
-import { prisma } from '../prisma.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
-import { connection, queuesEnabled } from './redis.js';
+import { aiService } from '../../features/intelligence/services/ai.service';
+import { requestContext } from '../async-context';
+import { logger } from '../logger';
+import { prisma } from '../prisma';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
+import { connection, queuesEnabled } from './redis';
 
 /**
  * Base queue setup.

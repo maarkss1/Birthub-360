@@ -31,7 +31,7 @@ import {
   buildTenantObjectKey,
   getPresignedDownloadUrl,
   getPresignedUploadUrl,
-} from './objectStorage.js';
+} from './objectStorage';
 
 beforeEach(() => {
   vi.clearAllMocks();

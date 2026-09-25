@@ -1,11 +1,11 @@
-import { logger } from '../../../lib/logger.js';
-import { toE164BR } from '../../../lib/phone.js';
-import { prisma } from '../../../lib/prisma.js';
+import { logger } from '../../../lib/logger';
+import { toE164BR } from '../../../lib/phone';
+import { prisma } from '../../../lib/prisma';
 import {
   isOptedOut,
   recordOptOut as recordUnifiedOptOut,
-} from '../../cadence/application/optOutService.js';
-import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
+} from '../../cadence/application/optOutService';
+import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository';
 
 /**
  * Lista interna de bloqueio de discagem.

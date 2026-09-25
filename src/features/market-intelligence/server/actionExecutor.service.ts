@@ -1,7 +1,7 @@
-import { getUserId } from '../../../lib/async-context.js';
-import { withRlsContext } from '../../../lib/prisma.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { callBitrix } from '../../integrations/bitrix/service/client.js';
+import { getUserId } from '../../../lib/async-context';
+import { withRlsContext } from '../../../lib/prisma';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import { callBitrix } from '../../integrations/bitrix/service/client';
 
 export const actionExecutorService = {
   async executeAction(recommendationId: string, expectedCompanyId?: string) {

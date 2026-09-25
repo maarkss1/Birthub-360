@@ -13,7 +13,7 @@ vi.mock('../repositories/webhookEndpointRepository.js', () => ({
   recordDeliveryResult: vi.fn(),
 }));
 
-import * as webhookEndpointRepository from '../repositories/webhookEndpointRepository.js';
+import * as webhookEndpointRepository from '../repositories/webhookEndpointRepository';
 import {
   MAX_ACTIVE_WEBHOOK_ENDPOINTS_PER_TENANT,
   WebhookEndpointServiceError,
@@ -24,7 +24,7 @@ import {
   listWebhookEndpointsForTenant,
   regenerateWebhookEndpointSecret,
   resolveActiveEndpointsForEvent,
-} from './webhookEndpointService.js';
+} from './webhookEndpointService';
 
 type Row = webhookEndpointRepository.TenantWebhookEndpointRecord;
 

@@ -1,10 +1,10 @@
-import { env } from '../../config/env.js';
-import { AppError } from '../../shared/middlewares/errorHandler.js';
-import { requestContext } from '../async-context.js';
-import { logger } from '../logger.js';
-import { prisma } from '../prisma.js';
-import { cacheConnection } from '../queue/redis.js';
-import { recordAiBudgetBlocked, recordOrgAiBudgetBlocked } from './metrics.js';
+import { env } from '../../config/env';
+import { AppError } from '../../shared/middlewares/errorHandler';
+import { requestContext } from '../async-context';
+import { logger } from '../logger';
+import { prisma } from '../prisma';
+import { cacheConnection } from '../queue/redis';
+import { recordAiBudgetBlocked, recordOrgAiBudgetBlocked } from './metrics';
 
 /**
  * Circuit breaker de orçamento mensal de IA (AI-011). Diferente do circuit breaker por provedor

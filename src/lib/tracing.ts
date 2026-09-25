@@ -1,4 +1,4 @@
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 let sdkInstance: { start: () => void; shutdown: () => Promise<void> } | null = null;
 

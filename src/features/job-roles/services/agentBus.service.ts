@@ -10,18 +10,18 @@
 //     de execução; `correlationId: handoffId` reusa a idempotência JÁ implementada lá (nenhuma
 //     segunda execução real, mesmo que `acceptHandoff` seja chamado mais de uma vez).
 import type { HandoffPriority, HandoffStatus } from '@prisma/client';
-import { AuditService } from '../../../lib/audit/audit.service.js';
-import { prisma } from '../../../lib/prisma.js';
+import { AuditService } from '../../../lib/audit/audit.service';
+import { prisma } from '../../../lib/prisma';
 import {
   DEFAULT_HANDOFF_TTL_MINUTES,
   isHandoffLoop,
   MAX_HANDOFF_DEPTH,
   MAX_HANDOFF_STEPS_PER_MISSION,
-} from '../config/agent-bus-policy.js';
-import { runAgentExecution } from './agentRuntime.service.js';
-import { getCapabilityDefinitionByCode } from './capability.service.js';
-import { authorizeCapability } from './capabilityAuthorization.service.js';
-import { getJobRoleByCode, getPrimaryActiveJobRoleForUser } from './jobRole.service.js';
+} from '../config/agent-bus-policy';
+import { runAgentExecution } from './agentRuntime.service';
+import { getCapabilityDefinitionByCode } from './capability.service';
+import { authorizeCapability } from './capabilityAuthorization.service';
+import { getJobRoleByCode, getPrimaryActiveJobRoleForUser } from './jobRole.service';
 
 export class AgentBusServiceError extends Error {
   constructor(

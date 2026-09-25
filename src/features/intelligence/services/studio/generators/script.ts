@@ -1,5 +1,5 @@
-import type { StudioGenerationRequest } from '../schema.js';
-import { invokeText, SYSTEM_RULES, stripCodeFence } from '../shared.js';
+import type { StudioGenerationRequest } from '../schema';
+import { invokeText, SYSTEM_RULES, stripCodeFence } from '../shared';
 
 export async function generateScript(
   request: Extract<StudioGenerationRequest, { kind: 'script' }>,

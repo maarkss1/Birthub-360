@@ -1,8 +1,8 @@
 import { context, trace } from '@opentelemetry/api';
 import type { NextFunction, Request, Response } from 'express';
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '../../lib/logger.js';
-import type { AuthRequest } from './authenticateToken.js';
+import { logger } from '../../lib/logger';
+import type { AuthRequest } from './authenticateToken';
 
 export interface IObservabilityRequest extends Request {
   observability?: {
@@ -55,7 +55,7 @@ export const observabilityMiddleware = (req: Request, res: Response, next: NextF
   const spanId = span ? span.spanContext().spanId : 'none';
 
   // Extract user info if authenticated (auth middleware runs before this ideally, but sometimes after)
-  const authReq = req as AuthRequest;
+  const authReq = req as unknown as AuthRequest;
   const userId = authReq.user?.id || 'anonymous';
   const tenantId = authReq.user?.organizationId || 'none';
 

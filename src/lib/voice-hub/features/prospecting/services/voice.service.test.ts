@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema.js';
+import type { AtlasGROutboundPayload } from '../validators/atlasgr.schema';
 
 vi.mock('../lib/webhookIdempotency.js', () => ({
   buildAtlasGROutboundIdempotencyKey: vi.fn().mockReturnValue('idempotency:atlasgr-outbound-call:hash:test'),
@@ -10,9 +10,9 @@ vi.mock('../../../services/settingService.js', () => ({
   getAiConsent: vi.fn(),
 }));
 
-import { claimIdempotencyKey } from '../lib/webhookIdempotency.js';
-import { getAiConsent } from '../../../services/settingService.js';
-import { BlandConfigurationError, VoiceProspectingService } from './voice.service.js';
+import { claimIdempotencyKey } from '../lib/webhookIdempotency';
+import { getAiConsent } from '../../../services/settingService';
+import { BlandConfigurationError, VoiceProspectingService } from './voice.service';
 
 const mockClaim = vi.mocked(claimIdempotencyKey);
 const mockGetAiConsent = vi.mocked(getAiConsent);

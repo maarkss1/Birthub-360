@@ -1,10 +1,10 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { runBitrixSyncTick } from '../../features/integrations/bitrix/bitrix.service.js';
-import { bitrixSyncFailuresTotal } from '../../features/integrations/bitrix/service/metrics.js';
-import { logger } from '../logger.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
-import { connection } from './redis.js';
+import { runBitrixSyncTick } from '../../features/integrations/bitrix/bitrix.service';
+import { bitrixSyncFailuresTotal } from '../../features/integrations/bitrix/service/metrics';
+import { logger } from '../logger';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
+import { connection } from './redis';
 
 export const BITRIX_SYNC_QUEUE_NAME = 'bitrix-sync';
 

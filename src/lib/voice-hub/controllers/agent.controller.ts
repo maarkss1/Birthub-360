@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { agentSchema } from '../validators/index.js';
-import { listAgents, createAgent, deleteAgent, getAgent, updateAgentConfig } from '../services/agentService.js';
+import { agentSchema } from '../validators/index';
+import { listAgents, createAgent, deleteAgent, getAgent, updateAgentConfig } from '../services/agentService';
 
 export async function listAgentsHandler(req: Request, res: Response) {
   const agents = await listAgents(req.organizationId!);

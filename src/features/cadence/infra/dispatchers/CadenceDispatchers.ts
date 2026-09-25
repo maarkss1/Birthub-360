@@ -1,9 +1,9 @@
-import { MailerNotConfiguredError, sendEmail } from '../../../../lib/email/mailer.js';
-import { logger } from '../../../../lib/logger.js';
-import { prisma } from '../../../../lib/prisma.js';
-import { sendWhatsAppMessage } from '../../../integrations/whatsapp/whatsapp.service.js';
-import type { CadenceDispatcher } from '../../application/cadenceService.js';
-import type { CadenceRunState, CadenceTouch } from '../../domain/cadence.js';
+import { MailerNotConfiguredError, sendEmail } from '../../../../lib/email/mailer';
+import { logger } from '../../../../lib/logger';
+import { prisma } from '../../../../lib/prisma';
+import { sendWhatsAppMessage } from '../../../integrations/whatsapp/whatsapp.service';
+import type { CadenceDispatcher } from '../../application/cadenceService';
+import type { CadenceRunState, CadenceTouch } from '../../domain/cadence';
 
 /**
  * Dispatchers reais de canal (CYC-008, onda-19) — a peça que faltava para `advanceCadenceRun`

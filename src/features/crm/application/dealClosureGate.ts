@@ -4,8 +4,8 @@ import {
   type DealClosureEventType,
   evaluateDealClosure,
   isDeterministicCloseEvent,
-} from '../../../shared/domain/dealClosure.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
+} from '../../../shared/domain/dealClosure';
+import { AppError } from '../../../shared/middlewares/errorHandler';
 
 /**
  * CYC-007 (onda 24) — conecta `dealClosure.ts` (domínio puro do Agente 17, entregue na Sprint 06

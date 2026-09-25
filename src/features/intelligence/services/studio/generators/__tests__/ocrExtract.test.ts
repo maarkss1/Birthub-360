@@ -7,8 +7,8 @@ vi.mock('../../shared.js', () => ({
   jsonOnlyInstruction: (schema: string) => `RETORNE JSON: ${schema}`,
 }));
 
-import { ocrExtractResultSchema } from '../../schema.js';
-import { generateOcrExtract } from '../ocrExtract.js';
+import { ocrExtractResultSchema } from '../../schema';
+import { generateOcrExtract } from '../ocrExtract';
 
 const request = {
   kind: 'ocr_extract' as const,

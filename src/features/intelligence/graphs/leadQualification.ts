@@ -1,8 +1,8 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { Annotation, END, START, StateGraph } from '@langchain/langgraph';
 import { z } from 'zod';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import { prisma } from '../../../lib/prisma.js';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { prisma } from '../../../lib/prisma';
 
 // Achado da auditoria (PR #328, item fora de escopo original): o parse da resposta do LLM abaixo
 // só fazia `result.score` opcional/`typeof` manual — um JSON malformado ou sem "score" caía no

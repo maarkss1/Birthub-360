@@ -1,4 +1,4 @@
-import type { UsagePoint, UsageRepository, UsageSummary } from '../domain/Usage.js';
+import type { UsagePoint, UsageRepository, UsageSummary } from '../domain/Usage';
 
 function startOfDayUtcOffsetDays(days: number): Date {
   const d = new Date();

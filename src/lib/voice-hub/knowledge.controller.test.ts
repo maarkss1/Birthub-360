@@ -17,9 +17,9 @@ vi.mock('../infrastructure/antivirus.js', async () => {
   };
 });
 
-import { getAgent, updateAgentConfig } from '../services/agentService.js';
-import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus.js';
-import { uploadKnowledgeDocumentHandler } from './knowledge.controller.js';
+import { getAgent, updateAgentConfig } from '../services/agentService';
+import { AntivirusUnavailableError, InfectedFileError, scanBufferForViruses } from '../infrastructure/antivirus';
+import { uploadKnowledgeDocumentHandler } from './knowledge.controller';
 
 const mockGetAgent = vi.mocked(getAgent);
 const mockUpdateAgentConfig = vi.mocked(updateAgentConfig);

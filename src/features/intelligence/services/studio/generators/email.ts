@@ -1,6 +1,6 @@
-import type { StudioGenerationRequest } from '../schema.js';
-import { emailResultSchema } from '../schema.js';
-import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared.js';
+import type { StudioGenerationRequest } from '../schema';
+import { emailResultSchema } from '../schema';
+import { invokeStructured, jsonOnlyInstruction, SYSTEM_RULES } from '../shared';
 
 export async function generateEmail(request: Extract<StudioGenerationRequest, { kind: 'email' }>) {
   const prompt = `${SYSTEM_RULES}

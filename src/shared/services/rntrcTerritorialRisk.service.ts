@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { logger } from '../../lib/logger.js';
+import { logger } from '../../lib/logger';
 
 /**
  * Snapshot territorial RNTRC/ANTT compartilhado pela Prospecção.

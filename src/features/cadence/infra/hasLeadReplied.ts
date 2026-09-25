@@ -1,4 +1,4 @@
-import { prisma } from '../../../lib/prisma.js';
+import { prisma } from '../../../lib/prisma';
 
 /**
  * Detecta se o lead respondeu desde que a cadência começou (CYC-008, onda-19). Cobre os dois

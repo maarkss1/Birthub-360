@@ -17,23 +17,23 @@
  * recusado, para auditoria); `PENDING` (divulgação da IA não detectada na transcrição) deixa a
  * conversa `SCHEDULED` sem processar nada — nunca fabrica consentimento por omissão.
  */
-import { logger } from '../../../lib/logger.js';
+import { logger } from '../../../lib/logger';
 import type {
   CopilotoVoiceIngestionPort,
   VoiceCallIngestionInput,
-} from '../../../shared/contracts/copilotoVoiceIngestion.contract.js';
-import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract.js';
-import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service.js';
-import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
+} from '../../../shared/contracts/copilotoVoiceIngestion.contract';
+import type { MeetingSynthesisPort } from '../../../shared/contracts/meetingSynthesis.contract';
+import { assertPiiExternalConsent } from '../../../shared/services/aiPiiConsent.service';
+import { CopilotoIaUseCases } from '../application/CopilotoIaUseCases';
 import {
   computeChurnRiskScore,
   computeDealHealthScore,
   type SentimentScore,
-} from '../application/dealHealthScoring.js';
-import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment.js';
-import type { AddTranscriptSegmentInput } from '../domain/CopilotoIa.js';
-import { extractConversationIntelligence } from './conversationIntelligence.service.js';
-import { PrismaCopilotoIaRepository } from './PrismaCopilotoIaRepository.js';
+} from '../application/dealHealthScoring';
+import { computeAiProbabilityAdjustment } from '../application/forecastAdjustment';
+import type { AddTranscriptSegmentInput } from '../domain/CopilotoIa';
+import { extractConversationIntelligence } from './conversationIntelligence.service';
+import { PrismaCopilotoIaRepository } from './PrismaCopilotoIaRepository';
 
 const repository = new PrismaCopilotoIaRepository();
 const useCases = new CopilotoIaUseCases(repository);

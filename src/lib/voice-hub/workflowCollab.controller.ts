@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { addComment, resolveComment, lockNode, unlockNode, ConflictError } from '../services/workflowCollabService.js';
-import { NotFoundError } from '../services/workflowService.js';
+import { addComment, resolveComment, lockNode, unlockNode, ConflictError } from '../services/workflowCollabService';
+import { NotFoundError } from '../services/workflowService';
 
 function handleCollabError(err: unknown, res: Response) {
   if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });

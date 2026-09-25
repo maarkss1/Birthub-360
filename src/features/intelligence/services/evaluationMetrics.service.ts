@@ -1,5 +1,5 @@
-import { prisma } from '../../../lib/prisma.js';
-import { emptyRate, getSwarmSloSnapshot, type SloRate } from './swarmScheduler.service.js';
+import { prisma } from '../../../lib/prisma';
+import { emptyRate, getSwarmSloSnapshot, type SloRate } from './swarmScheduler.service';
 
 /**
  * AI-006 (onda 35): harness real das 9 dimensões de avaliação do enxame de IA

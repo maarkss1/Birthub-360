@@ -5,12 +5,12 @@ import {
   toPrismaLeadStatus,
 } from '../../../../lib/enumMap';
 import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma.js';
-import { queueLeadPushToBitrix } from '../../../../lib/queue/bitrixOutbound.queue.js';
+import { prisma } from '../../../../lib/prisma';
+import { queueLeadPushToBitrix } from '../../../../lib/queue/bitrixOutbound.queue';
 import { toDeterministicCnpj } from '../cnpj.util';
 import { resolveCompanyIdentity } from '../companyIdentity.service';
 import { enrichCompany } from '../enrichment.service';
-import type { PromoteInput } from './types.js';
+import type { PromoteInput } from './types';
 
 function splitLocation(location?: string | null): { city?: string; state?: string } {
   if (!location) return {};

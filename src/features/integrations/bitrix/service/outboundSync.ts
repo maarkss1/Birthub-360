@@ -1,12 +1,12 @@
 import { randomUUID } from 'node:crypto';
-import { AuditService } from '../../../../lib/audit/audit.service.js';
-import { fromPrismaLeadStatus } from '../../../../lib/enumMap.js';
-import { logger } from '../../../../lib/logger.js';
-import { prisma } from '../../../../lib/prisma.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
-import { callBitrix, getConnectionWebhookUrl } from './client.js';
-import { buildOutboundCustomFields, resolveEnumMaps } from './customFields.js';
-import { bitrixSyncFailuresTotal } from './metrics.js';
+import { AuditService } from '../../../../lib/audit/audit.service';
+import { fromPrismaLeadStatus } from '../../../../lib/enumMap';
+import { logger } from '../../../../lib/logger';
+import { prisma } from '../../../../lib/prisma';
+import { AppError } from '../../../../shared/middlewares/errorHandler';
+import { callBitrix, getConnectionWebhookUrl } from './client';
+import { buildOutboundCustomFields, resolveEnumMaps } from './customFields';
+import { bitrixSyncFailuresTotal } from './metrics';
 
 export interface SyncLeadOverrides {
   /** STATUS_ID de destino no Bitrix — sem isto, o Bitrix aplica o status padrão do funil ao criar. */

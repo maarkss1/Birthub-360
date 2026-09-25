@@ -8,7 +8,7 @@
 // route it guards).
 import express from 'express';
 import { Redis } from 'ioredis';
-import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
+import { getRedisUrl, getRedisRetryStrategy } from '../lib/env';
 import { logger } from '@/lib/logger';
 
 const redisClient = new Redis(getRedisUrl(), { maxRetriesPerRequest: 1, connectTimeout: 2000, commandTimeout: 2000, retryStrategy: getRedisRetryStrategy() });

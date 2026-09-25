@@ -1,5 +1,5 @@
-import { fetchWithTimeout, HttpTimeoutError } from '../http.js';
-import { logger } from '../logger.js';
+import { fetchWithTimeout, HttpTimeoutError } from '../http';
+import { logger } from '../logger';
 
 /**
  * `fetch` com retry para chamadas a provedores externos de prospecção/enriquecimento

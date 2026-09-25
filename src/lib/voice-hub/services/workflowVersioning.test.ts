@@ -29,7 +29,7 @@ vi.mock('../repositories/workflowRepository.js', () => ({
   ),
 }));
 
-import * as workflowRepository from '../repositories/workflowRepository.js';
+import * as workflowRepository from '../repositories/workflowRepository';
 import {
   publishWorkflow,
   listWorkflowVersions,
@@ -37,8 +37,8 @@ import {
   NotFoundError,
   ValidationFailedError,
   type WorkflowMetadata,
-} from './workflowService.js';
-import type { NodeType, StudioEdge, StudioNode } from '../../lib/studio/types.js';
+} from './workflowService';
+import type { NodeType, StudioEdge, StudioNode } from '../../lib/studio/types';
 
 const mockFindForTenant = vi.mocked(workflowRepository.findWorkflowForTenant);
 const mockFindByIdForTenant = vi.mocked(workflowRepository.findWorkflowByIdForTenant);

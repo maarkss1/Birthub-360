@@ -1,6 +1,6 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
-import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
+import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway';
 import type { IEnrichedLead } from '../../../types/prospecting';
 
 // Achado da auditoria (PR #328, item fora de escopo original): os 4 métodos deste serviço faziam

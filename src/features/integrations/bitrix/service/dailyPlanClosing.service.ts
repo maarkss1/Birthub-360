@@ -1,15 +1,15 @@
-import { prisma } from '../../../../lib/prisma.js';
+import { prisma } from '../../../../lib/prisma';
 import type {
   DailyClosingMetrics,
   PendingDailyClosing,
-} from '../../../../shared/contracts/dailyPlan.contract.js';
-import { AppError } from '../../../../shared/middlewares/errorHandler.js';
-import { toPlanDate } from './dailyPlan.service.js';
+} from '../../../../shared/contracts/dailyPlan.contract';
+import { AppError } from '../../../../shared/middlewares/errorHandler';
+import { toPlanDate } from './dailyPlan.service';
 
 export type {
   DailyClosingMetrics,
   PendingDailyClosing,
-} from '../../../../shared/contracts/dailyPlan.contract.js';
+} from '../../../../shared/contracts/dailyPlan.contract';
 
 /**
  * Fechamento obrigatório do Plano Diário (ver `DailyPlanClosing` no schema e

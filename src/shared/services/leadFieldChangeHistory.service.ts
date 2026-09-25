@@ -1,4 +1,4 @@
-import { prisma } from '../../lib/prisma.js';
+import { prisma } from '../../lib/prisma';
 
 /**
  * Ponto único de escrita de `LeadFieldChange` (ver comentário no schema). Mora em `src/shared/`

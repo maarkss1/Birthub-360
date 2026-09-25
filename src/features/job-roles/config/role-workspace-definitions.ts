@@ -12,7 +12,7 @@
 // backend (workspace.service.ts) e por isso nunca importa `tabMeta.ts` (arquivo de frontend, com
 // `lucide-react`) nem qualquer módulo com dependência de UI — mesmo cuidado de
 // `src/config/module-catalog.ts` (`iconKey` como string solta, nunca o componente de ícone).
-import { JOB_ROLE_CATALOG, type JobRoleCode } from '../../../config/job-role-catalog.js';
+import { JOB_ROLE_CATALOG, type JobRoleCode } from '../../../config/job-role-catalog';
 
 /** Vocabulário fixo de seções da home do workspace — a ORDEM por cargo é o que varia, nunca o
  *  conjunto de componentes usados (isso é o que impede "12 aplicações duplicadas": 1 componente de

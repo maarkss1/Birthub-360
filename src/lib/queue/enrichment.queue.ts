@@ -1,10 +1,10 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { enrichCompany } from '../../features/prospecting/services/enrichment.service.js';
-import { requestContext } from '../async-context.js';
-import { logger } from '../logger.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
-import { connection, queuesEnabled } from './redis.js';
+import { enrichCompany } from '../../features/prospecting/services/enrichment.service';
+import { requestContext } from '../async-context';
+import { logger } from '../logger';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
+import { connection, queuesEnabled } from './redis';
 
 export const ENRICHMENT_QUEUE_NAME = 'enrichment-queue';
 

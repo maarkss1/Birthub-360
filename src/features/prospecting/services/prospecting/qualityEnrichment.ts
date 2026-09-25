@@ -1,11 +1,11 @@
 import { logger } from '../../../../lib/logger';
 import { validContactEmails } from '../../../../shared/utils/contact-links';
-import { findCompanyDomain } from '../../utils/domain.js';
+import { findCompanyDomain } from '../../utils/domain';
 import { enrichOrganizationWithContacts } from '../apollo.service';
 import { discoverCnpjByName } from '../cnpj.util';
-import { searchCompanyNews } from '../news.service.js';
-import type { SearchExecutionTracker } from '../searchExecution.service.js';
-import type { ProspectCandidate } from './types.js';
+import { searchCompanyNews } from '../news.service';
+import type { SearchExecutionTracker } from '../searchExecution.service';
+import type { ProspectCandidate } from './types';
 
 /**
  * Enriquecimento de qualidade rodado automaticamente ao final de toda busca (candidatos já

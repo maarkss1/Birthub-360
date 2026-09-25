@@ -1,6 +1,6 @@
-import { getTenantId } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
+import { getTenantId } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
 
 const CPF_REGEX = /\d{3}\.\d{3}\.\d{3}-\d{2}/g;
 // AIAGENT-006 (docs/audits/repository-debt-audit/agents/AIAGENT.md): o guard original só
@@ -221,4 +221,4 @@ export {
   assertPiiExternalConsent,
   hasPiiExternalConsent,
   PiiConsentRequiredError,
-} from '../../../shared/services/aiPiiConsent.service.js';
+} from '../../../shared/services/aiPiiConsent.service';

@@ -1,21 +1,21 @@
-import { getProspectingProviderMode } from '../../../../config/prospecting-integrations.js';
+import { getProspectingProviderMode } from '../../../../config/prospecting-integrations';
 import { logger } from '../../../../lib/logger';
-import { prisma } from '../../../../lib/prisma.js';
-import { buildLocationLabel } from '../../domain/prospectTypes.js';
+import { prisma } from '../../../../lib/prisma';
+import { buildLocationLabel } from '../../domain/prospectTypes';
 import {
   type ProviderPlanStep,
   planCompanyDiscovery,
   planShortfallFallback,
-} from '../../domain/queryPlanner.js';
-import { evaluateCandidateRequirements } from '../../domain/requirementEngine.js';
-import { buildSearchIntent } from '../../domain/searchIntent.js';
-import { ExclusionSet } from '../../utils/exclusionSet.js';
+} from '../../domain/queryPlanner';
+import { evaluateCandidateRequirements } from '../../domain/requirementEngine';
+import { buildSearchIntent } from '../../domain/searchIntent';
+import { ExclusionSet } from '../../utils/exclusionSet';
 import { fetchApolloCandidates } from '../apollo.service';
 import { searchNominatimCandidates } from '../nominatim.service';
 import { searchGooglePlacesCandidates } from '../places.service';
-import { type SearchExecutionStatus, SearchExecutionTracker } from '../searchExecution.service.js';
-import { enrichCandidatesWithQualityData } from './qualityEnrichment.js';
-import type { DiscoverResult, ProspectCandidate, ProspectCriteria } from './types.js';
+import { type SearchExecutionStatus, SearchExecutionTracker } from '../searchExecution.service';
+import { enrichCandidatesWithQualityData } from './qualityEnrichment';
+import type { DiscoverResult, ProspectCandidate, ProspectCriteria } from './types';
 
 export { buildLocationLabel };
 

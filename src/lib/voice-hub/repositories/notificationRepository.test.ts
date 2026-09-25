@@ -21,7 +21,7 @@ import {
   countUnreadForUser,
   markAllAsReadForUser,
   markNotificationAsRead,
-} from './notificationRepository.js';
+} from './notificationRepository';
 
 beforeEach(() => vi.clearAllMocks());
 

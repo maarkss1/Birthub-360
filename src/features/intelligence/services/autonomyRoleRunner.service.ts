@@ -1,6 +1,6 @@
-import { BDRAgent } from '../agents/bdr.agent.js';
-import { CloserAgent } from '../agents/closer.agent.js';
-import { CRMAgent } from '../agents/crm.agent.js';
+import { BDRAgent } from '../agents/bdr.agent';
+import { CloserAgent } from '../agents/closer.agent';
+import { CRMAgent } from '../agents/crm.agent';
 
 export type AutonomyRole = 'BDR' | 'CLOSER' | 'CRM';
 

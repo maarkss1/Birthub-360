@@ -1,13 +1,13 @@
-import { env } from '../../config/env.js';
-import { generateEmbedding } from '../../lib/ai/gateway.js';
-import { logger } from '../../lib/logger.js';
-import { withRlsContext } from '../../lib/prisma.js';
-import { toVectorLiteral } from './ingestion.service.js';
-import type { SearchHit, SearchResponse } from './knowledge.types.js';
-import { rerankerService } from './services/reranker.service.js';
-import { hasVectorSupport } from './vector-support.js';
+import { env } from '../../config/env';
+import { generateEmbedding } from '../../lib/ai/gateway';
+import { logger } from '../../lib/logger';
+import { withRlsContext } from '../../lib/prisma';
+import { toVectorLiteral } from './ingestion.service';
+import type { SearchHit, SearchResponse } from './knowledge.types';
+import { rerankerService } from './services/reranker.service';
+import { hasVectorSupport } from './vector-support';
 
-export type { SearchHit, SearchResponse } from './knowledge.types.js';
+export type { SearchHit, SearchResponse } from './knowledge.types';
 
 /** Constante de suavização do Reciprocal Rank Fusion. 60 é o valor do paper original (Cormack et al.). */
 const RRF_K = 60;

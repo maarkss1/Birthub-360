@@ -1,5 +1,5 @@
 import type { AgentAccessLevel, CapabilityActionType, CapabilityRiskLevel } from '@prisma/client';
-import { prisma } from '../../../lib/prisma.js';
+import { prisma } from '../../../lib/prisma';
 
 export class CapabilityServiceError extends Error {
   constructor(

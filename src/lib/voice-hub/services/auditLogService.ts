@@ -1,4 +1,4 @@
-import { listAuditLogsForTenant } from '../repositories/auditLogRepository.js';
+import { listAuditLogsForTenant } from '../repositories/auditLogRepository';
 
 export const AUDIT_LOG_DEFAULT_PAGE_SIZE = 20;
 export const AUDIT_LOG_MAX_PAGE_SIZE = 100;

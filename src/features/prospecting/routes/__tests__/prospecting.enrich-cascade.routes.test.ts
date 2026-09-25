@@ -18,7 +18,7 @@
 import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
+import { errorHandler } from '../../../../shared/middlewares/errorHandler';
 
 const runEnrichmentCascadeMock = vi.fn();
 const enrichmentCascadeQueueAddMock = vi.fn();
@@ -82,7 +82,7 @@ vi.mock('../../../../lib/prisma.js', () => ({
   prisma: {},
 }));
 
-import { prospectingRoutes } from '../prospecting.routes.js';
+import { prospectingRoutes } from '../prospecting.routes';
 
 function buildApp() {
   const app = express();

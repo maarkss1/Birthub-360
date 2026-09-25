@@ -12,15 +12,15 @@
 // ("NÃO: autoalterar prompt de produção; autoalterar capability; auto-publicar versão; auto-deploy"
 // — regra explícita do prompt da onda).
 import type { MemoryCategory, MemoryScope, MemoryStatus } from '@prisma/client';
-import { AuditService } from '../../../lib/audit/audit.service.js';
-import { prisma } from '../../../lib/prisma.js';
-import { redactResidualPii } from '../../../shared/security/piiRedaction.js';
+import { AuditService } from '../../../lib/audit/audit.service';
+import { prisma } from '../../../lib/prisma';
+import { redactResidualPii } from '../../../shared/security/piiRedaction';
 import {
   isEligibleDecider,
   requiresHumanDecision,
   resolveMemoryAutoApproval,
-} from '../config/memory-policy.js';
-import type { EvidenceItem } from './agentBus.service.js';
+} from '../config/memory-policy';
+import type { EvidenceItem } from './agentBus.service';
 
 export class MemoryServiceError extends Error {
   constructor(

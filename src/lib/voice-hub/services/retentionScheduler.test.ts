@@ -30,7 +30,7 @@ vi.mock('../lib/logger.js', () => ({
   logger: { info: vi.fn(), error: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
-import { startRetentionScheduler, stopRetentionScheduler } from './retentionScheduler.js';
+import { startRetentionScheduler, stopRetentionScheduler } from './retentionScheduler';
 
 beforeEach(() => {
   vi.clearAllMocks();

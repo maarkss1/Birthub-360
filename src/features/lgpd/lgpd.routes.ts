@@ -1,9 +1,9 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import { AuditService } from '../../lib/audit/audit.service.js';
-import { routeParam } from '../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../shared/middlewares/requireRole.js';
-import { lgpdService } from './lgpd.service.js';
+import { AuditService } from '../../lib/audit/audit.service';
+import { routeParam } from '../../shared/http/routeParams';
+import type { AuthRequest } from '../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../shared/middlewares/requireRole';
+import { lgpdService } from './lgpd.service';
 
 export const lgpdRouter = Router();
 

@@ -19,21 +19,21 @@
  */
 import { type NextFunction, type Request, type Response, Router } from 'express';
 import { z } from 'zod';
-import { container } from '../../../shared/di/container.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import { validateRequest } from '../../../shared/middlewares/validateRequest.js';
-import { BitrixGuardianAgent } from '../agents/bitrixGuardian.agent.js';
-import { ChurnRetentionAgent } from '../agents/churnRetention.agent.js';
-import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry.js';
-import { ContractSignatureAgent } from '../agents/contractSignature.agent.js';
-import { CoordinatorCommercialAgent } from '../agents/coordinatorCommercial.agent.js';
-import { ExecutiveDirectorAgent } from '../agents/executiveDirector.agent.js';
+import { container } from '../../../shared/di/container';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import { validateRequest } from '../../../shared/middlewares/validateRequest';
+import { BitrixGuardianAgent } from '../agents/bitrixGuardian.agent';
+import { ChurnRetentionAgent } from '../agents/churnRetention.agent';
+import { COMMERCIAL_AGENT_REGISTRY } from '../agents/commercialAgentRegistry';
+import { ContractSignatureAgent } from '../agents/contractSignature.agent';
+import { CoordinatorCommercialAgent } from '../agents/coordinatorCommercial.agent';
+import { ExecutiveDirectorAgent } from '../agents/executiveDirector.agent';
 // AIAGENT-004 (onda 6): os 5 agentes da célula que a onda 43 deixou sem caminho de entrega.
 // `billingRevenue.agent.ts` continua deliberadamente fora — ver `commercialAgentRegistry.ts`.
-import { LdrIntelligenceAgent } from '../agents/ldrIntelligence.agent.js';
-import { ManagerCommercialAgent } from '../agents/managerCommercial.agent.js';
-import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent.js';
+import { LdrIntelligenceAgent } from '../agents/ldrIntelligence.agent';
+import { ManagerCommercialAgent } from '../agents/managerCommercial.agent';
+import { RevenueIntelligenceAgent } from '../agents/revenueIntelligence.agent';
 
 const router = Router();
 // Mesmos papéis de escrita aplicados em `agent.routes.ts` — replicado (e não importado) porque o

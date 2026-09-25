@@ -4,7 +4,7 @@ import {
   type OptOutRecord,
   type OptOutRepository,
   subjectsMatch,
-} from '../domain/optOut.js';
+} from '../domain/optOut';
 
 /**
  * Implementação em memória de `OptOutRepository` — usada nos testes deste feature e como

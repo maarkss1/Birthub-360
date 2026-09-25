@@ -1,4 +1,4 @@
-import { encryptField, tryDecryptField } from './secretFields.js';
+import { encryptField, tryDecryptField } from './secretFields';
 
 // Criptografia de campos sensíveis (credenciais de integração + PII de contato) em repouso — mesmo mecanismo
 // AES-256-GCM de secretFields.ts, aplicado de forma transparente pela extensão do Prisma Client em

@@ -11,17 +11,17 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Badge } from '../../../components/ui/Badge.js';
-import { Button } from '../../../components/ui/Button.js';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card.js';
-import { EmptyState } from '../../../components/ui/EmptyState.js';
-import { Skeleton } from '../../../components/ui/Skeleton.js';
-import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
-import { api } from '../../../lib/api.js';
-import { toast } from '../../../lib/toast.js';
-import { accountSignalTypeLabel } from '../domain/accountSignalTaxonomy.js';
-import { CompanyBranchesView } from './CompanyBranchesView.js';
-import { VisualOrgChart } from './VisualOrgChart.js';
+import { Badge } from '../../../components/ui/Badge';
+import { Button } from '../../../components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
+import { EmptyState } from '../../../components/ui/EmptyState';
+import { Skeleton } from '../../../components/ui/Skeleton';
+import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { api } from '../../../lib/api';
+import { toast } from '../../../lib/toast';
+import { accountSignalTypeLabel } from '../domain/accountSignalTaxonomy';
+import { CompanyBranchesView } from './CompanyBranchesView';
+import { VisualOrgChart } from './VisualOrgChart';
 
 interface AccountIntelligenceSummary {
   account: { id: string; legalName: string; tradeName: string | null; cnpj: string | null };

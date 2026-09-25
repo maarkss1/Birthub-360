@@ -1,8 +1,8 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { z } from 'zod';
 
-import { getAiModel, logAiUsage, streamChatCompletion } from '../../../../lib/ai/gateway.js';
-import { createStreamingRedactor, redactAndTrackPiiLeak } from '../guardrails.service.js';
+import { getAiModel, logAiUsage, streamChatCompletion } from '../../../../lib/ai/gateway';
+import { createStreamingRedactor, redactAndTrackPiiLeak } from '../guardrails.service';
 
 export const SYSTEM_RULES = `Você é um copiloto B2B sênior. Produza material útil, específico e pronto para revisão humana.
 Regras obrigatórias:

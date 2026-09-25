@@ -19,7 +19,7 @@
 import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
+import { errorHandler } from '../../../../shared/middlewares/errorHandler';
 
 // vi.mock é hoisted para o topo — precisa vir antes do import de `errorHandler` acima na cadeia de
 // avaliação (mesmo padrão de ai-suite.routes.test.ts) para o gate de consentimento LGPD
@@ -86,7 +86,7 @@ vi.mock('../../../knowledge/search.service.js', () => ({
   searchService: { hybridSearch: (...args: unknown[]) => hybridSearchMock(...args) },
 }));
 
-import { aiSuiteRouter } from '../ai-suite.routes.js';
+import { aiSuiteRouter } from '../ai-suite.routes';
 
 function buildApp(role = 'ADMIN') {
   const app = express();

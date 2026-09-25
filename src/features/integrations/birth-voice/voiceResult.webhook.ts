@@ -1,24 +1,24 @@
 import { createHash, randomUUID, timingSafeEqual } from 'node:crypto';
 import express, { type Request, type Response, Router } from 'express';
-import { env } from '../../../config/env.js';
-import { requestContext } from '../../../lib/async-context.js';
-import { last8DigitsIndex } from '../../../lib/crypto/piiIndex.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import type { CopilotoVoiceIngestionPort } from '../../../shared/contracts/copilotoVoiceIngestion.contract.js';
-import { container } from '../../../shared/di/container.js';
+import { env } from '../../../config/env';
+import { requestContext } from '../../../lib/async-context';
+import { last8DigitsIndex } from '../../../lib/crypto/piiIndex';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import type { CopilotoVoiceIngestionPort } from '../../../shared/contracts/copilotoVoiceIngestion.contract';
+import { container } from '../../../shared/di/container';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
   validateWebhookTimestamp,
-} from '../../../shared/security/webhookReplayGuard.js';
-import { sseService } from '../../notifications/sse.service.js';
-import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service.js';
+} from '../../../shared/security/webhookReplayGuard';
+import { sseService } from '../../notifications/sse.service';
+import { sendWhatsAppMessage } from '../whatsapp/whatsapp.service';
 import {
   callResultedInConversation,
   classifyCallOutcome,
   detectRecordingConsentFromRawTranscript,
-} from './birthVoice.helpers.js';
+} from './birthVoice.helpers';
 
 /**
  * Webhook de resultado de ligação da Bland AI (rota legada /api/webhooks/voice-result).

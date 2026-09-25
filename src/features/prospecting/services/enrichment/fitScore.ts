@@ -1,4 +1,4 @@
-import type { PlaybookKey } from '../../../../config/playbooks.js';
+import type { PlaybookKey } from '../../../../config/playbooks';
 
 export interface ScoreBreakdownItem {
   label: string;

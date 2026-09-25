@@ -1,4 +1,4 @@
-import { logger } from '../../lib/logger.js';
+import { logger } from '../../lib/logger';
 
 /**
  * Falha classificada como recuperável numa tentativa de chamada externa — `retryWithBackoff`

@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response, Router } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
 import {
   disconnectGoogle,
   GoogleNotConfiguredError,
@@ -10,7 +10,7 @@ import {
   getUpcomingCalendarEvents,
   processGoogleCallback,
   verifyState,
-} from './google.service.js';
+} from './google.service';
 
 const router = Router();
 

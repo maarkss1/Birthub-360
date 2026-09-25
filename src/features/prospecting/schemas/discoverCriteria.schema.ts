@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { MAX_LEADS_PER_SEARCH } from '../domain/searchIntent.js';
+import { MAX_LEADS_PER_SEARCH } from '../domain/searchIntent';
 
 /**
  * Espelha `ProspectCriteria` (prospecting.service.ts) — sem isso, um filtro em formato errado

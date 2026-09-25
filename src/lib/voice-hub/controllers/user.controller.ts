@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { createUserSchema, updateUserSchema } from '../validators/index.js';
-import { listUsers, createUserInTenant, updateUserProfile, deleteUser, anonymizeUserData, UserServiceError } from '../services/userService.js';
-import { writeAuditLog } from '../services/audit.js';
+import { createUserSchema, updateUserSchema } from '../validators/index';
+import { listUsers, createUserInTenant, updateUserProfile, deleteUser, anonymizeUserData, UserServiceError } from '../services/userService';
+import { writeAuditLog } from '../services/audit';
 
 export async function listUsersHandler(req: Request, res: Response) {
   const users = await listUsers(req.organizationId!);

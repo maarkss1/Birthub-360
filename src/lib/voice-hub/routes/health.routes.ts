@@ -1,6 +1,6 @@
 import express from 'express';
 import { Redis } from 'ioredis';
-import { healthHandler, liveHandler, makeReadyHandler } from '../controllers/health.controller.js';
+import { healthHandler, liveHandler, makeReadyHandler } from '../controllers/health.controller';
 
 export function createHealthRouter(redisClient: Redis) {
   const router = express.Router();

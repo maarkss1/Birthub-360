@@ -1,6 +1,6 @@
-import { logger } from '../../lib/logger.js';
-import { prisma } from '../../lib/prisma.js';
-import { eraseDataSubject } from '../../shared/services/dataSubjectErasure.service.js';
+import { logger } from '../../lib/logger';
+import { prisma } from '../../lib/prisma';
+import { eraseDataSubject } from '../../shared/services/dataSubjectErasure.service';
 
 export class LgpdService {
   /**

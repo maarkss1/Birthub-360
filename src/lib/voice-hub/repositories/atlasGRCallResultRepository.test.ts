@@ -16,7 +16,7 @@ import {
   upsertAtlasGRCallResult,
   findAtlasGRCallResultByCallId,
   listAtlasGRCallResultsForTenant,
-} from './atlasGRCallResultRepository.js';
+} from './atlasGRCallResultRepository';
 
 beforeEach(() => vi.clearAllMocks());
 

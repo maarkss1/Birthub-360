@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
-import { container } from '../../../shared/di/container.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import type { CompanyDedupController } from '../presentation/CompanyDedupController.js';
+import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware';
+import { container } from '../../../shared/di/container';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import type { CompanyDedupController } from '../presentation/CompanyDedupController';
 
 const router = Router();
 // Mesma restrição de leadDedup.routes.ts — operação sobre a base inteira do tenant.

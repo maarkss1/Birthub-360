@@ -2,11 +2,11 @@ import { type Job, Queue, Worker } from 'bullmq';
 import {
   enabledOrganizations,
   runSwarmScheduler,
-} from '../../features/intelligence/services/swarmScheduler.service.js';
-import { logger } from '../logger.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
-import { connection } from './redis.js';
+} from '../../features/intelligence/services/swarmScheduler.service';
+import { logger } from '../logger';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
+import { connection } from './redis';
 
 export const SWARM_SCHEDULER_QUEUE_NAME = 'swarm-scheduler';
 

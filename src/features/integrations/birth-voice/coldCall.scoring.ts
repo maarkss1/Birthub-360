@@ -17,7 +17,7 @@
  * priorização por chance de atender reordena quem liga primeiro dentro do lote resgatado, nunca
  * substitui quais leads são resgatados.
  */
-import type { CallOutcomeState } from './birthVoice.helpers.js';
+import type { CallOutcomeState } from './birthVoice.helpers';
 
 export interface HourlyAnswerRate {
   rate: number;

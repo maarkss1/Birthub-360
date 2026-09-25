@@ -1,12 +1,12 @@
 import type { WAMessage } from '@whiskeysockets/baileys';
-import { last8DigitsIndex, last9DigitsIndex } from '../../../lib/crypto/piiIndex.js';
-import { decryptField } from '../../../lib/crypto/secretFields.js';
-import { logger } from '../../../lib/logger.js';
-import { toE164BR } from '../../../lib/phone.js';
-import { prisma, withRlsContext } from '../../../lib/prisma.js';
-import { scheduleConversationAnalysis } from '../../../lib/queue/whatsappSignal.worker.js';
-import { recordOptOut } from '../../cadence/application/optOutService.js';
-import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
+import { last8DigitsIndex, last9DigitsIndex } from '../../../lib/crypto/piiIndex';
+import { decryptField } from '../../../lib/crypto/secretFields';
+import { logger } from '../../../lib/logger';
+import { toE164BR } from '../../../lib/phone';
+import { prisma, withRlsContext } from '../../../lib/prisma';
+import { scheduleConversationAnalysis } from '../../../lib/queue/whatsappSignal.worker';
+import { recordOptOut } from '../../cadence/application/optOutService';
+import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository';
 
 /** Grupos (`@g.us`) e o próprio status (`status@broadcast`) não correspondem a um contato do CRM. */
 function isIndividualChat(remoteJid: string | null | undefined): boolean {

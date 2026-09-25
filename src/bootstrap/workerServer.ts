@@ -1,10 +1,10 @@
 import http from 'node:http';
 import type { Worker as BullWorker } from 'bullmq';
-import { env } from '../config/env.js';
-import { logger } from '../lib/logger.js';
-import { prisma } from '../lib/prisma.js';
-import { shutdownLangfuse } from '../lib/langfuse.js';
-import { withTimeout } from '../lib/http.js';
+import { env } from '../config/env';
+import { logger } from '../lib/logger';
+import { prisma } from '../lib/prisma';
+import { shutdownLangfuse } from '../lib/langfuse';
+import { withTimeout } from '../lib/http';
 import client from 'prom-client';
 import {
   connection,
@@ -12,14 +12,14 @@ import {
   cacheConnection,
   queuesEnabled,
   pingRedis,
-} from '../lib/queue/redis.js';
-import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from '../lib/queue/metrics.js';
-import { warnUnconfiguredSecondaryIntegrations } from './integrationsHealthCheck.js';
+} from '../lib/queue/redis';
+import { registerWorkerForRuntimeMetrics, setWorkerProcessUp } from '../lib/queue/metrics';
+import { warnUnconfiguredSecondaryIntegrations } from './integrationsHealthCheck';
 import {
   isPlatformOperatorTokenConfigured,
   isValidPlatformOperatorToken,
-} from '../shared/middlewares/requirePlatformOperator.js';
-import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/whatsapp.service.js';
+} from '../shared/middlewares/requirePlatformOperator';
+import { shutdownWhatsAppSessions } from '../features/integrations/whatsapp/whatsapp.service';
 
 const WORKER_PORT = parseInt(process.env.WORKER_HEALTH_PORT || '3006', 10);
 const SHUTDOWN_TIMEOUT_MS = 25_000;

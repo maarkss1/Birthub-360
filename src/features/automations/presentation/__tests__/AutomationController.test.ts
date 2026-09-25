@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AutomationUseCases } from '../../application/AutomationUseCases.js';
-import { AutomationController } from '../AutomationController.js';
+import type { AutomationUseCases } from '../../application/AutomationUseCases';
+import { AutomationController } from '../AutomationController';
 
 /**
  * `AutomationController` nunca tinha teste unitário próprio. Cobre aqui o contrato HTTP de cada

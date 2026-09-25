@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AppError } from '../../../../../shared/middlewares/errorHandler.js';
-import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from '../metrics.js';
+import { AppError } from '../../../../../shared/middlewares/errorHandler';
+import { bitrixExtractionFailuresTotal, bitrixExtractionPartialTotal } from '../metrics';
 
 vi.mock('@/lib/logger', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn() },

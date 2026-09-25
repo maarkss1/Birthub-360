@@ -22,7 +22,7 @@
 //   has no field for secret or secretHash — there is no code path in this service that could leak
 //   either, even by accident.
 import crypto from 'crypto';
-import * as webhookEndpointRepository from '../repositories/webhookEndpointRepository.js';
+import * as webhookEndpointRepository from '../repositories/webhookEndpointRepository';
 
 export class WebhookEndpointServiceError extends Error {
   status: number;

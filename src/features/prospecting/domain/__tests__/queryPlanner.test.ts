@@ -12,14 +12,14 @@
  *    caso-base".
  */
 import { describe, expect, it } from 'vitest';
-import type { ProspectingProviderMode } from '../../../../config/prospecting-integrations.js';
+import type { ProspectingProviderMode } from '../../../../config/prospecting-integrations';
 import {
   NOMINATIM_SUPPLEMENT_MIN_QUANTITY,
   planCompanyDiscovery,
   planShortfallFallback,
   scoreProvider,
-} from '../queryPlanner.js';
-import type { SearchIntent } from '../searchIntent.js';
+} from '../queryPlanner';
+import type { SearchIntent } from '../searchIntent';
 
 function baseIntent(overrides: Partial<SearchIntent> = {}): SearchIntent {
   return {

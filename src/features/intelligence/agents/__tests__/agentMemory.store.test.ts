@@ -12,8 +12,8 @@ vi.mock('../../../../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '../../../../lib/prisma.js';
-import { loadAgentMemory, recordAgentFailure, saveAgentMemory } from '../agentMemory.store.js';
+import { prisma } from '../../../../lib/prisma';
+import { loadAgentMemory, recordAgentFailure, saveAgentMemory } from '../agentMemory.store';
 
 const agentMemory = prisma.agentMemory as unknown as Record<string, ReturnType<typeof vi.fn>>;
 

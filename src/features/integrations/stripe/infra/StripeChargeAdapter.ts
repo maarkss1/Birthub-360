@@ -1,8 +1,8 @@
 import type {
   StripeChargePort,
   StripeChargeResult,
-} from '../../../../shared/contracts/stripeCharge.contract.js';
-import { getStripeCharge } from '../stripe.service.js';
+} from '../../../../shared/contracts/stripeCharge.contract';
+import { getStripeCharge } from '../stripe.service';
 
 /** Implementação real de `StripeChargePort` — repassa direto para `getStripeCharge` (o próprio
  *  feature `integrations/stripe` continua dono da lógica de validação de id, resolução de conexão

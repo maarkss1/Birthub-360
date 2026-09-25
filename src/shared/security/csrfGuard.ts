@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from 'express';
-import { env } from '../../config/env.js';
+import { env } from '../../config/env';
 
 /**
  * Proteção CSRF por validação estrita de Origin/Referer (SEC-002).

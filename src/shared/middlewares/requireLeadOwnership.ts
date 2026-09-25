@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import { prisma } from '../../lib/prisma.js';
-import { routeParam } from '../http/routeParams.js';
-import type { AuthRequest } from './authenticateToken.js';
+import { prisma } from '../../lib/prisma';
+import { routeParam } from '../http/routeParams';
+import type { AuthRequest } from './authenticateToken';
 
 /**
  * CLOSER/SDR só pode editar/excluir/reenriquecer os leads que capturou — GESTOR/ADMIN já são
@@ -21,7 +21,7 @@ import type { AuthRequest } from './authenticateToken.js';
  */
 export function requireLeadOwnership() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authReq = req as AuthRequest;
+    const authReq = req as unknown as AuthRequest;
 
     if (authReq.user.role !== 'CLOSER' && authReq.user.role !== 'SDR') {
       next();

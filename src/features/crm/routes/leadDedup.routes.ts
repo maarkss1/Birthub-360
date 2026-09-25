@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware.js';
-import { container } from '../../../shared/di/container.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
-import type { LeadDedupController } from '../presentation/LeadDedupController.js';
+import { auditAccessMiddleware } from '../../../lib/security/auditLog.middleware';
+import { container } from '../../../shared/di/container';
+import { requireRole } from '../../../shared/middlewares/requireRole';
+import type { LeadDedupController } from '../presentation/LeadDedupController';
 
 const router = Router();
 // Mesma restrição de export/import em massa (lead.routes.ts) — operação sobre a base inteira do

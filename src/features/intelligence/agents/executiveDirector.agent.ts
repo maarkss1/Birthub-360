@@ -1,10 +1,10 @@
-import { BaseAgent } from './base.agent.js';
+import { BaseAgent } from './base.agent';
 import {
   appendLearnedStyle,
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants.js';
+} from './swarm.constants';
 
 /**
  * Agente Diretoria — Executivo Comercial (Célula Comercial, pacote

@@ -1,10 +1,10 @@
-import { prisma } from '../../../lib/prisma.js';
+import { prisma } from '../../../lib/prisma';
 import type {
   NormalizedOptOutSubject,
   OptOutRecord,
   OptOutRepository,
   OptOutScope,
-} from '../domain/optOut.js';
+} from '../domain/optOut';
 
 /**
  * Adaptador Prisma real de `OptOutRepository` (tabela `OptOutRecord`, ver migration

@@ -1,24 +1,24 @@
 import { type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { MessagesAnnotation, StateGraph } from '@langchain/langgraph';
 import { ToolNode } from '@langchain/langgraph/prebuilt';
-import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer.js';
-import { logAiUsage } from '../../../lib/ai/gateway.js';
-import { getTenantId } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { assertPiiExternalConsent } from '../services/guardrails.service.js';
-import { getLeadContextTool, searchLeadsTool } from '../tools/crmTools.js';
-import { searchPlaybookTool } from '../tools/playbookTool.js';
-import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
+import { checkpointer, ensureCheckpointerReady } from '../../../lib/ai/checkpointer';
+import { logAiUsage } from '../../../lib/ai/gateway';
+import { getTenantId } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { assertPiiExternalConsent } from '../services/guardrails.service';
+import { getLeadContextTool, searchLeadsTool } from '../tools/crmTools';
+import { searchPlaybookTool } from '../tools/playbookTool';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store';
 // GOV-13: as duas ferramentas de execução (`create_follow_up_task`/`notify_team`) agora vêm de
 // `opsPendingActions.tool.ts`, não mais de `../tools/opsTools.js` — mesmo nome/schema visível ao
 // LLM, mas em vez de executar direto elas registram uma `AIPendingAction` e a execução real só
 // acontece após aprovação humana (ver `opsPendingActions.tool.ts` para o raciocínio completo).
-import { createFollowUpTaskTool, notifyTeamTool } from './opsPendingActions.tool.js';
+import { createFollowUpTaskTool, notifyTeamTool } from './opsPendingActions.tool';
 import {
   SWARM_IDENTITY,
   SWARM_OUTPUT_CONTRACT,
   SWARM_UNTRUSTED_CONTENT_GUARD,
-} from './swarm.constants.js';
+} from './swarm.constants';
 
 // O Agente de Operações é o "braço executor" do enxame: não só analisa, ele age nas demais
 // ferramentas do sistema (CRM, agenda, notificações), sempre em cima de dados reais buscados
@@ -38,7 +38,7 @@ const tools = [
 ];
 const toolNode = new ToolNode(tools);
 
-import { buildModelWithFallbackAndTools } from './fallback.util.js';
+import { buildModelWithFallbackAndTools } from './fallback.util';
 
 // Lazy + memoizado: monta o cliente só no primeiro uso real (dentro de callModel), nunca na carga
 // do módulo — process.env.GROQ_API_KEY lido numa const de topo de arquivo ficava congelado como

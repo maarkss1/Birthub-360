@@ -1,10 +1,10 @@
 import { Queue, Worker } from 'bullmq';
 import { Redis } from 'ioredis';
-import { getRedisConnectionOptions, getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
+import { getRedisConnectionOptions, getRedisUrl, getRedisRetryStrategy } from '../lib/env';
 import { logger } from '@/lib/logger';
-import { checkPlatformHealth } from '../controllers/health.controller.js';
-import { listActiveTenantIds } from '../repositories/organizationRepository.js';
-import { createMetric } from './metricService.js';
+import { checkPlatformHealth } from '../controllers/health.controller';
+import { listActiveTenantIds } from '../repositories/organizationRepository';
+import { createMetric } from './metricService';
 
 /**
  * Real, honest platform-wide SLA sampling — see

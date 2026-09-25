@@ -1,13 +1,13 @@
 import { AIMessage, type BaseMessage, HumanMessage, SystemMessage } from '@langchain/core/messages';
 import type { StructuredToolInterface } from '@langchain/core/tools';
 import { MemorySaver, MessagesAnnotation, StateGraph } from '@langchain/langgraph';
-import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget.js';
-import { getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import { getTenantId, getUserId } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger.js';
-import { assertPiiExternalConsent } from '../services/guardrails.service.js';
-import { recordAgentFailure, saveAgentMemory } from './agentMemory.store.js';
-import { getLearningProfile } from './learning.agent.js';
+import { assertAiBudgetNotExceeded } from '../../../lib/ai/budget';
+import { getAiModel, logAiUsage } from '../../../lib/ai/gateway';
+import { getTenantId, getUserId } from '../../../lib/async-context';
+import { logger } from '../../../lib/logger';
+import { assertPiiExternalConsent } from '../services/guardrails.service';
+import { recordAgentFailure, saveAgentMemory } from './agentMemory.store';
+import { getLearningProfile } from './learning.agent';
 
 export interface SerializedMessage {
   role: string;

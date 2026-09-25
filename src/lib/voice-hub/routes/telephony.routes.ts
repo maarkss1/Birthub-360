@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import twilio from 'twilio';
-import { incomingCallHandler, outboundCallHandler, gatherHandler, statusCallbackHandler, dialStatusHandler } from '../controllers/telephony.controller.js';
+import { incomingCallHandler, outboundCallHandler, gatherHandler, statusCallbackHandler, dialStatusHandler } from '../controllers/telephony.controller';
 import { logger } from '@/lib/logger';
 
 const router = express.Router();

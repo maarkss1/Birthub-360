@@ -1,11 +1,11 @@
 import express from 'express';
-import { requireTenant } from '../middlewares/rbac.js';
-import { createRateLimiter } from '../middlewares/rateLimit.js';
+import { requireTenant } from '../middlewares/rbac';
+import { createRateLimiter } from '../middlewares/rateLimit';
 import {
   listNotificationsHandler,
   markAllNotificationsReadHandler,
   markNotificationReadHandler,
-} from '../controllers/notification.controller.js';
+} from '../controllers/notification.controller';
 
 const router = express.Router();
 

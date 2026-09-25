@@ -3,15 +3,15 @@ import {
   fromPrismaActivityStatus,
   fromPrismaActivityType,
   fromPrismaLeadStatus,
-} from '../../lib/enumMap.js';
-import { prisma } from '../../lib/prisma.js';
-import { connection } from '../../lib/queue/redis.js';
-import type { OverviewMetrics } from '../../shared/contracts/analytics.contract.js';
+} from '../../lib/enumMap';
+import { prisma } from '../../lib/prisma';
+import { connection } from '../../lib/queue/redis';
+import type { OverviewMetrics } from '../../shared/contracts/analytics.contract';
 import {
   brazilMonthKey,
   brazilMonthRange,
   shiftBrazilMonth,
-} from '../../shared/time/brazilCalendar.js';
+} from '../../shared/time/brazilCalendar';
 
 /** Filtro base (`organizationId` + soft-delete) repassado do overview às sub-consultas privadas —
  * mesmo formato usado em `lead.groupBy`/`activity.findMany`, nunca outro filtro. */

@@ -1,6 +1,6 @@
-import { prisma } from '../../../lib/prisma.js';
-import type { DealClosureEventType } from '../../../shared/domain/dealClosure.js';
-import type { DealClosureEvidencePort } from '../application/dealClosureGate.js';
+import { prisma } from '../../../lib/prisma';
+import type { DealClosureEventType } from '../../../shared/domain/dealClosure';
+import type { DealClosureEvidencePort } from '../application/dealClosureGate';
 
 /**
  * Implementação real de `DealClosureEvidencePort` (CYC-007, onda 24) — mesmo padrão de

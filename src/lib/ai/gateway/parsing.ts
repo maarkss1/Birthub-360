@@ -4,7 +4,7 @@
  * nenhum estado — só transformação de dados, testável sem mocks.
  */
 import type { BaseMessage } from '@langchain/core/messages';
-import type { ChatCompletionMessage } from './types.js';
+import type { ChatCompletionMessage } from './types';
 
 const MAX_MESSAGES_PER_REQUEST = 100;
 const MAX_TOTAL_MESSAGE_CHARS = 200_000;

@@ -1,8 +1,8 @@
 import sharp from 'sharp';
 import { createWorker } from 'tesseract.js';
-import { logger } from '../../../lib/logger.js';
-import { studioService } from '../../intelligence/services/studio.service.js';
-import type { ProspectCandidate } from './prospecting.service.js';
+import { logger } from '../../../lib/logger';
+import { studioService } from '../../intelligence/services/studio.service';
+import type { ProspectCandidate } from './prospecting.service';
 
 const MAX_IMAGE_BYTES = 8 * 1024 * 1024;
 const ACCEPTED_MIME_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);

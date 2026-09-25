@@ -1,6 +1,6 @@
-import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
-import { HttpTimeoutError } from '../../../../lib/http.js';
-import type { RntrcUfRisk } from '../../../../shared/services/rntrcTerritorialRisk.service.js';
+import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch';
+import { HttpTimeoutError } from '../../../../lib/http';
+import type { RntrcUfRisk } from '../../../../shared/services/rntrcTerritorialRisk.service';
 import { formatCnpj, isValidCnpj, sanitizeCnpj } from '../cnpj.util';
 
 const BRASIL_API_BASE = 'https://brasilapi.com.br/api';

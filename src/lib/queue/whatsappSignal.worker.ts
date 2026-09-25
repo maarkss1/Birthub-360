@@ -1,9 +1,9 @@
 import { type Job, Queue, Worker } from 'bullmq';
-import { analyzeConversation } from '../../features/integrations/whatsapp/conversation-intelligence.service.js';
-import { logger } from '../logger.js';
-import { isFinalAttempt, recordDeadLetter } from './deadLetter.js';
-import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics.js';
-import { connection, queuesEnabled } from './redis.js';
+import { analyzeConversation } from '../../features/integrations/whatsapp/conversation-intelligence.service';
+import { logger } from '../logger';
+import { isFinalAttempt, recordDeadLetter } from './deadLetter';
+import { recordQueueJobCompleted, registerQueueForMetrics } from './metrics';
+import { connection, queuesEnabled } from './redis';
 
 export const WHATSAPP_SIGNAL_QUEUE_NAME = 'whatsapp-conversation-signal';
 

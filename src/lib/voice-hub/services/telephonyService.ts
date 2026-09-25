@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
-import * as agentRepository from '../repositories/agentRepository.js';
-import * as sessionRepository from '../repositories/sessionRepository.js';
-import * as callLogService from './callLogService.js';
-import { webhookService } from './webhook.service.js';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import * as agentRepository from '../repositories/agentRepository';
+import * as sessionRepository from '../repositories/sessionRepository';
+import * as callLogService from './callLogService';
+import { webhookService } from './webhook.service';
+import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway';
 import {
   getWorkflowOpeningQuestion,
   initializeWorkflowRuntime,
@@ -14,7 +14,7 @@ import {
   type VoiceOverride,
   type WorkflowNode,
   type WorkflowRuntimeState,
-} from './workflowRuntimeService.js';
+} from './workflowRuntimeService';
 import { logger } from '@/lib/logger';
 
 const DEFAULT_GREETING = 'Olá! Aqui é a assistente virtual do Birth Voices Hub. Como posso ajudar você hoje?';

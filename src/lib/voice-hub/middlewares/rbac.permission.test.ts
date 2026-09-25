@@ -5,8 +5,8 @@ vi.mock('../repositories/roleRepository.js', () => ({
   getPermissionsForRoleName: vi.fn(),
 }));
 
-import { getPermissionsForRoleName } from '../repositories/roleRepository.js';
-import { hasPermission, requirePermission } from './rbac.js';
+import { getPermissionsForRoleName } from '../repositories/roleRepository';
+import { hasPermission, requirePermission } from './rbac';
 
 beforeEach(() => vi.clearAllMocks());
 

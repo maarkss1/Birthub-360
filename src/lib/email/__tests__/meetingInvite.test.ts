@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { buildMeetingInviteEmail } from '../meetingInvite.js';
+import { buildMeetingInviteEmail } from '../meetingInvite';
 
 const baseInput = {
   uid: 'evt-1@google.com',

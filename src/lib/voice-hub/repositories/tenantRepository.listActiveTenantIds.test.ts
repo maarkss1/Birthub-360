@@ -9,7 +9,7 @@ vi.mock('../lib/prisma.js', () => ({
 }));
 
 import { prisma } from '@/lib/prisma';
-import { listActiveTenantIds } from './organizationRepository.js';
+import { listActiveTenantIds } from './organizationRepository';
 
 beforeEach(() => vi.clearAllMocks());
 

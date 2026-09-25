@@ -2,11 +2,11 @@
  * Adapter Groq — rota principal do gateway hoje (rápido, sem o gargalo de concorrência do modelo
  * local). Ver `../chat-model.ts` para a ordem de fallback completa.
  */
-import { callProvider } from '../circuit-breaker.js';
-import { requestChatCompletion } from '../http-client.js';
-import { resolveGroqModelName } from '../model-routing.js';
-import type { ChatCompletionResponse } from '../types.js';
-import type { ProviderAdapter, ProviderChatParams } from './types.js';
+import { callProvider } from '../circuit-breaker';
+import { requestChatCompletion } from '../http-client';
+import { resolveGroqModelName } from '../model-routing';
+import type { ChatCompletionResponse } from '../types';
+import type { ProviderAdapter, ProviderChatParams } from './types';
 
 const GROQ_CHAT_URL = 'https://api.groq.com/openai/v1/chat/completions';
 

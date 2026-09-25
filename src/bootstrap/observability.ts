@@ -1,10 +1,10 @@
 import type { Express } from 'express';
 import client from 'prom-client';
-import { env } from '../config/env.js';
-import { logger } from '../lib/logger.js';
-import { httpMetricsMiddleware } from '../shared/middlewares/httpMetrics.js';
-import { observabilityMiddleware } from '../shared/middlewares/observability.js';
-import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOperator.js';
+import { env } from '../config/env';
+import { logger } from '../lib/logger';
+import { httpMetricsMiddleware } from '../shared/middlewares/httpMetrics';
+import { observabilityMiddleware } from '../shared/middlewares/observability';
+import { requirePlatformOperator } from '../shared/middlewares/requirePlatformOperator';
 
 /**
  * Métrica http_server_duration_milliseconds (prom-client), consumida pelo alerta

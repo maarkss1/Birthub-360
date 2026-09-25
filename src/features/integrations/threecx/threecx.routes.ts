@@ -1,15 +1,15 @@
 import express, { type NextFunction, type Request, type Response, Router } from 'express';
-import { env } from '../../../config/env.js';
-import { logger } from '../../../lib/logger.js';
-import { routeParam } from '../../../shared/http/routeParams.js';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
-import { requireRole } from '../../../shared/middlewares/requireRole.js';
+import { env } from '../../../config/env';
+import { logger } from '../../../lib/logger';
+import { routeParam } from '../../../shared/http/routeParams';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { requireRole } from '../../../shared/middlewares/requireRole';
 import {
   claimWebhookDelivery,
   webhookDeliveryFingerprint,
   validateWebhookTimestamp,
-} from '../../../shared/security/webhookReplayGuard.js';
-import { isValidSignature } from '../birth-voice/birthVoice.helpers.js';
+} from '../../../shared/security/webhookReplayGuard';
+import { isValidSignature } from '../birth-voice/birthVoice.helpers';
 import {
   connect3CX,
   disconnect3CX,
@@ -17,7 +17,7 @@ import {
   make3CXCall,
   process3CXWebhook,
   test3CXConnection,
-} from './threecx.service.js';
+} from './threecx.service';
 
 const router = Router();
 const managementRoles = requireRole(['ADMIN', 'GESTOR']);

@@ -1,7 +1,7 @@
 import type { AccessRequestCategory } from '@prisma/client';
-import { CAPABILITY_CATALOG, type CapabilityCode } from '../../../config/capability-catalog.js';
-import type { JobRoleCode } from '../../../config/job-role-catalog.js';
-import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization.js';
+import { CAPABILITY_CATALOG, type CapabilityCode } from '../../../config/capability-catalog';
+import type { JobRoleCode } from '../../../config/job-role-catalog';
+import { ROLE_HIERARCHY, type Role } from '../../../lib/auth/authorization';
 
 // PROMPT 7 — Cross-Role Authorization + Aprovações. `ApprovalPolicy` (a MATRIZ do prompt da onda)
 // é CÓDIGO, não tabela — mesma decisão de `tool-bindings.ts`/`role-supervisor-profiles.ts`/

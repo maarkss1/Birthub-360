@@ -15,9 +15,9 @@
 //   fetches `keyHash` in the first place — so there is no code path in this service that could leak
 //   it even by accident.
 import crypto from 'crypto';
-import * as apiKeyRepository from '../repositories/apiKeyRepository.js';
-import * as userRepository from '../repositories/userRepository.js';
-import type { TokenPayload } from '../lib/auth-tokens.js';
+import * as apiKeyRepository from '../repositories/apiKeyRepository';
+import * as userRepository from '../repositories/userRepository';
+import type { TokenPayload } from '../lib/auth-tokens';
 
 export class ApiKeyServiceError extends Error {
   status: number;

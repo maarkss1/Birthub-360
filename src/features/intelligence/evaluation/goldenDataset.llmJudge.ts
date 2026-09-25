@@ -1,7 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
-import { cleanAndParseJson, getAiModel } from '../../../lib/ai/gateway.js';
-import type { GoldenSemanticJudge, SemanticJudgeResult } from './goldenDataset.scoring.js';
+import { cleanAndParseJson, getAiModel } from '../../../lib/ai/gateway';
+import type { GoldenSemanticJudge, SemanticJudgeResult } from './goldenDataset.scoring';
 
 const clamp01 = (value: unknown): number => Math.max(0, Math.min(1, Number(value) || 0));
 

@@ -1,20 +1,20 @@
 import { randomUUID } from 'node:crypto';
 import type { ThreeCXConnection } from '@prisma/client';
 import { Prisma } from '@prisma/client';
-import { requestContext } from '../../../lib/async-context.js';
-import { AuditService } from '../../../lib/audit/audit.service.js';
-import { last8DigitsIndex } from '../../../lib/crypto/piiIndex.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard.js';
+import { requestContext } from '../../../lib/async-context';
+import { AuditService } from '../../../lib/audit/audit.service';
+import { last8DigitsIndex } from '../../../lib/crypto/piiIndex';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { AppError } from '../../../shared/middlewares/errorHandler';
+import { assertSafeExternalUrl, safeFetch } from '../../../shared/security/urlGuard';
 import {
   callMarker,
   callResultedInConversation,
   classifyCallOutcome,
-} from '../birth-voice/birthVoice.helpers.js';
-import { isSuppressed } from '../birth-voice/callSuppression.service.js';
-import { threeCXExtensionResolutionFailuresTotal } from './threecx.metrics.js';
+} from '../birth-voice/birthVoice.helpers';
+import { isSuppressed } from '../birth-voice/callSuppression.service';
+import { threeCXExtensionResolutionFailuresTotal } from './threecx.metrics';
 
 export interface ThreeCXConnectionInput {
   label?: string;

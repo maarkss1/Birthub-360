@@ -13,7 +13,7 @@
 import express from 'express';
 import request from 'supertest';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { errorHandler } from '../../../../shared/middlewares/errorHandler.js';
+import { errorHandler } from '../../../../shared/middlewares/errorHandler';
 
 const discoverViaGooglePlacesMock = vi.fn();
 const fetchKnownExclusionsMock = vi.fn();
@@ -59,7 +59,7 @@ vi.mock('../../../../config/prospecting-integrations.js', () => ({
   getProspectingProviderMode: (...args: unknown[]) => getProspectingProviderModeMock(...args),
 }));
 
-import { prospectingToolsRoutes } from '../prospecting-tools.routes.js';
+import { prospectingToolsRoutes } from '../prospecting-tools.routes';
 
 function buildApp(role: string = 'ADMIN') {
   const app = express();

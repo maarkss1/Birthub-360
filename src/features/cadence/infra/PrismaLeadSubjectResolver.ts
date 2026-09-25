@@ -1,6 +1,6 @@
-import { toE164BR } from '../../../lib/phone.js';
-import { prisma } from '../../../lib/prisma.js';
-import type { LeadSubjectResolver } from '../application/cadenceService.js';
+import { toE164BR } from '../../../lib/phone';
+import { prisma } from '../../../lib/prisma';
+import type { LeadSubjectResolver } from '../application/cadenceService';
 
 /**
  * Resolve o sujeito de opt-out (e-mail/telefone) a partir do `Lead.contact` — o único lugar onde

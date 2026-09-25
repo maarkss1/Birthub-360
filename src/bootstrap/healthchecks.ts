@@ -1,8 +1,8 @@
 import type { Express, Request, Response } from 'express';
-import { env } from '../config/env.js';
-import { logger } from '../lib/logger.js';
-import { prisma } from '../lib/prisma.js';
-import { connection, queuesEnabled } from '../lib/queue/redis.js';
+import { env } from '../config/env';
+import { logger } from '../lib/logger';
+import { prisma } from '../lib/prisma';
+import { connection, queuesEnabled } from '../lib/queue/redis';
 
 export function handleLiveness(_req: Request, res: Response): void {
   res.status(200).json({

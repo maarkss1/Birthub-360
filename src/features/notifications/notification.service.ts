@@ -1,6 +1,6 @@
-import { logger } from '../../lib/logger.js';
-import { prisma } from '../../lib/prisma.js';
-import type { NotificationKind } from '../../shared/contracts/notification.contract.js';
+import { logger } from '../../lib/logger';
+import { prisma } from '../../lib/prisma';
+import type { NotificationKind } from '../../shared/contracts/notification.contract';
 
 export type { NotificationKind };
 

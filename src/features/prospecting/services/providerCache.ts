@@ -13,8 +13,8 @@
 // caso mais comum (mesmo processo, poucos minutos de intervalo) sem exigir Redis como dependência
 // obrigatória para este ganho.
 
-import { logger } from '../../../lib/logger.js';
-import { cacheConnection, redisConfigured } from '../../../lib/queue/redis.js';
+import { logger } from '../../../lib/logger';
+import { cacheConnection, redisConfigured } from '../../../lib/queue/redis';
 
 const CACHE_KEY_PREFIX = 'prospecting:provider-cache:v1:';
 

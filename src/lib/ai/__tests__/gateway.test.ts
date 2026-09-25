@@ -23,7 +23,7 @@ vi.mock('../../logger.js', () => ({
   },
 }));
 
-import * as budgetModule from '../budget.js';
+import * as budgetModule from '../budget';
 import {
   __resetCircuitBreakerForTests,
   cleanAndParseJson,

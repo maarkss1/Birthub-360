@@ -1,10 +1,10 @@
-import { requestContext } from '../../../lib/async-context.js';
-import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap.js';
-import { logger } from '../../../lib/logger.js';
-import { prisma } from '../../../lib/prisma.js';
-import { acquireDistributedLock } from '../../../lib/queue/distributedLock.js';
-import type { LeadStatus } from '../../../lib/zod.js';
-import { automationEngine } from '../automation.engine.js';
+import { requestContext } from '../../../lib/async-context';
+import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap';
+import { logger } from '../../../lib/logger';
+import { prisma } from '../../../lib/prisma';
+import { acquireDistributedLock } from '../../../lib/queue/distributedLock';
+import type { LeadStatus } from '../../../lib/zod';
+import { automationEngine } from '../automation.engine';
 
 /**
  * Gatilho de estagnação: expande o motor de automação (Onda 7) além dos 3 gatilhos "em tempo real"
@@ -259,9 +259,9 @@ export async function runStagnationScan(): Promise<StagnationScanResult> {
 }
 
 import { type ConnectionOptions, Queue, Worker } from 'bullmq';
-import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter.js';
-import { registerQueueForMetrics } from '../../../lib/queue/metrics.js';
-import { connection } from '../../../lib/queue/redis.js';
+import { isFinalAttempt, recordDeadLetter } from '../../../lib/queue/deadLetter';
+import { registerQueueForMetrics } from '../../../lib/queue/metrics';
+import { connection } from '../../../lib/queue/redis';
 
 export const STAGNATION_SCANNER_QUEUE_NAME = 'stagnation-scanner-queue';
 
