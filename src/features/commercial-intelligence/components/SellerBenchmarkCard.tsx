@@ -2,17 +2,17 @@
 
 import { AlertTriangle, Trophy } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   formatPercent,
   type SellerBenchmarkReport,
-} from '../commercialIntelligence.api';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { MetricInfo } from './MetricInfo.js';
 
 /**
  * Benchmark de vendedor — Win Rate, Ciclo de Venda e Ticket Médio de CADA vendedor comparados

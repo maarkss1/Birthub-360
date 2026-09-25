@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { navigationBus } from '../navigationBus';
+import { navigationBus } from '../navigationBus.js';
 
 // Bloqueador #7 do AGENTS.md ("comando de voz que afirma navegar sem realizar navegação") — este
 // contrato só pode reportar sucesso quando a navegação foi de fato disparada.

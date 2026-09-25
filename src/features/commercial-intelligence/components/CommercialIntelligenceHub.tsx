@@ -1,21 +1,21 @@
 import { LineChart, SlidersHorizontal } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { SoundFX } from '../../../lib/soundEffects';
+import { SoundFX } from '../../../lib/soundEffects.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   currentMonth,
   type FilterOptions,
-} from '../commercialIntelligence.api';
-import { AgingTab } from './AgingTab';
-import { CrmQualityTab } from './CrmQualityTab';
-import { ExecutiveOverviewTab } from './ExecutiveOverviewTab';
-import { JourneyTab } from './JourneyTab';
-import { LeadingIndicatorsTab } from './LeadingIndicatorsTab';
-import { LossesTab } from './LossesTab';
-import { PerformanceTab } from './PerformanceTab';
-import { PipelineForecastTab } from './PipelineForecastTab';
+} from '../commercialIntelligence.api.js';
+import { AgingTab } from './AgingTab.js';
+import { CrmQualityTab } from './CrmQualityTab.js';
+import { ExecutiveOverviewTab } from './ExecutiveOverviewTab.js';
+import { JourneyTab } from './JourneyTab.js';
+import { LeadingIndicatorsTab } from './LeadingIndicatorsTab.js';
+import { LossesTab } from './LossesTab.js';
+import { PerformanceTab } from './PerformanceTab.js';
+import { PipelineForecastTab } from './PipelineForecastTab.js';
 
 const TABS = [
   { id: 'overview', label: 'Visão Executiva' },

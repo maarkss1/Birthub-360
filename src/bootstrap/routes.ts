@@ -186,6 +186,23 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/whatsapp', authenticateToken, requireTenant, whatsappRoutes);
   app.use('/api/integrations/birth-voice', authenticateToken, requireTenant, birthVoiceRoutes);
   app.use('/api/integrations/3cx', authenticateToken, requireTenant, threecxRoutes);
+
+  // EXTERNAL TOOLS: Integrados do BIRTH-VOICES-HUB e Leads-Outbound
+  app.use('/api/voice-hub', authenticateToken, requireTenant, (req, res, next) => {
+    import('../features/voice-hub/routes/index.js').then((m) => m.default(req, res, next)).catch(next);
+  });
+  app.use('/api/outbound', authenticateToken, requireTenant, (req, res, next) => {
+    import('../features/prospecting/outbound/server/routes.js').then((m) => m.apiRouter(req, res, next)).catch(next);
+  });
+  app.use('/api/dialer-3cx', authenticateToken, requireTenant, (_req, _res, next) => {
+    // Dialer exposes campaigns, dnc, leads
+    import('../features/cadence/dialer/interface/http/server.js').then((_m) => {
+      // It's a full express app, but we can mount its router if exported, or just mock it here.
+      // This is a placeholder for the actual dialer routes.
+      next();
+    }).catch(next);
+  });
+
   app.use('/api/integrations/email', authenticateToken, requireTenant, emailRoutes);
   app.use('/api/integrations/slack', authenticateToken, requireTenant, slackRoutes);
   app.use('/api/integrations/stripe', authenticateToken, requireTenant, stripeRoutes);

@@ -11,10 +11,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { api } from '../../../lib/api';
-import { fadeInUp } from '../../../lib/motion';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useTheme } from '../../../contexts/ThemeContext.js';
+import { api } from '../../../lib/api.js';
+import { fadeInUp } from '../../../lib/motion.js';
 
 interface UsageByModel {
   model: string;
@@ -66,7 +66,7 @@ export function AiGatewayShowcase() {
     try {
       const result = await api.get<UsageSummary>('/api/usage?days=30');
       setData(result);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao carregar o consumo de IA.');
     } finally {
       setLoading(false);

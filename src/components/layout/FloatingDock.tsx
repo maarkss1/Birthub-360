@@ -1,9 +1,9 @@
 import { CalendarClock, KanbanSquare, LayoutDashboard, Menu, Radar } from 'lucide-react';
 import type React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { SoundFX } from '../../lib/soundEffects';
-import { cn } from '../../lib/utils';
-import type { TabType } from './tabMeta';
+import { SoundFX } from '../../lib/soundEffects.js';
+import { cn } from '../../lib/utils.js';
+import type { TabType } from './tabMeta.js';
 
 interface FloatingDockProps {
   activeTab: TabType;

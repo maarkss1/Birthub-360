@@ -23,7 +23,7 @@ vi.mock('../../../automations/automation.engine', () => ({
 const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 vi.mock('../../../../lib/logger', () => ({ logger }));
 
-const { LeadController } = await import('../LeadController');
+const { LeadController } = await import('../LeadController.js');
 
 function buildResponse() {
   const res = {} as Response;

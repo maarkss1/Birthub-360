@@ -40,7 +40,7 @@ export const logAiUsage = async (input: AiUsageLogInput): Promise<void> => {
             VALUES
                 (${id}, ${data.tokens}, ${data.cost}, ${data.latencyMs}, ${data.model}, ${data.promptId ?? null}, NULL, ${data.agentRole}, CURRENT_TIMESTAMP)
         `;
-  } catch (error) {
+  } catch (error: any) {
     // Telemetria nunca deve derrubar a resposta útil ao usuário.
     logger.warn({ err: error, model: input.model }, 'Unable to persist AI usage log');
   }

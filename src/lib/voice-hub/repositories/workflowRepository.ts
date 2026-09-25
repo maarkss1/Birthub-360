@@ -1,0 +1,128 @@
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
+
+export function findWorkflowForTenant(organizationId: string) {
+  return prisma.workflow.findFirst({ where: { organizationId, deletedAt: null }, orderBy: { updatedAt: 'desc' } });
+}
+
+// Only workflow the voice runtime (Agente 04) is meant to execute for a tenant: one that has
+// been through workflowService.publishWorkflow() and therefore passed ValidationEngine. Any
+// edit after publish flips status back to 'draft' (see workflowService.saveWorkflow/
+// updateWorkflow), so this never returns a row whose nodes/edges drifted from what was validated.
+export function findActiveWorkflowForTenant(organizationId: string) {
+  return prisma.workflow.findFirst({ where: { organizationId, deletedAt: null, status: 'active' }, orderBy: { updatedAt: 'desc' } });
+}
+
+export function upsertWorkflow(
+  organizationId: string,
+  userId: string,
+  existingId: string | null,
+  data: { name?: string; nodes?: unknown; edges?: unknown; metadata?: unknown; version?: number; status?: string }
+) {
+  if (existingId) {
+    return prisma.workflow.update({
+      where: { id: existingId },
+      data: {
+        name: data.name ?? undefined,
+        nodes: data.nodes !== undefined ? (data.nodes as Prisma.InputJsonValue) : undefined,
+        edges: data.edges !== undefined ? (data.edges as Prisma.InputJsonValue) : undefined,
+        metadata: data.metadata !== undefined ? (data.metadata as Prisma.InputJsonValue) : undefined,
+        version: data.version ?? undefined,
+        status: data.status ?? undefined,
+        updatedBy: userId,
+      },
+    });
+  }
+  return prisma.workflow.create({
+    data: {
+      organizationId,
+      userId,
+      createdBy: userId,
+      updatedBy: userId,
+      name: data.name || "Default Workflow",
+      nodes: (data.nodes ?? []) as Prisma.InputJsonValue,
+      edges: (data.edges ?? []) as Prisma.InputJsonValue,
+      metadata: (data.metadata ?? {}) as Prisma.InputJsonValue,
+      version: data.version ?? 1,
+      status: data.status ?? undefined,
+    },
+  });
+}
+
+export function deleteWorkflow(id: string) {
+  return prisma.workflow.update({ where: { id }, data: { deletedAt: new Date() } });
+}
+
+export function findWorkflowById(id: string) {
+  return prisma.workflow.findUnique({ where: { id } });
+}
+
+// Tenant-scoped lookup by id: the ONLY safe way to resolve a workflow id coming from a URL
+// param (GET/POST /workflow/:id/...). Never call findWorkflowById with a client-supplied id
+// without also checking organizationId — that would let one tenant address another tenant's workflow
+// by guessing/enumerating ids (AGENTS.md §15).
+export function findWorkflowByIdForTenant(id: string, organizationId: string) {
+  return prisma.workflow.findFirst({ where: { id, organizationId, deletedAt: null } });
+}
+
+// Optimistic concurrency: only applies the metadata write if `version` still matches what the
+// caller last read. Returns the affected row count so callers can detect a lost-update race
+// (two collaborators editing locks/comments on the same workflow at once) and retry.
+export async function updateMetadataIfVersion(id: string, expectedVersion: number, userId: string, metadata: unknown) {
+  const { count } = await prisma.workflow.updateMany({
+    where: { id, version: expectedVersion },
+    data: {
+      metadata: metadata as Prisma.InputJsonValue,
+      version: { increment: 1 },
+      updatedBy: userId,
+    },
+  });
+  return count;
+}
+
+// --- WorkflowVersion (publish/rollback archive) ---
+// Backing store for workflowService.ts's publish/rollback history — see the `WorkflowVersion`
+// model comment in prisma/schema.prisma and `.agents/handoffs/onda-5/01-para-07-schema-workflow-
+// version-pronto.md`. One immutable row per version that was ever actually live for a workflow.
+
+// Lets the raw Prisma error propagate on a duplicate (workflowId, version) pair (P2002, enforced
+// by `@@unique([workflowId, version])`) — same division of responsibility as
+// billingRepository.createTransactionAtomic: the archive-or-skip decision belongs to
+// workflowService.archivePublishedVersion, not to this repository.
+export function createWorkflowVersion(input: {
+  workflowId: string;
+  version: number;
+  nodes: unknown;
+  edges: unknown;
+  metadata: unknown;
+  publishedBy: string;
+}) {
+  return prisma.workflowVersion.create({
+    data: {
+      workflowId: input.workflowId,
+      version: input.version,
+      nodes: input.nodes as Prisma.InputJsonValue,
+      edges: input.edges as Prisma.InputJsonValue,
+      metadata: input.metadata as Prisma.InputJsonValue,
+      publishedBy: input.publishedBy,
+    },
+  });
+}
+
+// Newest-first, so callers that just want "the archive" don't need to re-sort.
+export function findWorkflowVersionsForWorkflow(workflowId: string) {
+  return prisma.workflowVersion.findMany({
+    where: { workflowId },
+    orderBy: { version: 'desc' },
+  });
+}
+
+export function findWorkflowVersion(workflowId: string, version: number) {
+  return prisma.workflowVersion.findUnique({
+    where: { workflowId_version: { workflowId, version } },
+  });
+}
+
+export function isUniqueConstraintViolation(err: unknown): err is Prisma.PrismaClientKnownRequestError {
+  return err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002';
+}

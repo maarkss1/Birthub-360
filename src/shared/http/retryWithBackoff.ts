@@ -75,7 +75,7 @@ export async function retryWithBackoff<T>(
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
       return await attemptFn(attempt);
-    } catch (err) {
+    } catch (err: any) {
       if (!(err instanceof TransientHttpError)) throw err;
       lastError = err;
       logger.warn(

@@ -1,5 +1,5 @@
-import type { PlaybookKey } from '../../../../config/playbooks';
-import type { Repository } from '../../../../shared/domain/Repository';
+import type { PlaybookKey } from '../../../../config/playbooks.js';
+import type { Repository } from '../../../../shared/domain/Repository.js';
 
 export type ObjectionBrand = PlaybookKey;
 

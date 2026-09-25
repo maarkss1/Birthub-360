@@ -1,11 +1,11 @@
 import type { Prisma } from '@prisma/client';
-import { toDeterministicCnpj } from '../../../lib/cnpj';
-import { env } from '../../../config/env';
-import { fromPrismaCompanyStatus, toPrismaCompanyStatus } from '../../../lib/enumMap';
-import { prisma } from '../../../lib/prisma';
-import { searchCompanyIds } from '../../../lib/search/index';
-import type { CompanyStatus } from '../../../lib/zod';
-import type { Company, CompanyRepository } from '../domain/Company';
+import { toDeterministicCnpj } from '../../../lib/cnpj.js';
+import { env } from '../../../config/env.js';
+import { fromPrismaCompanyStatus, toPrismaCompanyStatus } from '../../../lib/enumMap.js';
+import { prisma } from '../../../lib/prisma.js';
+import { searchCompanyIds } from '../../../lib/search/index.js';
+import type { CompanyStatus } from '../../../lib/zod.js';
+import type { Company, CompanyRepository } from '../domain/Company.js';
 
 // O Prisma Client devolve a CHAVE do enum (ex.: "Em_analise"), nao o valor mapeado via @map no
 // schema (ex.: "Em análise") — e so aceita a mesma chave em escritas. Ja era tratado para Company

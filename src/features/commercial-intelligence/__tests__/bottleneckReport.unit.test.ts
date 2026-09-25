@@ -4,7 +4,7 @@ import {
   BOTTLENECK_WARNING_MULTIPLIER,
   buildFunnelBottlenecks,
   MIN_SAMPLE_SIZE_FOR_BASELINE,
-} from '../application/queries/bottleneckReport';
+} from '../application/queries/bottleneckReport.js';
 import type {
   CommercialGoalDTO,
   CommercialIntelligenceRepository,
@@ -13,7 +13,7 @@ import type {
   GoalMetric,
   LeadFieldChangeRow,
   StageDefinition,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';
@@ -168,7 +168,7 @@ class FakeRepository implements CommercialIntelligenceRepository {
     return new Map();
   }
   async upsertGoal(
-    organizationId: string,
+    _organizationId: string,
     period: string,
     metric: GoalMetric,
     amount: number,

@@ -13,7 +13,7 @@ import { prisma } from '../../../lib/prisma.js';
 import type {
   ForecastSnapshotRecord,
   ForecastSnapshotStore,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 function toRecord(row: {
   id: string;

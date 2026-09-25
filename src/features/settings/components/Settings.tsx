@@ -1,28 +1,28 @@
 import { BrainCircuit, Flag, GitMerge, Moon, Puzzle, Shield, Sun, User, Users } from 'lucide-react';
 import { useState } from 'react';
-import { IconSliders } from '../../../components/icons';
+import { IconSliders } from '../../../components/icons/index.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { SoundFX } from '../../../lib/soundEffects';
-import { FeatureFlagsPanel } from '../../feature-flags/components/FeatureFlagsPanel';
-import { Integrations } from '../../integrations/components/Integrations';
-import { AuditLogs } from '../../lgpd/components/AuditLogs';
-import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights';
-import { Team } from '../../team/components/Team';
-import { CompanyDedupPanel } from './CompanyDedupPanel';
-import { LeadDedupPanel } from './LeadDedupPanel';
-import { LearningProfilePanel } from './LearningProfilePanel';
-import { MemoryGovernancePanel } from './MemoryGovernancePanel';
+} from '../../../components/ui/Card.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useTheme } from '../../../contexts/ThemeContext.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { FeatureFlagsPanel } from '../../feature-flags/components/FeatureFlagsPanel.js';
+import { Integrations } from '../../integrations/components/Integrations.js';
+import { AuditLogs } from '../../lgpd/components/AuditLogs.js';
+import { DataSubjectRights } from '../../lgpd/components/DataSubjectRights.js';
+import { Team } from '../../team/components/Team.js';
+import { CompanyDedupPanel } from './CompanyDedupPanel.js';
+import { LeadDedupPanel } from './LeadDedupPanel.js';
+import { LearningProfilePanel } from './LearningProfilePanel.js';
+import { MemoryGovernancePanel } from './MemoryGovernancePanel.js';
 
-import { PageHeader } from '../../../components/ui/PageHeader';
+import { PageHeader } from '../../../components/ui/PageHeader.js';
 
 export function Settings() {
   const { theme, setThemeMode } = useTheme();

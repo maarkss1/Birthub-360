@@ -4,7 +4,7 @@ import {
   filterNewContacts,
   normalizeEmailForDedupe,
   normalizePhoneForDedupe,
-} from '../contactDedupe';
+} from '../contactDedupe.js';
 
 describe('normalizeEmailForDedupe', () => {
   it('normaliza para minúsculas e remove espaços', () => {

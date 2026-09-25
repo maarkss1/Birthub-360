@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitrixWriteback.contract';
+import type { BitrixLeadWritebackPort } from '../../../../shared/contracts/bitrixWriteback.contract.js';
 import type {
   CopilotoBitrixFieldMappingDTO,
   CopilotoCrmEntityType,
@@ -7,8 +7,8 @@ import type {
   CopilotoIaRepository,
   CopilotoSuggestionStatus,
   UpsertBitrixFieldMappingInput,
-} from '../../domain/CopilotoIa';
-import { CopilotoBitrixWritebackUseCases } from '../CopilotoBitrixWritebackUseCases';
+} from '../../domain/CopilotoIa.js';
+import { CopilotoBitrixWritebackUseCases } from '../CopilotoBitrixWritebackUseCases.js';
 
 const ORG_ID = 'org-1';
 

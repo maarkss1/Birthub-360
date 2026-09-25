@@ -1,5 +1,5 @@
 import { BrowserRouter } from 'react-router-dom';
-import { LoginPage } from './sign-in-page';
+import { LoginPage } from './sign-in-page.js';
 
 /**
  * Preview isolado do componente `LoginPage` (sign-in-page.tsx) — envolve em seu próprio

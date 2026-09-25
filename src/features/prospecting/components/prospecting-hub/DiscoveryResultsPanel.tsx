@@ -9,9 +9,9 @@ import {
   Search,
   UserPlus,
 } from 'lucide-react';
-import type { FitScoreResult } from '../../services/enrichment.service';
-import type { ProspectCandidate } from '../../services/prospecting.service';
-import { CandidateCard } from './CandidateCard';
+import type { FitScoreResult } from '../../services/enrichment.service.js';
+import type { ProspectCandidate } from '../../services/prospecting.service.js';
+import { CandidateCard } from './CandidateCard.js';
 
 interface PromoteResult {
   lead: { id: string };

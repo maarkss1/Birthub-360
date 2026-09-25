@@ -10,7 +10,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const { organizationId, id: userId } = (req as AuthRequest).user;
     const views = await listSavedViews(organizationId, userId);
     res.json({ success: true, data: views });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -20,7 +20,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
     const { organizationId, id: userId } = (req as AuthRequest).user;
     const view = await createSavedView(organizationId, userId, req.body);
     res.status(201).json({ success: true, data: view });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -30,7 +30,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction): P
     const { organizationId, id: userId } = (req as AuthRequest).user;
     await deleteSavedView(organizationId, userId, routeParam(req.params.id, 'id'));
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

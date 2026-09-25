@@ -1,8 +1,8 @@
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
@@ -10,14 +10,14 @@ import {
   formatMultiple,
   formatPercent,
   type PipelineCreation,
-} from '../commercialIntelligence.api';
-import { CloseDateIntelligenceCard } from './CloseDateIntelligenceCard';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
-import { ForecastAccuracyCard } from './ForecastAccuracyCard';
-import { ForecastCalibrationCard } from './ForecastCalibrationCard';
-import { HiringScenarioCard } from './HiringScenarioCard';
-import { KpiTile } from './KpiTile';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { CloseDateIntelligenceCard } from './CloseDateIntelligenceCard.js';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer.js';
+import { ForecastAccuracyCard } from './ForecastAccuracyCard.js';
+import { ForecastCalibrationCard } from './ForecastCalibrationCard.js';
+import { HiringScenarioCard } from './HiringScenarioCard.js';
+import { KpiTile } from './KpiTile.js';
+import { MetricInfo } from './MetricInfo.js';
 
 function BreakdownTable({
   title,

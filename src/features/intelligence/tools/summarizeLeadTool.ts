@@ -45,7 +45,7 @@ export const summarizeLeadTool = tool(
       }
 
       return resumo;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, leadId: args.leadId }, 'Erro ao gerar resumo do lead');
       return 'Erro ao tentar gerar o resumo do histórico.';
     }

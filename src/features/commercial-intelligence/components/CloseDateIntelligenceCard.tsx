@@ -2,19 +2,19 @@
 
 import { AlertTriangle, CalendarClock } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CloseDateBreakdown,
   type CloseDateIntelligenceReport,
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
-} from '../commercialIntelligence.api';
-import type { DrillDownQuery } from './DealDrillDownDrawer';
-import { KpiTile } from './KpiTile';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import type { DrillDownQuery } from './DealDrillDownDrawer.js';
+import { KpiTile } from './KpiTile.js';
+import { MetricInfo } from './MetricInfo.js';
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—';

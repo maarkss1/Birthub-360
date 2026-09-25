@@ -47,7 +47,7 @@ export const searchPlaybookTool = tool(
       });
 
       return `Trechos do Playbook encontrados (cite sempre a fonte entre aspas ao usar o conteúdo abaixo):\n\n${lines.join('\n\n')}`;
-    } catch (error) {
+    } catch (error: any) {
       return `Erro ao buscar no playbook: ${error instanceof Error ? error.message : String(error)}`;
     }
   },

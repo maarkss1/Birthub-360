@@ -113,7 +113,7 @@ export class IngestionService {
       ? await mapWithConcurrency(chunks, EMBEDDING_CONCURRENCY, async (chunk) => {
           try {
             return await generateEmbedding(`${normalizedTitle}\n\n${chunk}`, 'passage');
-          } catch (err) {
+          } catch (err: any) {
             logger.error({ err, documentId: document.id }, 'Falha ao gerar embedding do trecho');
             return null;
           }
@@ -228,7 +228,7 @@ export class IngestionService {
       ? await mapWithConcurrency(chunks, EMBEDDING_CONCURRENCY, async (chunk) => {
           try {
             return await generateEmbedding(`${title}\n\n${chunk}`, 'passage');
-          } catch (err) {
+          } catch (err: any) {
             logger.error({ err, documentId }, 'Falha ao gerar embedding na reindexação');
             return null;
           }
@@ -368,7 +368,7 @@ export class IngestionService {
                     `,
         );
         repaired++;
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err, chunkId: chunk.id }, 'Falha ao revetorizar trecho');
       }
     });

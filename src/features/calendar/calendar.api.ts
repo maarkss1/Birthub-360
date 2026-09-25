@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import type { ActivityStatus, ActivityType } from '../../lib/zod';
+import { api } from '../../lib/api.js';
+import type { ActivityStatus, ActivityType } from '../../lib/zod.js';
 
 export type { ActivityStatus, ActivityType };
 

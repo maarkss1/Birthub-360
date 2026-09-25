@@ -24,7 +24,7 @@ router.get(
     try {
       const owners = await listAssignableOwners((req as AuthRequest).user.organizationId);
       res.json({ success: true, data: { owners } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -36,7 +36,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
   try {
     const members = await listTeamMembers((req as AuthRequest).user.organizationId);
     res.json({ success: true, data: { members, assignableRoles: ASSIGNABLE_ROLES } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -57,7 +57,7 @@ router.post('/', async (req: Request, res: Response, next: NextFunction): Promis
     // A senha temporária só existe nesta resposta — nunca é persistida em texto puro nem
     // devolvida de novo depois. O admin precisa copiá-la e repassar agora.
     res.status(201).json({ success: true, data: { member, tempPassword } });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof TeamServiceError) {
       res.status(error.statusCode).json({ success: false, error: error.message });
       return;
@@ -77,7 +77,7 @@ router.post(
       );
       // Mesma regra da criação: a senha só existe nesta resposta, nunca é devolvida de novo.
       res.json({ success: true, data: { member, tempPassword } });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof TeamServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
@@ -97,7 +97,7 @@ router.post(
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: { member } });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof TeamServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
@@ -116,7 +116,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction): P
       authReq.user.id,
     );
     res.json({ success: true, message: 'Usuário removido.' });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof TeamServiceError) {
       res.status(error.statusCode).json({ success: false, error: error.message });
       return;

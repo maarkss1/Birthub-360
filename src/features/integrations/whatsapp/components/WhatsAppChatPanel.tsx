@@ -2,8 +2,8 @@
 
 import { AlertTriangle, Loader2, MessageCircle, Send, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { api } from '../../../../lib/api';
-import { useWhatsAppMessages } from '../hooks/useWhatsAppMessages';
+import { api } from '../../../../lib/api.js';
+import { useWhatsAppMessages } from '../hooks/useWhatsAppMessages.js';
 
 type ConnectionStatus = 'checking' | 'connected' | 'disconnected' | 'connecting';
 

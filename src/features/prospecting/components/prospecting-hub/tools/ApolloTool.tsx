@@ -1,17 +1,17 @@
 import { Building2, ChevronDown, ChevronUp, Cpu, Loader2, SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
-import { BRAND } from '../../../../../config/brand';
-import { api } from '../../../../../lib/api';
+import { BRAND } from '../../../../../config/brand.js';
+import { api } from '../../../../../lib/api.js';
 import {
   ESTADO_OPTIONS,
   PORTE_OPTIONS,
   SEGMENTO_OPTIONS,
   BIRTHHUB360_SEGMENTO_OPTIONS,
-} from '../../../../../shared/constants/icp-options';
-import type { ProspectCandidate, ProspectCriteria } from '../../../services/prospecting.service';
-import { CandidateCard } from '../CandidateCard';
-import { NotConfiguredBanner } from './NotConfiguredBanner';
-import { getErrorMessage, type PromoteResult } from './shared';
+} from '../../../../../shared/constants/icp-options.js';
+import type { ProspectCandidate, ProspectCriteria } from '../../../services/prospecting.service.js';
+import { CandidateCard } from '../CandidateCard.js';
+import { NotConfiguredBanner } from './NotConfiguredBanner.js';
+import { getErrorMessage, type PromoteResult } from './shared.js';
 
 export function ApolloTool({ configured }: { configured: boolean }) {
   // Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
@@ -45,7 +45,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
       );
       setCandidates(result.candidates);
       setApolloError(result.error || null);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar na Apollo'));
     } finally {
       setIsSearching(false);
@@ -69,7 +69,7 @@ export function ApolloTool({ configured }: { configured: boolean }) {
         decisionMakers: candidate.decisionMakers,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

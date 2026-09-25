@@ -38,7 +38,7 @@ export async function checkQdrantHealth(): Promise<boolean> {
   try {
     await qdrant.getCollections();
     return true;
-  } catch (err) {
+  } catch (err: any) {
     logger.debug(
       { err },
       '[qdrant] health check falhou — serviço indisponível ou não configurado.',

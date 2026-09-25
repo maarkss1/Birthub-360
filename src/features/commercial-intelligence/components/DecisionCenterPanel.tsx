@@ -1,16 +1,16 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import { AlertTriangle, ChevronRight, Loader2, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { staggerContainer, staggerItem } from '../../../lib/motion';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { staggerContainer, staggerItem } from '../../../lib/motion.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   type DealDrillDownRow,
   formatCurrency,
-} from '../commercialIntelligence.api';
-import type { DrillDownQuery } from './DealDrillDownDrawer';
+} from '../commercialIntelligence.api.js';
+import type { DrillDownQuery } from './DealDrillDownDrawer.js';
 
 const MAX_ITEMS = 6;
 

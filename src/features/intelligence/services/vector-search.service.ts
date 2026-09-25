@@ -49,7 +49,7 @@ export const VectorSearchService = {
         },
         similarity: hit.similarity ?? 0,
       }));
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, query }, 'Erro ao realizar busca vetorial');
       return [];
     }

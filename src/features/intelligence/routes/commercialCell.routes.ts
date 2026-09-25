@@ -132,7 +132,7 @@ router.post(
       const agent = new RevenueIntelligenceAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -194,7 +194,7 @@ router.post(
       const agent = new ChurnRetentionAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -275,7 +275,7 @@ router.post(
       const agent = new ContractSignatureAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -552,7 +552,7 @@ router.post(
       const agent = new LdrIntelligenceAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -607,7 +607,7 @@ router.post(
       const agent = new CoordinatorCommercialAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -668,7 +668,7 @@ router.post(
       const agent = new ManagerCommercialAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -726,7 +726,7 @@ router.post(
       const agent = new ExecutiveDirectorAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -767,7 +767,7 @@ router.post(
       const agent = new BitrixGuardianAgent();
       const result = await agent.run(contextLines.join('\n'));
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },

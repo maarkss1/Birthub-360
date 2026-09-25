@@ -68,7 +68,7 @@ export async function withRetry<T>(
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
       return await fn();
-    } catch (error) {
+    } catch (error: any) {
       lastError = error;
       if (attempt === retries || !isRetryableAiError(error)) throw error;
       const suggestedMs =

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
+import { clientLogger } from '../lib/clientLogger.js';
 
 /** Estado/ações da conexão WhatsApp (Baileys) na tela de Integrações — extraído de Integrations.tsx (FRONT-006). */
 export function useWhatsAppIntegration() {
@@ -15,7 +15,7 @@ export function useWhatsAppIntegration() {
         setStatus(data.data.status);
         setQrCode(data.data.qr);
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch WhatsApp status');
     }
   }, []);
@@ -30,7 +30,7 @@ export function useWhatsAppIntegration() {
     setLoading(true);
     try {
       await fetch('/api/whatsapp/connect', { method: 'POST' });
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to connect');
     }
     setLoading(false);
@@ -42,7 +42,7 @@ export function useWhatsAppIntegration() {
       await fetch('/api/whatsapp/disconnect', { method: 'POST' });
       setStatus('disconnected');
       setQrCode(null);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to disconnect');
     }
     setLoading(false);

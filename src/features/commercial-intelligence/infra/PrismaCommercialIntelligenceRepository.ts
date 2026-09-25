@@ -8,7 +8,7 @@ import type {
   LeadFieldChangeRow,
   StageDefinition,
   TrackedLeadField,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 /**
  * Status terminais usados como FALLBACK quando um negócio não tem `pipelineStageId` (registro

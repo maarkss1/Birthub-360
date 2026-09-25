@@ -126,7 +126,7 @@ export async function extractText(fileName: string, base64: string): Promise<str
     let value: string;
     try {
       ({ value } = await mammoth.extractRawText({ buffer }));
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, fileName },
         'Falha ao extrair texto de DOCX na ingestão da Base de Conhecimento',
@@ -175,7 +175,7 @@ async function extractPdfText(buffer: Buffer): Promise<string> {
   let parsed: { text: string; numpages: number };
   try {
     parsed = await pdfParse(bytes, { max: MAX_PDF_PAGES });
-  } catch (err) {
+  } catch (err: any) {
     const name = (err as { name?: string } | null)?.name;
 
     // pdf.js (usado internamente pelo pdf-parse) nomeia essas exceções — ver
@@ -227,7 +227,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     const { organizationId } = (req as AuthRequest).user;
     const documents = await ingestionService.list(organizationId);
     res.json({ success: true, data: documents });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -242,7 +242,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
       return;
     }
     res.json({ success: true, data: document });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -266,7 +266,7 @@ router.post(
       });
 
       res.status(201).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -285,7 +285,7 @@ router.post(
       let content: string;
       try {
         content = await extractText(fileName, data);
-      } catch (err) {
+      } catch (err: any) {
         // Erro de formato é culpa do envio, não do servidor: responde 400 em vez de 500.
         res.status(400).json({ success: false, error: (err as Error).message });
         return;
@@ -315,7 +315,7 @@ router.post(
       });
 
       res.status(201).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -332,7 +332,7 @@ router.post(
 
       const result = await searchService.hybridSearch(organizationId, query, limit);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -361,7 +361,7 @@ router.put(
         req.body,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       if ((error as Error).message === 'Documento não encontrado.') {
         res.status(404).json({ success: false, error: (error as Error).message });
         return;
@@ -380,7 +380,7 @@ router.post('/:id/reembed', writeRoles, async (req: Request, res: Response, next
       routeParam(req.params.id, 'id'),
     );
     res.json({ success: true, data: result });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -400,7 +400,7 @@ router.delete(
       }
       logger.info({ documentId }, 'Documento removido da Base de Conhecimento');
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -436,7 +436,7 @@ router.post(
       const aiResponse = await model.invoke([new HumanMessage(prompt)]);
 
       res.json({ success: true, result: aiResponse.content });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -475,7 +475,7 @@ ${document.content.substring(0, 15000)} // Limite de segurança de contexto
       const aiResponse = await model.invoke([new HumanMessage(prompt)]);
 
       res.json({ success: true, result: aiResponse.content });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

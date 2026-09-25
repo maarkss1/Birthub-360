@@ -1,10 +1,10 @@
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 import type {
   CrmCommercialDocument,
   CrmCommercialDocumentVersionDTO,
   CrmDocumentLineItem,
   CrmProduct,
-} from './crm360.types';
+} from './crm360.types.js';
 
 export interface CrmDocumentInput {
   number?: string;

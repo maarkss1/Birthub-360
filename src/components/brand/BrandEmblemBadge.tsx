@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { BRAND } from '../../config/brand';
+import { BRAND } from '../../config/brand.js';
 
 /**
  * Selo de marca em camadas (anel externo → aro claro → anel interno → núcleo

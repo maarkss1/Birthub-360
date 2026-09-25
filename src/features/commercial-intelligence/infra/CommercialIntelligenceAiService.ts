@@ -415,7 +415,7 @@ export class CommercialIntelligenceAiService {
         source: 'ai',
         generatedAt,
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, leadId },
         'CommercialIntelligenceAiService: falha ao analisar transcrição de motivo de perda, aplicando fallback determinístico',
@@ -458,7 +458,7 @@ export class CommercialIntelligenceAiService {
       response = await withRetry(() =>
         model.invoke([new SystemMessage(systemPrompt), new HumanMessage(userPrompt)]),
       );
-    } catch (error) {
+    } catch (error: any) {
       // O detalhe técnico (ex.: "Nenhum motor de IA configurado. Defina GROQ_API_KEY...")
       // é útil para operação/debug, mas nunca deve chegar ao usuário final via toast — só
       // vai pro log estruturado. O cliente recebe apenas a mensagem de negócio (errorPrefix).

@@ -49,7 +49,7 @@ export async function discoverCnpjByName(companyName: string): Promise<string | 
     const match = html.match(/\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}/);
     if (match && isValidCnpj(match[0])) return match[0];
     return null;
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { err: error, companyName },
       'discoverCnpjByName: falha ao buscar CNPJ por nome via DuckDuckGo — tratando como não encontrado',

@@ -1,7 +1,7 @@
 import { Check, Copy, ExternalLink, Layers, Search, Share2, Sparkles, Target } from 'lucide-react';
 import { useState } from 'react';
-import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader';
-import { BRAND } from '../../../config/brand';
+import { ExecutiveHeader } from '../../../components/layout/ExecutiveHeader.js';
+import { BRAND } from '../../../config/brand.js';
 
 export function SocialSellingHub() {
   const [activeSubTab, setActiveSubTab] = useState<'motor' | 'pipeline' | 'linkedin' | 'posts'>(

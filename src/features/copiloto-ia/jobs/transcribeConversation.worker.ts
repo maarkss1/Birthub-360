@@ -76,7 +76,7 @@ async function recordWhisperCost(organizationId: string, durationSeconds: number
         organizationId,
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[copiloto-ia] falha ao registrar custo do Whisper em AILog',
@@ -117,7 +117,7 @@ export async function runTranscribeConversationJob(
     // conversation-intelligence.service.ts (WhatsApp).
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       logger.warn(
         { err: error, conversationId, organizationId },
         '[copiloto-ia] transcrição bloqueada: sem base legal LGPD registrada para enviar dado pessoal a provedor de IA externo.',
@@ -283,7 +283,7 @@ export async function runTranscribeConversationJob(
         transcriptionCompletedAt: new Date(),
       });
       await useCases.markReady(organizationId, conversationId);
-    } catch (err) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : String(err);
       await repository
         .updateTranscriptionStatus(organizationId, conversationId, { transcriptionError: message })

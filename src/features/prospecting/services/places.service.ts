@@ -1,6 +1,6 @@
 import { getPaidProspectingKey } from '../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export interface PlaceCandidate {
   tradeName: string;
@@ -96,7 +96,7 @@ export async function searchGooglePlacesCandidates(
         website: p.websiteUri,
       } satisfies PlaceCandidate;
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, query }, 'Error searching Google Places candidates');
     return [];
   }
@@ -190,7 +190,7 @@ export async function searchGooglePlaceDetailed(
         businessHours: p.regularOpeningHours,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, companyName, locationStr }, 'Error fetching Google Place');
     return {
       place: null,

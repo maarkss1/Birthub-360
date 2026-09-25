@@ -8,19 +8,19 @@ import {
   Search,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { BRAND } from '../../../config/brand';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { BRAND } from '../../../config/brand.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { Dialog } from '../../../components/ui/Dialog';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { api } from '../../../lib/api';
+} from '../../../components/ui/Card.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { api } from '../../../lib/api.js';
 
 // ── Histórico real de sincronização Bitrix24 ────────────────────────────────────────────────────
 //
@@ -83,7 +83,7 @@ export function WebhookMonitor() {
     try {
       const data = await api.get<BitrixSyncLogItem[]>('/api/bitrix/sync-logs?take=100');
       setLogs(data);
-    } catch (e) {
+    } catch (e: any) {
       // Estado de erro EXPLÍCITO — nunca cai para dado inventado (ver nota de arquitetura no
       // topo do arquivo sobre o achado real desta auditoria).
       setLoadError(

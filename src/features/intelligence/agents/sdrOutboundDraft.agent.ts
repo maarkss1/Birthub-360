@@ -170,7 +170,7 @@ Escreva um primeiro e-mail curto, específico e consultivo. Valide uma hipótese
     try {
       draft = emailDraftSchema.parse(cleanAndParseJson<unknown>(rehydrated));
       isStructuredOutputValid = true;
-    } catch (error) {
+    } catch (error: any) {
       // Modelos pequenos ocasionalmente cercam o JSON com texto. O corpo bruto continua útil
       // e auditável (fica salvo na AIPendingAction para revisão humana) — não perdemos o job
       // inteiro por um problema apenas de formatação. Mas este texto NUNCA passou pelo
@@ -338,7 +338,7 @@ Retorne SOMENTE JSON válido neste formato exato (sem tags de bloco em volta):
     try {
       draft = whatsAppDraftSchema.parse(cleanAndParseJson<unknown>(rehydrated));
       isStructuredOutputValid = true;
-    } catch (error) {
+    } catch (error: any) {
       logger.warn(
         { err: error, leadId },
         'SDR outbound (WhatsApp) retornou formato não estruturado; usando fallback textual (revisão humana obrigatória).',

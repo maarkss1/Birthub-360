@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { toE164BR } from '../phone';
+import { toE164BR } from '../phone.js';
 
 describe('toE164BR', () => {
   it('normaliza celular com DDD e máscara', () => {

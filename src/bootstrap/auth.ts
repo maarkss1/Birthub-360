@@ -21,7 +21,7 @@ export function mountAuthHandler(app: Express): void {
     requestContext.run({ bypassRls: true }, async () => {
       try {
         await authHandler(req, res);
-      } catch (err) {
+      } catch (err: any) {
         console.error('MOUNT_AUTH_HANDLER_CAUGHT_ERROR:', err);
         if (!res.headersSent) {
           res.status(500).json({ error: err instanceof Error ? err.message : String(err) });

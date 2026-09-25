@@ -1,11 +1,11 @@
 import { Bug } from 'lucide-react';
 import { type FormEvent, useState } from 'react';
-import { type BugReportSeverity, bugReportApi } from '../../features/bug-reports/bugReport.api';
-import { useActivePlaybook } from '../../hooks/useActivePlaybook';
-import { useFeatureFlag } from '../../hooks/useFeatureFlags';
-import { toast } from '../../lib/toast';
-import { Button } from './Button';
-import { Dialog } from './Dialog';
+import { type BugReportSeverity, bugReportApi } from '../../features/bug-reports/bugReport.api.js';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook.js';
+import { useFeatureFlag } from '../../hooks/useFeatureFlags.js';
+import { toast } from '../../lib/toast.js';
+import { Button } from './Button.js';
+import { Dialog } from './Dialog.js';
 
 const SEVERITY_OPTIONS: Array<{ value: BugReportSeverity; label: string }> = [
   { value: 'LOW', label: 'Baixa — incômodo visual, não trava o trabalho' },
@@ -58,7 +58,7 @@ export function BugReportButton() {
       toast.success('Relato enviado. Obrigado por avisar!');
       setIsOpen(false);
       resetForm();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível enviar o relato.');
     } finally {
       setIsSubmitting(false);

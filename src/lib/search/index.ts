@@ -57,7 +57,7 @@ export const initMeiliIndexes = async () => {
       ]);
 
     logger.info('Meilisearch indexes initialized');
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Failed to initialize Meilisearch indexes');
   }
 };
@@ -89,7 +89,7 @@ export async function searchCompanyIds(
       }),
     );
     return result.hits.map((hit) => (hit as { id: string }).id);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err }, 'Busca no Meilisearch indisponível — usando fallback do Postgres');
     return null;
   }
@@ -131,7 +131,7 @@ export async function searchLeadIds(
       }),
     );
     return result.hits.map((hit) => (hit as { id: string }).id);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err }, 'Busca no Meilisearch indisponível — usando fallback do Postgres (Leads)');
     return null;
   }

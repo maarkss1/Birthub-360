@@ -314,7 +314,7 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
                 ? 'Olá! Obrigado por conversar com nossa equipe. Confirmamos o interesse e seguimos à disposição para os próximos passos.\n\n*Responda SAIR para não receber mais mensagens.*'
                 : 'Olá! Tentamos contato agora pouco por telefone mas não conseguimos falar. Quando seria o melhor horário para conversarmos rapidamente?\n\n*Responda SAIR para não receber mais mensagens.*',
             );
-          } catch (err) {
+          } catch (err: any) {
             logger.warn(
               { err, leadId: lead.id },
               'Falha ao disparar WhatsApp automático pós-ligação',
@@ -361,7 +361,7 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
             durationSeconds: callLength * 60,
             consent: detectRecordingConsentFromRawTranscript(transcript),
           });
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, callId, leadId: lead.id },
             'Falha ao ingerir resultado da ligação no Copiloto Comercial IA (efeito secundário, não afeta o registro da ligação).',
@@ -383,7 +383,7 @@ ${transcript || 'Nenhuma transcrição gravada.'}`;
     res
       .status(200)
       .json({ success: true, lead_found: outcome.leadFound, duplicate: outcome.duplicate });
-  } catch (err) {
+  } catch (err: any) {
     // 5xx de propósito: a Bland reentrega com backoff, e o marcador de idempotência acima
     // garante que a reentrega não duplica a nota caso a falha tenha sido depois da escrita.
     logger.error({ err, callId }, 'Erro ao processar voice result da Bland AI');

@@ -1,4 +1,4 @@
-import { checkEmailDeliverability } from '../email-verification.service';
+import { checkEmailDeliverability } from '../email-verification.service.js';
 
 function slugify(name: string): string {
   return (name || '')

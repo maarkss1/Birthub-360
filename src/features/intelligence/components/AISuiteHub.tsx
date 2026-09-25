@@ -23,10 +23,10 @@ import {
   Users,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card, CardDescription, CardTitle } from '../../../components/ui/Card';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
+import { Button } from '../../../components/ui/Button.js';
+import { Card, CardDescription, CardTitle } from '../../../components/ui/Card.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
 
 interface AICapability {
   id: number;
@@ -452,7 +452,7 @@ export function AISuiteHub() {
       );
       const output = res.data || res.result || res;
       setExecutionResult(typeof output === 'string' ? output : JSON.stringify(output, null, 2));
-    } catch (err) {
+    } catch (err: any) {
       setExecutionError((err as Error).message || 'Falha ao executar serviço de IA');
     } finally {
       setIsRunning(false);

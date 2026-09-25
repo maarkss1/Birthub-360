@@ -14,8 +14,8 @@ import type {
   DataReadinessField,
   DataReadinessScore,
   DealRow,
-} from '../domain/CommercialIntelligence';
-import { roundMoney } from './shared/mathUtils';
+} from '../domain/CommercialIntelligence.js';
+import { roundMoney } from './shared/mathUtils.js';
 
 export type ReadinessClassification = 'saudavel' | 'atencao' | 'critico';
 

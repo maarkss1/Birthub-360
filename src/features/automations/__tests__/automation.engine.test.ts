@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { matchesConditions, renderTemplate } from '../automation.engine';
+import { matchesConditions, renderTemplate } from '../automation.engine.js';
 
 describe('renderTemplate', () => {
   it('substitui o placeholder pelo valor do evento', () => {

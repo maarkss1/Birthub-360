@@ -62,7 +62,7 @@ export async function* streamChatCompletion(
       }),
       signal: AbortSignal.timeout(timeoutMs),
     });
-  } catch (error) {
+  } catch (error: any) {
     await recordCircuitFailure('groq');
     throw error;
   }
@@ -114,7 +114,7 @@ export async function* streamChatCompletion(
         }
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     await recordCircuitFailure('groq');
     throw error;
   }

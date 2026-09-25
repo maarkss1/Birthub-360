@@ -104,7 +104,7 @@ export async function listHubTasks(
       },
     );
     rawTasks = (payload.result?.tasks ?? []).slice(0, HUB_TASK_LIST_LIMIT);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId, creatorId },
       '[hub-tasks] Falha ao listar tarefas delegadas no Bitrix24',

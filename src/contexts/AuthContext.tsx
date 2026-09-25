@@ -6,8 +6,8 @@ import {
   hasRequiredRole,
   isKnownRole,
   type Role,
-} from '../lib/auth/authorization';
-import { authClient } from '../lib/auth-client';
+} from '../lib/auth/authorization.js';
+import { authClient } from '../lib/auth-client.js';
 
 export interface UserSession {
   id: string;
@@ -118,7 +118,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     try {
       await authClient.signOut();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao encerrar sessão:', err);
     } finally {
       window.location.href = '/login';

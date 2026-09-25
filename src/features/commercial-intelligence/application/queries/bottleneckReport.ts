@@ -15,11 +15,11 @@ import type {
   CommercialIntelligenceRepository,
   FunnelBottleneckReport,
   FunnelBottleneckStage,
-} from '../../domain/CommercialIntelligence';
-import { isDealOpen } from '../pipelineEligibility';
-import { buildStageDurationStats, loadScoredDeals } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { median, roundMoney } from '../shared/mathUtils';
+} from '../../domain/CommercialIntelligence.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { buildStageDurationStats, loadScoredDeals } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { median, roundMoney } from '../shared/mathUtils.js';
 
 /**
  * Amostra mínima de passagens CONCLUÍDAS por etapa para confiar na duração média como baseline —

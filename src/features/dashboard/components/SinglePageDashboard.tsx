@@ -16,10 +16,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { BorderBeam } from '../../../components/ui/BorderBeam';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useAnalyticsDashboard } from '../../../hooks/useDatabase';
+import { BorderBeam } from '../../../components/ui/BorderBeam.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useAnalyticsDashboard } from '../../../hooks/useDatabase.js';
 
 function greeting() {
   const hour = new Date().getHours();

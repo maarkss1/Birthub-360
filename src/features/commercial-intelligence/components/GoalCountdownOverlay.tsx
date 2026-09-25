@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { CalendarDays, Clock, Target, TrendingUp, Trophy, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { formatCurrency, formatPercent } from '../commercialIntelligence.api';
+import { formatCurrency, formatPercent } from '../commercialIntelligence.api.js';
 
 interface GoalCountdownOverlayProps {
   isOpen: boolean;

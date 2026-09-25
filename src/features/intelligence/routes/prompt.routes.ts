@@ -16,7 +16,7 @@ promptRoutes.get('/', async (req, res, next) => {
     const { organizationId } = (req as AuthRequest).user;
     const prompts = await listPrompts(organizationId);
     res.json({ success: true, data: prompts });
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -42,7 +42,7 @@ promptRoutes.post(
 
       const prompt = await createPrompt(organizationId, { name, category, variables });
       res.status(201).json({ success: true, data: prompt });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -75,7 +75,7 @@ promptRoutes.put(
         return;
       }
       res.json({ success: true, data: prompt });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },

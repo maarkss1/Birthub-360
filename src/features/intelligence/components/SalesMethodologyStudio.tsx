@@ -17,9 +17,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { api } from '../../../lib/api';
+import { Button } from '../../../components/ui/Button.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { api } from '../../../lib/api.js';
 
 type FrameworkType = 'spin' | 'snap' | 'aida' | 'meddpicc' | 'challenger';
 
@@ -132,7 +132,7 @@ export function SalesMethodologyStudio() {
         { timeoutMs: 90_000 },
       );
       setResult(response.result);
-    } catch (error) {
+    } catch (error: any) {
       setGenerationError(
         error instanceof Error ? error.message : 'Falha ao consultar o motor de IA',
       );

@@ -1,6 +1,6 @@
 import type { Request, Response } from 'express';
 import { describe, expect, it, vi } from 'vitest';
-import { requireRole } from '../requireRole';
+import { requireRole } from '../requireRole.js';
 
 function makeRes() {
   return {

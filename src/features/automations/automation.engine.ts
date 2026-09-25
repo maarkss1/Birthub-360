@@ -316,7 +316,7 @@ export class AutomationEngine {
           );
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error({ err, trigger: event.trigger }, 'Falha ao avaliar automações');
     }
     return executed;
@@ -327,7 +327,7 @@ export class AutomationEngine {
   ): Promise<void> {
     try {
       await automationHistoryService.record(input);
-    } catch (err) {
+    } catch (err: any) {
       // A trilha de auditoria é obrigatória para observabilidade, mas continua sendo efeito
       // colateral: uma indisponibilidade do AuditLog não pode desfazer a ação comercial que
       // já aconteceu nem derrubar o salvamento do lead que originou o evento.
@@ -360,7 +360,7 @@ export class AutomationEngine {
       try {
         await this.runAction(automation, event, attemptState);
         return { success: true, attempts: attempt };
-      } catch (err) {
+      } catch (err: any) {
         lastError = err;
         const permanent = err instanceof PermanentAutomationError;
         const isLastAttempt = attempt === MAX_ACTION_ATTEMPTS;
@@ -426,7 +426,7 @@ export class AutomationEngine {
         const { sendEmail, MailerNotConfiguredError } = await import('../../lib/email/mailer.js');
         try {
           await sendEmail({ to, subject: title, text: body || title });
-        } catch (error) {
+        } catch (error: any) {
           // Sem SMTP configurado, a notificação interna já foi criada acima (o time não
           // fica sem aviso nenhum) — só o e-mail extra não sai. Propaga um erro claro para
           // o histórico da automação registrar a causa, em vez de fingir sucesso total.
@@ -511,7 +511,7 @@ export class AutomationEngine {
         // coberto pelo dedupe de disparo em `automation-idempotency.service.ts`, que impede a
         // automação de sequer chegar a chamar `callLead` duas vezes para o MESMO evento.
         await callLead(event.organizationId, event.entityId);
-      } catch (error) {
+      } catch (error: any) {
         // Número com opt-out é a regra funcionando, não uma falha.
         if (!(error instanceof SuppressedNumberError)) throw error;
         logger.info(

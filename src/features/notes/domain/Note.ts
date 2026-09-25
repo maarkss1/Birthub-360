@@ -1,4 +1,4 @@
-import type { Repository } from '../../../shared/domain/Repository';
+import type { Repository } from '../../../shared/domain/Repository.js';
 
 export type NoteEntityType = 'lead' | 'company' | 'contact';
 

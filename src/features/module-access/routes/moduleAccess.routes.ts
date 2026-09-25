@@ -25,7 +25,7 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction): Promi
       authReq.user.role,
     );
     res.json({ success: true, data: { grantedModules } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -36,7 +36,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
   try {
     const users = await getModuleAccessMatrix((req as AuthRequest).user.organizationId);
     res.json({ success: true, data: { users, modules: MODULE_CATALOG } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -53,7 +53,7 @@ router.put(
         grantedByUserId: authReq.user.id,
       });
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ModuleAccessServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
@@ -74,7 +74,7 @@ router.delete(
         moduleKey: routeParam(req.params.moduleKey, 'moduleKey'),
       });
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof ModuleAccessServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;

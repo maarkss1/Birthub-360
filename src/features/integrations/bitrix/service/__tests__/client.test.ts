@@ -119,7 +119,7 @@ describe('callBitrix — resiliência (bloqueador #11: sincronização não pode
     ).rejects.toBeInstanceOf(AppError);
     try {
       await callBitrix(WEBHOOK, 'crm.lead.list', {}, { maxAttempts: 2 });
-    } catch (err) {
+    } catch (err: any) {
       expect((err as Error).message).not.toContain(WEBHOOK);
       expect((err as Error).message).not.toContain('token');
     }

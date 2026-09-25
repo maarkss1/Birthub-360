@@ -125,7 +125,7 @@ export class CopilotoVoiceIngestionAdapter implements CopilotoVoiceIngestionPort
     // nenhuma checagem deste segundo eixo — corrigido aqui, fail-closed.
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       logger.warn(
         { err: error, organizationId, conversationId: conversation.id },
         '[copiloto-ia] ponte de voz bloqueada: sem base legal LGPD registrada para enviar dado pessoal a provedor de IA externo.',
@@ -241,7 +241,7 @@ export class CopilotoVoiceIngestionAdapter implements CopilotoVoiceIngestionPort
       });
 
       await useCases.markReady(organizationId, conversation.id);
-    } catch (err) {
+    } catch (err: any) {
       await useCases.markFailed(organizationId, conversation.id).catch(() => {});
       throw err;
     }

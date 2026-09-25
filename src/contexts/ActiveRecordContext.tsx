@@ -1,7 +1,7 @@
 import { type ReactNode, useCallback, useState } from 'react';
-import { type ActiveRecord, ActiveRecordContext } from './activeRecord';
+import { type ActiveRecord, ActiveRecordContext } from './activeRecord.js';
 
-export type { ActiveRecord } from './activeRecord';
+export type { ActiveRecord } from './activeRecord.js';
 
 /**
  * Registro comercial (empresa/negócio) atualmente aberto na tela, para que o copiloto de IA global

@@ -11,7 +11,7 @@ export class Crm360Controller {
       const orgId = (req as AuthRequest).user.organizationId;
       const data = await this.crm360UseCases.getOverview(orgId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -21,7 +21,7 @@ export class Crm360Controller {
       const orgId = (req as AuthRequest).user.organizationId;
       const data = await this.crm360UseCases.getPipelines(orgId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -32,7 +32,7 @@ export class Crm360Controller {
       const { funnel, pipelineId } = req.query as { funnel?: string; pipelineId?: string };
       const data = await this.crm360UseCases.getBoardLeads(orgId, funnel, pipelineId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -49,7 +49,7 @@ export class Crm360Controller {
         actorUserId,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -59,7 +59,7 @@ export class Crm360Controller {
       const orgId = (req as AuthRequest).user.organizationId;
       const data = await this.crm360UseCases.convertLead(orgId, routeParam(req.params.id, 'id'));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -70,7 +70,7 @@ export class Crm360Controller {
       const search = typeof req.query.q === 'string' ? req.query.q : undefined;
       const data = await this.crm360UseCases.listProducts(orgId, search);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -80,7 +80,7 @@ export class Crm360Controller {
       const orgId = (req as AuthRequest).user.organizationId;
       const data = await this.crm360UseCases.createProduct(orgId, req.body);
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -93,7 +93,7 @@ export class Crm360Controller {
         routeParam(req.params.leadId, 'leadId'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -107,7 +107,7 @@ export class Crm360Controller {
         req.body,
       );
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -121,7 +121,7 @@ export class Crm360Controller {
         routeParam(req.params.id, 'id'),
       );
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -132,7 +132,7 @@ export class Crm360Controller {
       const leadId = typeof req.query.leadId === 'string' ? req.query.leadId : undefined;
       const data = await this.crm360UseCases.listDocuments(orgId, leadId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -142,7 +142,7 @@ export class Crm360Controller {
       const { organizationId: orgId, id: actorUserId } = (req as AuthRequest).user;
       const data = await this.crm360UseCases.createDocument(orgId, req.body, actorUserId);
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -157,7 +157,7 @@ export class Crm360Controller {
         actorUserId,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -170,7 +170,7 @@ export class Crm360Controller {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -186,7 +186,7 @@ export class Crm360Controller {
         actorUserId,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -204,7 +204,7 @@ export class Crm360Controller {
         actorUserId,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -220,7 +220,7 @@ export class Crm360Controller {
         return;
       }
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -235,7 +235,7 @@ export class Crm360Controller {
         req.body,
       );
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

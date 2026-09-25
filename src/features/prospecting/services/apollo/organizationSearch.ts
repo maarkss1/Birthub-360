@@ -3,8 +3,8 @@
 
 import { getPaidProspectingKey } from '../../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
-import { logger } from '../../../../lib/logger';
-import { validContactEmails } from '../../../../shared/utils/contact-links';
+import { logger } from '../../../../lib/logger.js';
+import { validContactEmails } from '../../../../shared/utils/contact-links.js';
 import type { ProspectCandidate, ProspectCriteria } from '../../domain/prospectTypes.js';
 import { buildLocationLabel } from '../../domain/prospectTypes.js';
 import { ExclusionSet } from '../../utils/exclusionSet.js';
@@ -362,7 +362,7 @@ export async function fetchApolloCandidates(
         enrichCandidatesWithDecisionMakers(candidates, organizations),
         new Promise<void>((resolve) => setTimeout(resolve, DECISION_MAKER_PREFETCH_BUDGET_MS)),
       ]);
-    } catch (decisionMakerError) {
+    } catch (decisionMakerError: any) {
       // Log e segue — os candidatos (já obtidos com sucesso) continuam válidos sem decisores.
       logger.error({ err: decisionMakerError }, 'Falha ao pré-buscar decisores na descoberta');
     }
@@ -373,7 +373,7 @@ export async function fetchApolloCandidates(
     }
 
     return { candidates };
-  } catch (error) {
+  } catch (error: any) {
     return {
       candidates: [],
       error: error instanceof Error ? error.message : 'Falha ao consultar Apollo.io',

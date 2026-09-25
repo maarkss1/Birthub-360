@@ -13,9 +13,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../hooks/useActivePlaybook';
-import { api } from '../../lib/api';
-import { Button } from './Button';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook.js';
+import { api } from '../../lib/api.js';
+import { Button } from './Button.js';
 
 type Channel = 'email' | 'call' | 'message';
 type Tone = 'consultative' | 'direct' | 'roi_focused' | 'hyper_personalized';
@@ -137,7 +137,7 @@ export function AIEmailGenerator({
         );
         setMessageResult(response.result);
       }
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

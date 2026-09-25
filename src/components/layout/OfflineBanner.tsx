@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { WifiOff } from 'lucide-react';
-import { useOnlineStatus } from '../../hooks/useOnlineStatus';
+import { useOnlineStatus } from '../../hooks/useOnlineStatus.js';
 
 /**
  * Indicador persistente de perda de conectividade — ver

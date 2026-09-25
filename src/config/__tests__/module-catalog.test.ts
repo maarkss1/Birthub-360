@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EXTERNAL_LINKS, isModuleKey, MODULE_CATALOG, MODULE_KEYS } from '../module-catalog';
+import { EXTERNAL_LINKS, isModuleKey, MODULE_CATALOG, MODULE_KEYS } from '../module-catalog.js';
 
 /**
  * Regressão para DOCBRAND-002/005/012 (docs/audits/repository-debt-audit): o módulo "Proposta

@@ -2,12 +2,12 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   CommercialIntelligenceUseCases,
   classifyCoverageProtection,
-} from '../application/CommercialIntelligenceUseCases';
+} from '../application/CommercialIntelligenceUseCases.js';
 import {
   computeForecastAccuracy,
   summarizeForecastAccuracy,
-} from '../application/forecastAccuracy';
-import { HEALTH_PILLAR_ORDER } from '../application/healthScore';
+} from '../application/forecastAccuracy.js';
+import { HEALTH_PILLAR_ORDER } from '../application/healthScore.js';
 import type {
   CommercialGoalDTO,
   CommercialIntelligenceRepository,
@@ -15,7 +15,7 @@ import type {
   GoalMetric,
   LeadFieldChangeRow,
   StageDefinition,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';

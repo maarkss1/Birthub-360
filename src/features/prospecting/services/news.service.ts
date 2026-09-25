@@ -1,5 +1,5 @@
 import { fetchWithTimeout } from '../../../lib/http.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 const GDELT_DOC_API = 'https://api.gdeltproject.org/api/v2/doc/doc';
 
@@ -119,7 +119,7 @@ export async function searchCompanyNews(companyName: string): Promise<NewsMentio
         domain: a.domain,
         seenAt: a.seendate || '',
       }));
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, companyName }, 'Error searching GDELT news');
     return [];
   }

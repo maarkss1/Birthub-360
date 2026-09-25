@@ -1,6 +1,6 @@
 import { fetchWithTimeout } from '../../../lib/http.js';
-import { logger } from '../../../lib/logger';
-import type { PlaceCandidate, PlaceSearchResult } from './places.service';
+import { logger } from '../../../lib/logger.js';
+import type { PlaceCandidate, PlaceSearchResult } from './places.service.js';
 
 const NOMINATIM_BASE_URL = 'https://nominatim.openstreetmap.org/search';
 const NOMINATIM_HEADERS = {
@@ -83,7 +83,7 @@ export async function searchNominatimCandidates(
         website: tags.website || tags['contact:website'],
       } satisfies PlaceCandidate;
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, query }, 'Error searching Nominatim candidates');
     return [];
   }
@@ -110,7 +110,7 @@ export async function searchNominatimPlace(
       nationalPhoneNumber: tags.phone || tags['contact:phone'],
       websiteUri: tags.website || tags['contact:website'],
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, companyName, locationStr }, 'Error searching Nominatim place');
     return null;
   }

@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type React from 'react';
-import { SoundFX, type UiSound } from '../../lib/soundEffects';
-import { cn } from '../../lib/utils';
+import { SoundFX, type UiSound } from '../../lib/soundEffects.js';
+import { cn } from '../../lib/utils.js';
 
 // Omite os 4 handlers cujo tipo o framer-motion redefine em `motion.button` (drag/animation): sem
 // isto, o spread de `...props` no <motion.button> não compila.

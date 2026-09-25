@@ -15,7 +15,7 @@ import type { AuthRequest } from './authenticateToken.js';
  */
 export function requireRole(allowedRoles: string[]) {
   return (req: Request, res: Response, next: NextFunction): void => {
-    const authReq = req as AuthRequest;
+    const authReq = req as unknown as AuthRequest;
 
     // authenticateToken deve ter sido chamado antes deste middleware
     if (!authReq.user) {

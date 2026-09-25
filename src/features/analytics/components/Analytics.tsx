@@ -11,23 +11,23 @@ import {
   TrendingDown,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BarChart, LineChart } from '../../../components/charts';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { PageHeader } from '../../../components/ui/PageHeader';
+import { BarChart, LineChart } from '../../../components/charts/index.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { PageHeader } from '../../../components/ui/PageHeader.js';
 import {
   type AnalyticsDashboard,
   analyticsApi,
   formatMonthLabel,
   PERIOD_OPTIONS,
-} from '../analytics.api';
-import { CohortAnalysis } from './CohortAnalysis';
+} from '../analytics.api.js';
+import { CohortAnalysis } from './CohortAnalysis.js';
 import {
   AgentPerformanceWidget,
   HeatmapWidget,
   LostReasonsWidget,
   TmqTile,
-} from './DashboardExtensions';
+} from './DashboardExtensions.js';
 
 function DecisionInstrument({
   label,
@@ -182,7 +182,7 @@ export function Analytics() {
     setError(null);
     try {
       setData(await analyticsApi.dashboard(period));
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);

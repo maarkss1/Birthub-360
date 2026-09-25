@@ -2,7 +2,7 @@ import { Float, MeshDistortMaterial, Sparkles, Sphere } from '@react-three/drei'
 import { Canvas } from '@react-three/fiber';
 import { useReducedMotion } from 'framer-motion';
 import { type ComponentRef, useRef } from 'react';
-import { BRAND } from '../../config/brand';
+import { BRAND } from '../../config/brand.js';
 
 function OrbCore() {
   const materialRef = useRef<ComponentRef<typeof MeshDistortMaterial>>(null);

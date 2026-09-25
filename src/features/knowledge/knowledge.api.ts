@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import type { IngestResult } from '../../shared/contracts/ingestion.contract';
+import { api } from '../../lib/api.js';
+import type { IngestResult } from '../../shared/contracts/ingestion.contract.js';
 
 export type { IngestResult };
 

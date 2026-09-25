@@ -72,7 +72,7 @@ export class RerankerService {
 
       const raw = cleanAndParseJson<{ scores?: unknown }>(response.content);
       return RerankerService.applyScores(candidates, raw.scores).slice(0, topK);
-    } catch (error) {
+    } catch (error: any) {
       // Custo/latência da tentativa falha não fica sem registro: o gateway já loga o erro do
       // provedor internamente (redigido); aqui só avisamos que a busca caiu de volta pro RRF.
       logger.warn(

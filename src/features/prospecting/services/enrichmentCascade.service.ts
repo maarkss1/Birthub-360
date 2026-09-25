@@ -119,7 +119,7 @@ export async function runEnrichmentCascade(
           domain = guessed.domain || undefined;
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err, cnpj }, 'Aviso ao buscar dados cadastrais de CNPJ na cascata');
     }
   }
@@ -176,7 +176,7 @@ export async function runEnrichmentCascade(
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       apolloError =
         err instanceof Error ? err.message : 'Falha desconhecida no passo Apollo da cascata';
       logger.error(
@@ -223,7 +223,7 @@ export async function runEnrichmentCascade(
           hunterError = hunterError || domainPeople.error;
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       hunterError =
         err instanceof Error ? err.message : 'Falha desconhecida no passo Hunter.io da cascata';
       logger.error(
@@ -271,7 +271,7 @@ export async function runEnrichmentCascade(
       } else if (placesFetchError) {
         googlePlacesError = placesFetchError;
       }
-    } catch (err) {
+    } catch (err: any) {
       googlePlacesError =
         err instanceof Error ? err.message : 'Falha desconhecida no passo Google Places da cascata';
       logger.error({ err, companyId, companyName }, 'Falha no passo 3 da cascata (Google Places)');

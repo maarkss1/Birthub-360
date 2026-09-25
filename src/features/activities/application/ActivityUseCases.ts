@@ -1,7 +1,7 @@
 import type { z } from 'zod';
-import { activitySchema } from '../../../lib/zod';
-import type { ActivityListFilters, ActivityRepository } from '../domain/Activity';
-import { assertRealOwner } from '../domain/ownerGuard';
+import { activitySchema } from '../../../lib/zod.js';
+import type { ActivityListFilters, ActivityRepository } from '../domain/Activity.js';
+import { assertRealOwner } from '../domain/ownerGuard.js';
 
 export class ActivityUseCases {
   constructor(private activityRepository: ActivityRepository) {}

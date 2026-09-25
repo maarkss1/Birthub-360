@@ -31,10 +31,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Dialog } from '../../../components/ui/Dialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { api } from '../../../lib/api';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { api } from '../../../lib/api.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 
 interface BitrixLeadSummary {
   id: string;
@@ -235,7 +235,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
         setTotal(data.total);
         setStart(from);
         setRestrictedWarning(meta.warning || '');
-      } catch (e) {
+      } catch (e: any) {
         setError(
           e instanceof Error ? e.message : 'Não foi possível carregar os negócios do Bitrix24.',
         );
@@ -276,7 +276,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
         setTotal(data.total);
         setStart(from);
         setRestrictedWarning(meta.warning || '');
-      } catch (e) {
+      } catch (e: any) {
         setError(
           e instanceof Error ? e.message : 'Não foi possível carregar os leads do Bitrix24.',
         );
@@ -400,7 +400,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       setShowBulkEditModal(false);
       await load(start);
       return result;
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao importar os itens selecionados.');
       return null;
     } finally {
@@ -448,7 +448,7 @@ export function BitrixImportPanel({ connectionId }: BitrixImportPanelProps) {
       }>(endpoint, body, { timeoutMs: 30_000 });
       setImportResult(result);
       await load(start);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao importar o item.');
     } finally {
       setImportingSingleId(null);

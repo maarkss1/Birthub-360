@@ -1,0 +1,18 @@
+:root {
+  --bh-midnight: #101D2F;
+  --bh-gold: #C69B52;
+  --bh-goldLight: #E4BC76;
+  --bh-ivory: #F5F2EA;
+  --bh-white: #FFFFFF;
+  --bh-blue: #315FD6;
+  --bh-pink: #BE326F;
+  --bh-red: #BE3B36;
+  --bh-pinkLight: #F18BB9;
+  --bh-redLight: #F38278;
+  --bh-blueLight: #8EADFF;
+  --bh-muted: #58616C;
+  --bh-line: #D8D6CF;
+  --bh-font-display: 'Cabin', sans-serif;
+  --bh-font-body: 'Cabin', sans-serif;
+  --bh-font-data: 'IBM Plex Mono', monospace;
+}

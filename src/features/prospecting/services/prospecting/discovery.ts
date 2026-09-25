@@ -1,5 +1,5 @@
 import { getProspectingProviderMode } from '../../../../config/prospecting-integrations.js';
-import { logger } from '../../../../lib/logger';
+import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
 import { buildLocationLabel } from '../../domain/prospectTypes.js';
 import {
@@ -10,9 +10,9 @@ import {
 import { evaluateCandidateRequirements } from '../../domain/requirementEngine.js';
 import { buildSearchIntent } from '../../domain/searchIntent.js';
 import { ExclusionSet } from '../../utils/exclusionSet.js';
-import { fetchApolloCandidates } from '../apollo.service';
-import { searchNominatimCandidates } from '../nominatim.service';
-import { searchGooglePlacesCandidates } from '../places.service';
+import { fetchApolloCandidates } from '../apollo.service.js';
+import { searchNominatimCandidates } from '../nominatim.service.js';
+import { searchGooglePlacesCandidates } from '../places.service.js';
 import { type SearchExecutionStatus, SearchExecutionTracker } from '../searchExecution.service.js';
 import { enrichCandidatesWithQualityData } from './qualityEnrichment.js';
 import type { DiscoverResult, ProspectCandidate, ProspectCriteria } from './types.js';
@@ -124,7 +124,7 @@ export async function fetchKnownExclusions(organizationId: string): Promise<Excl
     ]);
     for (const c of companies) exclusions.add(c.tradeName, c.website);
     for (const r of rejections) exclusions.add(r.tradeName, r.website);
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error },
       'Falha ao buscar empresas já cadastradas/rejeitadas para excluir da descoberta',
@@ -276,7 +276,7 @@ export async function discoverCandidates(
           resultCount: fallbackResult.candidates.length,
           status: 'ok',
         });
-      } catch (err) {
+      } catch (err: any) {
         tracker.recordProviderCall({
           provider: trackerProviderName(fallbackStep.provider),
           resultCount: 0,
@@ -352,7 +352,7 @@ export async function discoverCandidates(
       apolloError: providerMode === 'hybrid' ? apolloError : undefined,
       providerMode,
     };
-  } catch (error) {
+  } catch (error: any) {
     // Search-ID precisa ser persistido mesmo quando a execução inteira quebra antes de gerar
     // qualquer candidato — é exatamente o cenário que a auditoria de execução (Onda 42) existe
     // para capturar ("a busca rodou, com este critério, e falhou assim").

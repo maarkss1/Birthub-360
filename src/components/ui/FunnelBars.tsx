@@ -1,4 +1,4 @@
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Generalizado a partir de `FunnelBars` (JoaoReisDiagnosticHub.tsx) — o mapeamento de status
    Bitrix (CONVERTED/JUNK → tom ok/critical) é regra de negócio e fica com quem chama, não aqui

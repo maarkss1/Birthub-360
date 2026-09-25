@@ -85,7 +85,7 @@ threecxWebhookRouter.post(
     try {
       const result = await process3CXWebhook(payload);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Falha ao processar webhook do 3CX.');
       res.status(500).json({ success: false, error: 'Falha ao processar webhook.' });
     }
@@ -98,7 +98,7 @@ router.get('/connections', async (req: Request, res: Response, next: NextFunctio
     const { organizationId } = (req as AuthRequest).user;
     const data = await list3CXConnections(organizationId);
     res.json({ success: true, data });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -111,7 +111,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const data = await connect3CX(organizationId, req.body);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -128,7 +128,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -142,7 +142,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnect3CX(organizationId, routeParam(req.params.connectionId, 'connectionId'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -159,7 +159,7 @@ router.post(
       const { connectionId, phoneNumber, leadId, email } = req.body;
       const data = await make3CXCall(organizationId, connectionId, phoneNumber, leadId, email);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

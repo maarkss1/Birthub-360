@@ -1,4 +1,4 @@
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 // Fonte única do contrato de OverviewMetrics — ver .agents/handoffs/onda-8/
 // 18-para-02-unificar-overviewmetrics-frontend.md. A interface local que existia aqui foi
 // removida em favor deste import; a forma pública do tipo não mudou.

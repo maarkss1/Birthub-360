@@ -34,7 +34,7 @@ externalCrmRoutes.get('/', async (req: Request, res: Response) => {
       return res.send(connections.filter((c) => c.provider === provider));
     }
     return res.send(connections);
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err, organizationId }, 'Erro ao listar conexões de CRM externo');
     return res.status(500).send({ error: 'Falha interna' });
   }
@@ -74,7 +74,7 @@ externalCrmRoutes.post('/', express.json(), async (req: Request, res: Response) 
       provider: connection.provider,
       label: connection.label,
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err, organizationId }, 'Erro ao criar conexão de CRM externo');
     return res.status(400).send({ error: err instanceof Error ? err.message : 'Falha interna' });
   }
@@ -93,7 +93,7 @@ externalCrmRoutes.delete('/:id', async (req: Request, res: Response) => {
   try {
     await ExternalCrmService.deleteConnection(id, organizationId);
     return res.send({ success: true });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err, organizationId }, 'Erro ao remover conexão de CRM externo');
     return res.status(500).send({ error: 'Falha interna' });
   }

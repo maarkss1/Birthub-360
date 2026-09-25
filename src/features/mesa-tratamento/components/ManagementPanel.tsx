@@ -1,10 +1,10 @@
 import { CheckCheck, Loader2, MessageSquarePlus, ShieldCheck, UserCog } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { toast } from '../../../lib/toast';
-import { type BitrixUserOption, bitrixApi } from '../../integrations/bitrix/bitrix.api';
-import { mesaTratamentoManagementApi } from '../mesaTratamento.api';
+import { Button } from '../../../components/ui/Button.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card.js';
+import { toast } from '../../../lib/toast.js';
+import { type BitrixUserOption, bitrixApi } from '../../integrations/bitrix/bitrix.api.js';
+import { mesaTratamentoManagementApi } from '../mesaTratamento.api.js';
 
 interface ManagementPanelProps {
   leadId: string;
@@ -52,7 +52,7 @@ export function ManagementPanel({ leadId, connectionId, onActionComplete }: Mana
       toast.success(`Responsável reatribuído para ${result.ownerName}.`);
       setSelectedUserId('');
       onActionComplete();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível reatribuir o lead.');
     } finally {
       setReassigning(false);
@@ -66,7 +66,7 @@ export function ManagementPanel({ leadId, connectionId, onActionComplete }: Mana
       await mesaTratamentoManagementApi.comment(leadId, comment.trim());
       toast.success('Comentário registrado no Bitrix24.');
       setComment('');
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível comentar.');
     } finally {
       setCommenting(false);
@@ -80,7 +80,7 @@ export function ManagementPanel({ leadId, connectionId, onActionComplete }: Mana
       toast.success('Lead marcado como revisado pela gestão.');
       setDecideNote('');
       onActionComplete();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível marcar como decidido.');
     } finally {
       setDeciding(false);

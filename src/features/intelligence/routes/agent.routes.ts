@@ -23,7 +23,7 @@ router.post(
       const audio = await synthesizeSpeech(text);
       res.setHeader('Content-Type', 'audio/wav');
       res.send(audio);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Voicebox TTS request failed');
       next(error);
     }
@@ -63,7 +63,7 @@ router.post(
       const result = await swarm.executeMission(mission, sessionId, leadId);
       // Retorna a última mensagem ou todo o contexto no formato esperado pelo api.ts (data envelope)
       res.json({ success: true, data: { messages: result.map((m) => m.content) } });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -96,7 +96,7 @@ router.post(
 
       res.write('event: end\ndata: {}\n\n');
       res.end();
-    } catch (err) {
+    } catch (err: any) {
       if (!res.headersSent) {
         next(err);
       } else {
@@ -125,7 +125,7 @@ router.get('/swarm/slo', async (req: Request, res: Response, next: NextFunction)
     const { organizationId } = (req as AuthRequest).user;
     const snapshot = await getSwarmSloSnapshot(organizationId, parsed.data.days ?? 30);
     res.json(snapshot);
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -142,7 +142,7 @@ router.get('/evaluation-metrics', async (req: Request, res: Response, next: Next
     const { organizationId } = (req as AuthRequest).user;
     const snapshot = await getEvaluationMetricsSnapshot(organizationId, parsed.data.days ?? 30);
     res.json(snapshot);
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -155,7 +155,7 @@ router.get('/golden-dataset/summary', async (_req: Request, res: Response, next:
     const summary = getDatasetSummary();
     const toolUseValidation = await validateToolUseCases();
     res.json({ summary, toolUseValidation });
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -176,7 +176,7 @@ router.post('/swarm/learn', async (req, res, next) => {
       // sozinha — fica pendente até um GESTOR+ aprovar em `/swarm/learn/:version/approve`.
       pendingApproval: Boolean(guidelines),
     });
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -196,7 +196,7 @@ router.get('/swarm/learn/history', async (req: Request, res: Response, next: Nex
     const { id: actorId, organizationId } = (req as AuthRequest).user;
     const history = await getLearningProfileHistory(organizationId, actorId);
     res.json({ success: true, data: history });
-  } catch (err) {
+  } catch (err: any) {
     next(err);
   }
 });
@@ -226,7 +226,7 @@ router.post(
         return;
       }
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -258,7 +258,7 @@ router.post(
         return;
       }
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -281,7 +281,7 @@ router.post(
         return;
       }
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },

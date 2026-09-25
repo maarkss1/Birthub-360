@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { opaGuard } from './opaGuard';
-import { Request, Response, NextFunction } from 'express';
+import { opaGuard } from './opaGuard.js';
+import type { Request, Response, NextFunction } from 'express';
 
 // Mock global fetch
 const mockFetch = vi.fn();

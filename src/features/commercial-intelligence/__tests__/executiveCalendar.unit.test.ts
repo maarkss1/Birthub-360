@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { countBusinessDays, monthLabelPt, shiftMonth } from '../application/executiveCalendar';
+import { countBusinessDays, monthLabelPt, shiftMonth } from '../application/executiveCalendar.js';
 
 describe('executiveCalendar', () => {
   it('shiftMonth: avança meses dentro do mesmo ano', () => {

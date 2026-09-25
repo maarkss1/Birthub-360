@@ -10,8 +10,8 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { formatMonthLabel, type MonthlyPoint } from '../analytics.api';
+import { useTheme } from '../../../contexts/ThemeContext.js';
+import { formatMonthLabel, type MonthlyPoint } from '../analytics.api.js';
 
 interface GlowChartProps {
   /** Série mensal real (criados/ganhos/perdidos) vinda de /api/analytics/dashboard. */

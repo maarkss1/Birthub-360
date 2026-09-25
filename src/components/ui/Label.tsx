@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/label-has-associated-control -- primitivo repassa htmlFor ou envolve o controle */
 import * as React from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 export type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
 

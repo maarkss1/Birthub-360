@@ -96,7 +96,7 @@ export class SearchService {
       // 'query' e não 'passage': o modelo e5 distingue os dois papéis e a recuperação piora
       // sensivelmente se a consulta for embedada como se fosse um documento.
       embedding = await generateEmbedding(query, 'query');
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err }, 'Busca semântica indisponível; usando apenas palavra-chave');
       return null;
     }
@@ -121,7 +121,7 @@ export class SearchService {
                 LIMIT ${CANDIDATES_PER_STRATEGY}
             `,
       );
-    } catch (err) {
+    } catch (err: any) {
       logger.error({ err }, 'Falha na consulta vetorial da Base de Conhecimento');
       return null;
     }
@@ -156,7 +156,7 @@ export class SearchService {
                 LIMIT ${CANDIDATES_PER_STRATEGY}
             `,
       );
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err }, 'Full-text search falhou; caindo para ILIKE');
       try {
         return await withRlsContext(
@@ -174,7 +174,7 @@ export class SearchService {
                     LIMIT ${CANDIDATES_PER_STRATEGY}
                 `,
         );
-      } catch (fallbackErr) {
+      } catch (fallbackErr: any) {
         logger.error({ err: fallbackErr }, 'Busca por palavra-chave falhou');
         return [];
       }

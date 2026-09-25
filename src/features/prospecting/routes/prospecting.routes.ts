@@ -48,7 +48,7 @@ router.post(
     try {
       const status = await checkApolloConnection();
       res.json({ success: true, data: status });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -67,7 +67,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const result = await discoverCandidates(criteria, organizationId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -100,7 +100,7 @@ router.post(
         description: brandDescription,
       });
       res.json({ success: true, data: { candidate, rawText } });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof OcrValidationError) {
         res.status(422).json({ success: false, error: error.message });
         return;
@@ -129,7 +129,7 @@ router.post(
       // recalcular nada). `marketRisk` fica `null` só quando a Receita não devolveu empresa.
       const marketRisk = result.found && result.data ? rntrcRiskByUf(result.data.state) : null;
       res.json({ success: true, data: { ...result, marketRisk } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -149,7 +149,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const result = await promoteToCrm({ ...req.body, organizationId });
       res.status(201).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -166,7 +166,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await rejectCandidate({ ...req.body, organizationId });
       res.status(201).json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -190,7 +190,7 @@ router.post(
       }
       const result = await discoverDecisionMakers(normalizedDomain, criteria ?? {});
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -212,7 +212,7 @@ router.post(
       }
       const icebreaker = await icebreakerService.generateIcebreaker(companyName);
       res.json({ success: true, data: { icebreaker } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -242,7 +242,7 @@ router.post(
       } else {
         res.status(500).json({ success: false, error: 'Failed to send cold email' });
       }
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -312,7 +312,7 @@ router.post(
 
       const result = await runEnrichmentCascade(organizationId, companyId, options);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -329,7 +329,7 @@ router.get(
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: items });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -365,7 +365,7 @@ router.post(
       });
 
       res.status(201).json({ success: true, data: created });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -383,7 +383,7 @@ router.delete(
       });
 
       res.json({ success: true, message: 'Busca salva removida' });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -436,7 +436,7 @@ router.post(
           searchId: result?.searchId,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -459,7 +459,7 @@ router.get(
         return;
       }
       res.json({ success: true, data: execution });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -481,7 +481,7 @@ router.post('/enrich', async (req: Request, res: Response, next: NextFunction): 
       success: false,
       error: 'Enriquecimento via scraper (Crawlee) ainda não foi implementado.',
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

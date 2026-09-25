@@ -30,7 +30,7 @@ vi.mock('../../tools/playbookTool.js', () => ({
   searchPlaybookTool: { invoke: (...args: unknown[]) => playbookInvokeMock(...args) },
 }));
 
-import { draftNegotiatorReply } from '../negotiatorReply.service';
+import { draftNegotiatorReply } from '../negotiatorReply.service.js';
 
 const baseContext = {
   leadId: 'lead-1',

@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { AppError } from '../../../../shared/middlewares/errorHandler';
-import { type DealClosureEvidencePort, ensureManualDealClosureAllowed } from '../dealClosureGate';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
+import { type DealClosureEvidencePort, ensureManualDealClosureAllowed } from '../dealClosureGate.js';
 
 /**
  * CYC-007 — gate que decide se um lead pode mesmo ser movido para "Negócios Ganhos". A regra de

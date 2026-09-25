@@ -3,8 +3,8 @@
 // chave do Prisma, via toPrismaCompanyStatus/fromPrismaCompanyStatus (src/lib/enumMap.ts). Ver
 // achado da auditoria (PR #328): os dois tipos já divergiam aqui, mascarado por `as unknown as`
 // nos dois lados — este import é a correção real, não outro cast.
-import type { CompanyStatus } from '../../../lib/zod';
-import type { Repository } from '../../../shared/domain/Repository';
+import type { CompanyStatus } from '../../../lib/zod.js';
+import type { Repository } from '../../../shared/domain/Repository.js';
 
 export interface Company {
   id: string;

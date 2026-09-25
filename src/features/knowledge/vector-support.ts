@@ -27,7 +27,7 @@ async function detect(): Promise<boolean> {
       );
     }
     return present;
-  } catch (err) {
+  } catch (err: any) {
     // Banco fora do ar ou sem permissão de leitura no catálogo: assume que não há suporte, que
     // é o caminho degradado e seguro.
     logger.error({ err }, 'Falha ao verificar suporte a pgvector');

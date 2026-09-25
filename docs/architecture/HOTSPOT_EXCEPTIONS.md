@@ -114,6 +114,62 @@ propósito por estar fora de "## Exceções ativas"):
 - **Registrado em:** 2026-09-23
 - **Reavaliar até:** 2026-11-30 (mesmo checkpoint dos demais itens desta lista)
 
+### `src/features/prospecting/outbound/components/LeadCard.tsx`
+
+- **Limite excepcional:** 2500 linhas
+- **Dono:** Agente 07 — IA e Automações
+- **Motivo:** Integração massiva e bruta da aplicação satélite Leads-Outbound na onda 13. Requer refatoração futura para quebrar os componentes do Vite isolados no framework do Birthub-360.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/features/prospecting/outbound/server/routes.ts`
+
+- **Limite excepcional:** 3500 linhas
+- **Dono:** Agente 07 — IA e Automações
+- **Motivo:** Integração massiva e bruta da aplicação satélite Leads-Outbound na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/features/voice-hub/pages/Dashboard/Overview.tsx`
+
+- **Limite excepcional:** 1500 linhas
+- **Dono:** Agente 06 — Integrações e Telefonia
+- **Motivo:** Integração massiva e bruta da aplicação satélite Voice Hub na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/features/voice-hub/pages/Landing.tsx`
+
+- **Limite excepcional:** 2000 linhas
+- **Dono:** Agente 06 — Integrações e Telefonia
+- **Motivo:** Integração massiva e bruta da aplicação satélite Voice Hub na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/features/voice-hub/pages/Overview.tsx`
+
+- **Limite excepcional:** 1500 linhas
+- **Dono:** Agente 06 — Integrações e Telefonia
+- **Motivo:** Integração massiva e bruta da aplicação satélite Voice Hub na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/features/voice-hub/store/useStudioStore.ts`
+
+- **Limite excepcional:** 1800 linhas
+- **Dono:** Agente 06 — Integrações e Telefonia
+- **Motivo:** Integração massiva e bruta da aplicação satélite Voice Hub na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
+### `src/lib/voice-hub/services/workflowRuntimeService.ts`
+
+- **Limite excepcional:** 1500 linhas
+- **Dono:** Agente 06 — Integrações e Telefonia
+- **Motivo:** Integração massiva e bruta da aplicação satélite Voice Hub na onda 13.
+- **Registrado em:** 2026-09-24
+- **Reavaliar até:** 2026-11-30
+
 ## Débito conhecido, abaixo do limite de falha (sem exceção necessária)
 
 Arquivos na faixa de aviso (701–1000 linhas) no momento em que este gate foi criado — não

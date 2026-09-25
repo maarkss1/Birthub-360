@@ -7,9 +7,9 @@ import {
   useRef,
   useState,
 } from 'react';
-import { commercialIntelligenceApi } from '../features/commercial-intelligence/commercialIntelligence.api';
-import type { PendingDailyClosing } from '../shared/contracts/dailyPlan.contract';
-import { useAuth } from './AuthContext';
+import { commercialIntelligenceApi } from '../features/commercial-intelligence/commercialIntelligence.api.js';
+import type { PendingDailyClosing } from '../shared/contracts/dailyPlan.contract.js';
+import { useAuth } from './AuthContext.js';
 
 interface DailyClosingContextType {
   /** undefined enquanto a checagem ainda não rodou (ou está em voo) para o usuário atual. */

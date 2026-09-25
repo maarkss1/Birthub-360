@@ -1,21 +1,21 @@
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Building2, Mail, MapPin, Newspaper } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card, CardDescription, CardTitle } from '../../../../components/ui/Card';
-import { GithubIcon as Github } from '../../../../components/ui/icons/GithubIcon';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
-import { YoutubeIcon as Youtube } from '../../../../components/ui/icons/YoutubeIcon';
-import { useBrandAccent } from '../../../../hooks/useBrandAccent';
-import { api } from '../../../../lib/api';
-import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../../lib/motion';
-import { ApolloTool } from './tools/ApolloTool';
-import { GitHubTool } from './tools/GitHubTool';
-import { GooglePlacesTool } from './tools/GooglePlacesTool';
-import { HunterTool } from './tools/HunterTool';
-import { LinkedInTool } from './tools/LinkedInTool';
-import { NewsTool } from './tools/NewsTool';
-import type { ToolsStatus } from './tools/shared';
-import { YoutubeTool } from './tools/YoutubeTool';
+import { Card, CardDescription, CardTitle } from '../../../../components/ui/Card.js';
+import { GithubIcon as Github } from '../../../../components/ui/icons/GithubIcon.js';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon.js';
+import { YoutubeIcon as Youtube } from '../../../../components/ui/icons/YoutubeIcon.js';
+import { useBrandAccent } from '../../../../hooks/useBrandAccent.js';
+import { api } from '../../../../lib/api.js';
+import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../../lib/motion.js';
+import { ApolloTool } from './tools/ApolloTool.js';
+import { GitHubTool } from './tools/GitHubTool.js';
+import { GooglePlacesTool } from './tools/GooglePlacesTool.js';
+import { HunterTool } from './tools/HunterTool.js';
+import { LinkedInTool } from './tools/LinkedInTool.js';
+import { NewsTool } from './tools/NewsTool.js';
+import type { ToolsStatus } from './tools/shared.js';
+import { YoutubeTool } from './tools/YoutubeTool.js';
 
 type ToolId = 'google-places' | 'apollo' | 'hunter' | 'linkedin' | 'github' | 'news' | 'youtube';
 

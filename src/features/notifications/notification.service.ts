@@ -42,7 +42,7 @@ export class NotificationService {
         },
         select: { id: true },
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error({ err, title: input.title }, 'Falha ao criar notificação');
       return null;
     }

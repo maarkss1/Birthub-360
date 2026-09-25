@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { findCompanyDomain, normalizeCompanyDomain } from '../domain';
+import { findCompanyDomain, normalizeCompanyDomain } from '../domain.js';
 
 describe('prospecting domain helpers', () => {
   it('extrai o domínio de uma URL completa', () => {

@@ -58,7 +58,7 @@ export abstract class BaseAgent {
     const organizationId = getTenantId();
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       const message = (error as Error).message;
       logger.warn(
         { err: error, sessionId: sid, agentType: this.agentType, organizationId },
@@ -130,7 +130,7 @@ export abstract class BaseAgent {
         output: lastMessage.content as string,
         sessionId: sid,
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, sessionId: sid, agentType: this.agentType }, 'Agent run failed');
       // Nunca fabricar uma resposta falsa: quem chama precisa saber que a IA não respondeu (ou
       // que a resposta não pôde ser persistida).
@@ -160,7 +160,7 @@ export abstract class BaseAgent {
     const organizationId = getTenantId();
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       const message = (error as Error).message;
       logger.warn(
         { err: error, sessionId: sid, agentType: this.agentType, organizationId },
@@ -216,7 +216,7 @@ export abstract class BaseAgent {
       );
 
       return { output: lastMessage.content as string, sessionId: sid };
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, sessionId: sid, agentType: this.agentType },
         'Agent run (with tools) failed',

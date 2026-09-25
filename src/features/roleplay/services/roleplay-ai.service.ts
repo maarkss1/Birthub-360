@@ -102,7 +102,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<RoleplayTurnOutput>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       // roleplay/AGENTS.md: "Simulação nunca deve afirmar que executou ação real" e "estados
       // de simulação e falhas de IA são explícitos e testados". Antes, uma falha do provedor
       // (timeout, JSON inválido) devolvia uma réplica de persona genérica fixa com
@@ -171,7 +171,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<RoleplayEvaluationResult>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       // Mesmo raciocínio de simulateCustomerResponse acima: uma avaliação fabricada
       // (overallScore: 75 fixo, elogios genéricos) quando a IA falhou é pior que nenhuma
       // avaliação — o vendedor recebe uma nota e feedback que nunca vieram de uma leitura real

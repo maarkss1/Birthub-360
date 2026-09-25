@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { api } from '../../../../lib/api';
+import { api } from '../../../../lib/api.js';
 
 export interface WhatsAppMessageDto {
   id: string;
@@ -38,7 +38,7 @@ export function useWhatsAppMessages(phone: string | null, connected: boolean) {
         if (cancelled) return;
         setMessages([...data].reverse());
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         // Só reporta erro na carga inicial — uma falha de poll em segundo plano não deve
         // apagar/interromper a conversa já carregada com sucesso antes. Sem isso, uma falha
         // real na primeira carga (401/500) parece silenciosamente "conversa vazia".
@@ -79,7 +79,7 @@ export function useWhatsAppMessages(phone: string | null, connected: boolean) {
             receivedAt: new Date().toISOString(),
           },
         ]);
-      } catch (err) {
+      } catch (err: any) {
         setError(err instanceof Error ? err.message : 'Falha ao enviar mensagem.');
         throw err;
       } finally {

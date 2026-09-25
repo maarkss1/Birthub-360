@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface VoiceHubConnection {
   id: string;
@@ -36,7 +36,7 @@ export function useVoiceHubIntegration() {
       if (data.success) {
         setVoiceHubConnections(data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch Birth Voices Hub connections');
     }
   }, []);
@@ -78,7 +78,7 @@ export function useVoiceHubIntegration() {
         setRevealedWebhookSecretConnectionId(data.data.id ?? null);
       }
       fetchVoiceHubConnections();
-    } catch (error) {
+    } catch (error: any) {
       toast.error((error as Error).message);
     } finally {
       setVoiceHubLoading(false);

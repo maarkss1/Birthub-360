@@ -24,7 +24,7 @@ vi.mock('../../../../lib/prisma.js', () => ({
   },
 }));
 
-import { createFollowUpTaskTool, notifyTeamTool } from '../opsPendingActions.tool';
+import { createFollowUpTaskTool, notifyTeamTool } from '../opsPendingActions.tool.js';
 
 describe('createFollowUpTaskTool (OpsAgent, proposta pendente de aprovação)', () => {
   beforeEach(() => {

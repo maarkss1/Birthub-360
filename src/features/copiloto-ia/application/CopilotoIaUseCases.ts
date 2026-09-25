@@ -9,7 +9,7 @@
  *  2. Um `CopilotoInsight` com evidência (`evidenceSegmentIds`) só pode referenciar segmentos que
  *     pertencem à MESMA conversa — nunca aceita um id de outra conversa/tenant por engano.
  */
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import type {
   AddTranscriptSegmentInput,
   CompleteAudioUploadInput,
@@ -34,11 +34,11 @@ import type {
   HandoffSummaryDTO,
   LeadLookupResultDTO,
   RecordConsentInput,
-} from '../domain/CopilotoIa';
+} from '../domain/CopilotoIa.js';
 import {
   computeWhatsAppResponseTimeStats,
   type WhatsAppResponseTimeStats,
-} from './whatsappResponseTime';
+} from './whatsappResponseTime.js';
 
 /** Únicas fontes que não gravam áudio/vídeo — dispensam consentimento explícito de gravação. */
 const SOURCES_WITHOUT_RECORDING_CONSENT: readonly CopilotoConversationSource[] = ['MANUAL'];

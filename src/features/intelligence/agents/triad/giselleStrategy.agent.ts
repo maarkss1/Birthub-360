@@ -82,7 +82,7 @@ RETORNE APENAS JSON VÁLIDO.`,
           generatedAt: new Date().toISOString(),
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn(
         '[Giselle] Falha na inferência via AI Gateway, utilizando plano determinístico (fallback).',
         err,

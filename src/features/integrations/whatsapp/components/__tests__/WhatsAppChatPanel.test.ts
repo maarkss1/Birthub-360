@@ -21,7 +21,7 @@ vi.mock('../../hooks/useWhatsAppMessages', () => ({
   }),
 }));
 
-const { WhatsAppChatPanel } = await import('../WhatsAppChatPanel');
+const { WhatsAppChatPanel } = await import('../WhatsAppChatPanel.js');
 
 // jsdom não implementa Element.prototype.scrollTo (usado pelo auto-scroll de novas mensagens) —
 // sem isto, qualquer render deste componente quebra com "scrollTo is not a function", mesmo

@@ -1,6 +1,6 @@
 import type { Redis } from 'ioredis';
 import { describe, expect, it } from 'vitest';
-import { useRedisAuthState } from '../useRedisAuthState';
+import { useRedisAuthState } from '../useRedisAuthState.js';
 
 /**
  * Regressão de um bug P1 real: creds/keys de sessão do Baileys (equivalente a um token de

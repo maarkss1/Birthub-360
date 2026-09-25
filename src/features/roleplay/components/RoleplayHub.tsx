@@ -1,21 +1,21 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, PhoneCall, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { api } from '../../../lib/api';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { api } from '../../../lib/api.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
 import {
   OBJECTIONS_DATA,
   QUALIFICATION_CRITERIA,
-} from '../../chatbook/components/chatbook-hub/playbookData';
-import { ActiveCallView } from './roleplay-hub/ActiveCallView';
-import { CallAnalysisReport } from './roleplay-hub/CallAnalysisReport';
-import { CallSetup } from './roleplay-hub/CallSetup';
-import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel';
-import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types';
+} from '../../chatbook/components/chatbook-hub/playbookData.js';
+import { ActiveCallView } from './roleplay-hub/ActiveCallView.js';
+import { CallAnalysisReport } from './roleplay-hub/CallAnalysisReport.js';
+import { CallSetup } from './roleplay-hub/CallSetup.js';
+import { RoleplayHistoryPanel } from './roleplay-hub/RoleplayHistoryPanel.js';
+import type { CallAnalysisResult, CallMessage } from './roleplay-hub/types.js';
 
 export function RoleplayHub() {
   const { playbook, info: playbookMeta } = useActivePlaybook();
@@ -209,7 +209,7 @@ export function RoleplayHub() {
       };
 
       mediaRecorder.start();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao acessar microfone para gravação', err);
       toast.error('Não foi possível iniciar a gravação. Verifique as permissões do microfone.');
     }
@@ -314,7 +314,7 @@ export function RoleplayHub() {
         },
       ]);
       speakText(response.result.reply);
-    } catch (error) {
+    } catch (error: any) {
       const reason = error instanceof Error ? error.message : 'Falha inesperada';
       setMessages((prev) => [
         ...prev,
@@ -394,7 +394,7 @@ export function RoleplayHub() {
         closingScore: result.closingScore,
         sessionId: result.sessionId,
       });
-    } catch (error) {
+    } catch (error: any) {
       setEvaluationError(
         error instanceof Error ? error.message : 'Falha inesperada ao gerar o parecer técnico.',
       );

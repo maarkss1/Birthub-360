@@ -17,9 +17,9 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { analyticsDB } from '../../lib/db';
+import { analyticsDB } from '../../lib/db.js';
 
-import { Badge } from './Badge';
+import { Badge } from './Badge.js';
 
 interface Stats {
   totalCompanies: number;
@@ -49,7 +49,7 @@ export function LiveStatsWidget() {
       setStats(data);
       setConnected(true);
       setErrorMessage(null);
-    } catch (error) {
+    } catch (error: any) {
       setStats(null);
       setConnected(false);
       setErrorMessage(

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Ban, Clock, ShieldQuestion } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 export type BlockedStateTone = 'neutral' | 'warning' | 'info' | 'iris';
 

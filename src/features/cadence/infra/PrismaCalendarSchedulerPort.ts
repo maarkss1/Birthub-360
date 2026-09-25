@@ -52,7 +52,7 @@ async function sendInviteBestEffort(
       html: invite.html,
       icalEvent: invite.icalEvent,
     });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof MailerNotConfiguredError) {
       // Achado real (auditoria de release-readiness, integration-audit): este era o único
       // call site de MailerNotConfiguredError (de 7 no projeto) que engolia o erro sem log
@@ -92,7 +92,7 @@ export const prismaCalendarSchedulerPort: CalendarSchedulerPort = {
         { organizationId: draft.organizationId, leadId: draft.leadId, googleEventId, meetUrl },
         '[CYC-004] Evento criado no Google Calendar com sucesso.',
       );
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, organizationId: draft.organizationId, leadId: draft.leadId },
         '[CYC-004] Falha ao criar evento no Google Calendar, usando fallback ID para o banco.',

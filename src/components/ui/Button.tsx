@@ -4,9 +4,9 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
-import { SoundFX, type UiSound } from '../../lib/soundEffects';
-import { cn } from '../../lib/utils';
-import { Magnetic } from './Magnetic';
+import { SoundFX, type UiSound } from '../../lib/soundEffects.js';
+import { cn } from '../../lib/utils.js';
+import { Magnetic } from './Magnetic.js';
 
 const buttonVariants = cva(
   // disabled:text-gray-600 (não gray-400) — gray-400 sobre disabled:bg-gray-200 dá só 2.1:1,

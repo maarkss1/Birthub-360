@@ -40,7 +40,7 @@ router.get(
         overrideBitrixUserId,
       );
       res.json({ success: true, data: plan });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -65,7 +65,7 @@ router.post(
         overrideBitrixUserId,
       );
       res.json({ success: true, data: plan, message: 'Plano diário sincronizado com o Bitrix24.' });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -83,7 +83,7 @@ router.post(
       }
       const result = await completeDailyPlanItem(organizationId, userId, itemType, itemId);
       res.json({ success: true, message: result.message });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -112,7 +112,7 @@ router.post(
         entityId,
       );
       res.json({ success: true, message: result.message });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -136,7 +136,7 @@ router.get(
         entityId ? String(entityId) : undefined,
       );
       res.json({ success: true, data: notes });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -162,7 +162,7 @@ router.post(
         leadId,
       });
       res.json({ success: true, message: result.message });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -175,7 +175,7 @@ router.get(
       const { organizationId, id: userId } = (req as AuthRequest).user;
       const result = await getPendingDailyClosing(organizationId, userId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -199,7 +199,7 @@ router.post(
         nextDayGoals: Array.isArray(nextDayGoals) ? nextDayGoals : [],
       });
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

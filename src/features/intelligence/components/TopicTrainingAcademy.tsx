@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { AlertCircle, Award, BookOpen, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { api } from '../../../lib/api';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { api } from '../../../lib/api.js';
 
 export function TopicTrainingAcademy() {
   const { info: playbookMeta } = useActivePlaybook();
@@ -34,7 +34,7 @@ export function TopicTrainingAcademy() {
         { timeoutMs: 90_000 },
       );
       setTrainingModule(response.result);
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

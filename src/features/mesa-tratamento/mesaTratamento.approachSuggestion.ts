@@ -1,4 +1,4 @@
-import type { QueueLeadDetail } from './mesaTratamento.api';
+import type { QueueLeadDetail } from './mesaTratamento.api.js';
 
 /**
  * Sugestão de abordagem ("script coach") — portada do protótipo standalone `acompanhamento-sdr`

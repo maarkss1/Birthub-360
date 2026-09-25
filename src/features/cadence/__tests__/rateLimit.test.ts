@@ -8,7 +8,7 @@ import {
   isContactRateLimited,
   isDomainRateLimited,
   type LastSentTouch,
-} from '../domain/rateLimit';
+} from '../domain/rateLimit.js';
 
 // Auditoria transversal (Agente 17): o módulo de cadência já tinha opt-out multicanal, stop on
 // response/conversion, lock de concorrência e janela comercial real, mas nenhuma proteção contra o

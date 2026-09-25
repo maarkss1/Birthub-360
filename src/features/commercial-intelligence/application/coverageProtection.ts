@@ -1,4 +1,4 @@
-import type { CoverageProtectionStatus } from '../domain/CommercialIntelligence';
+import type { CoverageProtectionStatus } from '../domain/CommercialIntelligence.js';
 
 /**
  * Limiares-padrão de "Proteção 90 dias" (seção 11) quando ainda não há Win Rate histórico

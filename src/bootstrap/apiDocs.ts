@@ -26,7 +26,7 @@ export function mountApiDocs(app: Express): void {
       res.type('application/yaml').send(openApiYaml);
     });
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(openApiDocument));
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err }, 'Falha ao carregar docs/openapi.yaml — /api-docs não foi montado');
   }
 }

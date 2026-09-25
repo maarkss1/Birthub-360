@@ -4,9 +4,9 @@
  */
 
 import { useCallback, useEffect, useState } from 'react';
-import { analyticsApi } from '../features/analytics/analytics.api';
-import { activitiesDB, analyticsDB, companiesDB, contactsDB, leadsDB } from '../lib/db';
-import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types';
+import { analyticsApi } from '../features/analytics/analytics.api.js';
+import { activitiesDB, analyticsDB, companiesDB, contactsDB, leadsDB } from '../lib/db.js';
+import type { Activity, Company, Contact, Lead, PaginatedResponse } from '../types/index.js';
 
 // ─── Generic fetch hook ────────────────────────────────────────────────────────
 function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
@@ -20,7 +20,7 @@ function useFetch<T>(fetcher: () => Promise<T>, deps: unknown[] = []) {
     try {
       const result = await fetcher();
       setData(result);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Erro ao carregar dados');
     } finally {
       setLoading(false);

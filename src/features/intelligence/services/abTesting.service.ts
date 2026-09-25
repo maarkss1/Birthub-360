@@ -18,7 +18,7 @@ export class ABTestingService {
         },
       });
       logger.info({ leadId, promptVariant, promptName }, 'A/B Test prompt usage logged');
-    } catch (err) {
+    } catch (err: any) {
       logger.error({ err }, 'Failed to log A/B test usage');
     }
   }

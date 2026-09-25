@@ -12,20 +12,20 @@ import type {
   ExecutiveOverview,
   ForecastConfidence,
   PreviousPeriodComparison,
-} from '../../domain/CommercialIntelligence';
-import { classifyCoverageProtection } from '../coverageProtection';
+} from '../../domain/CommercialIntelligence.js';
+import { classifyCoverageProtection } from '../coverageProtection.js';
 import {
   classifyCompleteness,
   DEAL_FIELD_TESTS,
   FORECAST_CONFIDENCE_FIELDS,
   weightedCompletenessScore,
-} from '../dataReadiness';
-import { monthLabelPt, shiftMonth } from '../executiveCalendar';
-import { checkEligibility, isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { DAY_MS, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../dataReadiness.js';
+import { monthLabelPt, shiftMonth } from '../executiveCalendar.js';
+import { checkEligibility, isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { DAY_MS, roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 /**
  * Forecast Confidence (seção 22) — combina completude dos campos que o `forecastEngine` usa

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ColdEmailCampaign } from '../cold-email.service';
+import type { ColdEmailCampaign } from '../cold-email.service.js';
 
 /**
  * Regressão de um bug P1 real: sendColdEmail nunca checava a entregabilidade do e-mail antes de

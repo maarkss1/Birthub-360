@@ -1,4 +1,4 @@
-import type { TabType } from '../components/layout/tabMeta';
+import type { TabType } from '../components/layout/tabMeta.js';
 
 // Contrato de navegação entre ferramentas que disparam navegação fora do fluxo normal de clique
 // (hoje: comando de voz — ver VoiceCommandWidget.tsx). Existe porque esse widget é montado em

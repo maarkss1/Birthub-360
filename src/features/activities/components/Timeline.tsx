@@ -1,7 +1,7 @@
 import { Activity, ArrowRight, History, MessageCircle, User } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { clientLogger } from '../../../lib/clientLogger';
-import type { TimelineEvent } from '../../../types';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import type { TimelineEvent } from '../../../types/index.js';
 
 interface TimelineProps {
   leadId: string;
@@ -20,7 +20,7 @@ export function Timeline({ leadId }: TimelineProps) {
           const data = await res.json();
           setEvents(data.timeline || []);
         }
-      } catch (error) {
+      } catch (error: any) {
         clientLogger.error({ err: error }, 'Error fetching timeline');
       } finally {
         setLoading(false);

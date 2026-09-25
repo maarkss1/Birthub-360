@@ -33,7 +33,7 @@ router.post(
             `Equipe ${BRAND.shortName}`,
           ].join('\n'),
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof MailerNotConfiguredError) {
           logger.warn(
             { email: user.email },
@@ -44,7 +44,7 @@ router.post(
         }
       }
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

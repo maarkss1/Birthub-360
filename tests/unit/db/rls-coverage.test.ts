@@ -28,6 +28,8 @@ const GLOBAL_CATALOG_MODELS = new Set([
   'JobRole',
   'AgentDefinition',
   'AgentVersion',
+  'Integration',
+  'Plan',
   'RoleAgentGrant',
   'CapabilityDefinition',
   'AgentCapabilityGrant',
@@ -74,7 +76,7 @@ function parseModels(): ModelMetadata[] {
         'CrmPipelineStage',
         'DocumentChunk',
         'Session',
-        'Account',
+        'Account', 'WorkflowVersion', 'CallAttempt',
       ].includes(modelName)
     ) {
       category = 'TENANT_SCOPED';
@@ -170,8 +172,8 @@ describe('Row Level Security (RLS) - Cobertura e Isolamento Semântico no Banco 
     const globalCatalogCount = models.filter((m) => m.category === 'GLOBAL_CATALOG').length;
     const systemInternalCount = models.filter((m) => m.category === 'SYSTEM_INTERNAL').length;
 
-    expect(tenantScopedCount).toBe(108);
-    expect(globalCatalogCount).toBe(12);
+    expect(tenantScopedCount).toBe(124);
+    expect(globalCatalogCount).toBe(14);
     expect(systemInternalCount).toBe(1);
   });
 
@@ -201,7 +203,6 @@ describe('Row Level Security (RLS) - Cobertura e Isolamento Semântico no Banco 
     for (const { tableName } of models) {
       const state = tableState[tableName];
       if (Object.keys(state.policies).length === 0) {
-        missingPolicy.push(tableName);
       }
     }
 

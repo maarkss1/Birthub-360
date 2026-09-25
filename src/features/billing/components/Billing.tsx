@@ -1,11 +1,11 @@
 import { AlertTriangle, Info, Loader2, RefreshCw, Wallet } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
-import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
+import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette.js';
 
 interface UsageByModel {
   model: string;
@@ -67,7 +67,7 @@ export function Billing() {
     setError(null);
     try {
       setData(await api.get<UsageSummary>(`/api/usage?days=${period}`));
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);

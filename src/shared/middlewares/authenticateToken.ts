@@ -14,7 +14,7 @@ export interface AuthUser {
   organizationId: string;
 }
 
-export interface AuthRequest extends Request {
+export type AuthRequest = Omit<Request, 'user'> & {
   user: AuthUser;
   db?: ReturnType<typeof getTenantPrisma>;
 }
@@ -57,7 +57,7 @@ export const authenticateToken = async (
       return;
     }
 
-    (req as AuthRequest).user = {
+    (req as unknown as AuthRequest).user = {
       id: user.id,
       email: user.email,
       // 'GUEST' era um papel do sistema de permissões divergente já removido (ver
@@ -72,7 +72,7 @@ export const authenticateToken = async (
     requestContext.run({ tenantId: user.organizationId, userId: user.id, role: user.role }, () => {
       next();
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Authentication middleware error');
     res.status(401).json({ success: false, error: 'Invalid session.' });
   }

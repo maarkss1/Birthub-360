@@ -4,8 +4,8 @@ import {
   MAX_CALIBRATION_FACTOR,
   MIN_CALIBRATION_FACTOR,
   MIN_SAMPLES_FOR_CALIBRATION,
-} from '../application/forecastCalibration';
-import type { ForecastAccuracyResult } from '../domain/CommercialIntelligence';
+} from '../application/forecastCalibration.js';
+import type { ForecastAccuracyResult } from '../domain/CommercialIntelligence.js';
 
 function sample(overrides: Partial<ForecastAccuracyResult> = {}): ForecastAccuracyResult {
   return {

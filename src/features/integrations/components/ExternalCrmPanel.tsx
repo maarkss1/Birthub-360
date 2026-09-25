@@ -63,7 +63,7 @@ export function ExternalCrmPanel({ providerKey, displayName, authType }: Externa
       const data = (await res.json()) as CrmConnection[];
       setConnections(data);
       setLoadedOnce(true);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Erro desconhecido');
     } finally {
       setLoading(false);

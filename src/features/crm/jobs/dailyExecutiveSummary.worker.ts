@@ -118,7 +118,7 @@ ${leadsToday
           },
         });
         results.push({ organizationId, summary: summaryText });
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err, organizationId }, 'Falha ao gerar resumo executivo com IA');
         throw err;
       }

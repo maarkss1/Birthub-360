@@ -68,7 +68,7 @@ export async function readExtractionFile(
 ): Promise<Buffer | null> {
   try {
     return await fs.readFile(extractionFilePath(organizationId, runId, filename));
-  } catch (err) {
+  } catch (err: any) {
     if ((err as NodeJS.ErrnoException).code === 'ENOENT') return null;
     throw err;
   }

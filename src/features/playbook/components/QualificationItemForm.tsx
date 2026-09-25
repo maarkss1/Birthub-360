@@ -1,20 +1,20 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { Input } from '../../../components/ui/Input';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { Textarea } from '../../../components/ui/Textarea';
-import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { playbookApi, type QualificationMatrixItem } from '../playbook.api';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { Textarea } from '../../../components/ui/Textarea.js';
+import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { playbookApi, type QualificationMatrixItem } from '../playbook.api.js';
 import {
   type QualificationMatrixItemInput,
   qualificationMatrixItemSchema,
-} from '../playbook.schema';
+} from '../playbook.schema.js';
 
 const FRAMEWORKS = ['SPIN', 'BANT', 'MEDDPICC', 'SNAP', 'CHALLENGER'] as const;
 const CATEGORIES = ['Situação', 'Problema', 'Implicação/Custo', 'Necessidade/ROI'] as const;
@@ -78,7 +78,7 @@ export function QualificationItemForm({
         toast.success('Pergunta criada.');
       }
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error saving qualification matrix item');
       toast.error(error instanceof Error ? error.message : 'Falha ao salvar a pergunta.');
     }

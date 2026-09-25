@@ -84,7 +84,7 @@ export function createAccountIntelligenceSchedulerWorker() {
               await service.refresh(target.id);
             });
             refreshed++;
-          } catch (error) {
+          } catch (error: any) {
             logger.error(
               { error, companyId: target.id },
               'Falha ao atualizar a inteligencia no scheduler LDR',

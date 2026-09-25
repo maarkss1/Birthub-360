@@ -81,7 +81,7 @@ for (const mock of allDeleteManyMocks) {
 }
 
 const { requestContext } = await import('../../../../lib/async-context.js');
-const { CompanyDeduplicationService } = await import('../CompanyDeduplicationService');
+const { CompanyDeduplicationService } = await import('../CompanyDeduplicationService.js');
 
 afterEach(() => {
   vi.clearAllMocks();

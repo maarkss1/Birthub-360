@@ -1,6 +1,6 @@
 import { getPaidProspectingKey } from '../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { assertProspectingBudgetNotExceeded } from './providerBudget.js';
 import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 import { recordProviderCallCost } from './providerCostMetrics.js';
@@ -105,7 +105,7 @@ async function findEmailViaHunterUncached(
     recordProviderCallCost('hunter');
     const data = (await res.json()) as HunterEmailFinderResponse;
     return { email: data?.data?.email || null, score: data?.data?.score };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, domain }, 'Error querying Hunter.io');
     return {
       email: null,
@@ -187,7 +187,7 @@ async function findPeopleViaDomainSearchUncached(
       }));
 
     return { contacts };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, domain }, 'Error querying Hunter.io Domain Search');
     return {
       contacts: [],

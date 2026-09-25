@@ -84,7 +84,7 @@ export async function claimAutomationTrigger(
   try {
     const result = await cacheConnection.set(`${KEY_PREFIX}${key}`, '1', 'EX', ttlSeconds, 'NX');
     return result === 'OK' ? 'claimed' : 'duplicate';
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, key },
       'Redis indisponível para dedupe de disparo de automação; executando sem proteção de idempotência.',

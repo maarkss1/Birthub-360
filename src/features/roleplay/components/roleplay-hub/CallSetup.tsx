@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { CheckCircle2, Phone, PhoneCall } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
-import type { Persona } from './types';
+import { Button } from '../../../../components/ui/Button.js';
+import type { Persona } from './types.js';
 
 export function CallSetup({
   currentPersonas,

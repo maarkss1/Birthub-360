@@ -51,7 +51,7 @@ export async function enrichOrganizationByDomain(
     recordProviderCallCost('apollo');
     const data = (await res.json()) as { organization?: ApolloOrganization };
     return { organization: data.organization || null };
-  } catch (error) {
+  } catch (error: any) {
     return {
       organization: null,
       error: error instanceof Error ? error.message : 'Falha ao enriquecer organização via Apollo',

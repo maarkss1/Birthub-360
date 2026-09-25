@@ -7,10 +7,10 @@ import {
   RefreshCw,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { type Automation, automationsApi, type DryRunRecord } from '../automations.api';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { type Automation, automationsApi, type DryRunRecord } from '../automations.api.js';
 
 /** Uma linha do que "aconteceria" — mensagem curta e específica por tipo de ação, montada a partir
  *  de `outcome.details` (o mesmo objeto que o backend já monta pronto para exibição). */
@@ -82,7 +82,7 @@ export function AutomationDryRunDialog({ automation, onClose }: AutomationDryRun
     setError(null);
     try {
       setResult(await automationsApi.dryRun(id));
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);

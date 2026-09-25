@@ -11,19 +11,19 @@ import {
   TriangleAlert,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type NotificationItem,
   type NotificationKind,
   notificationsApi,
   relativeTime,
-} from '../notifications.api';
+} from '../notifications.api.js';
 
 /**
  * Cores de status, sempre acompanhadas de ícone e do texto do título — a severidade nunca é
@@ -62,7 +62,7 @@ export function Notifications() {
       const data = await notificationsApi.list(unreadOnly);
       setItems(data.items);
       setUnread(data.unread);
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -83,7 +83,7 @@ export function Notifications() {
       setUnread((u) => Math.max(0, u - 1));
       try {
         await notificationsApi.markRead(item.id);
-      } catch (err) {
+      } catch (err: any) {
         setItems(anterior);
         setUnread((u) => u + 1);
         toast.error((err as Error).message);
@@ -99,7 +99,7 @@ export function Notifications() {
         count === 0 ? 'Nada pendente.' : `${count} notificação(ões) marcada(s) como lida(s).`,
       );
       await load(onlyUnread);
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     }
   }, [load, onlyUnread]);
@@ -121,7 +121,7 @@ export function Notifications() {
         await notificationsApi.remove(item.id);
         setItems((prev) => prev.filter((n) => n.id !== item.id));
         if (!item.readAt) setUnread((u) => Math.max(0, u - 1));
-      } catch (err) {
+      } catch (err: any) {
         toast.error((err as Error).message);
       } finally {
         setBusyId(null);

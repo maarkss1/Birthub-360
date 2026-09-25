@@ -14,15 +14,15 @@ import type {
   ForecastAccuracyResult,
   ForecastAccuracySummary,
   ForecastSnapshotStore,
-} from '../../domain/CommercialIntelligence';
+} from '../../domain/CommercialIntelligence.js';
 import {
   computeForecastAccuracy,
   hasPeriodClosed,
   summarizeForecastAccuracy,
-} from '../forecastAccuracy';
-import { loadScoredDeals } from '../scoring/dealScoring';
-import { roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../forecastAccuracy.js';
+import { loadScoredDeals } from '../scoring/dealScoring.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 export async function buildForecastAccuracy(
   repository: CommercialIntelligenceRepository,

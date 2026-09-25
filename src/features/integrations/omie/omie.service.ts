@@ -78,7 +78,7 @@ async function callOmieRpc(
           OMIE_TIMEOUT_MS,
           OMIE_ALLOWED_HOSTS,
         );
-      } catch (err) {
+      } catch (err: any) {
         if (err instanceof DisallowedHostError) throw err;
         if (err instanceof HttpTimeoutError) {
           throw new TransientHttpError(
@@ -205,7 +205,7 @@ export async function testOmieConnection(
         ? 'Credenciais do Omie válidas e API respondendo normalmente.'
         : `Omie respondeu com erro: ${check.faultstring}`,
     };
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err, organizationId, connectionId }, '[omie] Falha ao testar comunicação');
     return { success: false, message: 'Não foi possível comunicar com a API do Omie.' };
   }

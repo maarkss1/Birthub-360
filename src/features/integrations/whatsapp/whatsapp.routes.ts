@@ -22,7 +22,7 @@ router.get(
       const { organizationId } = (req as AuthRequest).user;
       const conversations = await listConversations(organizationId);
       res.json({ success: true, data: conversations });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -39,7 +39,7 @@ router.get('/messages', async (req: Request, res: Response, next: NextFunction):
       take: 50,
     });
     res.json({ success: true, data: messages });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -58,7 +58,7 @@ router.get('/signals', async (req: Request, res: Response, next: NextFunction): 
       take: 20,
     });
     res.json({ success: true, data: signals });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -76,7 +76,7 @@ router.post(
       res
         .status(202)
         .json({ success: true, message: 'WhatsApp connect command queued.', data: command });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -87,7 +87,7 @@ router.get('/status', async (req: Request, res: Response, next: NextFunction): P
     const { organizationId } = (req as AuthRequest).user;
     const status = await getWhatsAppStatus(organizationId);
     res.json({ success: true, data: status });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -105,7 +105,7 @@ router.post(
       res
         .status(202)
         .json({ success: true, message: 'WhatsApp disconnect command queued.', data: command });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -135,7 +135,7 @@ router.post(
       res
         .status(202)
         .json({ success: true, message: 'Mensagem enfileirada para envio.', data: command });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

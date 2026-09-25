@@ -16,7 +16,7 @@ export function overview(ctx) {
 <div><b>${ctx.tokens.tokens.length}</b><span>tokens CSS extraídos</span></div><div><b>${ctx.icons.custom.length + ctx.icons.lucide.length}</b><span>ícones catalogados (${ctx.icons.custom.length} próprios + ${ctx.icons.lucide.length} lucide)</span></div></div>
 <h2>Como este documento foi produzido</h2>
 <ol><li>Aplicação executada localmente (<code>tsx server.ts</code>, porta 3024) sobre o stack Docker do projeto (Postgres/Redis/MinIO/Meilisearch).</li>
-<li>Navegador real (Microsoft Edge, headless, via Playwright) percorreu cada rota de <code>src/App.tsx</code> em 7 viewports: 1440×900, 1280×800, 1024×768, 768×1024, 430×932, 390×844, 375×812. O login foi feito manualmente pelo usuário; nenhuma credencial passou por este processo.</li>
+<li>Navegador real (Google Chrome, headless, via Playwright) percorreu cada rota de <code>src/App.tsx</code> em 7 viewports: 1440×900, 1280×800, 1024×768, 768×1024, 430×932, 390×844, 375×812. O login foi feito manualmente pelo usuário; nenhuma credencial passou por este processo.</li>
 <li>Para cada tela foram coletados: screenshot PNG, retângulos de landmarks, estilos computados de botões, inputs, cards, headings, badges, ícones e tipografia, além da árvore de componentes React (via fibras do React em modo dev).</li>
 <li>Tokens foram lidos de <code>src/styles/globals.css</code> com número de linha e contagem de usos por regex em <code>src/**</code>.</li></ol>
 <h2>Achados principais (verificados em runtime)</h2><ul class="findings">

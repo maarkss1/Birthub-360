@@ -13,11 +13,11 @@ import {
   Users,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { PageHeader } from '../../../components/ui/PageHeader';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { PageHeader } from '../../../components/ui/PageHeader.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 interface TeamMember {
   id: string;
@@ -86,7 +86,7 @@ export function Team() {
       const data = await api.get<{ members: TeamMember[]; assignableRoles: string[] }>('/api/team');
       setMembers(data.members);
       setAssignableRoles(data.assignableRoles);
-    } catch (error) {
+    } catch (error: any) {
       setLoadError(error instanceof Error ? error.message : 'Falha ao carregar a equipe.');
     } finally {
       setIsLoading(false);
@@ -117,7 +117,7 @@ export function Team() {
       setName('');
       setEmail('');
       setRole('SDR');
-    } catch (error) {
+    } catch (error: any) {
       setCreateError(error instanceof Error ? error.message : 'Falha ao criar usuário.');
     } finally {
       setIsCreating(false);
@@ -151,7 +151,7 @@ export function Team() {
         tempPassword: data.tempPassword,
         justCreated: false,
       });
-    } catch (error) {
+    } catch (error: any) {
       setResetError(error instanceof Error ? error.message : 'Falha ao redefinir a senha.');
     } finally {
       setResettingId(null);
@@ -164,7 +164,7 @@ export function Team() {
       const data = await api.post<{ member: TeamMember }>(`/api/team/${member.id}/unlock`, {});
       setMembers((prev) => prev.map((m) => (m.id === data.member.id ? data.member : m)));
       toast.success(`Acesso de ${member.name} desbloqueado.`);
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error instanceof Error ? error.message : 'Falha ao desbloquear o usuário.');
     } finally {
       setUnlockingId(null);
@@ -185,7 +185,7 @@ export function Team() {
     try {
       await api.delete(`/api/team/${member.id}`);
       setMembers((prev) => prev.filter((m) => m.id !== member.id));
-    } catch (error) {
+    } catch (error: any) {
       toast.error(error instanceof Error ? error.message : 'Falha ao remover usuário.');
     } finally {
       setDeletingId(null);

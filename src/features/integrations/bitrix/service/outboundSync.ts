@@ -253,7 +253,7 @@ async function syncLeadToBitrix(
       correlationId,
     });
     return { bitrixLeadId: String(newId) };
-  } catch (err) {
+  } catch (err: any) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     // bitrixSyncStatus só some de 'syncing' aqui em caso de erro — o caminho de sucesso acima
     // já sobrescreve para 'synced' antes de chegar neste catch.
@@ -334,7 +334,7 @@ export async function postCommentToBitrix(
       correlationId,
     });
     return { entityType, bitrixRecordId };
-  } catch (err) {
+  } catch (err: any) {
     const errorMessage = err instanceof Error ? err.message : String(err);
     await logSync({
       organizationId,
@@ -375,7 +375,7 @@ async function findDuplicateBitrixLeadId(
       );
       const found = data.result?.LEAD?.[0];
       if (found) return found;
-    } catch (err) {
+    } catch (err: any) {
       logger.debug(
         { err, type, correlationId },
         '[bitrix] crm.duplicate.findbycomm indisponível ou sem permissão — seguindo sem checagem de duplicidade',
@@ -409,7 +409,7 @@ export async function pushLeadToBitrix(organizationId: string, leadId: string): 
       { correlationId, organizationId, connectionId: connection.id, leadId },
       '[bitrix] Lead enviado automaticamente',
     );
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, correlationId, organizationId, leadId },
       '[bitrix] Falha ao enviar lead — motivo salvo em Lead.bitrixSyncError e propagado para fila de retentativa',
@@ -472,7 +472,7 @@ export async function exportLeadToBitrixNow(
     try {
       await syncLeadToBitrix(organizationId, resolvedConnectionId, webhookUrl, l.id, overrides);
       exportedCount++;
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err, leadId: l.id }, '[bitrix] Falha ao exportar lead em lote');
       skippedCount++;
     }

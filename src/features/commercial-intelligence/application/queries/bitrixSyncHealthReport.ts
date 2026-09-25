@@ -11,8 +11,8 @@ import type {
   BitrixSyncHealth,
   CommercialIntelligenceRepository,
   DealRow,
-} from '../../domain/CommercialIntelligence';
-import { DAY_MS, roundMoney } from '../shared/mathUtils';
+} from '../../domain/CommercialIntelligence.js';
+import { DAY_MS, roundMoney } from '../shared/mathUtils.js';
 
 export async function computeBitrixSyncHealth(
   repository: CommercialIntelligenceRepository,

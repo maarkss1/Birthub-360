@@ -76,7 +76,7 @@ export async function fetchDailyPlanItemNotes(
         const authorName = userNameById.get(String(c.AUTHOR_ID ?? '')) || 'Bitrix24';
         return `[${formatBitrixCommentDate(c.CREATED)}] ${authorName}: ${c.COMMENT}`;
       });
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId, itemType, itemId },
       '[daily-plan] Falha ao buscar comentários existentes do Bitrix24 para o item',

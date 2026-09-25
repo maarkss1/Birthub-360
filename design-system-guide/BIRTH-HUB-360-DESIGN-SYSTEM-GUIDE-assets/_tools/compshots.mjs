@@ -8,7 +8,7 @@ const idx = JSON.parse(fs.readFileSync(`${ROOT}/data/compindex.json`)); const NA
 const outPath = `${ROOT}/data/compshots.json`; const rec = fs.existsSync(outPath) ? JSON.parse(fs.readFileSync(outPath)) : {};
 const routes = fs.readdirSync(`${ROOT}/data`).filter(f => /__1440x900\.json$/.test(f)).map(f => JSON.parse(fs.readFileSync(`${ROOT}/data/${f}`))).filter(d => !d.error).map(d => d.route);
 const extra = ['/app'];
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
 function probe({ names, skip, mode }) {
   const set = new Set(names), skipS = new Set(skip);
   const fk = el => Object.keys(el).find(k => k.startsWith('__reactFiber$'));

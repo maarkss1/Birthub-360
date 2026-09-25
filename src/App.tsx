@@ -1,203 +1,210 @@
 import { MotionConfig } from 'framer-motion';
 import { lazy, Suspense, useCallback, useState } from 'react';
 import { Navigate, Route, Routes, useNavigate } from 'react-router-dom';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { MainLayout } from './components/layout/MainLayout';
-import { ProtectedRoute } from './components/layout/ProtectedRoute';
-import { RequireModuleAccess } from './components/layout/RequireModuleAccess';
-import { RequireRole } from './components/layout/RequireRole';
-import { ClickSpark } from './components/ui/ClickSpark';
-import { Skeleton } from './components/ui/Skeleton';
-import { ActiveRecordProvider } from './contexts/ActiveRecordContext';
-import { AuthProvider } from './contexts/AuthContext';
-import { BrandProvider } from './contexts/BrandContext';
-import { DailyClosingProvider } from './contexts/DailyClosingContext';
-import { ExperienceModeProvider } from './contexts/ExperienceModeContext';
-import { ThemeProvider } from './contexts/ThemeContext';
-import { COMMERCIAL_INTELLIGENCE_ROLES, MESA_TRATAMENTO_ROLES } from './lib/auth/authorization';
+import { ErrorBoundary } from './components/ErrorBoundary.js';
+import { MainLayout } from './components/layout/MainLayout.js';
+import { ProtectedRoute } from './components/layout/ProtectedRoute.js';
+import { RequireModuleAccess } from './components/layout/RequireModuleAccess.js';
+import { RequireRole } from './components/layout/RequireRole.js';
+import { ClickSpark } from './components/ui/ClickSpark.js';
+import { Skeleton } from './components/ui/Skeleton.js';
+import { ActiveRecordProvider } from './contexts/ActiveRecordContext.js';
+import { AuthProvider } from './contexts/AuthContext.js';
+import { BrandProvider } from './contexts/BrandContext.js';
+import { DailyClosingProvider } from './contexts/DailyClosingContext.js';
+import { ExperienceModeProvider } from './contexts/ExperienceModeContext.js';
+import { ThemeProvider } from './contexts/ThemeContext.js';
+import { COMMERCIAL_INTELLIGENCE_ROLES, MESA_TRATAMENTO_ROLES } from './lib/auth/authorization.js';
 
 const DesignLabPage = lazy(() =>
-  import('./features/design-lab/DesignLabPage').then((m) => ({ default: m.DesignLabPage })),
+  import('./features/design-lab/DesignLabPage.js').then((m) => ({ default: m.DesignLabPage })),
 );
 
 // Lazy loaded feature modules
 const SocialSellingHub = lazy(() =>
-  import('./features/social-selling/components/SocialSellingHub').then((m) => ({
+  import('./features/social-selling/components/SocialSellingHub.js').then((m) => ({
     default: m.SocialSellingHub,
   })),
 );
 const AdaptiveDashboard = lazy(() =>
-  import('./features/dashboard/components/AdaptiveDashboard').then((m) => ({
+  import('./features/dashboard/components/AdaptiveDashboard.js').then((m) => ({
     default: m.AdaptiveDashboard,
   })),
 );
 const WorkspaceHome = lazy(() =>
-  import('./features/workspace/components/WorkspaceHome').then((m) => ({
+  import('./features/workspace/components/WorkspaceHome.js').then((m) => ({
     default: m.WorkspaceHome,
   })),
 );
 const LoginScreen = lazy(() =>
-  import('./features/auth/components/LoginScreen').then((m) => ({ default: m.LoginScreen })),
+  import('./features/auth/components/LoginScreen.js').then((m) => ({ default: m.LoginScreen })),
 );
 const ResetPasswordScreen = lazy(() =>
-  import('./features/auth/components/ResetPasswordScreen').then((m) => ({
+  import('./features/auth/components/ResetPasswordScreen.js').then((m) => ({
     default: m.ResetPasswordScreen,
   })),
 );
 const ProspectingHub = lazy(() =>
-  import('./features/prospecting/components/ProspectingHub').then((m) => ({
+  import('./features/prospecting/components/ProspectingHub.js').then((m) => ({
     default: m.ProspectingHub,
   })),
 );
-const CrmBoard = lazy(() => import('./components/CrmBoard').then((m) => ({ default: m.CrmBoard })));
+const CrmBoard = lazy(() => import('./components/CrmBoard.js').then((m) => ({ default: m.CrmBoard })));
 const CrmOverview = lazy(() =>
-  import('./features/crm360/components/CrmOverview').then((m) => ({ default: m.CrmOverview })),
+  import('./features/crm360/components/CrmOverview.js').then((m) => ({ default: m.CrmOverview })),
 );
 const IntelligenceHub = lazy(() =>
-  import('./features/intelligence/components/IntelligenceHub').then((m) => ({
+  import('./features/intelligence/components/IntelligenceHub.js').then((m) => ({
     default: m.IntelligenceHub,
   })),
 );
 // Rota isolada do Agente Comercial de Elite (NBA): removida por engano no commit 2ab1b535 (varredura
 // "commit remaining pending changes") e coberta por tests/e2e/elite-commercial-agent-nba.spec.ts.
 const EliteCommercialAgentWorkspace = lazy(() =>
-  import('./features/intelligence/components/EliteCommercialAgentWorkspace').then((m) => ({
+  import('./features/intelligence/components/EliteCommercialAgentWorkspace.js').then((m) => ({
     default: m.EliteCommercialAgentWorkspace,
   })),
 );
 const CompanyList = lazy(() =>
-  import('./features/companies/components/CompanyList').then((m) => ({ default: m.CompanyList })),
+  import('./features/companies/components/CompanyList.js').then((m) => ({ default: m.CompanyList })),
 );
 const ContactList = lazy(() =>
-  import('./features/contacts/components/ContactList').then((m) => ({ default: m.ContactList })),
+  import('./features/contacts/components/ContactList.js').then((m) => ({ default: m.ContactList })),
 );
 const ActivityList = lazy(() =>
-  import('./features/activities/components/ActivityList').then((m) => ({
+  import('./features/activities/components/ActivityList.js').then((m) => ({
     default: m.ActivityList,
   })),
 );
 const CadenceHub = lazy(() =>
-  import('./features/cadence/components/CadenceHub').then((m) => ({ default: m.CadenceHub })),
+  import('./features/cadence/components/CadenceHub.js').then((m) => ({ default: m.CadenceHub })),
 );
 const RoleplayHub = lazy(() =>
-  import('./features/roleplay/components/RoleplayHub').then((m) => ({ default: m.RoleplayHub })),
+  import('./features/roleplay/components/RoleplayHub.js').then((m) => ({ default: m.RoleplayHub })),
 );
 const QualificationMatrixPage = lazy(() =>
-  import('./features/playbook/components/QualificationMatrixPage').then((m) => ({
+  import('./features/playbook/components/QualificationMatrixPage.js').then((m) => ({
     default: m.QualificationMatrixPage,
   })),
 );
 const ObjectionsMatrixPage = lazy(() =>
-  import('./features/playbook/components/ObjectionsMatrixPage').then((m) => ({
+  import('./features/playbook/components/ObjectionsMatrixPage.js').then((m) => ({
     default: m.ObjectionsMatrixPage,
   })),
 );
 const TopicTrainingAcademy = lazy(() =>
-  import('./features/intelligence/components/TopicTrainingAcademy').then((m) => ({
+  import('./features/intelligence/components/TopicTrainingAcademy.js').then((m) => ({
     default: m.TopicTrainingAcademy,
   })),
 );
 const BitrixGuideHub = lazy(() =>
-  import('./features/intelligence/components/BitrixGuideHub').then((m) => ({
+  import('./features/intelligence/components/BitrixGuideHub.js').then((m) => ({
     default: m.BitrixGuideHub,
   })),
 );
 const ReportsHub = lazy(() =>
-  import('./features/intelligence/components/ReportsHub').then((m) => ({ default: m.ReportsHub })),
+  import('./features/intelligence/components/ReportsHub.js').then((m) => ({ default: m.ReportsHub })),
 );
 const ChatbookHub = lazy(() =>
-  import('./features/chatbook/components/ChatbookHub').then((m) => ({ default: m.ChatbookHub })),
+  import('./features/chatbook/components/ChatbookHub.js').then((m) => ({ default: m.ChatbookHub })),
 );
 const Integrations = lazy(() =>
-  import('./features/integrations/components/Integrations').then((m) => ({
+  import('./features/integrations/components/Integrations.js').then((m) => ({
     default: m.Integrations,
   })),
 );
 const KnowledgeBase = lazy(() =>
-  import('./features/knowledge/components/Base').then((m) => ({ default: m.Base })),
+  import('./features/knowledge/components/Base.js').then((m) => ({ default: m.Base })),
 );
 const Analytics = lazy(() =>
-  import('./features/analytics/components/Analytics').then((m) => ({ default: m.Analytics })),
+  import('./features/analytics/components/Analytics.js').then((m) => ({ default: m.Analytics })),
 );
 const WinLossAnalysis = lazy(() =>
-  import('./features/analytics/components/WinLossAnalysis').then((m) => ({
+  import('./features/analytics/components/WinLossAnalysis.js').then((m) => ({
     default: m.WinLossAnalysis,
   })),
 );
 const CommercialIntelligenceHub = lazy(() =>
-  import('./features/commercial-intelligence/components/CommercialIntelligenceHub').then((m) => ({
+  import('./features/commercial-intelligence/components/CommercialIntelligenceHub.js').then((m) => ({
     default: m.CommercialIntelligenceHub,
   })),
 );
 
 const DailyPlanHub = lazy(() =>
-  import('./features/commercial-intelligence/components/DailyPlanHub').then((m) => ({
+  import('./features/commercial-intelligence/components/DailyPlanHub.js').then((m) => ({
     default: m.DailyPlanHub,
   })),
 );
 const JoaoReisDiagnosticHub = lazy(() =>
-  import('./features/commercial-intelligence/components/JoaoReisDiagnosticHub').then((m) => ({
+  import('./features/commercial-intelligence/components/JoaoReisDiagnosticHub.js').then((m) => ({
     default: m.JoaoReisDiagnosticHub,
   })),
 );
 const Calendar = lazy(() =>
-  import('./features/calendar/components/Calendar').then((m) => ({ default: m.Calendar })),
+  import('./features/calendar/components/Calendar.js').then((m) => ({ default: m.Calendar })),
 );
 const MesaTratamento = lazy(() =>
-  import('./features/mesa-tratamento/components/MesaTratamento').then((m) => ({
+  import('./features/mesa-tratamento/components/MesaTratamento.js').then((m) => ({
     default: m.MesaTratamento,
   })),
 );
 const Notifications = lazy(() =>
-  import('./features/notifications/components/Notifications').then((m) => ({
+  import('./features/notifications/components/Notifications.js').then((m) => ({
     default: m.Notifications,
   })),
 );
 const Automations = lazy(() =>
-  import('./features/automations/components/Automations').then((m) => ({ default: m.Automations })),
+  import('./features/automations/components/Automations.js').then((m) => ({ default: m.Automations })),
 );
 const Usage = lazy(() =>
-  import('./features/billing/components/Billing').then((m) => ({ default: m.Billing })),
+  import('./features/billing/components/Billing.js').then((m) => ({ default: m.Billing })),
 );
 const DocumentEditor = lazy(() =>
-  import('./features/document-editor/components/Editor').then((m) => ({ default: m.Editor })),
+  import('./features/document-editor/components/Editor.js').then((m) => ({ default: m.Editor })),
 );
 const Team = lazy(() =>
-  import('./features/team/components/Team').then((m) => ({ default: m.Team })),
+  import('./features/team/components/Team.js').then((m) => ({ default: m.Team })),
 );
 const ModuleAccessAdmin = lazy(() =>
-  import('./features/module-access/components/ModuleAccessAdmin').then((m) => ({
+  import('./features/module-access/components/ModuleAccessAdmin.js').then((m) => ({
     default: m.ModuleAccessAdmin,
   })),
 );
 const Settings = lazy(() =>
-  import('./features/settings/components/Settings').then((m) => ({ default: m.Settings })),
+  import('./features/settings/components/Settings.js').then((m) => ({ default: m.Settings })),
 );
 const OnboardingTour = lazy(() =>
-  import('./features/onboarding/components/OnboardingTour').then((m) => ({
+  import('./features/onboarding/components/OnboardingTour.js').then((m) => ({
     default: m.OnboardingTour,
   })),
 );
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy.js'));
+const TermsOfUse = lazy(() => import('./pages/TermsOfUse.js'));
 const WelcomeScreen = lazy(() =>
-  import('./features/auth/components/WelcomeScreen').then((m) => ({ default: m.WelcomeScreen })),
+  import('./features/auth/components/WelcomeScreen.js').then((m) => ({ default: m.WelcomeScreen })),
 );
-const Ldr = lazy(() => import('./pages/Ldr').then((m) => ({ default: m.Ldr })));
+const Ldr = lazy(() => import('./pages/Ldr.js').then((m) => ({ default: m.Ldr })));
 const Account360 = lazy(() =>
-  import('./features/market-intelligence/components/Account360').then((m) => ({
+  import('./features/market-intelligence/components/Account360.js').then((m) => ({
     default: m.Account360,
   })),
 );
 const LeadApprovalDeck = lazy(() =>
-  import('./features/market-intelligence/components/LeadApprovalDeck').then((m) => ({
+  import('./features/market-intelligence/components/LeadApprovalDeck.js').then((m) => ({
     default: m.LeadApprovalDeck,
   })),
 );
+
+const VoiceStudioPage = lazy(() => import('./features/voice-hub/pages/VoiceStudio.js').then(m => ({ default: m.default })));
+const OutboundApp = lazy(() => import('./features/prospecting/outbound/App.js').then(m => ({ default: m.default })));
+const DialerFrontend = lazy(() => import('./features/cadence/components/CadenceHub.js').then(m => ({ default: m.CadenceHub })));
+
 const PropostasList = lazy(() =>
-  import('./features/crm360/components/PropostasList').then((m) => ({ default: m.PropostasList })),
+  import('./features/crm360/components/PropostasList.js').then((m) => ({ default: m.PropostasList })),
 );
 
 const PublicBookingPage = lazy(() =>
-  import('./features/calendar/components/PublicBookingPage').then((m) => ({
+  import('./features/calendar/components/PublicBookingPage.js').then((m) => ({
     default: m.PublicBookingPage,
   })),
 );
@@ -288,6 +295,11 @@ function AppLayout() {
           <Route path="companies" element={<CompanyList />} />
           <Route path="contacts" element={<ContactList />} />
           <Route path="activities" element={<ActivityList />} />
+
+          <Route path="voice-hub" element={<VoiceStudioPage />} />
+          <Route path="outbound/*" element={<OutboundApp />} />
+          <Route path="dialer" element={<DialerFrontend />} />
+
           <Route path="cadence" element={<CadenceHub />} />
           <Route path="chatbook" element={<ChatbookHub />} />
           <Route path="roleplay" element={<RoleplayHub />} />
@@ -411,6 +423,8 @@ export default function App() {
                       />
                       <Route path="/" element={<WelcomeScreen />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />
+                      <Route path="/privacy" element={<PrivacyPolicy />} />
+                      <Route path="/terms" element={<TermsOfUse />} />
                       {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
                         única a tela deixou de existir; a rota permanece como redirecionamento
                         para não quebrar link salvo, atalho de app instalado ou bookmark. */}

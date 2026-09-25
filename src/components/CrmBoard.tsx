@@ -27,22 +27,22 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { BRAND } from '../config/brand';
-import { BitrixImportModal } from '../features/crm/components/BitrixImportModal';
-import { KanbanCard } from '../features/crm/components/KanbanCard';
-import { KanbanColumn } from '../features/crm/components/KanbanColumn';
-import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer';
-import { type SavedViewItem, SavedViewsPanel } from '../features/crm/components/SavedViewsPanel';
-import { bitrixApi } from '../features/integrations/bitrix/bitrix.api';
-import { useCrmBoardController } from '../hooks/useCrmBoardController';
-import { api } from '../lib/api';
-import { clientLogger } from '../lib/clientLogger';
-import { SoundFX } from '../lib/soundEffects';
-import { toast } from '../lib/toast';
-import type { Lead, LeadStatus } from '../types';
-import { Button } from './ui/Button';
-import { ContextualTip } from './ui/ContextualTip';
-import { EmptyState } from './ui/EmptyState';
+import { BRAND } from '../config/brand.js';
+import { BitrixImportModal } from '../features/crm/components/BitrixImportModal.js';
+import { KanbanCard } from '../features/crm/components/KanbanCard.js';
+import { KanbanColumn } from '../features/crm/components/KanbanColumn.js';
+import { LeadDetailDrawer } from '../features/crm/components/LeadDetailDrawer.js';
+import { type SavedViewItem, SavedViewsPanel } from '../features/crm/components/SavedViewsPanel.js';
+import { bitrixApi } from '../features/integrations/bitrix/bitrix.api.js';
+import { useCrmBoardController } from '../hooks/useCrmBoardController.js';
+import { api } from '../lib/api.js';
+import { clientLogger } from '../lib/clientLogger.js';
+import { SoundFX } from '../lib/soundEffects.js';
+import { toast } from '../lib/toast.js';
+import type { Lead, LeadStatus } from '../types/index.js';
+import { Button } from './ui/Button.js';
+import { ContextualTip } from './ui/ContextualTip.js';
+import { EmptyState } from './ui/EmptyState.js';
 
 // dnd-kit ativa drag por teclado em Space E Enter por padrão — mas KanbanCard também usa Enter pra
 // abrir o LeadDetailDrawer (mesma tecla, dois significados). Restringindo o sensor a Space, Enter
@@ -158,7 +158,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           // Atualiza a lista para refletir possíveis mudanças
           fetchLeads();
         }
-      } catch (err) {
+      } catch (err: any) {
         clientLogger.error({ err }, 'Erro ao processar evento SSE');
       }
     };
@@ -310,7 +310,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           // Resultado real: mover um card no Kanban nunca persistia, sempre revertia com o
           // toast "a alteração foi desfeita" (achado do teste E2E de drag-and-drop).
           await api.put(`/api/leads/${leadId}`, { status: targetStatus });
-        } catch (error) {
+        } catch (error: any) {
           SoundFX.play('error');
           clientLogger.error({ err: error }, 'Error updating lead status');
           toast.error(
@@ -433,7 +433,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       }
       fetchLeads();
       setSelectedLeadIds(new Set());
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao mover leads em lote.');
     } finally {
       setIsBatchUpdating(false);
@@ -466,7 +466,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       }
       fetchLeads();
       setSelectedLeadIds(new Set());
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao reatribuir leads.');
     } finally {
       setIsBatchUpdating(false);
@@ -482,7 +482,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
           `Exportação concluída: ${res.data.exportedCount} leads enviados para o Bitrix24!`,
         );
         fetchLeads();
-      } catch (err) {
+      } catch (err: any) {
         toast.error(err instanceof Error ? err.message : 'Falha ao exportar para Bitrix24.');
       }
       return;
@@ -494,7 +494,7 @@ export function CrmBoard({ funnel: funnelProp, embedded = false }: CrmBoardProps
       toast.success(`${res.data.exportedCount} leads enviados com sucesso para o Bitrix24!`);
       fetchLeads();
       setSelectedLeadIds(new Set());
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao exportar para Bitrix24.');
     } finally {
       setIsBatchUpdating(false);

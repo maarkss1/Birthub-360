@@ -253,7 +253,7 @@ export async function runAgentExecution(
       include: { agentVersion: { select: { version: true } } },
     });
     return toDto({ ...succeeded, agentVersionNumber: succeeded.agentVersion?.version ?? null });
-  } catch (error) {
+  } catch (error: any) {
     const finishedAt = new Date();
     const toolCalls: AgentExecutionToolCall[] = [
       {

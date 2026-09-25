@@ -11,11 +11,11 @@ vi.mock('../../../logger.js', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-import { __resetCircuitBreakerForTests } from '../circuit-breaker';
-import { groqProvider } from '../providers/groq.provider';
-import { litellmProvider } from '../providers/litellm.provider';
-import { openaiProvider } from '../providers/openai.provider';
-import type { ProviderAdapter } from '../providers/types';
+import { __resetCircuitBreakerForTests } from '../circuit-breaker.js';
+import { groqProvider } from '../providers/groq.provider.js';
+import { litellmProvider } from '../providers/litellm.provider.js';
+import { openaiProvider } from '../providers/openai.provider.js';
+import type { ProviderAdapter } from '../providers/types.js';
 
 const originalEnv = {
   GROQ_API_KEY: process.env.GROQ_API_KEY,
@@ -108,7 +108,7 @@ describe('golden dataset — adapters de provedor de IA', () => {
         let caught: unknown;
         try {
           await provider.chatCompletion(BASE_PARAMS);
-        } catch (err) {
+        } catch (err: any) {
           caught = err;
         }
         expect(caught).toBeInstanceOf(Error);

@@ -1,11 +1,11 @@
 import type { LeadFunnel } from '@prisma/client';
 import type { NextFunction, Request, Response } from 'express';
-import { logger } from '../../../lib/logger';
-import { clampQueryLimit } from '../../../shared/http/queryLimit';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { automationEngine } from '../../automations/automation.engine';
-import type { LeadUseCases } from '../application/LeadUseCases';
+import { logger } from '../../../lib/logger.js';
+import { clampQueryLimit } from '../../../shared/http/queryLimit.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { automationEngine } from '../../automations/automation.engine.js';
+import type { LeadUseCases } from '../application/LeadUseCases.js';
 
 const UTF8_BOM = String.fromCharCode(0xfeff);
 
@@ -40,7 +40,7 @@ export class LeadController {
       const status = typeof req.query.status === 'string' ? req.query.status : undefined;
       const result = await this.leadUseCases.findLeads(orgId, status, page, limit, funnel, query);
       res.json({ success: true, data: result.data, meta: result.meta });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -54,7 +54,7 @@ export class LeadController {
         return;
       }
       res.json({ success: true, data: lead });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -71,7 +71,7 @@ export class LeadController {
         data: { ...(lead as unknown as Record<string, unknown>) },
       });
       res.status(201).json({ success: true, data: lead });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -108,7 +108,7 @@ export class LeadController {
       }
 
       res.json({ success: true, data: lead });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -118,7 +118,7 @@ export class LeadController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.leadUseCases.deleteLead(orgId, routeParam(req.params.id, 'id'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -128,7 +128,7 @@ export class LeadController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.leadUseCases.enrichLead(orgId, routeParam(req.params.id, 'id'));
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -141,7 +141,7 @@ export class LeadController {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(UTF8_BOM + csv);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -166,7 +166,7 @@ export class LeadController {
         assignedById: typeof assignedById === 'string' ? assignedById : undefined,
       });
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -176,7 +176,7 @@ export class LeadController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.leadUseCases.importRecentBitrixLeads(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -186,7 +186,7 @@ export class LeadController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.leadUseCases.enqueueBatchEnrichment(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -209,7 +209,7 @@ export class LeadController {
         success: true,
         message: `Follow-up automation triggered for leads stale for ${days} days.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -242,7 +242,7 @@ export class LeadController {
       }
       const result = await this.leadUseCases.batchUpdateLeads(orgId, leadIds, updates, actorUserId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

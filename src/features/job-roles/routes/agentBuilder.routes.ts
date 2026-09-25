@@ -46,7 +46,7 @@ router.post(
         ...body,
       });
       res.status(201).json({ success: true, data: { proposal } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -73,7 +73,7 @@ router.get('/proposals', async (req: Request, res: Response, next: NextFunction)
       parsedStatus.success ? parsedStatus.data : undefined,
     );
     res.json({ success: true, data: { proposals } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -88,7 +88,7 @@ router.get(
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: { proposal } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -114,7 +114,7 @@ router.post(
         notes,
       });
       res.json({ success: true, data: { proposal } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -138,7 +138,7 @@ router.post(
         notes,
       });
       res.json({ success: true, data: { proposal } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },

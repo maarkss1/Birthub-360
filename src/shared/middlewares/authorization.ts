@@ -10,7 +10,7 @@ import type { AuthRequest } from './authenticateToken.js';
 // em `src/lib/auth/authorization.ts`.
 
 export const requireTenant = (req: Request, res: Response, next: NextFunction): void => {
-  const authReq = req as AuthRequest;
+  const authReq = req as unknown as AuthRequest;
   if (!authReq.user?.organizationId) {
     logger.warn({ userId: authReq.user?.id }, 'Access denied: Tenant ID missing');
     res
@@ -21,7 +21,7 @@ export const requireTenant = (req: Request, res: Response, next: NextFunction): 
   try {
     authReq.db = getTenantPrisma(authReq.user.organizationId);
     next();
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Failed to set db instance');
     res.status(500).json({ success: false, error: 'Internal Server Error.' });
   }

@@ -1,4 +1,4 @@
-import { BRAND } from '../../config/brand';
+import { BRAND } from '../../config/brand.js';
 
 /**
  * Convite de reunião (ICS + e-mail HTML) — só o caminho de CRIAÇÃO existe hoje porque nenhum dos

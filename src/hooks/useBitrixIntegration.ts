@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface BitrixConnectionSummary {
   id: string;
@@ -37,7 +37,7 @@ export function useBitrixIntegration() {
           prev && connections.some((c) => c.id === prev) ? prev : (connections[0]?.id ?? null),
         );
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch Bitrix24 connections');
     }
   }, []);
@@ -71,7 +71,7 @@ export function useBitrixIntegration() {
       } else {
         toast.error(data.error || 'Não foi possível conectar ao Bitrix24.');
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to connect Bitrix24');
       toast.error('Não foi possível conectar ao Bitrix24.');
     }
@@ -90,7 +90,7 @@ export function useBitrixIntegration() {
         toast.error(data.error || 'Não foi possível desconectar este portal Bitrix24.');
       }
       await fetchBitrixConnections();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to disconnect Bitrix24');
       toast.error('Não foi possível desconectar este portal Bitrix24.');
     }
@@ -113,7 +113,7 @@ export function useBitrixIntegration() {
       }
       await fetchBitrixConnections();
       return data.data as { webhookSecret: string; webhookReceiverUrl: string };
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to generate Bitrix24 webhook secret');
       toast.error('Não foi possível gerar o segredo do webhook.');
       return null;
@@ -141,7 +141,7 @@ export function useBitrixIntegration() {
         );
       }
       await fetchBitrixConnections();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to toggle Bitrix24 inbound events');
       toast.error('Não foi possível atualizar o recebimento de eventos.');
     }

@@ -1,16 +1,16 @@
 import { AlertTriangle, ArrowRight, Mic, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   COACHING_DIMENSION_LABELS,
   type CoachingRubricOutput,
   type CopilotoConversationDTO,
   type HandoffSummaryDTO,
   copilotoIaApi,
-} from '../copilotoIa.api';
+} from '../copilotoIa.api.js';
 
 /** Mesma paleta de `MeetingSynthesisOutput.sentimentScore` (meetingSynthesis.contract.ts) — só os
  * 4 valores fixos que o modelo pode retornar têm mapeamento; qualquer outro cai no `default` do

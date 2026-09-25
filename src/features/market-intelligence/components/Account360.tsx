@@ -109,7 +109,7 @@ export function Account360() {
         `/api/market-intelligence/accounts/${id}/intelligence`,
       );
       setIntelligence(data);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Erro ao se comunicar com o servidor.');
     } finally {
       setLoading(false);
@@ -149,7 +149,7 @@ export function Account360() {
           `/api/market-intelligence/accounts/${id}/${TAB_ENDPOINT[tab]}?page=1&limit=20`,
         );
         setTabState((prev) => ({ ...prev, [tab]: { loading: false, error: null, result } }));
-      } catch (err) {
+      } catch (err: any) {
         setTabState((prev) => ({
           ...prev,
           [tab]: {
@@ -179,7 +179,7 @@ export function Account360() {
       );
       toast.success('Recomendação executada.');
       await fetchTab('recommendations');
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível executar a recomendação.');
     } finally {
       setExecutingId(null);
@@ -194,7 +194,7 @@ export function Account360() {
       toast.success('Inteligência da conta atualizada.');
       await fetchIntelligence();
       if (activeTab !== 'overview') await fetchTab(activeTab);
-    } catch (err) {
+    } catch (err: any) {
       toast.error(
         err instanceof Error
           ? err.message

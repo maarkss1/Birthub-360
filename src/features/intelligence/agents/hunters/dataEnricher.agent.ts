@@ -58,7 +58,7 @@ Retorne APENAS JSON VÁLIDO no formato exato:
         estimatedRevenue: parsed.estimatedRevenue || 15000000,
         knownDecisionMakers: parsed.knownDecisionMakers || [],
       };
-    } catch (error) {
+    } catch (error: any) {
       console.warn('[Enricher] Falha ao enriquecer via AI. Retornando fallback.', error);
       return {
         companyName,

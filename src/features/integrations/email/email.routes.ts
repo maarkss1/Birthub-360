@@ -25,7 +25,7 @@ router.get('/messages', async (req: Request, res: Response, next: NextFunction):
       take: 50,
     });
     res.json({ success: true, data: messages });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

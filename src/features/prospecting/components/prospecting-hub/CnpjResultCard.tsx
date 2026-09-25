@@ -9,10 +9,10 @@ import {
   UserPlus,
   Users,
 } from 'lucide-react';
-import { Badge } from '../../../../components/ui/Badge';
-import type { RntrcRiskTier } from '../../../../shared/services/rntrcTerritorialRisk.service';
-import type { CnpjLookupResult } from '../../services/enrichment.service';
-import { InfoTile } from './InfoTile';
+import { Badge } from '../../../../components/ui/Badge.js';
+import type { RntrcRiskTier } from '../../../../shared/services/rntrcTerritorialRisk.service.js';
+import type { CnpjLookupResult } from '../../services/enrichment.service.js';
+import { InfoTile } from './InfoTile.js';
 
 const number = new Intl.NumberFormat('pt-BR');
 

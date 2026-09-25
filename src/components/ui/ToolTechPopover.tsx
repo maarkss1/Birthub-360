@@ -3,7 +3,7 @@
 import { Filter, Info, X } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useRef } from 'react';
-import type { TechToolInfo } from './TechToolLogo';
+import type { TechToolInfo } from './TechToolLogo.js';
 
 interface ToolTechPopoverProps {
   info: TechToolInfo | null;

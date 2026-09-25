@@ -1,5 +1,5 @@
 import type React from 'react';
-import { DailyPlanHub } from './DailyPlanHub';
+import { DailyPlanHub } from './DailyPlanHub.js';
 
 export { DailyPlanHub };
 
@@ -30,13 +30,13 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { ChannelDonut } from '../../../components/ui/ChannelDonut';
-import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar';
-import { type DealCardData, DealsGrid } from '../../../components/ui/DealsGrid';
-import { Dialog } from '../../../components/ui/Dialog';
-import { type FunnelBarItem, FunnelBars } from '../../../components/ui/FunnelBars';
-import { KpiCard } from '../../../components/ui/KpiCard';
-import { useAuth } from '../../../contexts/AuthContext';
+import { ChannelDonut } from '../../../components/ui/ChannelDonut.js';
+import { CompareBar, DeltaPill } from '../../../components/ui/CompareBar.js';
+import { type DealCardData, DealsGrid } from '../../../components/ui/DealsGrid.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { type FunnelBarItem, FunnelBars } from '../../../components/ui/FunnelBars.js';
+import { KpiCard } from '../../../components/ui/KpiCard.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
 
 // Dataset extraído do Diagnóstico SDR — João Reis (BDR ID 392, Birth Hub 360)
 const DIAGNOSTIC_DATA = {

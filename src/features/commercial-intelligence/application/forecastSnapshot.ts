@@ -11,8 +11,8 @@
  * lógica de cálculo sem depender de Postgres.
  */
 import { randomUUID } from 'node:crypto';
-import type { ExecutiveOverview, ForecastSnapshotRecord } from '../domain/CommercialIntelligence';
-import { FORECAST_RULES_VERSION } from './forecastEngine';
+import type { ExecutiveOverview, ForecastSnapshotRecord } from '../domain/CommercialIntelligence.js';
+import { FORECAST_RULES_VERSION } from './forecastEngine.js';
 
 /**
  * Constrói o registro de snapshot a partir de um `ExecutiveOverview` já calculado para o período.

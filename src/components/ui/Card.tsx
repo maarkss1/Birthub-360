@@ -2,8 +2,8 @@
 
 import { cva, type VariantProps } from 'class-variance-authority';
 import * as React from 'react';
-import { cn } from '../../lib/utils';
-import { BorderBeam, type BorderBeamProps } from './BorderBeam';
+import { cn } from '../../lib/utils.js';
+import { BorderBeam, type BorderBeamProps } from './BorderBeam.js';
 
 const cardVariants = cva('relative overflow-hidden rounded-card text-ink', {
   variants: {

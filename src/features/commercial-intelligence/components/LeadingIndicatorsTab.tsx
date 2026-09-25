@@ -1,11 +1,11 @@
 import { AlertTriangle, Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   commercialIntelligenceApi,
   type LeadingIndicatorsReport,
-} from '../commercialIntelligence.api';
+} from '../commercialIntelligence.api.js';
 
 const TREND_ICON = { up: TrendingUp, down: TrendingDown, flat: Minus } as const;
 

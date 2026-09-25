@@ -6,11 +6,11 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useFeatureFlags } from '../../../hooks/useFeatureFlags';
-import { toast } from '../../../lib/toast';
-import { featureFlagsApi, type ResolvedFeatureFlag } from '../featureFlags.api';
+} from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useFeatureFlags } from '../../../hooks/useFeatureFlags.js';
+import { toast } from '../../../lib/toast.js';
+import { featureFlagsApi, type ResolvedFeatureFlag } from '../featureFlags.api.js';
 
 /** Switch acessível mínimo (role="switch") — não há um primitivo Switch em src/components/ui/
  *  hoje; introduzir um componente genérico novo só para este único uso seria antecipar reuso que
@@ -69,7 +69,7 @@ export function FeatureFlagsPanel() {
     try {
       await featureFlagsApi.setOverride(flag.key, !flag.enabled);
       refetch();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível alterar o flag.');
     } finally {
       setPendingKey(null);
@@ -81,7 +81,7 @@ export function FeatureFlagsPanel() {
     try {
       await featureFlagsApi.clearOverride(flag.key);
       refetch();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível restaurar o padrão.');
     } finally {
       setPendingKey(null);

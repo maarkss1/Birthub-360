@@ -1,12 +1,12 @@
 import { ChevronDown, ChevronUp, Gauge, Lightbulb, Mic, Square } from 'lucide-react';
 import { useMemo, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
-import { LOSS_REASONS } from '../constants/lossReasons';
-import { useVoiceDictation } from '../hooks/useVoiceDictation';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '../../../components/ui/Card.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
+import { LOSS_REASONS } from '../constants/lossReasons.js';
+import { useVoiceDictation } from '../hooks/useVoiceDictation.js';
 import {
   type BitrixLeadStageOption,
   isDisqualifyOutcome,
@@ -14,8 +14,8 @@ import {
   mesaTratamentoApi,
   OUTCOME_LABELS,
   type QueueLeadDetail,
-} from '../mesaTratamento.api';
-import { suggestApproach } from '../mesaTratamento.approachSuggestion';
+} from '../mesaTratamento.api.js';
+import { suggestApproach } from '../mesaTratamento.approachSuggestion.js';
 
 interface CurrentLeadCardProps {
   lead: QueueLeadDetail;
@@ -87,7 +87,7 @@ export function CurrentLeadCard({ lead, leadStatuses, onRegistered }: CurrentLea
       setNextActionTitle('');
       setNextActionWhen('');
       onRegistered();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Não foi possível registrar.');
     } finally {
       setSubmitting(false);

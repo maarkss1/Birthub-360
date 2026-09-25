@@ -1,18 +1,18 @@
 import { Download, Loader2, Search, ShieldAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { api } from '../../../lib/api';
-import { contactsDB } from '../../../lib/db';
-import { toast } from '../../../lib/toast';
-import type { Contact } from '../../../types';
+} from '../../../components/ui/Card.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { api } from '../../../lib/api.js';
+import { contactsDB } from '../../../lib/db.js';
+import { toast } from '../../../lib/toast.js';
+import type { Contact } from '../../../types/index.js';
 
 function contactLabel(contact: Contact): string {
   const company = contact.company?.tradeName || contact.company?.legalName;
@@ -79,7 +79,7 @@ export function DataSubjectRights() {
       const data = await api.get<unknown>(`/api/lgpd/titular/${selected.id}/export`);
       setExportResult(data);
       toast.success('Dados do titular exportados. Registrado na trilha de auditoria.');
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao exportar os dados do titular.');
     } finally {
       setExporting(false);
@@ -102,7 +102,7 @@ export function DataSubjectRights() {
       await api.delete(`/api/lgpd/titular/${selected.id}`);
       toast.success(`Dados de "${selected.name}" anonimizados. Registrado na trilha de auditoria.`);
       reset();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao anonimizar os dados do titular.');
     } finally {
       setErasing(false);

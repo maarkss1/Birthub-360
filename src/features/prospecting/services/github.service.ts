@@ -1,5 +1,5 @@
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 import { checkProviderRateLimit } from './providerRateLimit.js';
 
@@ -106,7 +106,7 @@ async function searchGithubOrganizationsUncached(
       avatarUrl: item.avatar_url,
     }));
     return { organizations };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, query }, 'Error querying GitHub Search API');
     return {
       organizations: [],
@@ -165,7 +165,7 @@ async function getGithubOrganizationProfileUncached(
         avatarUrl: data.avatar_url,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, login }, 'Error querying GitHub Org Profile');
     return {
       profile: null,

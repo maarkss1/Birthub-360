@@ -6,7 +6,7 @@ import {
   type PlaybookInfo,
   type PlaybookKey,
   playbookInfo,
-} from '../config/playbooks';
+} from '../config/playbooks.js';
 
 const STORAGE_KEY = '@birthhub:active-playbook';
 /** Chave da versão de duas marcas: lida uma vez para não perder a escolha de quem já usava. */

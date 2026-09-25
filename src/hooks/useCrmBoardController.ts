@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { api } from '../lib/api';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
-import type { Lead } from '../types';
+import { api } from '../lib/api.js';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
+import type { Lead } from '../types/index.js';
 
 export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -24,7 +24,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
       } else if (response?.data) {
         setLeads(response.data);
       }
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Error fetching leads');
       setError(
         err instanceof Error ? err.message : 'N�o foi possivel carregar o pipeline comercial.',
@@ -44,7 +44,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
         await api.post(`/api/crm/leads/${leadId}/convert`);
         toast.success('Lead convertido em neg�cio e enviado ao pipeline comercial.');
         await fetchLeads();
-      } catch (error) {
+      } catch (error: any) {
         clientLogger.error({ err: error }, 'Error converting lead to deal');
         toast.error(error instanceof Error ? error.message : 'Falha ao converter o lead.');
       }
@@ -67,7 +67,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
       } else {
         toast.info('Nenhum lead novo encontrado no Bitrix24.');
       }
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Error importing from Bitrix24');
       toast.error(err instanceof Error ? err.message : 'Falha ao importar do Bitrix24.');
     } finally {
@@ -81,7 +81,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
         await api.post(`/api/leads/${leadId}/enrich`, undefined, { timeoutMs: 60_000 });
         await fetchLeads();
         toast.success('Lead enriquecido com sucesso.');
-      } catch (error) {
+      } catch (error: any) {
         clientLogger.error({ err: error }, 'Error enriching lead');
         toast.error(error instanceof Error ? error.message : 'Falha ao enriquecer o lead.');
       }
@@ -102,7 +102,7 @@ export function useCrmBoardController(funnel: 'Lead' | 'Negocio') {
       } else {
         toast.info('Nenhum lead pendente de enriquecimento encontrado.');
       }
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Error in batch enrichment');
       toast.error(
         err instanceof Error ? err.message : 'Falha ao processar o enriquecimento em lote.',

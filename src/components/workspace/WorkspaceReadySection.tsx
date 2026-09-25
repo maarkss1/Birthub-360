@@ -7,11 +7,11 @@ import type {
   WorkspaceKpi,
   WorkspaceModule,
   WorkspaceQuickAction,
-} from '../../features/workspace/workspace.api';
-import { cn } from '../../lib/utils';
-import { TAB_META, type TabType } from '../layout/tabMeta';
-import { Badge, type BadgeProps } from '../ui/Badge';
-import { EmptyState } from '../ui/EmptyState';
+} from '../../features/workspace/workspace.api.js';
+import { cn } from '../../lib/utils.js';
+import { TAB_META, type TabType } from '../layout/tabMeta.js';
+import { Badge, type BadgeProps } from '../ui/Badge.js';
+import { EmptyState } from '../ui/EmptyState.js';
 
 // Vive fora de src/features/** de propósito: é reaproveitado por duas features (`workspace`, tela
 // dedicada em /app/workspace, e `dashboard`, seção da home unificada em /app e /app/dashboard) —

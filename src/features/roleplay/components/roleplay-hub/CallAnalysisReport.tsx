@@ -2,9 +2,9 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Phone, RotateCcw, ShieldCheck } from 'lucide-react';
 import { Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { useTheme } from '../../../../contexts/ThemeContext';
-import { scoreTextClass, scoreTextClassOnSurface } from './scoreColor';
-import type { CallAnalysisResult } from './types';
+import { useTheme } from '../../../../contexts/ThemeContext.js';
+import { scoreTextClass, scoreTextClassOnSurface } from './scoreColor.js';
+import type { CallAnalysisResult } from './types.js';
 
 interface TurnEvaluation {
   clarity: number;

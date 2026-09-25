@@ -3,7 +3,7 @@ import { useState } from 'react';
 import {
   commercialIntelligenceApi,
   type LossReasonAiAnalysisResult,
-} from '../commercialIntelligence.api';
+} from '../commercialIntelligence.api.js';
 
 const REASON_LABEL: Record<NonNullable<LossReasonAiAnalysisResult['reason']>, string> = {
   sem_transcricao: 'Sem transcrição de chamada registrada para este negócio.',

@@ -1,8 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import { getDownloadUrl, getUploadUrl } from '../../../lib/storage/index.js';
-import { attachmentCompleteSchema, attachmentUploadUrlSchema } from '../../../lib/zod';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import type { AttachmentEntityType, AttachmentRepository } from '../domain/Attachment';
+import { attachmentCompleteSchema, attachmentUploadUrlSchema } from '../../../lib/zod.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import type { AttachmentEntityType, AttachmentRepository } from '../domain/Attachment.js';
 
 // Só o essencial pra compor um caminho de objeto legível no bucket — nunca usado pra decidir
 // permissão nem persistido como identificador (isso é objectKey, gerado à parte com randomUUID).

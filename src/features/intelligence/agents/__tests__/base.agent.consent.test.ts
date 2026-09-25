@@ -22,7 +22,7 @@ vi.mock('../../../../lib/logger.js', () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
 
-const { requestContext } = await import('../../../../lib/async-context');
+const { requestContext } = await import('../../../../lib/async-context.js');
 const { BDRAgent } = await import('../bdr.agent');
 const { CRMAgent } = await import('../crm.agent');
 const { PiiConsentRequiredError } = await import('../../services/guardrails.service');

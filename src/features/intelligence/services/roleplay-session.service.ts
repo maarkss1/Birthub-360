@@ -120,7 +120,7 @@ export async function finishRoleplaySession(
       },
     });
     sessionId = session.id;
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId: input.organizationId, userId: input.userId },
       'Falha ao persistir sessão de roleplay (o parecer técnico já foi entregue ao usuário).',

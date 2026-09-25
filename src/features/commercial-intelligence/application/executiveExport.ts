@@ -1,4 +1,4 @@
-import { BRAND } from '../../../config/brand';
+import { BRAND } from '../../../config/brand.js';
 import type {
   ExecutiveAlert,
   ExecutiveOverview,
@@ -6,7 +6,7 @@ import type {
   ExportKpiRow,
   PerformanceMetrics,
   PipelineCreation,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 /**
  * Serialização em CSV/JSON/HTML dos dados JÁ CALCULADOS por `executiveOverview`/`performance`/

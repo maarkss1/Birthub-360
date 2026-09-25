@@ -1,4 +1,4 @@
-import { LdrAccountIntelligence } from '../features/market-intelligence/components/LdrAccountIntelligence';
+import { LdrAccountIntelligence } from '../features/market-intelligence/components/LdrAccountIntelligence.js';
 
 export function Ldr() {
   return (

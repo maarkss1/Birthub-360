@@ -356,7 +356,7 @@ export class AIService {
       response = await withRetry(() =>
         model.invoke([new SystemMessage(systemPrompt), new HumanMessage(userPrompt)]),
       );
-    } catch (error) {
+    } catch (error: any) {
       const detail = error instanceof Error ? error.message : String(error);
       throw new Error(
         `Não foi possível gerar o conteúdo agora (ferramenta: ${toolId}). ${detail}`,

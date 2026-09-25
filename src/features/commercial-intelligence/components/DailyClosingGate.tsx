@@ -10,8 +10,8 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
-import type { PendingDailyClosing } from '../../../shared/contracts/dailyPlan.contract';
-import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import type { PendingDailyClosing } from '../../../shared/contracts/dailyPlan.contract.js';
+import { commercialIntelligenceApi } from '../commercialIntelligence.api.js';
 
 const MAX_GOALS = 5;
 

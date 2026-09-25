@@ -16,12 +16,12 @@ import {
   Users,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { fadeInUp, staggerContainer } from '../../../lib/motion';
-import { SoundFX } from '../../../lib/soundEffects';
-import type { CrmOverviewData } from '../crm360.types';
+import { Button } from '../../../components/ui/Button.js';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { fadeInUp, staggerContainer } from '../../../lib/motion.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import type { CrmOverviewData } from '../crm360.types.js';
 
 interface CrmOverviewProps {
   /**
@@ -97,7 +97,7 @@ export function CrmOverview({ onNavigate }: CrmOverviewProps) {
     setError(null);
     try {
       setData(await api.get<CrmOverviewData>('/api/crm/overview'));
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Failed to load CRM overview');
       setError(err instanceof Error ? err.message : 'Falha ao carregar o cockpit do CRM.');
     } finally {

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   featureFlagsApi,
   type ResolvedFeatureFlag,
-} from '../features/feature-flags/featureFlags.api';
+} from '../features/feature-flags/featureFlags.api.js';
 
 // Cache in-memory compartilhado entre todos os componentes que usam este hook na mesma aba —
 // evita um GET /api/feature-flags redundante por componente montado (BugReportButton +

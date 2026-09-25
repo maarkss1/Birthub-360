@@ -4,19 +4,19 @@ import {
   type CadenceDispatcher,
   type CadenceRunLockPort,
   type LeadSubjectResolver,
-} from '../application/cadenceService';
-import { evaluateRateLimitForUpcomingTouch } from '../application/rateLimitService';
+} from '../application/cadenceService.js';
+import { evaluateRateLimitForUpcomingTouch } from '../application/rateLimitService.js';
 import {
   type CadenceRunState,
   type CadenceSequenceDefinition,
   type CadenceTouch,
   recordTouchAttempt,
   startCadenceRun,
-} from '../domain/cadence';
-import type { CadenceRateLimitPolicy } from '../domain/rateLimit';
-import { InMemoryCadenceRateLimitPort } from '../infra/InMemoryCadenceRateLimitPort';
-import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository';
-import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
+} from '../domain/cadence.js';
+import type { CadenceRateLimitPolicy } from '../domain/rateLimit.js';
+import { InMemoryCadenceRateLimitPort } from '../infra/InMemoryCadenceRateLimitPort.js';
+import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository.js';
+import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository.js';
 
 /**
  * Cobertura de integração do rate limit por contato/domínio (auditoria transversal, Agente 17) —

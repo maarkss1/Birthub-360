@@ -5,8 +5,8 @@ import type {
   ModuleAccessRepository,
   ModuleAccessUserRow,
   RevokeModuleAccessInput,
-} from '../../domain/ModuleAccess';
-import { ModuleAccessService, ModuleAccessServiceError } from '../moduleAccess.service';
+} from '../../domain/ModuleAccess.js';
+import { ModuleAccessService, ModuleAccessServiceError } from '../moduleAccess.service.js';
 
 const ORG = 'org-1';
 

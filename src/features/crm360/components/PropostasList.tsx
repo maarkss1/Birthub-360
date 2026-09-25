@@ -1,13 +1,13 @@
 import { FileText, Plus, Search, WifiOff } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { clientLogger } from '../../../lib/clientLogger';
-import { crm360Api } from '../crm360.api';
-import type { CrmCommercialDocument } from '../crm360.types';
-import { PropostaDetail } from './PropostaDetail';
-import { PropostaForm } from './PropostaForm';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { crm360Api } from '../crm360.api.js';
+import type { CrmCommercialDocument } from '../crm360.types.js';
+import { PropostaDetail } from './PropostaDetail.js';
+import { PropostaForm } from './PropostaForm.js';
 
 type DocumentStatus = CrmCommercialDocument['status'];
 type DocumentType = CrmCommercialDocument['type'];

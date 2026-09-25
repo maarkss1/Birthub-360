@@ -1,11 +1,11 @@
 import { motion } from 'framer-motion';
 import { Bot, Database, Globe, Link2, RefreshCw, Send, Sparkles } from 'lucide-react';
 import { useEffect, useRef } from 'react';
-import { BRAND } from '../../../config/brand';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useAssistantChat } from '../../../hooks/useAssistantChat';
-import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData';
-import { SoundFX } from '../../../lib/soundEffects';
+import { BRAND } from '../../../config/brand.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useAssistantChat } from '../../../hooks/useAssistantChat.js';
+import { usePlaybookMatrixData } from '../../../hooks/usePlaybookMatrixData.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
 
 /**
  * Página cheia (`/app/chatbook`) do mesmo copiloto do drawer flutuante global

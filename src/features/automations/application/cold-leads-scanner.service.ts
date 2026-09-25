@@ -138,7 +138,7 @@ export async function runColdLeadsScan(): Promise<{
       scanned: totalScanned,
       failures: totalFailures,
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, runId }, 'Cold leads scan falhou.');
     return {
       runId,

@@ -1,8 +1,8 @@
 import { AlertTriangle, CheckCircle2, RefreshCw, Users } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import type { UserDailyPlanSummary } from '../../../shared/contracts/dailyPlan.contract';
-import { commercialIntelligenceApi, type DailyPlanTeamMember } from '../commercialIntelligence.api';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import type { UserDailyPlanSummary } from '../../../shared/contracts/dailyPlan.contract.js';
+import { commercialIntelligenceApi, type DailyPlanTeamMember } from '../commercialIntelligence.api.js';
 
 type TeamPlanState =
   | { status: 'loading' }

@@ -16,7 +16,7 @@ import type {
   ForecastScenario,
   HistoricalTrendsReport,
   TrendMomentum,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 /** Limiar de variação (pontos percentuais de Win Rate) para classificar momentum — política, não medição. */
 export const TREND_MOMENTUM_THRESHOLD_PP = 3;

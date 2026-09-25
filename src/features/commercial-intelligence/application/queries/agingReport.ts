@@ -9,11 +9,11 @@ import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
   StageAging,
-} from '../../domain/CommercialIntelligence';
-import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
-import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
+} from '../../domain/CommercialIntelligence.js';
+import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility.js';
+import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { daysBetween, mean, roundMoney } from '../shared/mathUtils.js';
 
 export async function buildAging(
   repository: CommercialIntelligenceRepository,

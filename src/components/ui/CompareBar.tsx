@@ -1,4 +1,4 @@
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Generalizado a partir de `CompareBar`/`DeltaPill` (JoaoReisDiagnosticHub.tsx) — os rótulos de
    período (jul/ago) e a formatação em BRL eram fixos ao diagnóstico SDR; viraram props pra

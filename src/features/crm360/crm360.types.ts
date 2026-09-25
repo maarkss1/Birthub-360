@@ -1,4 +1,4 @@
-import type { Activity, Company, Contact, Lead } from '../../types';
+import type { Activity, Company, Contact, Lead } from '../../types/index.js';
 
 export interface CrmKpis {
   leads: number;

@@ -71,7 +71,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<GeneratedPlaybookChapter>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao gerar capítulo do playbook');
       return {
         title: input.topic,

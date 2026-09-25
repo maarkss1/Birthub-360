@@ -140,7 +140,7 @@ export async function recordOptOut(input: RecordOptOutInput): Promise<boolean> {
       evidence: input.evidence ?? null,
       requestedBy: null,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId: input.organizationId },
       'Falha ao gravar opt-out unificado (OptOutRecord) — a lista de bloqueio de voz (CallSuppression) já foi gravada e continua valendo.',

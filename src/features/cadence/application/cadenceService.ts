@@ -116,7 +116,7 @@ async function saveWithRetry(
     try {
       await runRepo.save(run);
       return;
-    } catch (err) {
+    } catch (err: any) {
       lastErr = err;
       if (attempt < attempts) {
         await new Promise((resolve) => setTimeout(resolve, attempt * 250));
@@ -276,7 +276,7 @@ export async function advanceCadenceRun(
     });
     try {
       await saveWithRetry(deps.runRepo, updated);
-    } catch (persistErr) {
+    } catch (persistErr: any) {
       // O canal já foi chamado de verdade (outcome já existe) — a gravação é que não
       // confirmou mesmo após retry. Log distinto e de alta severidade: sem isto, o próximo
       // ciclo simplesmente re-despacharia o mesmo toque para o mesmo lead, e ninguém saberia

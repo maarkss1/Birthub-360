@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { api } from '../../../lib/api';
+import { api } from '../../../lib/api.js';
 
 interface BookingLinkData {
   id: string;
@@ -88,7 +88,7 @@ export function PublicBookingPage() {
         time: selectedSlot,
       });
       setSuccessData(res);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Falha ao realizar agendamento.');
     } finally {
       setSubmitting(false);

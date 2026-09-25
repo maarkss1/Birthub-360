@@ -7,7 +7,7 @@ import {
   isKnownRole,
   ROLE_HIERARCHY,
   UNVERIFIED_ROLE,
-} from '../authorization';
+} from '../authorization.js';
 
 describe('RBAC canônico (src/lib/auth/authorization.ts)', () => {
   it('expõe exatamente os cinco papéis realmente gravados em User.role', () => {

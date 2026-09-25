@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import {
   AUTOMATION_ACTIONS,
   AUTOMATION_TRIGGERS,
   type AutomationUseCases,
-} from '../application/AutomationUseCases';
+} from '../application/AutomationUseCases.js';
 
 export class AutomationController {
   constructor(private automationUseCases: AutomationUseCases) {}
@@ -24,7 +24,7 @@ export class AutomationController {
         success: true,
         data: await this.automationUseCases.listAutomations(organizationId),
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -34,7 +34,7 @@ export class AutomationController {
       const { organizationId } = (req as AuthRequest).user;
       const created = await this.automationUseCases.createAutomation(organizationId, req.body);
       res.status(201).json({ success: true, data: created });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -53,7 +53,7 @@ export class AutomationController {
         return;
       }
       res.json({ success: true, data: updated });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -74,7 +74,7 @@ export class AutomationController {
         return;
       }
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -92,7 +92,7 @@ export class AutomationController {
         return;
       }
       res.json({ success: true, data: timeline });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -114,7 +114,7 @@ export class AutomationController {
         return;
       }
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

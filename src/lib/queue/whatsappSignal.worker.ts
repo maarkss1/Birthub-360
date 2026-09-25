@@ -56,7 +56,7 @@ export async function scheduleConversationAnalysis(
       { leadId, organizationId },
       { jobId, delay: DEBOUNCE_MS, removeOnComplete: true, attempts: 1 },
     );
-  } catch (error) {
+  } catch (error: any) {
     // Best-effort: se o Redis estiver indisponível, a mensagem já foi persistida (o que importa
     // não se perde) — só a leitura por IA desta rodada fica pra próxima mensagem.
     logger.warn(

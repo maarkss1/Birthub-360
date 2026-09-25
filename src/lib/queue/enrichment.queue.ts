@@ -46,7 +46,7 @@ export function createEnrichmentWorker() {
         try {
           await enrichCompany(organizationId, companyId, { cnpj, segmentKeywords });
           logger.info({ companyId, organizationId }, 'Enrichment job completed successfully');
-        } catch (error) {
+        } catch (error: any) {
           logger.error({ err: error, jobId: job.id, companyId }, 'Enrichment job failed');
           throw error;
         }

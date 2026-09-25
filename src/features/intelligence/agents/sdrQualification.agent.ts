@@ -189,7 +189,7 @@ export class SDRQualificationAgent {
     const organizationId = getTenantId();
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       const message = (error as Error).message;
       logger.warn(
         { err: error, leadId, organizationId },
@@ -230,7 +230,7 @@ export class SDRQualificationAgent {
       await ensureCheckpointerReady();
       // Invoca o gráfico (state machine) com checkpointer ativado para manter histórico na thread.
       finalState = await app.invoke(inputs, config);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, leadId, sessionId }, 'SDR Agent run failed');
       await recordAgentFailure({
         sessionId: sid,
@@ -264,7 +264,7 @@ export class SDRQualificationAgent {
 
     try {
       await this.updateMemory(sid, serializedMessages);
-    } catch (error) {
+    } catch (error: any) {
       // AI-003: reportar sucesso aqui seria mentir — a qualificação rodou, mas o resultado
       // nunca ficou disponível para quem está fazendo polling em
       // GET /agents/sdr/status/:sessionId (o único jeito de consultar o resultado desta

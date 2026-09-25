@@ -10,16 +10,16 @@ import {
   ShieldQuestion,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { EntityAttachments } from '../../../components/crm/EntityAttachments';
-import { EntityNotes } from '../../../components/crm/EntityNotes';
-import { Drawer } from '../../../components/ui/Drawer';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { contactsDB } from '../../../lib/db';
-import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap';
-import { getWhatsAppLink } from '../../../shared/utils/contact-links';
-import type { Contact } from '../../../types';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments.js';
+import { EntityNotes } from '../../../components/crm/EntityNotes.js';
+import { Drawer } from '../../../components/ui/Drawer.js';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
+import { contactsDB } from '../../../lib/db.js';
+import { LEAD_STATUS_EMOJI } from '../../../lib/enumMap.js';
+import { getWhatsAppLink } from '../../../shared/utils/contact-links.js';
+import type { Contact } from '../../../types/index.js';
 
 interface ContactDetailProps {
   /** `null` mantém a gaveta fechada — o próprio componente controla o fetch a partir do id. */

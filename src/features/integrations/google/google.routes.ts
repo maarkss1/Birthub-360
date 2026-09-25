@@ -20,7 +20,7 @@ router.get('/auth-url', (req: Request, res: Response, next: NextFunction): void 
     const { organizationId } = (req as AuthRequest).user;
     const url = getGoogleAuthUrl(organizationId);
     res.json({ success: true, data: { url } });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof GoogleNotConfiguredError) {
       res.status(503).json({ success: false, error: error.message });
       return;
@@ -52,7 +52,7 @@ router.get('/callback', async (req: Request, res: Response): Promise<void> => {
 
     await processGoogleCallback(organizationId, code);
     redirectBack('connected');
-  } catch (error) {
+  } catch (error: any) {
     redirectBack(
       'error',
       error instanceof Error ? error.message : 'Falha ao conectar com o Google.',
@@ -65,7 +65,7 @@ router.get('/status', async (req: Request, res: Response, next: NextFunction): P
     const { organizationId } = (req as AuthRequest).user;
     const status = await getGoogleStatus(organizationId);
     res.json({ success: true, data: status });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -78,7 +78,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnectGoogle(organizationId);
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -92,7 +92,7 @@ router.get(
       const { organizationId } = (req as AuthRequest).user;
       const events = await getUpcomingCalendarEvents(organizationId);
       res.json({ success: true, data: events });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof GoogleNotConnectedError) {
         res.status(409).json({ success: false, error: error.message });
         return;

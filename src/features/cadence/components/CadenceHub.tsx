@@ -17,18 +17,18 @@ import {
   Trash2,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge, type BadgeProps } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Dialog } from '../../../components/ui/Dialog';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { leadsDB } from '../../../lib/db';
-import { toast } from '../../../lib/toast';
-import type { Lead } from '../../../types';
+import { Badge, type BadgeProps } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { leadsDB } from '../../../lib/db.js';
+import { toast } from '../../../lib/toast.js';
+import type { Lead } from '../../../types/index.js';
 import {
   type CadenceChannel,
   type CadenceRunDTO,
@@ -41,8 +41,8 @@ import {
   type OptOutOriginChannel,
   type OptOutRecordDTO,
   type OptOutScope,
-} from '../cadence.api';
-import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';
+} from '../cadence.api.js';
+import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates.js';
 
 /**
  * Tela de cadência multicanal e ciclo de receita (Agente 17, Onda 10) — ver
@@ -190,7 +190,7 @@ function ScheduleMeetingDialog({
       );
       reset();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Não foi possível registrar a reunião.');
     } finally {
       setSubmitting(false);
@@ -437,7 +437,7 @@ function CadenceRunActions({
       await fn();
       toast.success(successMessage);
       onChanged();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Não foi possível concluir a ação.');
     } finally {
       setPending(null);
@@ -853,7 +853,7 @@ function SequencesSection({ canManage }: { canManage: boolean }) {
       await cadenceApi.deactivateSequence(sequence.id);
       toast.success(`Sequência "${sequence.name}" encerrada.`);
       load();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Não foi possível encerrar a sequência.');
     } finally {
       setDeactivatingId(null);
@@ -1034,7 +1034,7 @@ function NewSequenceDialog({
       reset();
       onCreated();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Não foi possível criar a sequência.');
     } finally {
       setSubmitting(false);
@@ -1304,7 +1304,7 @@ function StartRunDialog({
       setLeadId('');
       onStarted();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Não foi possível iniciar a cadência.');
     } finally {
       setSubmitting(false);
@@ -1437,7 +1437,7 @@ function JourneyTemplatesDialog({
       toast.success('Sequência de jornada criada com sucesso!');
       onCreated();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Falha ao criar sequência a partir do modelo');
     } finally {
       setInstantiating(null);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface SlackConnection {
   id: string;
@@ -26,7 +26,7 @@ export function useSlackIntegration() {
       if (data.success) {
         setSlackConnections(data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch Slack connections');
     }
   }, []);
@@ -62,7 +62,7 @@ export function useSlackIntegration() {
       setSlackBotTokenInput('');
       setSlackDefaultChannelInput('');
       fetchSlackConnections();
-    } catch (error) {
+    } catch (error: any) {
       toast.error((error as Error).message);
     } finally {
       setSlackLoading(false);

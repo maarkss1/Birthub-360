@@ -98,7 +98,7 @@ async function loadState(tenantId: string, actorId: string): Promise<LearningPro
     // livre antigo não tem uma métrica de origem associada).
     if (!isLearningProfileState(state)) return emptyState();
     return state;
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { err: error, tenantId, actorId },
       'Failed to read learning profile history — tratando como perfil vazio.',
@@ -337,7 +337,7 @@ export class LearningAgent {
     // então o mesmo risco que motivou a checagem nos demais agentes se aplica aqui.
     try {
       assertPiiExternalConsent(tenantId);
-    } catch (error) {
+    } catch (error: any) {
       logger.warn(
         { err: error, actorId, tenantId },
         'LearningAgent bloqueado: sem base legal LGPD registrada para enviar dado pessoal (AuditLog) a provedor de IA externo.',
@@ -464,7 +464,7 @@ Não gere títulos markdown nem introduções.
       );
 
       return learnedStyle;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'LearningAgent failed to reflect and learn');
       return null;
     }

@@ -115,7 +115,7 @@ function startLockHeartbeat(organizationId: string, session: TenantSession): voi
       if (sock) {
         try {
           sock.end(new Error('distributed lock lost'));
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, organizationId },
             'WhatsApp: erro ao fechar socket após perda da trava',
@@ -137,7 +137,7 @@ async function releaseSessionLock(organizationId: string, session: TenantSession
   if (!lock) return;
   try {
     await lock.release();
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       'WhatsApp: falha ao liberar a trava distribuída da sessão; TTL fará a limpeza.',
@@ -174,7 +174,7 @@ async function persistStatusToRedis(organizationId: string, session: TenantSessi
       'EX',
       60 * 60 * 24,
     );
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err, organizationId }, 'WhatsApp: falha ao espelhar status no Redis');
   }
 }
@@ -238,7 +238,7 @@ export async function initWhatsApp(organizationId: string) {
       syncFullHistory: false,
       logger: pino({ level: 'silent' }) as unknown as WASocketLogger,
     });
-  } catch (err) {
+  } catch (err: any) {
     session.status = 'disconnected';
     await persistStatusToRedis(organizationId, session);
     await releaseSessionLock(organizationId, session);
@@ -308,7 +308,7 @@ export async function initWhatsApp(organizationId: string) {
             remoteJid: message.key.remoteJid,
             body: extractMessageText(message),
           });
-        } catch (error) {
+        } catch (error: any) {
           logger.error({ err: error, organizationId }, 'Falha ao persistir mensagem de WhatsApp.');
           // Achado real (auditoria de release-readiness, integration-audit): sem isto, uma falha
           // de persistência aqui (ex.: blip de banco) descartava a mensagem recebida do lead sem
@@ -339,7 +339,7 @@ export async function getWhatsAppStatus(organizationId: string) {
       const parsed = JSON.parse(raw) as { status: TenantSession['status']; qr: string | null };
       return { status: parsed.status, qr: parsed.qr };
     }
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       'WhatsApp: falha ao ler status do Redis, usando estado local',
@@ -378,7 +378,7 @@ export async function shutdownWhatsAppSessions(): Promise<void> {
       if (sock) {
         try {
           sock.end(new Error('process shutdown'));
-        } catch (err) {
+        } catch (err: any) {
           logger.warn({ err, organizationId }, 'WhatsApp: erro ao fechar socket no shutdown');
         }
       }
@@ -456,7 +456,7 @@ export async function sendWhatsAppMessage(
   let results: Awaited<ReturnType<WASocket['onWhatsApp']>>;
   try {
     results = await withTimeout(sock.onWhatsApp(formattedNumber), BAILEYS_CALL_TIMEOUT_MS);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[whatsapp] Falha/timeout ao verificar número no WhatsApp',
@@ -480,7 +480,7 @@ export async function sendWhatsAppMessage(
       sock.sendMessage(result.jid, { text: finalMessage }),
       BAILEYS_CALL_TIMEOUT_MS,
     );
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err, organizationId }, '[whatsapp] Falha/timeout ao enviar mensagem');
     throw new AppError(
       'Não foi possível enviar a mensagem agora (timeout ou falha de conexão).',

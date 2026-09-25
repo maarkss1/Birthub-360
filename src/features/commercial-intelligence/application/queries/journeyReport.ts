@@ -17,7 +17,7 @@
 import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
-} from '../../domain/CommercialIntelligence';
+} from '../../domain/CommercialIntelligence.js';
 import type {
   HandoffPairBreakdown,
   HandoffRow,
@@ -29,13 +29,13 @@ import type {
   ReentryRow,
   StageTransitionEdge,
   StageTransitionsSummary,
-} from '../../domain/JourneyIntelligence';
-import { FORECAST_RULES } from '../forecastEngine';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals, type ScoredDeal, type StageHistoryRow } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { daysBetween, median, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../../domain/JourneyIntelligence.js';
+import { FORECAST_RULES } from '../forecastEngine.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals, type ScoredDeal, type StageHistoryRow } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { daysBetween, median, roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 const RECENT_LIMIT = 50;
 

@@ -7,13 +7,13 @@ import {
   fromPrismaLeadStatus,
   toPrismaActivityStatus,
   toPrismaActivityType,
-} from '../../../lib/enumMap';
-import { logger } from '../../../lib/logger';
-import { prisma } from '../../../lib/prisma';
-import { type ActivityStatus, type ActivityType, activitySchema } from '../../../lib/zod';
-import { automationEngine } from '../../automations/automation.engine';
-import type { ActivityListFilters } from '../domain/Activity';
-import { assertRealOwner } from '../domain/ownerGuard';
+} from '../../../lib/enumMap.js';
+import { logger } from '../../../lib/logger.js';
+import { prisma } from '../../../lib/prisma.js';
+import { type ActivityStatus, type ActivityType, activitySchema } from '../../../lib/zod.js';
+import { automationEngine } from '../../automations/automation.engine.js';
+import type { ActivityListFilters } from '../domain/Activity.js';
+import { assertRealOwner } from '../domain/ownerGuard.js';
 
 function serializeActivity<
   T extends {

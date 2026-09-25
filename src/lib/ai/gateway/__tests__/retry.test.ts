@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { extractSuggestedRetryDelayMs, isRetryableAiError, withRetry } from '../retry';
+import { extractSuggestedRetryDelayMs, isRetryableAiError, withRetry } from '../retry.js';
 
 describe('retry — política de reexecução do gateway de IA', () => {
   describe('isRetryableAiError', () => {

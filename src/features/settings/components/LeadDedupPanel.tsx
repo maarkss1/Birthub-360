@@ -1,16 +1,16 @@
 import { GitMerge, Loader2, RefreshCw, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
+} from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
 
 // CRM-002/003 (auditoria de débito técnico): vive em settings/components/, não em
 // features/crm/components/, porque é o único consumidor desta rota e consome só
@@ -50,7 +50,7 @@ export function LeadDedupPanel() {
     try {
       const result = await api.get<{ groups: DedupGroup[] }>('/api/leads/dedup/preview');
       setGroups(result.groups);
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Erro ao carregar preview de deduplicação de leads');
       setError(err instanceof Error ? err.message : 'Erro ao carregar duplicados.');
     } finally {
@@ -70,7 +70,7 @@ export function LeadDedupPanel() {
       const result = await api.post<{ merged: number }>('/api/leads/dedup/merge');
       toast.success(`${result.merged} lead(s) duplicado(s) mesclado(s) com sucesso.`);
       await loadPreview();
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Erro ao mesclar leads duplicados');
       toast.error(err instanceof Error ? err.message : 'Erro ao mesclar leads duplicados.');
     } finally {

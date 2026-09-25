@@ -1,10 +1,10 @@
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 import type {
   DailyPlanClosingInput,
   PendingDailyClosing,
   UserDailyPlanSummary,
-} from '../../shared/contracts/dailyPlan.contract';
-import { brazilMonthKey } from '../../shared/time/brazilCalendar';
+} from '../../shared/contracts/dailyPlan.contract.js';
+import { brazilMonthKey } from '../../shared/time/brazilCalendar.js';
 
 /**
  * DUPLICAÇÃO INTENCIONAL, NÃO DÍVIDA ESQUECIDA: várias interfaces abaixo (formas de resposta dos
@@ -962,7 +962,7 @@ export {
   buildForecastRange,
   computeTrendMomentum,
   TREND_MOMENTUM_THRESHOLD_PP,
-} from './application/predictiveForecast';
+} from './application/predictiveForecast.js';
 
 export function currentMonth(): string {
   return brazilMonthKey(new Date());

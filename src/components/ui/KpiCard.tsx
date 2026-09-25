@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Generalizado a partir de `KpiStat` (JoaoReisDiagnosticHub.tsx) — mesmo vocabulário visual
    (barra de destaque no topo, chip de ícone, valor em mono tabular), promovido pra cá porque

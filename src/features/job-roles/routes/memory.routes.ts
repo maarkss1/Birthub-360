@@ -76,7 +76,7 @@ router.post(
         ...body,
       });
       res.status(201).json({ success: true, data: { candidate } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -106,7 +106,7 @@ router.get(
         parsedStatus.success ? parsedStatus.data : undefined,
       );
       res.json({ success: true, data: { candidates } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -122,7 +122,7 @@ router.get(
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: { candidate } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -152,7 +152,7 @@ router.post(
         supersedesMemoryId,
       });
       res.json({ success: true, data: { candidate } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -178,7 +178,7 @@ router.post(
         notes,
       });
       res.json({ success: true, data: { candidate } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -194,7 +194,7 @@ router.get(
         routeParam(req.params.code, 'code'),
       );
       res.json({ success: true, data: { memory } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -210,7 +210,7 @@ router.get(
         routeParam(req.params.code, 'code'),
       );
       res.json({ success: true, data: { memory } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -223,7 +223,7 @@ router.get(
       const authReq = req as AuthRequest;
       const memory = await getActiveOrganizationMemory(authReq.user.organizationId);
       res.json({ success: true, data: { memory } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -259,7 +259,7 @@ router.post(
         reason,
       });
       res.json({ success: true, data: { rolledBack: true } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },

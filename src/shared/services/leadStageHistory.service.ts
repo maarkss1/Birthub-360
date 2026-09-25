@@ -41,7 +41,7 @@ export async function recordStageTransition(
         },
       });
     }
-  } catch (error) {
+  } catch (error: any) {
     // Logger estruturado em vez de console — mesmo padrão do resto do backend
     // (ver src/lib/logger.ts). Falha aqui nunca deve propagar para o caller (moveRecord/
     // createDeal/convertLead) — o negócio já foi movido de verdade, só o registro histórico

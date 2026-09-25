@@ -9,19 +9,19 @@ import {
   Send,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Input } from '../../../components/ui/Input';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { useStripeIntegration } from '../../../hooks/useStripeIntegration';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { crm360Api } from '../crm360.api';
-import type { CrmCommercialDocument, CrmCommercialDocumentVersionDTO } from '../crm360.types';
-import { diffProposalVersions } from './proposalVersionDiff';
+import { Button } from '../../../components/ui/Button.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
+import { useStripeIntegration } from '../../../hooks/useStripeIntegration.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { crm360Api } from '../crm360.api.js';
+import type { CrmCommercialDocument, CrmCommercialDocumentVersionDTO } from '../crm360.types.js';
+import { diffProposalVersions } from './proposalVersionDiff.js';
 
 type DocumentStatus = CrmCommercialDocument['status'];
 
@@ -122,7 +122,7 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
       toast.success(`Status atualizado para "${nextStatus}".`);
       setNextStatus('');
       onChanged();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao atualizar status do documento');
       toast.error(error instanceof Error ? error.message : 'Falha ao atualizar status.');
     } finally {
@@ -145,7 +145,7 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
         'Solicitação registrada no CRM. O envio real ao provedor gov.br ainda não está ativo — ver aviso abaixo.',
       );
       onChanged();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao solicitar assinatura');
       toast.error(error instanceof Error ? error.message : 'Falha ao solicitar assinatura.');
     } finally {
@@ -168,7 +168,7 @@ export function PropostaDetail({ document, onBack, onEdit, onChanged }: Proposta
       toast.success('Pagamento confirmado na Stripe — Fatura marcada como Pago.');
       setReconcilePaymentIntentId('');
       onChanged();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao reconciliar pagamento da Fatura');
       toast.error(error instanceof Error ? error.message : 'Falha ao reconciliar pagamento.');
     } finally {

@@ -21,7 +21,7 @@ import type { AuthRequest } from './authenticateToken.js';
  */
 export function requireLeadOwnership() {
   return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const authReq = req as AuthRequest;
+    const authReq = req as unknown as AuthRequest;
 
     if (authReq.user.role !== 'CLOSER' && authReq.user.role !== 'SDR') {
       next();

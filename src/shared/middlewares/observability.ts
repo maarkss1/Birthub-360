@@ -55,7 +55,7 @@ export const observabilityMiddleware = (req: Request, res: Response, next: NextF
   const spanId = span ? span.spanContext().spanId : 'none';
 
   // Extract user info if authenticated (auth middleware runs before this ideally, but sometimes after)
-  const authReq = req as AuthRequest;
+  const authReq = req as unknown as AuthRequest;
   const userId = authReq.user?.id || 'anonymous';
   const tenantId = authReq.user?.organizationId || 'none';
 

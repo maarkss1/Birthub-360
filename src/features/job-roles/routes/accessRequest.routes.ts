@@ -50,7 +50,7 @@ router.post(
         reason,
       });
       res.status(201).json({ success: true, data: { accessRequest } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -61,7 +61,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const authReq = req as AuthRequest;
     const accessRequests = await listMyAccessRequests(authReq.user.organizationId, authReq.user.id);
     res.json({ success: true, data: { accessRequests } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -79,7 +79,7 @@ router.get(
         authReq.user.role,
       );
       res.json({ success: true, data: { accessRequests } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -112,7 +112,7 @@ router.post(
         expiresInHours,
       });
       res.json({ success: true, data: { accessRequest } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -136,7 +136,7 @@ router.post(
         notes,
       });
       res.json({ success: true, data: { accessRequest } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -154,7 +154,7 @@ router.post(
         accessRequestId: routeParam(req.params.id, 'id'),
       });
       res.json({ success: true, data: { accessRequest } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -179,7 +179,7 @@ router.post(
         reason,
       });
       res.json({ success: true, data: { revoked: true } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },

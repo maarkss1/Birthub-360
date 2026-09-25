@@ -1,10 +1,10 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronRight, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { BrandOrb } from '../../../components/ui/BrandOrb';
-import { Button } from '../../../components/ui/Button';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { SoundFX } from '../../../lib/soundEffects';
+import { BrandOrb } from '../../../components/ui/BrandOrb.js';
+import { Button } from '../../../components/ui/Button.js';
+import { useTheme } from '../../../contexts/ThemeContext.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
 
 type TourStep = {
   id: number;

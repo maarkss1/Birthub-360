@@ -1,4 +1,4 @@
-import type { AutomationActionLabel, AutomationTriggerLabel } from '../../../lib/enumMap';
+import type { AutomationActionLabel, AutomationTriggerLabel } from '../../../lib/enumMap.js';
 
 /**
  * Histórico de versões da REGRA de uma automação (trigger/condições/ação/config), não das

@@ -1,5 +1,5 @@
 import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 
 /**
@@ -227,7 +227,7 @@ export class CompanyDeduplicationService {
           merged += await this.mergeGroup(organizationId, group.companies);
         }
         return { merged, groups: groups.length };
-      } catch (error) {
+      } catch (error: any) {
         logger.error({ err: error, organizationId }, 'Falha na deduplicação de empresas');
         throw error;
       }

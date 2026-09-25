@@ -168,7 +168,7 @@ export async function generateObjectionSuggestions(
         sourceLossReasons: group.lossReasons,
       })),
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId },
       'Falha ao gerar sugestões de objeções a partir de negócios perdidos.',

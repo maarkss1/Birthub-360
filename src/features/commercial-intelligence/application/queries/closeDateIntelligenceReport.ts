@@ -12,18 +12,18 @@
 import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
-} from '../../domain/CommercialIntelligence';
+} from '../../domain/CommercialIntelligence.js';
 import type {
   CloseDateBreakdown,
   CloseDateDealRow,
   CloseDateIntelligenceReport,
-} from '../../domain/JourneyIntelligence';
-import { FORECAST_RULES, FORECAST_RULES_VERSION } from '../forecastEngine';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { daysBetween, mean, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../../domain/JourneyIntelligence.js';
+import { FORECAST_RULES, FORECAST_RULES_VERSION } from '../forecastEngine.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { daysBetween, mean, roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 function breakdown(
   rows: Array<{ deal: ScoredDeal; slips: number; chronic: boolean }>,

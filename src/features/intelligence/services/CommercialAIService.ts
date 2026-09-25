@@ -1,7 +1,7 @@
 import { HumanMessage, SystemMessage } from '@langchain/core/messages';
 import { z } from 'zod';
 import { cleanAndParseJson, getAiModel, logAiUsage } from '../../../lib/ai/gateway.js';
-import type { IEnrichedLead } from '../../../types/prospecting';
+import type { IEnrichedLead } from '../../../types/prospecting.js';
 
 // Achado da auditoria (PR #328, item fora de escopo original): os 4 métodos deste serviço faziam
 // `cleanAndParseJson<T>` (JSON.parse + cast genérico) sem validar o shape contra um schema —

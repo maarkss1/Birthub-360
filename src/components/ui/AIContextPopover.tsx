@@ -27,8 +27,8 @@ import {
 } from '@floating-ui/react';
 import { Bot, Loader2, Sparkles, X } from 'lucide-react';
 import { type ReactNode, useCallback, useRef, useState } from 'react';
-import { api } from '../../lib/api';
-import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent';
+import { api } from '../../lib/api.js';
+import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent.js';
 
 type EntityType = 'company' | 'contact' | 'deal';
 

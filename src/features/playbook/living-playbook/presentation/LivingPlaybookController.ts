@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../../../shared/middlewares/authenticateToken';
+import type { AuthRequest } from '../../../../shared/middlewares/authenticateToken.js';
 import {
   broadcastWinningPattern,
   generateWinningPatterns,
-} from '../application/livingPlaybook.service';
+} from '../application/livingPlaybook.service.js';
 
 export class LivingPlaybookController {
   /** Item 42: gera sugestões de abordagens vencedoras a partir de outcomes POSITIVOS reais —
@@ -17,7 +17,7 @@ export class LivingPlaybookController {
         data: result.suggestions,
         meta: { emptyReason: result.emptyReason },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -57,7 +57,7 @@ export class LivingPlaybookController {
         return;
       }
       res.json({ success: true, data: notification });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

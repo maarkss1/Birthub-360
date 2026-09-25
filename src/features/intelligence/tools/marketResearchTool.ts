@@ -206,7 +206,7 @@ export const marketResearchTool = tool(
           answer = res.answer;
           engineUsed = 'Tavily Search Intelligence';
         }
-      } catch (err) {
+      } catch (err: any) {
         logger.warn({ err }, 'Tavily falhou; acionando fallback de busca');
       }
     }
@@ -220,7 +220,7 @@ export const marketResearchTool = tool(
           results = res.results;
           engineUsed = 'Google Serper Engine';
         }
-      } catch (err) {
+      } catch (err: any) {
         logger.warn({ err }, 'Serper falhou; acionando fallback DuckDuckGo');
       }
     }
@@ -233,7 +233,7 @@ export const marketResearchTool = tool(
           results = res.results;
           engineUsed = 'DuckDuckGo Web Engine';
         }
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err }, 'DuckDuckGo fallback também falhou');
       }
     }

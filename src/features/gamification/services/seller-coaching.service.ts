@@ -73,7 +73,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<SellerCoachingReport>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao gerar coaching do vendedor');
       return {
         motivationalHeadline: `Bom trabalho esta semana, ${data.sellerName}!`,

@@ -21,7 +21,7 @@ export interface OpaInput {
 const DEFAULT_OPA_URL = 'http://localhost:8181/v1/data/birthhub/authz/allow';
 
 export const opaGuard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const user = (req as Partial<AuthRequest>).user;
+  const user = (req as unknown as Partial<AuthRequest>).user;
   const resourceId = req.params?.id;
 
   const input: OpaInput = {
@@ -52,7 +52,7 @@ export const opaGuard = async (req: Request, res: Response, next: NextFunction):
     }
 
     res.status(403).json({ success: false, error: 'Forbidden by OPA policy' });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'OPA inacessível; negando (fail-closed).');
     res.status(500).json({ success: false, error: 'Authorization service unreachable' });
   }

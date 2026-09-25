@@ -2,11 +2,11 @@
 
 import { AlertTriangle, ArrowRight, Download, MonitorPlay, Pencil, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type CommercialFilter,
   type CoverageProtectionStatus,
@@ -22,19 +22,19 @@ import {
   type LeadingIndicatorsReport,
   type PerformanceMetrics,
   type PipelineCreation,
-} from '../commercialIntelligence.api';
-import { AlertsPanel } from './AlertsPanel';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
-import { DecisionCenterPanel } from './DecisionCenterPanel';
-import { ForecastRangeCard } from './ForecastRangeCard';
-import { FunnelConversionCard } from './FunnelConversionCard';
-import { GoalCountdownOverlay } from './GoalCountdownOverlay';
-import { GoalEditorDialog } from './GoalEditorDialog';
-import { HealthScoreCard } from './HealthScoreCard';
-import { KpiTile } from './KpiTile';
-import { MentorPlaybookCard } from './MentorPlaybookCard';
-import { PipelineByStageCard } from './PipelineByStageCard';
-import { TrendChartCard } from './TrendChartCard';
+} from '../commercialIntelligence.api.js';
+import { AlertsPanel } from './AlertsPanel.js';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer.js';
+import { DecisionCenterPanel } from './DecisionCenterPanel.js';
+import { ForecastRangeCard } from './ForecastRangeCard.js';
+import { FunnelConversionCard } from './FunnelConversionCard.js';
+import { GoalCountdownOverlay } from './GoalCountdownOverlay.js';
+import { GoalEditorDialog } from './GoalEditorDialog.js';
+import { HealthScoreCard } from './HealthScoreCard.js';
+import { KpiTile } from './KpiTile.js';
+import { MentorPlaybookCard } from './MentorPlaybookCard.js';
+import { PipelineByStageCard } from './PipelineByStageCard.js';
+import { TrendChartCard } from './TrendChartCard.js';
 
 /** Ritmo do "Atualização automática" opcional (desligado por padrão) — regra de performance da
  * constituição: nada roda em background sem o usuário pedir. */
@@ -174,7 +174,7 @@ export function ExecutiveOverviewTab({ filter }: ExecutiveOverviewTabProps) {
         setPerformance(performanceData);
         setCreation(creationData);
         setTrends(trendsData);
-      } catch (err) {
+      } catch (err: any) {
         setError((err as Error).message);
       } finally {
         setLoading(false);
@@ -189,7 +189,7 @@ export function ExecutiveOverviewTab({ filter }: ExecutiveOverviewTabProps) {
       setExporting(format);
       try {
         await downloadExecutiveExport(filter, format);
-      } catch (err) {
+      } catch (err: any) {
         toast.error((err as Error).message || 'Falha ao exportar o relatório executivo.');
       } finally {
         setExporting(null);

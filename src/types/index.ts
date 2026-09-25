@@ -13,7 +13,7 @@ export type {
   LEAD_TEMPERATURE,
   LeadStatus,
   LeadTemperature,
-} from '../lib/zod';
+} from '../lib/zod.js';
 // Arrays das etapas de cada funil (não tipos) — usados pelos dois Kanbans para montar as colunas.
 
 /**
@@ -90,7 +90,7 @@ export interface Company {
   city?: string | null;
   state?: string | null;
   zipCode?: string | null;
-  status: import('../lib/zod').CompanyStatus;
+  status: import('../lib/zod.js').CompanyStatus;
   tags: string[];
   observations?: string | null;
   customFields?: Record<string, unknown> | null;
@@ -129,7 +129,7 @@ export interface Contact {
   linkedin?: string | null;
   birthDate?: string | null;
   observations?: string | null;
-  status: import('../lib/zod').ContactStatus;
+  status: import('../lib/zod.js').ContactStatus;
   source?: string | null;
   seniority?: string | null;
   emailStatus?: string | null;
@@ -151,7 +151,7 @@ export interface Lead {
   id: string;
 
   // CRM Core
-  status: import('../lib/zod').LeadStatus;
+  status: import('../lib/zod.js').LeadStatus;
   funnel?: 'Lead' | 'Negocio';
   title?: string | null;
   amount?: number | null;
@@ -166,7 +166,7 @@ export interface Lead {
   pipelineStageId?: string | null;
   source?: string | null;
   channel?: string | null;
-  temperature?: import('../lib/zod').LeadTemperature | null;
+  temperature?: import('../lib/zod.js').LeadTemperature | null;
   score?: number | null;
   owner?: string | null;
   lastInteraction?: string | null;
@@ -212,11 +212,11 @@ export interface Lead {
 
 export interface Activity {
   id: string;
-  type: import('../lib/zod').ActivityType;
+  type: import('../lib/zod.js').ActivityType;
   owner: string;
   date: string;
   time?: string | null;
-  status: import('../lib/zod').ActivityStatus;
+  status: import('../lib/zod.js').ActivityStatus;
   observations?: string | null;
   leadId: string;
   lead?: Lead;

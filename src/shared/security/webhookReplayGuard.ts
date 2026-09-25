@@ -53,7 +53,7 @@ export function validateWebhookTimestamp(
   nowMs: number = Date.now(),
 ): WebhookTimestampValidation {
   if (timestampHeader === undefined || timestampHeader === null || timestampHeader === '') {
-    return { valid: true, reason: 'missing' as any };
+    return { valid: true, reason: 'missing' };
   }
 
   let epochSeconds: number;
@@ -116,7 +116,7 @@ export async function claimWebhookDelivery(
       'NX',
     );
     return result === 'OK' ? 'fresh' : 'replay';
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, namespace },
       'Redis indisponível para dedupe de entrega de webhook; processando sem proteção de replay.',

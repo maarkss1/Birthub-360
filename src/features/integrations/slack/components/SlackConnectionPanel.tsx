@@ -1,7 +1,7 @@
-import { Card } from '../../../../components/ui/Card';
-import { useAuth } from '../../../../contexts/AuthContext';
-import { useSlackIntegration } from '../../../../hooks/useSlackIntegration';
-import { hasRequiredRole } from '../../../../lib/auth/authorization';
+import { Card } from '../../../../components/ui/Card.js';
+import { useAuth } from '../../../../contexts/AuthContext.js';
+import { useSlackIntegration } from '../../../../hooks/useSlackIntegration.js';
+import { hasRequiredRole } from '../../../../lib/auth/authorization.js';
 
 type CapabilityStatus = 'connected' | 'pending';
 

@@ -21,7 +21,7 @@ export class UsageController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.usageUseCases.summary(organizationId, parseDays(req.query.days));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

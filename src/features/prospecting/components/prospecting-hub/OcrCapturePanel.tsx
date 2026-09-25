@@ -21,10 +21,10 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { BRAND } from '../../../../config/brand';
-import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
-import { api } from '../../../../lib/api';
-import type { ProspectCandidate } from '../../services/prospecting.service';
+import { BRAND } from '../../../../config/brand.js';
+import { useActivePlaybook } from '../../../../hooks/useActivePlaybook.js';
+import { api } from '../../../../lib/api.js';
+import type { ProspectCandidate } from '../../services/prospecting.service.js';
 
 interface PromoteResult {
   lead: { id: string };
@@ -192,7 +192,7 @@ export function OcrCapturePanel() {
           rationale: cand.rationale || 'Extraído via OCR inteligente + IA.',
           fitScoreEstimate: cand.fitScoreEstimate || 65,
         });
-      } catch (e) {
+      } catch (e: any) {
         setError(getErrorMessage(e, 'Não foi possível ler essa imagem.'));
       } finally {
         setReading(false);
@@ -248,7 +248,7 @@ export function OcrCapturePanel() {
           contactRole: c.qsa && c.qsa.length > 0 ? c.qsa[0].qualificacao_socio : prev.contactRole,
         }));
       }
-    } catch (e) {
+    } catch (e: any) {
       setError(getErrorMessage(e, 'Falha ao consultar CNPJ na Receita Federal.'));
     } finally {
       setEnrichingCnpj(false);
@@ -282,7 +282,7 @@ export function OcrCapturePanel() {
           : null,
       });
       setPromoted(result);
-    } catch (e) {
+    } catch (e: any) {
       setError(getErrorMessage(e, 'Falha ao cadastrar no CRM.'));
     } finally {
       setPromoting(false);

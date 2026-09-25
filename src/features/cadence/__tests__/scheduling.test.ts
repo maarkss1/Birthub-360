@@ -4,7 +4,7 @@ import {
   type CalendarSchedulerPort,
   isVerifiableConfirmation,
   scheduleMeetingIfConfirmed,
-} from '../domain/scheduling';
+} from '../domain/scheduling.js';
 
 const NOW = new Date('2026-08-03T12:00:00Z');
 const FUTURE_START = new Date('2026-08-05T14:00:00Z');

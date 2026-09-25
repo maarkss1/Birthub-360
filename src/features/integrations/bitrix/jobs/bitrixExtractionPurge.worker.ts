@@ -189,14 +189,14 @@ export async function runBitrixExtractionPurgeSweep(): Promise<BitrixExtractionP
           });
 
           purgedCount++;
-        } catch (err) {
+        } catch (err: any) {
           logger.error(
             { err, organizationId: org.id, runId: candidate.id },
             '[bitrix] Falha ao expurgar uma extração — seguindo com as demais desta organização',
           );
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, organizationId: org.id },
         '[bitrix] Falha ao buscar extrações expiradas desta organização — seguindo com as demais organizações',

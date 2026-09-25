@@ -1,5 +1,5 @@
 import { requestContext } from '../../../lib/async-context.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { prisma } from '../../../lib/prisma.js';
 
 /**
@@ -212,7 +212,7 @@ export class LeadDeduplicationService {
         }
 
         return { merged: mergedCount };
-      } catch (error) {
+      } catch (error: any) {
         logger.error({ err: error, organizationId }, 'Falha na deduplicação de leads');
         throw error;
       }

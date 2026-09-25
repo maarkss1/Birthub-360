@@ -10,7 +10,7 @@ import {
   type CrmProvider,
   type NormalizedLead,
   registerCrmProvider,
-} from '../shared/CrmProvider';
+} from '../shared/CrmProvider.js';
 
 const MONDAY_API_URL = 'https://api.monday.com/v2';
 

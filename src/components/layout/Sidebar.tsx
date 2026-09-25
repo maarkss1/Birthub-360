@@ -2,12 +2,12 @@ import { AnimatePresence, useReducedMotion } from 'framer-motion';
 import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { type CSSProperties, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
-import { BrandEmblemBadge } from '../brand/BrandEmblemBadge';
-import { SoundFX } from '../../lib/soundEffects';
-import { NavLaunchTransition, type NavLaunch } from './NavLaunchTransition';
-import { NAV_ACCENT_VAR, TAB_META, type TabType } from './tabMeta';
+import { useAuth } from '../../contexts/AuthContext.js';
+import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization.js';
+import { BrandEmblemBadge } from '../brand/BrandEmblemBadge.js';
+import { SoundFX } from '../../lib/soundEffects.js';
+import { NavLaunchTransition, type NavLaunch } from './NavLaunchTransition.js';
+import { NAV_ACCENT_VAR, TAB_META, type TabType } from './tabMeta.js';
 
 /** Preferência de menu recolhido. A chave anterior era prefixada com o nome da
  *  marca antiga; a leitura do valor legado existe só para não zerar a
@@ -145,7 +145,7 @@ export function Sidebar({
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
     ? [
         { title: 'COMMAND CENTER', items: ['daily-plan'] },
-        { title: 'BUSINESS', items: ['prospect'] },
+        { title: 'BUSINESS', items: ['prospect', 'outbound'] },
         {
           title: 'EXECUTION',
           items: [
@@ -155,6 +155,8 @@ export function Sidebar({
             'activities',
             'calendar',
             'cadence',
+            'voice-hub',
+            'dialer',
           ],
         },
         {
@@ -184,6 +186,7 @@ export function Sidebar({
           title: 'BUSINESS',
           items: [
             'prospect',
+            'outbound',
             'crm',
             'crm360',
             'propostas',
@@ -194,7 +197,7 @@ export function Sidebar({
         },
         {
           title: 'EXECUTION',
-          items: ['activities', 'calendar', 'cadence'],
+          items: ['activities', 'calendar', 'cadence', 'voice-hub', 'dialer'],
         },
         {
           title: 'CAPACITATION',
@@ -421,3 +424,8 @@ export function Sidebar({
     </aside>
   );
 }
+
+
+
+
+

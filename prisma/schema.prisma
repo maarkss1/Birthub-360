@@ -879,6 +879,9 @@ model User {
   // próprio dono lê/edita/exclui (ver SavedView abaixo).
   savedViews               SavedView[]
 
+  agentSessions  AgentSession[]
+  createdApiKeys APIKey[]
+
   @@index([organizationId])
   @@map("user")
 }
@@ -1007,6 +1010,21 @@ model Organization {
   /// organização. Nullable = SEM TETO, mesmo raciocínio do campo acima. Comparado contra o
   /// acumulado do mês corrente (Redis, ver providerBudget.ts) por assertProspectingBudgetNotExceeded.
   monthlyProspectingBudgetUsd Float?
+
+  workflows          Workflow[]
+  callLogs           CallLog[]
+  metrics            Metric[]
+  agentSessions      AgentSession[]
+  agents             Agent[]
+  settings           Setting[]
+  aiConsent          OrganizationAiConsent?
+  atlasGRCallResults AtlasGRCallResult[]
+  wallet             Wallet?
+  transactions       Transaction[]
+  apiKeys            APIKey[]
+  webhookEndpoints   OrganizationWebhookEndpoint[]
+  campaigns          Campaign[]
+  dncLists           DncList[]
 }
 
 // ─── Comercial Inteligente (Revenue Command Center) ────────────────────────
@@ -4990,4 +5008,306 @@ model WorkspaceWidget {
 
   @@index([organizationId])
   @@index([sectionId])
+}
+
+model Workflow {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  name           String
+  description    String?
+  version        Int          @default(1)
+  status         String       @default("draft")
+  nodes          Json         @default("[]")
+  edges          Json         @default("[]")
+  metadata       Json         @default("{}")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  createdBy String?
+  updatedBy String?
+
+  versions WorkflowVersion[]
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model WorkflowVersion {
+  id          String   @id @default(uuid())
+  workflowId  String
+  workflow    Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  version     Int
+  nodes       Json
+  edges       Json
+  metadata    Json     @default("{}")
+  publishedAt DateTime @default(now())
+  publishedBy String?
+
+  @@unique([workflowId, version])
+  @@index([workflowId])
+}
+
+model Agent {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  name           String
+  model          String
+  configuration  Json         @default("{}")
+  phoneNumber    String?      @unique
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model CallLog {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  contactName    String
+  duration       String
+  status         String
+  time           String
+  agent          String
+  timestamp      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Metric {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  name           String
+  value          Float
+  tags           Json         @default("{}")
+  timestamp      DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Setting {
+  id             String        @id @default(uuid())
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  key            String
+  value          Json
+  isGlobal       Boolean       @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([organizationId, userId, key])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model OrganizationAiConsent {
+  id              String       @id @default(uuid())
+  organizationId  String       @unique
+  organization    Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  granted         Boolean      @default(false)
+  consentVersion  String?
+  grantedAt       DateTime?
+  revokedAt       DateTime?
+  grantedByUserId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+}
+
+model AtlasGRCallResult {
+  id             String        @id @default(uuid())
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  leadId         String?
+  callId         String        @unique
+  status         String?
+  completed      Boolean?
+  callLength     Float?
+  receivedAt     DateTime      @default(now())
+
+  @@index([organizationId])
+  @@index([leadId])
+}
+
+model APIKey {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  keyHash        String       @unique
+  name           String
+  scopes         Json         @default("[]")
+
+  createdByUserId String?
+  createdByUser   User?   @relation(fields: [createdByUserId], references: [id], onDelete: SetNull)
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  expiresAt  DateTime?
+  lastUsedAt DateTime?
+  revokedAt  DateTime?
+
+  @@index([organizationId])
+  @@index([createdByUserId])
+}
+
+model OrganizationWebhookEndpoint {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  url            String
+  secretHash     String // SHA-256 hex — nunca texto plano
+
+  // Lista de tipos de evento assinados (ex.: ["call.completed", "lead.qualified"]) ou ["*"] para
+  // todos. Json em vez de uma tabela separada de junção porque a cardinalidade é pequena (no
+  // máximo dezenas de tipos de evento no catálogo) e não precisa ser consultável por SQL — o
+  // filtro é feito em memória em webhookEndpointService.resolveActiveEndpointsForEvent, mesmo
+  // padrão já usado por APIKey.scopes.
+  events Json @default("[]")
+
+  active Boolean @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lastDeliveryAt     DateTime?
+  lastDeliveryStatus String?
+
+  @@index([organizationId])
+}
+
+model Integration {
+  id       String @id @default(uuid())
+  provider String
+  config   Json   @default("{}")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Plan {
+  id              String   @id @default(uuid())
+  slug            String   @unique
+  name            String
+  priceCents      Int
+  currency        String   @default("BRL")
+  billingInterval String // "monthly" | "yearly"
+  active          Boolean  @default(true)
+  wallets         Wallet[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Wallet {
+  id               String        @id @default(uuid())
+  organizationId   String        @unique
+  organization     Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  balanceCents     Int           @default(0)
+  currency         String        @default("BRL")
+  planId           String?
+  plan             Plan?         @relation(fields: [planId], references: [id])
+  planStatus       String        @default("inactive") // 'inactive'|'active'|'past_due'|'canceled'|'trialing'
+  currentPeriodEnd DateTime?
+  transactions     Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([organizationId])
+  @@index([planId])
+}
+
+model Transaction {
+  id                String       @id @default(uuid())
+  walletId          String
+  wallet            Wallet       @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  type              String
+  amountCents       Int // signed: positive = credit, negative = debit
+  balanceAfterCents Int
+  status            String
+  description       String?
+  externalReference String? // e.g. the payment gateway's own transaction id (Stripe), if any
+  idempotencyKey    String       @unique
+  createdAt         DateTime     @default(now())
+
+  @@index([organizationId])
+  @@index([walletId])
+}
+
+model AgentSession {
+  id             String       @id @default(uuid())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String?
+  user           User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  agentId        String?
+  channel        String
+  status         String       @default("active")
+  metadata       Json         @default("{}")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model Campaign {
+  id             String       @id @default(uuid())
+  name           String
+  status         String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  callAttempts CallAttempt[]
+
+  @@index([organizationId])
+}
+
+model CallAttempt {
+  id         String   @id @default(uuid())
+  campaignId String
+  campaign   Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  leadId     String?
+  agentDn    String?
+  status     String
+  duration   Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([campaignId])
+  @@index([leadId])
+}
+
+model DncList {
+  id             String       @id @default(uuid())
+  phone          String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  createdAt      DateTime     @default(now())
+
+  @@unique([organizationId, phone])
+  @@index([organizationId])
 }

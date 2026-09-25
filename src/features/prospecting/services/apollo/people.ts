@@ -4,7 +4,7 @@
 import { getPaidProspectingKey } from '../../../../config/prospecting-integrations.js';
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
 import type { DecisionMaker, ProspectCandidate } from '../../domain/prospectTypes.js';
-import { findEmailViaHunter, findPeopleViaDomainSearch } from '../hunter.service';
+import { findEmailViaHunter, findPeopleViaDomainSearch } from '../hunter.service.js';
 import { assertProspectingBudgetNotExceeded } from '../providerBudget.js';
 import { buildProviderCacheKey, withProviderCache } from '../providerCache.js';
 import { recordProviderCallCost } from '../providerCostMetrics.js';
@@ -113,7 +113,7 @@ async function enrichPersonByNameUncached(
         linkedin_url: p.linkedin_url || null,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       contact: null,
       error: error instanceof Error ? error.message : 'Falha ao consultar Apollo People Match',
@@ -266,7 +266,7 @@ async function enrichOrganizationWithContactsUncached(
     }));
 
     return { contacts, source: 'apollo' };
-  } catch (error) {
+  } catch (error: any) {
     return {
       contacts: [],
       error: error instanceof Error ? error.message : 'Falha ao consultar Apollo People API',
@@ -425,7 +425,7 @@ async function searchDecisionMakersAdvancedUncached(
     );
 
     return { contacts, source: 'apollo' };
-  } catch (error) {
+  } catch (error: any) {
     return {
       contacts: [],
       error: error instanceof Error ? error.message : 'Falha ao consultar Apollo People API',

@@ -252,7 +252,7 @@ async function persistInsight(
       select: { id: true },
     });
     return created.id;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId, sellerId: suggestion.sellerId, segment: suggestion.segment },
       'Falha ao persistir PlaybookInsight — a sugestão segue disponível para revisão nesta rodada, mas sem histórico.',
@@ -328,7 +328,7 @@ export async function generateWinningPatterns(
         insightId: insightIds[index],
       })),
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId },
       'Falha ao gerar sugestões do Playbook Vivo a partir de outcomes positivos.',
@@ -374,7 +374,7 @@ export async function broadcastWinningPattern(
         where: { id: suggestion.insightId },
         data: { status: 'BROADCAST', broadcastAt: new Date(), broadcastBy: broadcastBy ?? null },
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, organizationId, insightId: suggestion.insightId },
         'Falha ao marcar PlaybookInsight como BROADCAST — a notificação ao time já foi criada normalmente.',

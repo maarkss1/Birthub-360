@@ -2,8 +2,8 @@ import { motion, useAnimationControls } from 'framer-motion';
 import type { LucideIcon } from 'lucide-react';
 import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { EASE_OUT_EXPO, EASE_PREMIUM } from '../../lib/motion';
-import { BrandEmblemBadge } from '../brand/BrandEmblemBadge';
+import { EASE_OUT_EXPO, EASE_PREMIUM } from '../../lib/motion.js';
+import { BrandEmblemBadge } from '../brand/BrandEmblemBadge.js';
 
 /** Módulo que o usuário acabou de escolher na barra lateral e de onde o "selo" decola. */
 export interface NavLaunch {

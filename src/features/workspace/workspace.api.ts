@@ -1,4 +1,4 @@
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 
 export type WorkspaceStatus = 'READY' | 'NO_JOB_ROLE' | 'NO_WORKSPACE_DEFINITION';
 

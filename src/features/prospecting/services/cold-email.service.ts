@@ -1,5 +1,5 @@
 import { MailerNotConfiguredError, sendEmail } from '../../../lib/email/mailer.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { toE164BR } from '../../../lib/phone.js';
 import { isOptedOut } from '../../cadence/application/optOutService.js';
 import { prismaOptOutRepository } from '../../cadence/infra/PrismaOptOutRepository.js';
@@ -124,7 +124,7 @@ export async function sendColdEmail(campaign: ColdEmailCampaign): Promise<boolea
       'Cold email enviado',
     );
     return true;
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof MailerNotConfiguredError) {
       logger.warn(
         { campaignId: campaign.id, toDomain },

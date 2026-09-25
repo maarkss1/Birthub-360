@@ -1,5 +1,5 @@
-import type { ActivityStatus, ActivityType } from '../../../lib/zod';
-import type { Repository } from '../../../shared/domain/Repository';
+import type { ActivityStatus, ActivityType } from '../../../lib/zod.js';
+import type { Repository } from '../../../shared/domain/Repository.js';
 
 export interface Activity {
   id: string;

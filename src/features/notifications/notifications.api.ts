@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import type { NotificationKind } from '../../shared/contracts/notification.contract';
+import { api } from '../../lib/api.js';
+import type { NotificationKind } from '../../shared/contracts/notification.contract.js';
 
 export type { NotificationKind };
 

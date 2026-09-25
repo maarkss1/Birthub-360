@@ -5,7 +5,7 @@ import {
   type InboundEmailReply,
   type IntentClassifierPort,
   isGenuineLeadReply,
-} from '../../../shared/domain/replyTracking';
+} from '../../../shared/domain/replyTracking.js';
 
 const BASE: InboundEmailReply = {
   organizationId: 'org-1',

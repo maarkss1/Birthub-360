@@ -11,10 +11,10 @@ import type {
   CommercialIntelligenceRepository,
   DealRow,
   LeadFieldChangeRow,
-} from '../../domain/CommercialIntelligence';
-import { type ForecastResult, scoreOpportunity } from '../forecastEngine';
-import { agingInStageDays } from '../pipelineEligibility';
-import { daysBetween } from '../shared/mathUtils';
+} from '../../domain/CommercialIntelligence.js';
+import { type ForecastResult, scoreOpportunity } from '../forecastEngine.js';
+import { agingInStageDays } from '../pipelineEligibility.js';
+import { daysBetween } from '../shared/mathUtils.js';
 
 export type StageHistoryRow = {
   leadId: string;

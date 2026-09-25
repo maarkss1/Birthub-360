@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { ActivityStatus, ActivityType } from '../../../lib/zod';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { ActivityUseCases } from '../application/ActivityUseCases';
+import type { ActivityStatus, ActivityType } from '../../../lib/zod.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { ActivityUseCases } from '../application/ActivityUseCases.js';
 
 export class ActivityController {
   constructor(private activityUseCases: ActivityUseCases) {}
@@ -40,7 +40,7 @@ export class ActivityController {
       );
 
       res.json({ success: true, data: result.data, meta: result.meta });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -50,7 +50,7 @@ export class ActivityController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const activity = await this.activityUseCases.createActivity(orgId, req.body);
       res.status(201).json({ success: true, data: activity });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -64,7 +64,7 @@ export class ActivityController {
         req.body,
       );
       res.json({ success: true, data: activity });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -74,7 +74,7 @@ export class ActivityController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.activityUseCases.deleteActivity(orgId, routeParam(req.params.id, 'id'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -89,7 +89,7 @@ export class ActivityController {
         duration || 'tomorrow',
       );
       res.json({ success: true, data: activity });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -98,7 +98,7 @@ export class ActivityController {
     try {
       const templates = this.activityUseCases.getFollowUpTemplates();
       res.json({ success: true, data: templates });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -113,7 +113,7 @@ export class ActivityController {
       res.setHeader('Content-Type', 'text/calendar; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="agenda.ics"');
       res.send(ics);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

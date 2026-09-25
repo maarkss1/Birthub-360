@@ -1,8 +1,8 @@
 import { AlertTriangle, CircleDot, Loader2, Phone } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-import { Card } from '../../../components/ui/Card';
-import { type ColdCallStatus, coldCallCampaignApi } from '../coldCallCampaign.api';
+import { Card } from '../../../components/ui/Card.js';
+import { type ColdCallStatus, coldCallCampaignApi } from '../coldCallCampaign.api.js';
 
 const DIAS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
 

@@ -17,16 +17,16 @@ import {
   ZapIcon,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { PageHeader } from '../../../components/ui/PageHeader';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Dialog } from '../../../components/ui/Dialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
+import { PageHeader } from '../../../components/ui/PageHeader.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
 import {
   ACTIONS,
   type Automation,
@@ -37,10 +37,10 @@ import {
   describeAutomation,
   LEAD_STATUSES,
   TRIGGERS,
-} from '../automations.api';
-import { AutomationDryRunDialog } from './AutomationDryRunDialog';
-import { AutomationVersionsDialog } from './AutomationVersionsDialog';
-import { ColdCallStatusCard } from './ColdCallStatusCard';
+} from '../automations.api.js';
+import { AutomationDryRunDialog } from './AutomationDryRunDialog.js';
+import { AutomationVersionsDialog } from './AutomationVersionsDialog.js';
+import { ColdCallStatusCard } from './ColdCallStatusCard.js';
 
 const inputClass =
   'w-full bg-surface-2 border border-line rounded-xl px-3 py-2 text-sm text-ink placeholder-ink-2 outline-none focus:border-brand transition-colors';
@@ -192,7 +192,7 @@ function AutomationForm({
         toast.success('Automação criada.');
       }
       onSaved();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setSaving(false);
@@ -436,7 +436,7 @@ export function Automations() {
     setError(null);
     try {
       setItems(await automationsApi.list());
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -454,7 +454,7 @@ export function Automations() {
       setItems((prev) => prev.map((a) => (a.id === item.id ? { ...a, enabled: !a.enabled } : a)));
       try {
         await automationsApi.update(item.id, { enabled: !item.enabled });
-      } catch (err) {
+      } catch (err: any) {
         setItems(anterior);
         toast.error((err as Error).message);
       }
@@ -478,7 +478,7 @@ export function Automations() {
         await automationsApi.remove(item.id);
         setItems((prev) => prev.filter((a) => a.id !== item.id));
         toast.success('Automação removida.');
-      } catch (err) {
+      } catch (err: any) {
         toast.error((err as Error).message);
       } finally {
         setBusyId(null);
@@ -512,7 +512,7 @@ export function Automations() {
         }.`,
       );
       void load();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setScanningStagnation(false);

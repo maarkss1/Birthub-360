@@ -13,8 +13,8 @@
 import { AlertTriangle, Check, Loader2, Plus } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useId, useState } from 'react';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 interface HubTask {
   id: string;
@@ -54,7 +54,7 @@ export function HubTaskWidget() {
       setTasks(result.tasks);
       setAssignees(result.assignees);
       setAssigneeId((current) => current || result.assignees[0]?.id || '');
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Falha ao carregar tarefas do Bitrix24.');
     } finally {
       setLoading(false);
@@ -77,7 +77,7 @@ export function HubTaskWidget() {
         done: !task.done,
       });
       setTasks(result.tasks);
-    } catch (err) {
+    } catch (err: any) {
       setTasks((prev) => prev.map((t) => (t.id === task.id ? { ...t, done: task.done } : t)));
       toast.error(err instanceof Error ? err.message : 'Falha ao atualizar tarefa no Bitrix24.');
     } finally {
@@ -96,7 +96,7 @@ export function HubTaskWidget() {
       });
       setTasks(result.tasks);
       setNewText('');
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao criar tarefa no Bitrix24.');
     } finally {
       setSubmitting(false);

@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { MODULE_KEYS } from '../module-catalog';
+import { MODULE_KEYS } from '../module-catalog.js';
 
 /**
  * Regressão para DOCBRAND-001: uma migração já renomeou `ModuleAccessGrant.moduleKey` para um

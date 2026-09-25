@@ -217,7 +217,7 @@ async function findEntityCheckpoint(
       select: { id: true, filters: true, progress: true },
     });
     candidates = rows ?? [];
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId, connectionId, entity },
       '[bitrix] Falha ao buscar checkpoint incremental anterior — seguindo com full-scan do período pedido',
@@ -447,7 +447,7 @@ export async function executeExtractionRun(organizationId: string, runId: string
       { from: filters.customFrom, to: filters.customTo },
       runNow,
     );
-  } catch (err) {
+  } catch (err: any) {
     await failRun(organizationId, runId, err instanceof Error ? err.message : String(err), 'run');
     return;
   }
@@ -456,7 +456,7 @@ export async function executeExtractionRun(organizationId: string, runId: string
   try {
     if (!run.connectionId) throw new AppError('Extração sem conexão Bitrix24 associada.', 400);
     webhookUrl = await getConnectionWebhookUrl(organizationId, run.connectionId);
-  } catch (err) {
+  } catch (err: any) {
     await failRun(organizationId, runId, err instanceof Error ? err.message : String(err), 'run');
     return;
   }
@@ -563,7 +563,7 @@ export async function executeExtractionRun(organizationId: string, runId: string
         wasCancelled = true;
         break;
       }
-    } catch (err) {
+    } catch (err: any) {
       entry.status = 'error';
       entry.error = err instanceof Error ? err.message : String(err);
       await persistProgress(organizationId, runId, progressEntities, totalCount, countByEntity);
@@ -614,7 +614,7 @@ export async function executeExtractionRun(organizationId: string, runId: string
         '[bitrix] Extração concluída',
       );
     }
-  } catch (err) {
+  } catch (err: any) {
     await failRun(organizationId, runId, err instanceof Error ? err.message : String(err), 'run');
   }
 }
@@ -649,7 +649,7 @@ export async function createExtractionRun(
       from: input.filters.customFrom,
       to: input.filters.customTo,
     });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof InvalidExtractionPeriodError) throw new AppError(err.message, 400);
     throw err;
   }

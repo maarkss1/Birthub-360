@@ -178,7 +178,7 @@ export function LdrAccountIntelligence() {
       const result = payload as LdrResponse;
       setAccount(result.data);
       setDataset(result.dataset);
-    } catch (reason) {
+    } catch (reason: any) {
       setError(reason instanceof Error ? reason.message : 'Falha ao montar Account Intelligence.');
     } finally {
       setLoading(false);

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { api } from '../../../../lib/api';
+import { api } from '../../../../lib/api.js';
 
 export interface WhatsAppConversationDto {
   phoneE164: string;
@@ -35,7 +35,7 @@ export function useWhatsAppConversations(connected: boolean) {
         if (cancelled) return;
         setConversations(data);
         setError(null);
-      } catch (err) {
+      } catch (err: any) {
         // Só reporta erro na carga inicial — uma falha de poll em segundo plano não deve
         // apagar/interromper a lista já carregada com sucesso antes (mesma decisão de
         // useWhatsAppMessages). Sem isso, uma falha real (401/500) fica indistinguível de

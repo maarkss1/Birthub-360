@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Test connection doc for initial boot validation
+    match /test/connection {
+      allow read: if true;
+      allow write: if false;
+    }
+
+    // User profile document
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && isValidId(userId)
+        && incoming().keys().hasAll(['uid', 'email', 'createdAt'])
+        && incoming().uid == request.auth.uid
+        && incoming().email is string && incoming().email.size() <= 256;
+      allow update: if isOwner(userId) && isValidId(userId)
+        && incoming().uid == request.auth.uid
+        && incoming().email == existing().email
+        && incoming().createdAt == existing().createdAt;
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Projects subcollection
+      match /projects/{projectId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(projectId)
+          && incoming().keys().hasAll(['id', 'ownerId', 'name', 'filesJson', 'createdAt', 'updatedAt'])
+          && incoming().ownerId == request.auth.uid
+          && incoming().name is string && incoming().name.size() <= 120;
+        allow update: if isOwner(userId) && isValidId(projectId)
+          && incoming().ownerId == request.auth.uid
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(projectId);
+      }
+
+      // AI Creations subcollection (Music, Images, Videos, Grounded Search, Grounded Maps, Transcripts)
+      match /ai_creations/{creationId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(creationId)
+          && incoming().keys().hasAll(['id', 'ownerId', 'type', 'title', 'prompt', 'model', 'createdAt'])
+          && incoming().ownerId == request.auth.uid
+          && incoming().title is string && incoming().title.size() <= 250
+          && incoming().prompt is string && incoming().prompt.size() <= 4000;
+        allow update: if isOwner(userId) && isValidId(creationId)
+          && incoming().ownerId == request.auth.uid
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(creationId);
+      }
+
+      // Chat sessions subcollection
+      match /chat_sessions/{sessionId} {
+        allow get, list: if isOwner(userId);
+        allow create: if isOwner(userId) && isValidId(sessionId)
+          && incoming().keys().hasAll(['id', 'ownerId', 'title', 'role', 'model', 'messagesJson', 'createdAt', 'updatedAt'])
+          && incoming().ownerId == request.auth.uid
+          && incoming().title is string && incoming().title.size() <= 200;
+        allow update: if isOwner(userId) && isValidId(sessionId)
+          && incoming().ownerId == request.auth.uid
+          && incoming().ownerId == existing().ownerId
+          && incoming().createdAt == existing().createdAt;
+        allow delete: if isOwner(userId) && isValidId(sessionId);
+      }
+    }
+  }
+}

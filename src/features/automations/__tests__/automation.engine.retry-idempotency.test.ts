@@ -65,8 +65,8 @@ vi.mock('@/lib/queue/redis', () => ({
   },
 }));
 
-import type { AutomationEvent } from '../automation.engine';
-import { automationEngine } from '../automation.engine';
+import type { AutomationEvent } from '../automation.engine.js';
+import { automationEngine } from '../automation.engine.js';
 
 function makeAutomation(overrides: Record<string, unknown> = {}) {
   return {

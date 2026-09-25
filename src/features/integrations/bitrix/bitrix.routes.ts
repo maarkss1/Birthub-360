@@ -77,7 +77,7 @@ router.get(
       const { organizationId } = (req as AuthRequest).user;
       const result = await listBitrixConnections(organizationId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -95,7 +95,7 @@ router.post(
       const { webhookUrl, label } = req.body;
       const result = await connectBitrix(organizationId, webhookUrl, label);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -112,7 +112,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -126,7 +126,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnectBitrix(organizationId, routeParam(req.params.connectionId, 'connectionId'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -145,7 +145,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -168,7 +168,7 @@ router.put(
         enabled,
       );
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -219,7 +219,7 @@ router.get('/leads', async (req: Request, res: Response, next: NextFunction): Pr
       customFieldValue: req.query.customFieldValue ? String(req.query.customFieldValue) : undefined,
     });
     res.json({ success: true, data: result, meta: { restricted: scope.restricted } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -260,7 +260,7 @@ router.post(
         scope.restricted ? scope.assignedById : undefined,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -277,7 +277,7 @@ router.get(
       if (!connectionId) return;
       const result = await getDealPipelines(organizationId, connectionId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -297,7 +297,7 @@ router.get(
       }
       const result = await getDealStages(organizationId, connectionId, categoryId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -312,7 +312,7 @@ router.get(
       if (!connectionId) return;
       const result = await getLeadStatuses(organizationId, connectionId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -325,7 +325,7 @@ router.get('/users', async (req: Request, res: Response, next: NextFunction): Pr
     if (!connectionId) return;
     const result = await getBitrixUsers(organizationId, connectionId);
     res.json({ success: true, data: result });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -342,7 +342,7 @@ router.get('/fields', async (req: Request, res: Response, next: NextFunction): P
     const webhookUrl = await getConnectionWebhookUrl(organizationId, connectionId);
     const result = await getEntityFields(webhookUrl, entity);
     res.json({ success: true, data: result });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -387,7 +387,7 @@ router.get('/deals', async (req: Request, res: Response, next: NextFunction): Pr
       customFieldValue: req.query.customFieldValue ? String(req.query.customFieldValue) : undefined,
     });
     res.json({ success: true, data: result, meta: { restricted: scope.restricted } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -428,7 +428,7 @@ router.post(
         scope.restricted ? scope.assignedById : undefined,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -455,7 +455,7 @@ router.post(
         comment.trim(),
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -483,7 +483,7 @@ router.post(
         },
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -523,7 +523,7 @@ router.post(
         typeof connectionId === 'string' ? connectionId : undefined,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -540,7 +540,7 @@ router.get(
       if (!connectionId) return;
       const result = await listSyncRules(organizationId, connectionId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -600,7 +600,7 @@ router.post(
         assignedById: scope.assignedById ?? null,
       });
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -623,7 +623,7 @@ router.put(
         active,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -637,7 +637,7 @@ router.delete(
       const { organizationId } = (req as AuthRequest).user;
       await deleteSyncRule(organizationId, routeParam(req.params.id, 'id'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -655,7 +655,7 @@ router.get('/sync-logs', async (req: Request, res: Response, next: NextFunction)
     const take = req.query.take ? Number(req.query.take) : undefined;
     const result = await listRecentBitrixSyncLogs(organizationId, take);
     res.json({ success: true, data: result });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -676,7 +676,7 @@ router.get(
       const take = req.query.take ? Number(req.query.take) : undefined;
       const result = await listExtractionRuns(organizationId, take);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -726,7 +726,7 @@ router.post(
         },
       });
       res.status(201).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -740,7 +740,7 @@ router.get(
       const { organizationId } = (req as AuthRequest).user;
       const result = await getExtractionRun(organizationId, routeParam(req.params.id, 'id'));
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -754,7 +754,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await cancelExtractionRun(organizationId, routeParam(req.params.id, 'id'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -768,7 +768,7 @@ router.delete(
       const { organizationId } = (req as AuthRequest).user;
       await deleteExtractionRun(organizationId, routeParam(req.params.id, 'id'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -797,7 +797,7 @@ router.get(
       res.setHeader('Content-Type', contentType);
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(buffer);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

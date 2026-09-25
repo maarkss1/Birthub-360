@@ -9,20 +9,20 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { Textarea } from '../../../components/ui/Textarea';
-import { useAuth } from '../../../contexts/AuthContext';
-import { api } from '../../../lib/api';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { clientLogger } from '../../../lib/clientLogger';
+} from '../../../components/ui/Card.js';
+import { Textarea } from '../../../components/ui/Textarea.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { api } from '../../../lib/api.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
 
 // Consome só `/api/memory/**` (feature job-roles, dono do PROMPT 9) via HTTP — nunca importa
 // nenhum módulo de `src/features/job-roles/**` diretamente (proibido por
@@ -154,7 +154,7 @@ export function MemoryGovernancePanel() {
         '/api/memory/candidates?status=PROPOSED',
       );
       setCandidates(res.candidates || []);
-    } catch (err) {
+    } catch (err: any) {
       setCandidateError(
         err instanceof Error ? err.message : 'Erro ao carregar candidatos de memória.',
       );
@@ -186,7 +186,7 @@ export function MemoryGovernancePanel() {
         return next;
       });
       await loadCandidates();
-    } catch (err) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : 'Erro ao aprovar memória.';
       const conflictId = extractConflictMemoryId(message);
       if (conflictId) {
@@ -207,7 +207,7 @@ export function MemoryGovernancePanel() {
         notes: notesByCandidate[candidate.id]?.trim() || undefined,
       });
       await loadCandidates();
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Error rejecting learning candidate');
       setCandidateError(err instanceof Error ? err.message : 'Erro ao rejeitar memória.');
     } finally {
@@ -239,7 +239,7 @@ export function MemoryGovernancePanel() {
       setNewCandidate(EMPTY_NEW_CANDIDATE);
       setShowNewForm(false);
       await loadCandidates();
-    } catch (err) {
+    } catch (err: any) {
       setNewCandidateError(
         err instanceof Error ? err.message : 'Erro ao propor candidato de memória.',
       );
@@ -264,7 +264,7 @@ export function MemoryGovernancePanel() {
             : `/api/memory/role/${encodeURIComponent(codeInput.trim())}`;
       const res = await api.get<{ memory: MemoryRecordDto[] }>(path);
       setRecords(res.memory || []);
-    } catch (err) {
+    } catch (err: any) {
       setRecordsError(err instanceof Error ? err.message : 'Erro ao carregar memória ativa.');
     } finally {
       setLoadingRecords(false);
@@ -287,7 +287,7 @@ export function MemoryGovernancePanel() {
     try {
       await api.post(`/api/memory/${scopePath}/${record.id}/rollback`, { reason });
       await loadRecords();
-    } catch (err) {
+    } catch (err: any) {
       setRecordsError(err instanceof Error ? err.message : 'Erro ao revogar memória.');
     }
   };

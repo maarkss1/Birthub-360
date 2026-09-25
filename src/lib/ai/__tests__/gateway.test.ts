@@ -30,7 +30,7 @@ import {
   generateEmbedding,
   getAiModel,
   toChatCompletionMessages,
-} from '../gateway';
+} from '../gateway.js';
 
 const originalEnv = {
   GROQ_API_KEY: process.env.GROQ_API_KEY,

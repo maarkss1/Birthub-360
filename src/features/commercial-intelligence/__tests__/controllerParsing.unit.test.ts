@@ -1,11 +1,11 @@
 import type { Request } from 'express';
 import { describe, expect, it } from 'vitest';
-import { currentPeriod } from '../application/CommercialIntelligenceUseCases';
+import { currentPeriod } from '../application/CommercialIntelligenceUseCases.js';
 import {
   parseFilter,
   parseMonth,
   parseOwner,
-} from '../presentation/CommercialIntelligenceController';
+} from '../presentation/CommercialIntelligenceController.js';
 
 describe('CommercialIntelligenceController — parsing de input de query string', () => {
   describe('parseMonth', () => {

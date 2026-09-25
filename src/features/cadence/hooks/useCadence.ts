@@ -5,8 +5,8 @@ import {
   type CadenceRunStatus,
   type CadenceSequenceDTO,
   type OptOutRecordDTO,
-} from '../cadence.api';
-import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates';
+} from '../cadence.api.js';
+import type { CadenceJourneyTemplate } from '../domain/cadenceTemplates.js';
 
 export function useOptOuts() {
   return useQuery<OptOutRecordDTO[]>({

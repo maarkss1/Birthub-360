@@ -3,7 +3,7 @@ import type {
   AutomationVersionInput,
   AutomationVersionRecord,
   AutomationVersionStore,
-} from '../domain/AutomationVersion';
+} from '../domain/AutomationVersion.js';
 
 /**
  * Implementação em memória de `AutomationVersionStore` — mantida hoje só para testes.

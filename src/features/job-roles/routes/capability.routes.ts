@@ -19,7 +19,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const activeOnly = req.query.activeOnly !== 'false';
     const capabilities = await listCapabilityDefinitions({ activeOnly });
     res.json({ success: true, data: { capabilities } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -55,7 +55,7 @@ router.post(
         resource,
       });
       res.json({ success: true, data: { decision } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -69,7 +69,7 @@ router.get('/:code', async (req: Request, res: Response, next: NextFunction): Pr
       return;
     }
     res.json({ success: true, data: { capability } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

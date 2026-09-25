@@ -10,24 +10,24 @@ import {
   Wand2,
 } from 'lucide-react';
 import { useState } from 'react';
-import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon';
-import { BRAND } from '../../../../../config/brand';
-import { api } from '../../../../../lib/api';
+import { LinkedinIcon as Linkedin } from '../../../../../components/ui/icons/LinkedinIcon.js';
+import { BRAND } from '../../../../../config/brand.js';
+import { api } from '../../../../../lib/api.js';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
   BIRTHHUB360_SEGMENTO_OPTIONS,
-} from '../../../../../shared/constants/icp-options';
+} from '../../../../../shared/constants/icp-options.js';
 import type {
   DecisionMaker,
   ProspectCandidate,
   ProspectCriteria,
-} from '../../../services/prospecting.service';
-import { normalizeCompanyDomain } from '../../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
-import { CandidateCard } from '../CandidateCard';
-import { NotConfiguredBanner } from './NotConfiguredBanner';
-import { getErrorMessage, type PromoteResult } from './shared';
+} from '../../../services/prospecting.service.js';
+import { normalizeCompanyDomain } from '../../../utils/domain.js';
+import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin.js';
+import { CandidateCard } from '../CandidateCard.js';
+import { NotConfiguredBanner } from './NotConfiguredBanner.js';
+import { getErrorMessage, type PromoteResult } from './shared.js';
 
 type SubTab = 'empresas' | 'decisores';
 
@@ -83,7 +83,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
       setCompanyTotal(result.candidates.length);
       setCompaniesWithLinkedin(result.candidates.filter((c) => !!c.linkedinUrl));
       if (result.error) setCompanyError(result.error);
-    } catch (err) {
+    } catch (err: any) {
       setCompanyError(getErrorMessage(err, 'Falha ao buscar empresas na Apollo'));
     } finally {
       setIsSearchingCompanies(false);
@@ -115,7 +115,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         ),
       );
       if (result.error) setPeopleError(result.error);
-    } catch (err) {
+    } catch (err: any) {
       setPeopleError(getErrorMessage(err, 'Falha ao buscar decisores'));
     } finally {
       setIsSearchingPeople(false);
@@ -151,7 +151,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         decisionMakers: candidate.decisionMakers,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setCompanyError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);
@@ -171,7 +171,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         contact: { name: dm.name, role: dm.title || undefined },
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setPeopleError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);
@@ -190,7 +190,7 @@ export function LinkedInTool({ configured }: { configured: boolean }) {
         contact: { name: manualName, role: manualTitle || undefined },
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setPeopleError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

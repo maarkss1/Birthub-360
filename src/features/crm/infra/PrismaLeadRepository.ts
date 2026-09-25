@@ -7,12 +7,12 @@ import {
   fromPrismaLeadStatus,
   isLeadClosingStatus,
   toPrismaLeadStatus,
-} from '../../../lib/enumMap';
-import { prisma } from '../../../lib/prisma';
+} from '../../../lib/enumMap.js';
+import { prisma } from '../../../lib/prisma.js';
 import { searchLeadIds } from '../../../lib/search/index.js';
-import type { LeadStatus } from '../../../lib/zod';
+import type { LeadStatus } from '../../../lib/zod.js';
 import { recordLeadFieldChanges } from '../../../shared/services/leadFieldChangeHistory.service.js';
-import type { Lead, LeadRepository } from '../domain/Lead';
+import type { Lead, LeadRepository } from '../domain/Lead.js';
 
 /**
  * CRM-011 (`docs/audits/repository-debt-audit/agents/CRM.md`): `Lead.status` (o enum `LeadStatus`

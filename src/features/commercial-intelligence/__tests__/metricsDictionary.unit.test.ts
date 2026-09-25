@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { METRICS_DICTIONARY } from '../application/metricsDictionary';
+import { METRICS_DICTIONARY } from '../application/metricsDictionary.js';
 
 describe('metricsDictionary — fonte única de verdade de fórmula/origem/limitação de cada KPI', () => {
   it('toda métrica tem os campos obrigatórios preenchidos (key, name, description, formula, source)', () => {

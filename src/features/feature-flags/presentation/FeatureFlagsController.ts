@@ -14,7 +14,7 @@ export class FeatureFlagsController {
       const { organizationId } = (req as AuthRequest).user;
       const flags = await this.featureFlagsUseCases.listResolvedForOrganization(organizationId);
       res.json({ success: true, data: flags });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -40,7 +40,7 @@ export class FeatureFlagsController {
         userId,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -56,7 +56,7 @@ export class FeatureFlagsController {
         key,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

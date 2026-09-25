@@ -1,6 +1,6 @@
 import { Minus, TrendingDown, TrendingUp } from 'lucide-react';
 import { useMemo } from 'react';
-import { Card } from '../../../components/ui/Card';
+import { Card } from '../../../components/ui/Card.js';
 import {
   buildForecastRange,
   computeTrendMomentum,
@@ -8,7 +8,7 @@ import {
   formatCurrency,
   type HistoricalTrendsReport,
   type TrendDirection,
-} from '../commercialIntelligence.api';
+} from '../commercialIntelligence.api.js';
 
 /**
  * Previsor — Faixa de Cenário. Não é um segundo modelo estatístico: os 3 números são a mesma

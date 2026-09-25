@@ -1,3 +1,5 @@
+> **[ARCHIVED / NOT ACTIVE]** Esta arquitetura est depreciada. A nica fonte de verdade cannica atual  docs/operations/PRODUCTION_ARCHITECTURE.md. 
+
 # Ativação do worker dedicado (`prospector-atlas-worker`) no Render
 
 > [!WARNING]
@@ -130,3 +132,4 @@ Assim que o serviço `prospector-atlas-worker` estiver rodando de verdade em pro
 3. Atualizar `.agents/handoffs/onda-6/16-para-08-deploy-worker-service.md` e
    `.agents/handoffs/onda-6/16-para-10-observabilidade-worker.md` de `em-andamento` para
    `resolvido`, com a data e quem confirmou a ativação real no Render.
+

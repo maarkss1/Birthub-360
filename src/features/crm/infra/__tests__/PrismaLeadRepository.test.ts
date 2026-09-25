@@ -22,7 +22,7 @@ vi.mock('../../../../shared/services/leadStageHistory.service.js', () => ({
   recordStageTransition: recordStageTransitionMock,
 }));
 
-const { PrismaLeadRepository } = await import('../PrismaLeadRepository');
+const { PrismaLeadRepository } = await import('../PrismaLeadRepository.js');
 
 afterEach(() => {
   vi.clearAllMocks();

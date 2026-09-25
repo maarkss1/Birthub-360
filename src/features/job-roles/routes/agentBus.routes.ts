@@ -75,7 +75,7 @@ router.post(
         ...body,
       });
       res.status(201).json({ success: true, data: { handoff } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -92,7 +92,7 @@ router.get('/pending', async (req: Request, res: Response, next: NextFunction): 
       authReq.user.role,
     );
     res.json({ success: true, data: { handoffs } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -107,7 +107,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const { missionId } = missionQuerySchema.parse({ missionId: req.query.missionId });
     const handoffs = await listHandoffsForMission(authReq.user.organizationId, missionId);
     res.json({ success: true, data: { handoffs } });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof z.ZodError) {
       res.status(400).json({ success: false, error: 'missionId é obrigatório na query.' });
       return;
@@ -121,7 +121,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     const authReq = req as AuthRequest;
     const handoff = await getHandoff(authReq.user.organizationId, routeParam(req.params.id, 'id'));
     res.json({ success: true, data: { handoff } });
-  } catch (error) {
+  } catch (error: any) {
     handleServiceError(error, next, res);
   }
 });
@@ -140,7 +140,7 @@ router.post(
         handoffId: routeParam(req.params.id, 'id'),
       });
       res.json({ success: true, data: { handoff } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -169,7 +169,7 @@ router.post(
         confidence,
       });
       res.json({ success: true, data: { handoff } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -198,7 +198,7 @@ router.post(
         outcome,
       });
       res.json({ success: true, data: { handoff } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },
@@ -218,7 +218,7 @@ router.post(
         handoffId: routeParam(req.params.id, 'id'),
       });
       res.json({ success: true, data: { handoff } });
-    } catch (error) {
+    } catch (error: any) {
       handleServiceError(error, next, res);
     }
   },

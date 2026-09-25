@@ -1,11 +1,11 @@
 import { LogOut, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization';
-import { BirthHubLogo } from '../brand/BirthHubLogo';
-import { SoundFX } from '../../lib/soundEffects';
-import { TAB_META, type TabType } from './tabMeta';
+import { useAuth } from '../../contexts/AuthContext.js';
+import { hasRequiredRole, MESA_TRATAMENTO_ROLES } from '../../lib/auth/authorization.js';
+import { BirthHubLogo } from '../brand/BirthHubLogo.js';
+import { SoundFX } from '../../lib/soundEffects.js';
+import { TAB_META, type TabType } from './tabMeta.js';
 
 const SIDEBAR_COLLAPSED_KEY = '@birthhub:futuristic-sidebar-collapsed';
 

@@ -9,7 +9,7 @@ vi.mock('../../../../lib/ai/vectorStore.js', () => ({
   vectorStore: { similaritySearch: (...args: unknown[]) => similaritySearchMock(...args) },
 }));
 
-import { searchPlaybookTool } from '../playbookTool';
+import { searchPlaybookTool } from '../playbookTool.js';
 
 beforeEach(() => {
   similaritySearchMock.mockReset();

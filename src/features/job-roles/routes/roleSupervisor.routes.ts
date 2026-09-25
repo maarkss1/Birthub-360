@@ -41,7 +41,7 @@ router.post(
       res
         .status(noJobRoleContext ? 409 : 200)
         .json({ success: !noJobRoleContext, data: { supervisorRun: result } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

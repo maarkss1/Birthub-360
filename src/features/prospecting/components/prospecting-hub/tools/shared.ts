@@ -1,4 +1,4 @@
-import type { FitScoreResult } from '../../../services/enrichment.service';
+import type { FitScoreResult } from '../../../services/enrichment.service.js';
 
 export interface PromoteResult {
   lead: { id: string };

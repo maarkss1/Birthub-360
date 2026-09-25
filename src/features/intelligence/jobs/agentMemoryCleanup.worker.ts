@@ -76,7 +76,7 @@ export async function runAgentMemoryCleanupSweep(): Promise<AgentMemoryCleanupRe
         }),
       );
       deletedCount += result.count;
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, organizationId: org.id },
         'Falha ao expurgar AgentMemory desta organização',

@@ -1,6 +1,6 @@
 import { Sparkles } from 'lucide-react';
-import { cn } from '../../../lib/utils';
-import { BentoCard, type BentoCardProps } from './BentoCard';
+import { cn } from '../../../lib/utils.js';
+import { BentoCard, type BentoCardProps } from './BentoCard.js';
 
 export interface BentoInsightProps extends BentoCardProps {
   category?: string;

@@ -225,7 +225,7 @@ export async function runStagnationScan(): Promise<StagnationScanResult> {
               });
               fired += executed;
             }
-          } catch (err) {
+          } catch (err: any) {
             orgFailures++;
             logger.error(
               { err, runId, organizationId, automationId: automation.id },
@@ -250,7 +250,7 @@ export async function runStagnationScan(): Promise<StagnationScanResult> {
       'Stagnation scan concluída.',
     );
     return { runId, automationsEvaluated, leadsScanned, fired, failures };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, runId }, 'Stagnation scan falhou.');
     return { runId, automationsEvaluated, leadsScanned, fired, failures: failures + 1 };
   } finally {

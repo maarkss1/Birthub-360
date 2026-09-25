@@ -3,7 +3,7 @@ import {
   HIRING_SIMULATION_WINDOW_DAYS,
   NEW_REP_RAMP_UP_DAYS,
   simulateHiringScenario,
-} from '../application/hiringScenarioSimulator';
+} from '../application/hiringScenarioSimulator.js';
 
 describe('hiringScenarioSimulator.simulateHiringScenario — honestidade sobre ausência de dado', () => {
   it('número de vendedores adicionais inválido (<= 0): available=false', () => {

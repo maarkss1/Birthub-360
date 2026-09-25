@@ -1,17 +1,17 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge';
-import { BugReportButton } from '../ui/BugReportButton';
-import { CommandPalette } from '../ui/CommandPalette';
-import { CopilotTrigger } from '../ui/CopilotTrigger';
-import { Toaster } from '../ui/Toaster';
-import { VoiceCommandWidget } from '../ui/VoiceCommandWidget';
-import { AppTopbar } from './AppTopbar';
-import { FloatingDock } from './FloatingDock';
-import { OfflineBanner } from './OfflineBanner';
-import { PageTransition } from './PageTransition';
-import { FuturisticSidebar } from './FuturisticSidebar';
-import type { TabType } from './tabMeta';
+import { useNavigationBusBridge } from '../../hooks/useNavigationBusBridge.js';
+import { BugReportButton } from '../ui/BugReportButton.js';
+import { CommandPalette } from '../ui/CommandPalette.js';
+import { CopilotTrigger } from '../ui/CopilotTrigger.js';
+import { Toaster } from '../ui/Toaster.js';
+import { VoiceCommandWidget } from '../ui/VoiceCommandWidget.js';
+import { AppTopbar } from './AppTopbar.js';
+import { FloatingDock } from './FloatingDock.js';
+import { OfflineBanner } from './OfflineBanner.js';
+import { PageTransition } from './PageTransition.js';
+import { FuturisticSidebar } from './FuturisticSidebar.js';
+import type { TabType } from './tabMeta.js';
 
 interface FuturisticLayoutProps {
   children: ReactNode;

@@ -78,7 +78,7 @@ export async function getMonthCostUsd(): Promise<number> {
   try {
     const cached = await cacheConnection.get(CACHE_KEY);
     if (cached !== null) return Number(cached);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err },
       '[AI Budget] Redis indisponível ao ler cache, recalculando direto do Postgres',
@@ -91,7 +91,7 @@ export async function getMonthCostUsd(): Promise<number> {
   let fresh: number;
   try {
     fresh = await computeMonthCostUsd();
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err },
       '[AI Budget] Falha ao calcular custo do mês (Postgres indisponível) — tratando como custo desconhecido, não como orçamento excedido',
@@ -102,7 +102,7 @@ export async function getMonthCostUsd(): Promise<number> {
   localCacheFallback = { value: fresh, expiresAt: now + CACHE_TTL_SECONDS * 1000 };
   try {
     await cacheConnection.set(CACHE_KEY, fresh.toString(), 'EX', CACHE_TTL_SECONDS);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err },
       '[AI Budget] Redis indisponível ao gravar cache — fallback em memória local já cobre a janela',
@@ -179,7 +179,7 @@ async function getOrgMonthCostUsd(organizationId: string): Promise<number> {
   try {
     const cached = await cacheConnection.get(cacheKey);
     if (cached !== null) return Number(cached);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[AI Budget] Redis indisponível ao ler cache por organização, recalculando direto do Postgres',
@@ -193,7 +193,7 @@ async function getOrgMonthCostUsd(organizationId: string): Promise<number> {
   let fresh: number;
   try {
     fresh = await computeOrgMonthCostUsd(organizationId);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[AI Budget] Falha ao calcular custo do mês da organização (Postgres indisponível) — tratando como custo desconhecido, não como orçamento excedido',
@@ -204,7 +204,7 @@ async function getOrgMonthCostUsd(organizationId: string): Promise<number> {
   localOrgCostCache.set(cacheKey, { value: fresh, expiresAt: now + ORG_CACHE_TTL_SECONDS * 1000 });
   try {
     await cacheConnection.set(cacheKey, fresh.toString(), 'EX', ORG_CACHE_TTL_SECONDS);
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[AI Budget] Redis indisponível ao gravar cache por organização — fallback em memória local já cobre a janela',
@@ -223,7 +223,7 @@ async function getOrgAiBudgetUsd(organizationId: string): Promise<number | null>
       select: { monthlyAiBudgetUsd: true },
     });
     return org?.monthlyAiBudgetUsd ?? null;
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[AI Budget] Falha ao ler o teto mensal de IA da organização — tratando como sem teto configurado',

@@ -41,7 +41,7 @@ export const copywriterTool = tool(
       });
 
       return `Draft de email gerado com sucesso e salvo no histórico do Lead! Conteúdo gerado:\n\n${finalCopy}`;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, leadId: args.leadId }, 'Erro ao gerar copy do lead');
       return 'Erro ao tentar gerar o draft de email.';
     }

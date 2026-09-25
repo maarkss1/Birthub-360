@@ -4,7 +4,7 @@ import {
   getWhatsAppLink,
   validContactEmails,
   validContactPhones,
-} from '../contact-links';
+} from '../contact-links.js';
 
 describe('contact links', () => {
   it('gera links de telefone e WhatsApp para números brasileiros', () => {

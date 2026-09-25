@@ -63,7 +63,7 @@ import {
   ANONYMIZED_CONTACT_NAME,
   ANONYMIZED_TRANSCRIPT_SEGMENT_TEXT,
   eraseDataSubject,
-} from '@/shared/services/dataSubjectErasure.service';
+} from '@/shared/services/dataSubjectErasure.service.js';
 
 const ORG_ID = 'org-1';
 const CONTACT_ID = 'contact-1';

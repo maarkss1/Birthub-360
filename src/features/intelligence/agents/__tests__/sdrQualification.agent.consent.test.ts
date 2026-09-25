@@ -12,7 +12,7 @@ vi.mock('../../../../lib/logger.js', () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
 
-const { requestContext } = await import('../../../../lib/async-context');
+const { requestContext } = await import('../../../../lib/async-context.js');
 const { SDRQualificationAgent } = await import('../sdrQualification.agent');
 const { PiiConsentRequiredError } = await import('../../services/guardrails.service');
 

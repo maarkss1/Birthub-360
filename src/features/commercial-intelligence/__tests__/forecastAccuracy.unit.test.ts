@@ -3,8 +3,8 @@ import {
   computeForecastAccuracy,
   hasPeriodClosed,
   summarizeForecastAccuracy,
-} from '../application/forecastAccuracy';
-import type { ForecastSnapshotRecord } from '../domain/CommercialIntelligence';
+} from '../application/forecastAccuracy.js';
+import type { ForecastSnapshotRecord } from '../domain/CommercialIntelligence.js';
 
 const ORG = 'org-1';
 

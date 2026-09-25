@@ -1,9 +1,9 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, Award, Medal, Trophy, Users } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { fadeInUp, staggerContainer, staggerItem } from '../../../lib/motion';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { fadeInUp, staggerContainer, staggerItem } from '../../../lib/motion.js';
 
 interface RankingRow {
   label: string;

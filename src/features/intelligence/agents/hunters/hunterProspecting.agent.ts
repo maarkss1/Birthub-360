@@ -51,7 +51,7 @@ Retorne APENAS JSON VÁLIDO no seguinte formato:
 
       const companies = JSON.parse(cleanContent);
       return Array.isArray(companies) ? companies : [];
-    } catch (error) {
+    } catch (error: any) {
       console.warn(
         '[Hunter] Falha na captação passiva via AI/Reach. Retornando dados de fallback.',
         error,

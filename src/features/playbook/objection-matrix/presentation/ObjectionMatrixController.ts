@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../../shared/middlewares/authenticateToken';
-import type { ObjectionMatrixUseCases } from '../application/ObjectionMatrixUseCases';
-import { generateObjectionSuggestions } from '../application/objectionGenerator.service';
+import { routeParam } from '../../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../../shared/middlewares/authenticateToken.js';
+import type { ObjectionMatrixUseCases } from '../application/ObjectionMatrixUseCases.js';
+import { generateObjectionSuggestions } from '../application/objectionGenerator.service.js';
 
 export class ObjectionMatrixController {
   constructor(private useCases: ObjectionMatrixUseCases) {}
@@ -15,7 +15,7 @@ export class ObjectionMatrixController {
       const limit = parseInt(req.query.limit as string, 10) || 200;
       const result = await this.useCases.findItems(orgId, brand, page, limit);
       res.json({ success: true, data: result.data, meta: result.meta });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -36,7 +36,7 @@ export class ObjectionMatrixController {
         data: result.suggestions,
         meta: { emptyReason: result.emptyReason },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -46,7 +46,7 @@ export class ObjectionMatrixController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const item = await this.useCases.createItem(orgId, req.body);
       res.status(201).json({ success: true, data: item });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -56,7 +56,7 @@ export class ObjectionMatrixController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const item = await this.useCases.updateItem(orgId, routeParam(req.params.id, 'id'), req.body);
       res.json({ success: true, data: item });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -66,7 +66,7 @@ export class ObjectionMatrixController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.useCases.deleteItem(orgId, routeParam(req.params.id, 'id'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

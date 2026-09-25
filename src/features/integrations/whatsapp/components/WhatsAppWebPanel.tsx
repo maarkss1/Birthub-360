@@ -3,8 +3,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   useWhatsAppConversations,
   type WhatsAppConversationDto,
-} from '../hooks/useWhatsAppConversations';
-import { useWhatsAppMessages } from '../hooks/useWhatsAppMessages';
+} from '../hooks/useWhatsAppConversations.js';
+import { useWhatsAppMessages } from '../hooks/useWhatsAppMessages.js';
 
 /** +5511999998888 -> +55 11 99999-8888 (best effort — só formatação de exibição, nunca usado para
  * decidir se um número é válido). */

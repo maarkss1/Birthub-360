@@ -1,1 +1,1 @@
-export * from './BrandIcons';
+export * from './BrandIcons.js';

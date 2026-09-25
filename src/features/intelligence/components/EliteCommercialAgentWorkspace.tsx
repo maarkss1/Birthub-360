@@ -17,8 +17,8 @@ import {
   Award,
   Clock,
 } from 'lucide-react';
-import type { AgentCenterTrace, SellerWorkspaceOverview } from '../agents/triad/triad.types';
-import { CORE_AND_SPECIALIST_TAXONOMY } from '../agents/triad/agentGraphTaxonomy';
+import type { AgentCenterTrace, SellerWorkspaceOverview } from '../agents/triad/triad.types.js';
+import { CORE_AND_SPECIALIST_TAXONOMY } from '../agents/triad/agentGraphTaxonomy.js';
 
 export const EliteCommercialAgentWorkspace: React.FC = () => {
   const [overview, setOverview] = useState<SellerWorkspaceOverview | null>(null);

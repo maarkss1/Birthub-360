@@ -516,7 +516,7 @@ export async function runSwarmScheduler(
           const negotiatorProposed = await maybeProposeNegotiatorReply(candidate, organizationId);
           if (negotiatorProposed) result.negotiatorDraftsProposed++;
         }
-      } catch (error) {
+      } catch (error: any) {
         result.errors++;
         logger.error(
           { err: error, organizationId, leadId: candidate.leadId },

@@ -75,7 +75,7 @@ export abstract class AgentService {
         latencyMs: Date.now() - startTime,
       });
       return result.content;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, agentType: this.agentType }, 'LLM call failed');
       throw new Error(`Falha ao gerar mensagem pelo agente ${this.agentType}`, { cause: error });
     }

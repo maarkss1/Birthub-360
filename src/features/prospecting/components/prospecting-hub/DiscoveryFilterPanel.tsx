@@ -10,14 +10,14 @@ import {
   SlidersHorizontal,
   X,
 } from 'lucide-react';
-import { fadeIn } from '../../../../lib/motion';
+import { fadeIn } from '../../../../lib/motion.js';
 import {
   ESTADO_OPTIONS,
   PORTE_OPTIONS,
   QUANTIDADE_LEADS_OPTIONS,
   TECNOLOGIA_OPTIONS,
-} from '../../../../shared/constants/icp-options';
-import type { ProspectCriteria } from '../../services/prospecting.service';
+} from '../../../../shared/constants/icp-options.js';
+import type { ProspectCriteria } from '../../services/prospecting.service.js';
 
 type PersonaOption = {
   label: string;

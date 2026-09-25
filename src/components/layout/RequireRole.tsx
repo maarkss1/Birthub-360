@@ -1,7 +1,7 @@
 import { ShieldAlert } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { hasRequiredRole, type Role } from '../../lib/auth/authorization';
+import { useAuth } from '../../contexts/AuthContext.js';
+import { hasRequiredRole, type Role } from '../../lib/auth/authorization.js';
 
 interface RequireRoleProps {
   allowedRoles: Role[];

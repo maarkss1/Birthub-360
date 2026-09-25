@@ -36,7 +36,7 @@ export class BugReportController {
       });
 
       res.status(201).json({ success: true, data: { id: report.id, status: report.status } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -50,7 +50,7 @@ export class BugReportController {
       const status = typeof req.query.status === 'string' ? req.query.status : undefined;
       const reports = await this.bugReportUseCases.listBugReports(organizationId, status);
       res.json({ success: true, data: reports });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -75,7 +75,7 @@ export class BugReportController {
         status,
       );
       res.json({ success: true, data: updated });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

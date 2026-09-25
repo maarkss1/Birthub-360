@@ -88,7 +88,7 @@ export async function recordLeadFieldChanges(
         changedAt,
       })),
     });
-  } catch (error) {
+  } catch (error: any) {
     const { logger } = await import('../../lib/logger.js');
     logger.error({ err: error, leadId, organizationId }, 'Falha ao registrar LeadFieldChange');
   }

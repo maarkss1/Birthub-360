@@ -101,7 +101,7 @@ export async function resetProviderCacheForTests(): Promise<void> {
   try {
     const keys = await cacheConnection.keys(`${CACHE_KEY_PREFIX}*`);
     if (keys.length > 0) await cacheConnection.del(...keys);
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { err: error },
       'resetProviderCacheForTests: falha ao limpar o Redis — cache pode vazar entre testes',
@@ -120,7 +120,7 @@ export async function getCachedProviderResult<T>(key: string): Promise<T | undef
       const raw = await cacheConnection.get(key);
       if (raw == null) return undefined;
       return JSON.parse(raw) as T;
-    } catch (error) {
+    } catch (error: any) {
       // Redis flakiness nunca deve derrubar a chamada real ao provider — trata como cache
       // miss (mesma postura de outros usos de cacheConnection neste repo).
       logger.warn(
@@ -143,7 +143,7 @@ export async function setCachedProviderResult<T>(
     try {
       await cacheConnection.set(key, JSON.stringify(value), 'EX', ttlSeconds);
       return;
-    } catch (error) {
+    } catch (error: any) {
       logger.warn(
         { err: error, key },
         'providerCache: falha ao gravar no Redis — usando fallback em memória só para esta entrada',

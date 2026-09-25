@@ -20,23 +20,23 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Intelligence } from '../../../components/Intelligence';
-import { Button } from '../../../components/ui/Button';
-import { Card, CardDescription, CardTitle } from '../../../components/ui/Card';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../lib/motion';
-import { AIConfigCenter } from '../../dashboard/components/AIConfigCenter';
-import { type KnowledgeDocumentSummary, knowledgeApi } from '../../knowledge/knowledge.api';
-import { AgentQualityPanel } from './AgentQualityPanel';
-import { AIPendingActions } from './AIPendingActions';
-import { AISuiteHub } from './AISuiteHub';
-import { CopilotoIaHub } from '../../copiloto-ia/components/CopilotoIaHub';
-import { AutomationGuide } from './AutomationGuide';
-import { B2BGenerator } from './B2BGenerator';
-import { RobustScriptGenerator } from './RobustScriptGenerator';
-import { SalesMethodologyStudio } from './SalesMethodologyStudio';
-import { SuperagentCreator } from './SuperagentCreator';
-import { SwarmDashboard } from './SwarmDashboard';
+import { Intelligence } from '../../../components/Intelligence.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card, CardDescription, CardTitle } from '../../../components/ui/Card.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { fadeInUp, SPRING_SOFT, staggerContainer, staggerItem } from '../../../lib/motion.js';
+import { AIConfigCenter } from '../../dashboard/components/AIConfigCenter.js';
+import { type KnowledgeDocumentSummary, knowledgeApi } from '../../knowledge/knowledge.api.js';
+import { AgentQualityPanel } from './AgentQualityPanel.js';
+import { AIPendingActions } from './AIPendingActions.js';
+import { AISuiteHub } from './AISuiteHub.js';
+import { CopilotoIaHub } from '../../copiloto-ia/components/CopilotoIaHub.js';
+import { AutomationGuide } from './AutomationGuide.js';
+import { B2BGenerator } from './B2BGenerator.js';
+import { RobustScriptGenerator } from './RobustScriptGenerator.js';
+import { SalesMethodologyStudio } from './SalesMethodologyStudio.js';
+import { SuperagentCreator } from './SuperagentCreator.js';
+import { SwarmDashboard } from './SwarmDashboard.js';
 
 export type IntelligenceTab =
   | 'ai_suite'
@@ -186,7 +186,7 @@ export function IntelligenceHub({ initialTab }: IntelligenceHubProps) {
     setRagError(null);
     try {
       setRagDocuments(await knowledgeApi.list());
-    } catch (err) {
+    } catch (err: any) {
       setRagError((err as Error).message);
     } finally {
       setRagLoading(false);

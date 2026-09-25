@@ -21,7 +21,7 @@ const prismaMock = {
 vi.mock('../../../../lib/prisma', () => ({ prisma: prismaMock }));
 vi.mock('../../../../config/env', () => ({ env: { ENABLE_SEARCH: false } }));
 
-const { PrismaCompanyRepository } = await import('../PrismaCompanyRepository');
+const { PrismaCompanyRepository } = await import('../PrismaCompanyRepository.js');
 
 afterEach(() => {
   vi.clearAllMocks();

@@ -1,3 +1,5 @@
+> **[ARCHIVED / NOT ACTIVE]** Esta arquitetura est depreciada. A nica fonte de verdade cannica atual  docs/operations/PRODUCTION_ARCHITECTURE.md. 
+
 # k8s/ — status real
 
 Estes manifests Kubernetes avulsos (`api-deployment.yaml`, `postgres-statefulset.yaml`,
@@ -54,3 +56,4 @@ reaplicar a versão anterior do YAML (`git show <commit-anterior>:k8s/api-deploy
 apply -f -`) com a tag de imagem anterior. Para rollback real com histórico versionado, use o
 caminho Helm/ArgoCD (`charts/`, `argocd/`) — ver `infrastructure/observability/RUNBOOK.md` seção
 de rollback.
+

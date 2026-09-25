@@ -192,7 +192,7 @@ Responda com um array JSON, na MESMA ORDEM das conversas recebidas, um item por 
       }
     });
     return candidates;
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId },
       'Falha ao analisar tom/concorrente das conversas recentes.',
@@ -290,7 +290,7 @@ export async function detectDealRisks(
       }
       await notifyManagers(organizationId, candidate);
       result.alertsCreated++;
-    } catch (error) {
+    } catch (error: any) {
       result.errors++;
       logger.error(
         { err: error, organizationId, leadId: candidate.leadId, reason: candidate.reason },

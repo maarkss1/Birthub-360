@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { Lead } from '../../domain/Lead';
+import type { Lead } from '../../domain/Lead.js';
 
 /**
  * `exportLeadsCsv` é o formato que alimenta a importação/atualização manual no Bitrix24 — o
@@ -11,7 +11,7 @@ vi.mock('../../../../lib/logger.js', () => ({
   logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn() },
 }));
 
-const { LeadUseCases } = await import('../LeadUseCases');
+const { LeadUseCases } = await import('../LeadUseCases.js');
 
 function makeLead(overrides: Record<string, unknown> = {}): Lead {
   return {

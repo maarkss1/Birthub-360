@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface ThreeCXConnection {
   id: string;
@@ -25,7 +25,7 @@ export function use3CXIntegration() {
       if (data.success) {
         setThreecxConnections(data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch 3CX connections');
     }
   }, []);
@@ -60,7 +60,7 @@ export function use3CXIntegration() {
       setThreecxExtensionInput('');
       setThreecxLabelInput('');
       fetchThreeCXConnections();
-    } catch (error) {
+    } catch (error: any) {
       toast.error((error as Error).message);
     } finally {
       setThreecxLoading(false);

@@ -3,8 +3,8 @@ import type {
   SellerPerformancePeriod,
   SellerPerformanceRawMetrics,
   SellerPerformanceRepository,
-} from '../../domain/SellerPerformance';
-import { SellerPerformanceAggregatorService } from '../sellerPerformanceAggregator.service';
+} from '../../domain/SellerPerformance.js';
+import { SellerPerformanceAggregatorService } from '../sellerPerformanceAggregator.service.js';
 
 const ORG = 'org-1';
 const OWNER = 'owner-1';

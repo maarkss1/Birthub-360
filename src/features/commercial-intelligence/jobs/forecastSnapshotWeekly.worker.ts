@@ -75,7 +75,7 @@ export async function runForecastSnapshotWeeklyJob(
         await store.save(record);
       });
       results.push({ organizationId, status: 'saved' });
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, organizationId, period },
         'Falha ao calcular/gravar snapshot de forecast desta organização',

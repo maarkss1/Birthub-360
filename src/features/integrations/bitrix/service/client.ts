@@ -69,7 +69,7 @@ export async function testWebhook(webhookUrl: string): Promise<{ portalDomain: s
   let response: Response;
   try {
     response = await safeFetch(`${webhookUrl}profile.json`, { signal: controller.signal });
-  } catch (error) {
+  } catch (error: any) {
     // Erro do guard de SSRF (URL/host reprovado por `safeFetch`) já vem com a mensagem certa —
     // não reescreve para o genérico de falha de rede abaixo.
     if (error instanceof AppError) throw error;
@@ -172,7 +172,7 @@ async function attemptBitrixCall<T>(
       body: JSON.stringify(params || {}),
       signal: controller.signal,
     });
-  } catch (err) {
+  } catch (err: any) {
     clearTimeout(timeout);
     // Erro do guard de SSRF nunca é transiente/retentável — propaga cru (fora do contrato de
     // `TransientBitrixError`/`BitrixDefinitiveError`, `callBitrix` já trata isso como erro
@@ -374,7 +374,7 @@ export async function callBitrix<T>(
       const result = await attemptBitrixCall<T>(webhookUrl, method, params, correlationId);
       if (CIRCUIT_BREAKER_ENABLED) recordCircuitSuccess(webhookUrl);
       return result;
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof BitrixDefinitiveError) {
         logger.warn(
           { correlationId, method, statusCode: err.statusCode, attempt },

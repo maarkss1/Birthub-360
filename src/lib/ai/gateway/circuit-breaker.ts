@@ -45,7 +45,7 @@ export async function isCircuitOpen(provider: string): Promise<boolean> {
   try {
     const open = await cacheConnection.exists(`${CIRCUIT_KEY_PREFIX}:${provider}:open`);
     return open === 1;
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, provider },
       'Circuit breaker: Redis indisponível, usando estado local desta instância',
@@ -62,7 +62,7 @@ export async function recordCircuitSuccess(provider: string): Promise<void> {
       `${CIRCUIT_KEY_PREFIX}:${provider}:failures`,
       `${CIRCUIT_KEY_PREFIX}:${provider}:open`,
     );
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, provider },
       'Circuit breaker: falha ao limpar estado no Redis (fallback local já limpo)',
@@ -85,7 +85,7 @@ export async function recordCircuitFailure(provider: string): Promise<void> {
         CIRCUIT_COOLDOWN_MS,
       );
     }
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, provider },
       'Circuit breaker: Redis indisponível, contando falha só localmente',
@@ -116,7 +116,7 @@ export async function callProvider<T>(provider: string, fn: () => Promise<T>): P
     const result = await withRetry(fn, MAX_ATTEMPTS_PER_LEG - 1, RETRY_BASE_DELAY_MS);
     await recordCircuitSuccess(provider);
     return result;
-  } catch (error) {
+  } catch (error: any) {
     await recordCircuitFailure(provider);
     throw error;
   }

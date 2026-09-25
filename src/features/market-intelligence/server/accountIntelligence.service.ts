@@ -566,7 +566,7 @@ export class AccountIntelligenceService implements AccountIntelligenceServiceCon
           },
           { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
         );
-      } catch (error) {
+      } catch (error: any) {
         if (!isUniqueOrSerializationConflict(error) || attempt === 1) throw error;
       }
     }

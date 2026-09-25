@@ -1,30 +1,30 @@
 import { motion } from 'framer-motion';
 import { Bookmark, Camera, Database, Landmark, Wrench } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { GamificationWidget } from '../../../components/ui/GamificationWidget';
-import { BRAND } from '../../../config/brand';
-import { api } from '../../../lib/api';
-import { SoundFX } from '../../../lib/soundEffects';
+import { GamificationWidget } from '../../../components/ui/GamificationWidget.js';
+import { BRAND } from '../../../config/brand.js';
+import { api } from '../../../lib/api.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
 import {
   ATLAS_PERSONA_OPTIONS,
   SEGMENTO_OPTIONS,
   BIRTHHUB360_PERSONA_OPTIONS,
   BIRTHHUB360_SEGMENTO_OPTIONS,
-} from '../../../shared/constants/icp-options';
-import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service';
+} from '../../../shared/constants/icp-options.js';
+import type { CnpjLookupResult, FitScoreResult } from '../services/enrichment.service.js';
 import type {
   DiscoverResult,
   ProspectCandidate,
   ProspectCriteria,
-} from '../services/prospecting.service';
-import { CnpjSearchPanel } from './prospecting-hub/CnpjSearchPanel';
-import { DiscoveryFilterPanel } from './prospecting-hub/DiscoveryFilterPanel';
-import { DiscoveryResultsPanel } from './prospecting-hub/DiscoveryResultsPanel';
-import { OcrCapturePanel } from './prospecting-hub/OcrCapturePanel';
-import { ProspectingToolsHub } from './prospecting-hub/ProspectingToolsHub';
-import { SavedSearchesModal } from './SavedSearchesModal';
+} from '../services/prospecting.service.js';
+import { CnpjSearchPanel } from './prospecting-hub/CnpjSearchPanel.js';
+import { DiscoveryFilterPanel } from './prospecting-hub/DiscoveryFilterPanel.js';
+import { DiscoveryResultsPanel } from './prospecting-hub/DiscoveryResultsPanel.js';
+import { OcrCapturePanel } from './prospecting-hub/OcrCapturePanel.js';
+import { ProspectingToolsHub } from './prospecting-hub/ProspectingToolsHub.js';
+import { SavedSearchesModal } from './SavedSearchesModal.js';
 
-export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch';
+export { DecisionMakerSearch } from './prospecting-hub/DecisionMakerSearch.js';
 
 // Antes dividido entre dois playbooks nomeados por empresa (Birth Hub 360) — unificado
 // num único playbook geral (pedido explícito do usuário), sem descartar nenhuma opção. Hoisted
@@ -173,7 +173,7 @@ export function ProspectingHub() {
           setPromoted((prev) => ({ ...prev, [key]: result }));
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao salvar lista de leads em massa'));
     } finally {
       setIsSavingBatch(false);
@@ -214,7 +214,7 @@ export function ProspectingHub() {
           setPromoted((prev) => ({ ...prev, [key]: result }));
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao enriquecer leads em massa'));
     } finally {
       setIsSavingBatch(false);
@@ -255,7 +255,7 @@ export function ProspectingHub() {
         website: candidate.website,
       });
       setRejectedKeys((prev) => new Set(prev).add(key));
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao descartar candidato'));
     } finally {
       setRejectingKey(null);
@@ -288,7 +288,7 @@ export function ProspectingHub() {
           setPromoted((prev) => ({ ...prev, [key]: result }));
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao salvar lista de leads'));
     } finally {
       setIsSavingBatch(false);
@@ -371,7 +371,7 @@ export function ProspectingHub() {
         { timeoutMs: 30_000 },
       );
       setCnpjResult(result);
-    } catch (error) {
+    } catch (error: any) {
       setCnpjError(getErrorMessage(error, 'Falha ao consultar CNPJ'));
     } finally {
       setCnpjLoading(false);
@@ -423,7 +423,7 @@ export function ProspectingHub() {
       }
       setDiscoveryPage(page);
       setApolloError(result.apolloError || null);
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao buscar leads'));
     } finally {
       clearInterval(interval);
@@ -457,7 +457,7 @@ export function ProspectingHub() {
         autoEnrich: false, // Salvar como lead cru para economizar créditos; enriquecimento ocorre sob demanda no CRM
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (error) {
+    } catch (error: any) {
       setCnpjError(getErrorMessage(error, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);
@@ -488,7 +488,7 @@ export function ProspectingHub() {
         savedSearchId: activeSavedSearchId || undefined,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (error) {
+    } catch (error: any) {
       setDiscoverError(getErrorMessage(error, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

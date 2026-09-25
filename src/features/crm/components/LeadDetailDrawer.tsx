@@ -16,36 +16,36 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
-import { EntityAttachments } from '../../../components/crm/EntityAttachments';
-import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator';
-import { Button } from '../../../components/ui/Button';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments.js';
+import { AIEmailGenerator } from '../../../components/ui/AIEmailGenerator.js';
+import { Button } from '../../../components/ui/Button.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
 // Central unificada de conversas (item #18) — mescla lead.timeline com WhatsApp/e-mail/ligações.
 import {
   type RawTimelineEvent,
   useUnifiedLeadConversation,
-} from '../hooks/useUnifiedLeadConversation';
-import { api } from '../../../lib/api';
-import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap';
-import { toast } from '../../../lib/toast';
+} from '../hooks/useUnifiedLeadConversation.js';
+import { api } from '../../../lib/api.js';
+import { LEAD_STATUS_EMOJI as STATUS_EMOJI } from '../../../lib/enumMap.js';
+import { toast } from '../../../lib/toast.js';
 // LEAD_STATUS é reexportado como tipo em ../../../types (export type {...}) — o array em
 // runtime só existe na fonte original.
-import { LEAD_STATUS } from '../../../lib/zod';
-import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types';
+import { LEAD_STATUS } from '../../../lib/zod.js';
+import type { Lead, LeadQualification, LeadStatus, Note } from '../../../types/index.js';
 // Mesmo raciocínio do WhatsAppChatPanel acima: o CRM só decide QUANDO oferecer a entrada, não
 // COMO o Copiloto Comercial IA funciona (Onda 7 — UI/UX, ver src/features/copiloto-ia/AGENTS.md).
-import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel';
-import { bitrixApi } from '../../integrations/bitrix/bitrix.api';
+import { LeadCopilotoPanel } from '../../copiloto-ia/components/LeadCopilotoPanel.js';
+import { bitrixApi } from '../../integrations/bitrix/bitrix.api.js';
 // Painel de conversa real (histórico + envio) já usado pela Prospecção sobre a mesma integração
 // de WhatsApp (src/features/integrations/whatsapp, sessão Baileys por tenant) — reusado aqui em vez
 // de duplicar lógica de polling/envio; CRM só decide QUANDO oferecer a ação, não COMO ela funciona.
-import { WhatsAppChatPanel } from '../../integrations/whatsapp/components/WhatsAppChatPanel';
-import { type BantQualificationData, calculateLeadScore } from '../domain/leadScoreCalculator';
-import { LeadActionBar } from './LeadActionBar';
+import { WhatsAppChatPanel } from '../../integrations/whatsapp/components/WhatsAppChatPanel.js';
+import { type BantQualificationData, calculateLeadScore } from '../domain/leadScoreCalculator.js';
+import { LeadActionBar } from './LeadActionBar.js';
 
 const TEMPERATURE_EMOJI: Record<string, string> = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
 
@@ -159,7 +159,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
       toast.success(`Lead sincronizado com sucesso no Bitrix24 (ID #${res.data.bitrixLeadId})!`);
       fetchLead();
       onChanged();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao exportar para Bitrix24');
     } finally {
       setExportingBitrix(false);
@@ -223,7 +223,7 @@ export function LeadDetailDrawer({ leadId, onClose, onChanged }: LeadDetailDrawe
       toast.success(
         'Ligação de qualificação disparada com sucesso! O resultado chega de forma assíncrona.',
       );
-    } catch (error) {
+    } catch (error: any) {
       toast.error(
         error instanceof Error
           ? error.message

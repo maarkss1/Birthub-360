@@ -97,7 +97,7 @@ async function task(browser, route, [w,h]){
   await ctx.close();
 }
 
-const browser = await chromium.launch({ channel:'msedge', headless:true });
+const browser = await chromium.launch({ channel: 'chrome', headless:true });
 const queue=[]; for(const r of ROUTES) for(const vp of VPS) queue.push([r,vp]);
 // 1440 primeiro e em série (dedupe de recortes de componentes depende da ordem)
 const q1440=queue.filter(q=>q[1][0]===1440), rest=queue.filter(q=>q[1][0]!==1440); const PRI={390:0,1024:1,768:2,1280:3,430:4,375:5}; rest.sort((a,b)=>PRI[a[1][0]]-PRI[b[1][0]]);

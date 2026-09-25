@@ -4,8 +4,8 @@
  * que um filtro nunca seja interpretado de forma diferente em duas telas.
  */
 
-import type { CommercialIntelligenceFilter } from '../../domain/CommercialIntelligence';
-import type { ScoredDeal } from './dealScoring';
+import type { CommercialIntelligenceFilter } from '../../domain/CommercialIntelligence.js';
+import type { ScoredDeal } from './dealScoring.js';
 
 export function applyScope(
   scored: ScoredDeal[],

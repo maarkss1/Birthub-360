@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import type { PlaybookKey } from '../config/playbooks';
+import type { PlaybookKey } from '../config/playbooks.js';
 import {
   type ObjectionMatrixItem,
   playbookApi,
   type QualificationMatrixItem,
-} from '../features/playbook/playbook.api';
-import { clientLogger } from '../lib/clientLogger';
+} from '../features/playbook/playbook.api.js';
+import { clientLogger } from '../lib/clientLogger.js';
 
 /**
  * Busca as duas matrizes (qualificação + objeções) do playbook ativo uma única vez — usado pelo

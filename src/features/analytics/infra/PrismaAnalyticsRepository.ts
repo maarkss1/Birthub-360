@@ -4,8 +4,8 @@ import type {
   ClosedLead,
   CohortLeadRow,
   GroupCount,
-} from '../domain/Analytics';
-import { CLOSED_STATUSES } from '../domain/Analytics';
+} from '../domain/Analytics.js';
+import { CLOSED_STATUSES } from '../domain/Analytics.js';
 
 export class PrismaAnalyticsRepository implements AnalyticsRepository {
   async countCompanies(organizationId: string): Promise<number> {

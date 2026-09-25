@@ -13,19 +13,19 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BirthHubLogo } from '../../../components/brand/BirthHubLogo';
-import { EXTERNAL_LINKS, MODULE_CATALOG } from '../../../config/module-catalog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrand } from '../../../contexts/BrandContext';
-import { useTheme } from '../../../contexts/ThemeContext';
-import { useModuleAccess } from '../../../hooks/useModuleAccess';
-import { SoundFX } from '../../../lib/soundEffects';
-import { CommercialAgentCellPanel } from './CommercialAgentCellPanel';
-import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas';
-import { HubTaskWidget } from './HubTaskWidget';
+import { BirthHubLogo } from '../../../components/brand/BirthHubLogo.js';
+import { EXTERNAL_LINKS, MODULE_CATALOG } from '../../../config/module-catalog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrand } from '../../../contexts/BrandContext.js';
+import { useTheme } from '../../../contexts/ThemeContext.js';
+import { useModuleAccess } from '../../../hooks/useModuleAccess.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { CommercialAgentCellPanel } from './CommercialAgentCellPanel.js';
+import { type BurstHandle, HubBurstCanvas } from './HubBurstCanvas.js';
+import { HubTaskWidget } from './HubTaskWidget.js';
 import '../hub-orbit.css';
 
-import { HubIcons } from './HubIcons';
+import { HubIcons } from './HubIcons.js';
 
 interface OrbitItem {
   key: string;

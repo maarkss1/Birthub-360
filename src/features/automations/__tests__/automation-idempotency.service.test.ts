@@ -30,7 +30,7 @@ import {
   buildTriggerIdempotencyKey,
   claimAutomationTrigger,
   TRIGGER_IDEMPOTENCY_TTL_SECONDS,
-} from '../automation-idempotency.service';
+} from '../automation-idempotency.service.js';
 
 describe('buildTriggerIdempotencyKey', () => {
   const identity = {

@@ -1,19 +1,19 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
 import {
   type CommercialIntelligenceUseCases,
   currentPeriod,
-} from '../application/CommercialIntelligenceUseCases';
-import { detectDealRisks } from '../application/dealRiskDetection.service';
-import { METRICS_DICTIONARY } from '../application/metricsDictionary';
+} from '../application/CommercialIntelligenceUseCases.js';
+import { detectDealRisks } from '../application/dealRiskDetection.service.js';
+import { METRICS_DICTIONARY } from '../application/metricsDictionary.js';
 import type {
   CommercialIntelligenceFilter,
   DealDrillDownQuery,
   ExportFormat,
   ForecastTier,
-} from '../domain/CommercialIntelligence';
-import type { CommercialIntelligenceAiService } from '../infra/CommercialIntelligenceAiService';
+} from '../domain/CommercialIntelligence.js';
+import type { CommercialIntelligenceAiService } from '../infra/CommercialIntelligenceAiService.js';
 
 const MONTH_RE = /^\d{4}-(0[1-9]|1[0-2])$/;
 
@@ -75,7 +75,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const result = await detectDealRisks(organizationId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -85,7 +85,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.executiveOverview(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -95,7 +95,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.pipelineCreation(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -105,7 +105,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.performance(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -115,7 +115,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.aging(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -125,7 +125,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.losses(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -135,7 +135,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.leadingIndicators(organizationId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -145,7 +145,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.alerts(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -155,7 +155,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.crmQuality(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -191,7 +191,7 @@ export class CommercialIntelligenceController {
       };
       const data = await this.useCases.dealsDrillDown(organizationId, query);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -208,7 +208,7 @@ export class CommercialIntelligenceController {
         return;
       }
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -222,7 +222,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.filterOptions(organizationId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -249,7 +249,7 @@ export class CommercialIntelligenceController {
       res.setHeader('Content-Type', mimeType);
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(content);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -259,7 +259,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.healthScore(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -269,7 +269,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.forecastAccuracy(organizationId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -279,7 +279,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.forecastCalibration(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -289,7 +289,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.funnelBottlenecks(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -299,7 +299,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.sellerBenchmark(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -309,7 +309,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.channelAttribution(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -324,7 +324,7 @@ export class CommercialIntelligenceController {
         additionalReps,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -334,7 +334,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.closeDateIntelligence(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -344,7 +344,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.journey(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -354,7 +354,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.useCases.historicalTrends(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -365,7 +365,7 @@ export class CommercialIntelligenceController {
       const month = parseMonth(req.query.month);
       const data = await this.useCases.getGoal(organizationId, month);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -375,7 +375,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.aiService.generateExecutiveSummary(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -394,7 +394,7 @@ export class CommercialIntelligenceController {
         return;
       }
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -404,7 +404,7 @@ export class CommercialIntelligenceController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.aiService.generateMentorPlaybook(organizationId, parseFilter(req));
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -423,7 +423,7 @@ export class CommercialIntelligenceController {
         return;
       }
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -445,7 +445,7 @@ export class CommercialIntelligenceController {
           : 'BRL';
       const data = await this.useCases.setGoal(organizationId, period, amount, userId, currency);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

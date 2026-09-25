@@ -6,7 +6,7 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url)).replace(/\\/g, '/').r
 fs.mkdirSync(`${ROOT}/states`, { recursive: true });
 const out = { states: [], overlays: [], themes: [], notes: [] };
 const P = ['backgroundColor','color','borderTopColor','borderTopWidth','boxShadow','transform','outlineStyle','outlineColor','outlineWidth','outlineOffset','opacity','cursor','textDecorationLine','filter','backgroundImage'];
-const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const browser = await chromium.launch({ channel: 'chrome', headless: true });
 async function ctxFor(w, h, auth = true) { const c = await browser.newContext({ ...(auth ? { storageState: `${ROOT}/_tools/auth.json` } : {}), viewport: { width: w, height: h }, isMobile: w < 768, hasTouch: w < 768 }); await c.addInitScript(() => { try { localStorage.setItem('@prospector:has_seen_tour', 'true'); } catch {} }); return c; }
 const comp = (loc) => loc.evaluate((el, P) => { const c = getComputedStyle(el); const o = {}; for (const p of P) o[p] = c[p]; o.transition = c.transition; const r = el.getBoundingClientRect(); o.rect = { w: +r.width.toFixed(1), h: +r.height.toFixed(1) }; o.html = el.outerHTML.slice(0, 500); return o; }, P);
 async function clipShot(page, loc, path, pad = 10) { const b = await loc.boundingBox(); if (!b) return false; const vp = page.viewportSize(); const x = Math.max(0, b.x - pad), y = Math.max(0, b.y - pad); await page.screenshot({ path, clip: { x, y, width: Math.min(vp.width - x, b.width + pad * 2), height: Math.min(vp.height - y, b.height + pad * 2) } }); return true; }
@@ -29,7 +29,7 @@ async function open(page, route) { await page.goto(BASE + route, { waitUntil: 'd
 
 // ---- 1440 /app: estados de componentes reais
 {
-  const ctx = await ctxFor(1440, 900); const page = await ctx.newPage(); await open(page, '/app');
+  const ctx = await ctxFor(1440, 900); const page = await ctx.newPage(); page.setDefaultTimeout(6000); await open(page, '/app');
   await elementStates(page, 'button-primary--novo-negocio', page.getByRole('button', { name: /Novo Negócio/ }), '/app');
   await elementStates(page, 'button-secondary--prospeccao', page.getByRole('button', { name: /^Prospecção$/ }), '/app');
   await elementStates(page, 'button-icon--alternar-tema', page.getByRole('button', { name: /Alternar tema/ }), '/app');
@@ -58,14 +58,14 @@ async function open(page, route) { await page.goto(BASE + route, { waitUntil: 'd
 }
 // ---- mobile 390: drawer/menu
 {
-  const ctx = await ctxFor(390, 844); const page = await ctx.newPage(); await open(page, '/app');
+  const ctx = await ctxFor(390, 844); const page = await ctx.newPage(); page.setDefaultTimeout(6000); await open(page, '/app');
   await page.screenshot({ path: `${ROOT}/states/mobile-app-closed.png` });
   try { const btn = page.locator('header button').first(); await btn.click(); await page.waitForTimeout(900); await page.screenshot({ path: `${ROOT}/states/mobile-app-menu-open.png` }); out.notes.push('mobile menu aberto via primeiro header button'); } catch (e) { out.notes.push('mobile menu FAIL ' + String(e).slice(0, 100)); }
   await ctx.close();
 }
 // ---- login (sem sessão): input focus, erro de validação (e-mail inválido, sem senha), desabilitado
 {
-  const ctx = await ctxFor(1440, 900, false); const page = await ctx.newPage(); await open(page, '/login');
+  const ctx = await ctxFor(1440, 900, false); const page = await ctx.newPage(); page.setDefaultTimeout(6000); await open(page, '/login');
   await page.screenshot({ path: `${ROOT}/states/login-default.png` });
   const email = page.locator('input[type=email], input[name=email], input[autocomplete=email], input[autocomplete=username]').first();
   await elementStates(page, 'input-email--login', email, '/login');

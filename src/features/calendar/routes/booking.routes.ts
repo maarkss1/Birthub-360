@@ -107,7 +107,7 @@ privateBookingRouter.get(
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: links });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -140,7 +140,7 @@ privateBookingRouter.post(
         },
       });
       res.status(201).json({ success: true, data: link });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -162,7 +162,7 @@ privateBookingRouter.patch(
         active,
       );
       res.json({ success: true, data: link });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -178,7 +178,7 @@ privateBookingRouter.delete(
         where: { id: routeParam(req.params.id, 'id'), organizationId, userId },
       });
       res.status(204).send();
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -292,7 +292,7 @@ publicBookingRouter.get(
           availableSlots: standardSlots,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -512,7 +512,7 @@ publicBookingRouter.post(
             }),
           );
         }
-      } catch (err) {
+      } catch (err: any) {
         if (!(err instanceof MailerNotConfiguredError)) {
           logger.error(
             { err, linkId: link.id, bookingId: activity.id },
@@ -570,7 +570,7 @@ publicBookingRouter.post(
             );
           }
         });
-      } catch (cadenceErr) {
+      } catch (cadenceErr: any) {
         logger.warn(
           { err: cadenceErr, linkId: link.id, leadId: lead.id },
           '[ACH-17-04] Falha ao verificar/encerrar CadenceRun ativo no agendamento público.',
@@ -590,7 +590,7 @@ publicBookingRouter.post(
           message: 'Reunião confirmada com sucesso! Você receberá os detalhes em seu e-mail.',
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
