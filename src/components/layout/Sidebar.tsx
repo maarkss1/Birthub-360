@@ -145,7 +145,7 @@ export function Sidebar({
   const navGroupsByJourney: NavGroupDefinition[] = isRestrictedSdrProfile
     ? [
         { title: 'COMMAND CENTER', items: ['daily-plan'] },
-        { title: 'BUSINESS', items: ['prospect'] },
+        { title: 'BUSINESS', items: ['prospect', 'outbound'] },
         {
           title: 'EXECUTION',
           items: [
@@ -155,6 +155,8 @@ export function Sidebar({
             'activities',
             'calendar',
             'cadence',
+            'voice-hub',
+            'dialer',
           ],
         },
         {
@@ -184,6 +186,7 @@ export function Sidebar({
           title: 'BUSINESS',
           items: [
             'prospect',
+            'outbound',
             'crm',
             'crm360',
             'propostas',
@@ -194,7 +197,7 @@ export function Sidebar({
         },
         {
           title: 'EXECUTION',
-          items: ['activities', 'calendar', 'cadence'],
+          items: ['activities', 'calendar', 'cadence', 'voice-hub', 'dialer'],
         },
         {
           title: 'CAPACITATION',
@@ -421,3 +424,8 @@ export function Sidebar({
     </aside>
   );
 }
+
+
+
+
+
