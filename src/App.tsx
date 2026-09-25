@@ -192,6 +192,11 @@ const LeadApprovalDeck = lazy(() =>
     default: m.LeadApprovalDeck,
   })),
 );
+
+const VoiceStudioPage = lazy(() => import('./features/voice-hub/pages/VoiceStudio').then(m => ({ default: m.default })));
+const OutboundApp = lazy(() => import('./features/prospecting/outbound/App').then(m => ({ default: m.default })));
+const DialerFrontend = lazy(() => import('./features/cadence/components/CadenceHub').then(m => ({ default: m.CadenceHub })));
+
 const PropostasList = lazy(() =>
   import('./features/crm360/components/PropostasList').then((m) => ({ default: m.PropostasList })),
 );
@@ -288,6 +293,11 @@ function AppLayout() {
           <Route path="companies" element={<CompanyList />} />
           <Route path="contacts" element={<ContactList />} />
           <Route path="activities" element={<ActivityList />} />
+
+          <Route path="voice-hub" element={<VoiceStudioPage />} />
+          <Route path="outbound/*" element={<OutboundApp />} />
+          <Route path="dialer" element={<DialerFrontend />} />
+
           <Route path="cadence" element={<CadenceHub />} />
           <Route path="chatbook" element={<ChatbookHub />} />
           <Route path="roleplay" element={<RoleplayHub />} />

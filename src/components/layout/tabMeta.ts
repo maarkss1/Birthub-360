@@ -100,7 +100,10 @@ export type TabType =
   | 'sdr-diagnostic'
   | 'commercial_intelligence'
   | 'copiloto_ia'
-  | 'module-access';
+  | 'module-access'
+  | 'voice-hub'
+  | 'outbound'
+  | 'dialer';
 
 /**
  * Matiz do ícone de cada módulo na navegação lateral — chave para uma das variáveis
@@ -162,6 +165,11 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home; accen
   knowledge: { label: 'Base de Conhecimento', icon: Database, accent: 'green' },
   editor: { label: 'Editor de Documentos', icon: FileText, accent: 'slate' },
 
+    // TELEPHONY & OUTBOUND - Comunicação de Voz e Prospecção
+  'voice-hub': { label: 'Voice Hub', icon: Mic, accent: 'iris' },
+  outbound: { label: 'Outbound AI', icon: PhoneCall, accent: 'red' },
+  dialer: { label: 'Discador 3CX', icon: PhoneCall, accent: 'teal' },
+
   // DATA - Integrações e dados
   integrations: { label: 'Integrações', icon: Globe, accent: 'blue' },
   bitrix: { label: 'Guia Prático Bitrix24', icon: Layers, accent: 'teal' },
@@ -176,3 +184,5 @@ export const TAB_META: Record<TabType, { label: string; icon: typeof Home; accen
   // DIAGNOSTICS - Ferramentas de diagnóstico
   'sdr-diagnostic': { label: 'Diagnóstico SDR', icon: Stethoscope, accent: 'green' },
 };
+
+
