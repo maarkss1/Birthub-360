@@ -6,7 +6,7 @@ export default function TermsOfUse() {
       <div className="max-w-3xl mx-auto bg-white p-8 shadow rounded">
         <h1 className="text-3xl font-bold mb-6">Termos de Uso</h1>
         <p className="mb-4">
-          <strong>Última atualização:</strong> [PREENCHER ANTES DO GO-LIVE]
+          <strong>Última atualização:</strong> 25 de Setembro de 2026
         </p>
 
         <section className="mb-6">
@@ -21,7 +21,7 @@ export default function TermsOfUse() {
           <h2 className="text-xl font-semibold mb-2">2. Uso da Plataforma</h2>
           <p>
             O Birth Hub 360 é um sistema de CRM e prospecção corporativa licenciado para
-            [RAZÃO SOCIAL A PREENCHER ANTES DO GO-LIVE]. O uso restringe-se a funcionários e prestadores autorizados.
+            Birthub 360º. O uso restringe-se a funcionários e prestadores autorizados.
           </p>
         </section>
 
@@ -38,7 +38,7 @@ export default function TermsOfUse() {
           <h2 className="text-xl font-semibold mb-2">4. Propriedade Intelectual</h2>
           <p>
             Todos os direitos sobre a plataforma, software, marcas, logotipos e conteúdos proprietários
-            pertencem à [RAZÃO SOCIAL A PREENCHER ANTES DO GO-LIVE] e seus licenciadores.
+            pertencem à Birthub 360º e seus licenciadores.
           </p>
         </section>
 
@@ -53,7 +53,7 @@ export default function TermsOfUse() {
         <section className="mb-6">
           <h2 className="text-xl font-semibold mb-2">6. Foro</h2>
           <p>
-            As partes elegem o foro da Comarca de [CIDADE A PREENCHER ANTES DO GO-LIVE] para dirimir eventuais litígios.
+            As partes elegem o foro da Comarca de Ribeirão Preto - São Paulo para dirimir eventuais litígios.
           </p>
         </section>
       </div>

@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
       <div className="max-w-3xl mx-auto bg-white p-8 shadow rounded">
         <h1 className="text-3xl font-bold mb-6">Política de Privacidade</h1>
         <p className="mb-4">
-          <strong>Última atualização:</strong> [PREENCHER ANTES DO GO-LIVE]
+          <strong>Última atualização:</strong> 25 de Setembro de 2026
         </p>
 
         <section className="mb-6">
@@ -14,7 +14,7 @@ export default function PrivacyPolicy() {
           <p>
             O Birth Hub 360 processa dados pessoais de leads, contatos e clientes, que podem incluir
             nome, e-mail, telefone, cargo e dados corporativos, com a finalidade exclusiva de gestão
-            comercial, prospecção e relacionamento (CRM) para [RAZÃO SOCIAL DA EMPRESA A PREENCHER ANTES DO GO-LIVE].
+            comercial, prospecção e relacionamento (CRM) para Birthub 360º.
           </p>
         </section>
 
@@ -58,7 +58,7 @@ export default function PrivacyPolicy() {
           <h2 className="text-xl font-semibold mb-2">6. Contato (DPO)</h2>
           <p>
             Dúvidas sobre proteção de dados ou solicitações do titular devem ser direcionadas ao nosso Encarregado de Dados (DPO):
-            [NOME/E-MAIL DO DPO A PREENCHER ANTES DO GO-LIVE].
+            marcelo.nascimento@birthub360.com.
           </p>
         </section>
       </div>
