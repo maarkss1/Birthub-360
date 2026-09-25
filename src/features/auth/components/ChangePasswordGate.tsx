@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { AlertCircle, ArrowRight, KeyRound, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { authClient } from '../../../lib/auth-client';
+import { authClient } from '../../../lib/auth-client.js';
 
 // Bloqueia o acesso ao app até o usuário trocar uma senha temporária/padrão definida por um
 // admin (ver User.mustChangePassword). Sem isso, uma senha padrão conhecida ficaria valendo

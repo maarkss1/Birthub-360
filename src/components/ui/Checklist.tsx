@@ -1,6 +1,6 @@
 import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Novo primitivo — checklist de leitura/orientação (ex.: pontos de um relatório, não uma lista
    de tarefas com estado). Para checklist interativo com toggle/progresso, veja o padrão já usado

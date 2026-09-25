@@ -234,7 +234,7 @@ export async function recordTransaction(input: RecordTransactionInput): Promise<
     }
 
     return mapTransaction(created);
-  } catch (err) {
+  } catch (err: any) {
     if (isUniqueConstraintViolation(err)) {
       const existing = await findTransactionByIdempotencyKey(input.idempotencyKey);
       if (existing) {

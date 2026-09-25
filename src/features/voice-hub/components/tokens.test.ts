@@ -5,7 +5,7 @@ import {
   getAccessibleTextOnBrand,
   hexToRgb,
   relativeLuminance,
-} from './tokens';
+} from './tokens.js';
 
 // This product is white-label per tenant (see brandColor.controller.ts / useSessionStore): any
 // hex color a tenant picks flows straight into `--brand-color` and is used as a solid background

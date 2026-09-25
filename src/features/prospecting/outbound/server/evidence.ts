@@ -4,7 +4,7 @@
 // e para nunca apresentar um valor sem saber se ele é confirmado, inferido
 // ou desconhecido (mesma distinção da Wave 0/01_PROMPT_MESTRE_ORQUESTRADOR).
 
-import type { DbHandle } from './db';
+import type { DbHandle } from './db.js';
 
 export type VerificationStatus = 'verified' | 'unverified' | 'inferred' | 'unknown' | 'conflicted';
 

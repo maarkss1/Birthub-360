@@ -9,7 +9,7 @@
 // onda's precedent.
 import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import RebuiltExecutiveOverview from './Overview';
+import RebuiltExecutiveOverview from './Overview.js';
 
 const mockNavigate = vi.fn();
 

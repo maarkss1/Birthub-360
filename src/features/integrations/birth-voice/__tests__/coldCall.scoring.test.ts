@@ -4,7 +4,7 @@ import {
   type DialCandidateScoreInput,
   prioritizeDialCandidates,
   scoreDialCandidate,
-} from '../coldCall.scoring';
+} from '../coldCall.scoring.js';
 
 // 2026-08-03T14:00:00Z = segunda-feira, 11:00 em São Paulo — mesma âncora de coldCall.policy.test.ts.
 const SEGUNDA_11H_SP = new Date('2026-08-03T14:00:00Z');

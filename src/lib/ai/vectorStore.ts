@@ -84,7 +84,7 @@ export const vectorStore = {
         similarity: hit.similarity,
         matchedBy: hit.matchedBy,
       }));
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, query }, 'Falha na busca híbrida do playbook (vectorStore)');
       return [];
     }

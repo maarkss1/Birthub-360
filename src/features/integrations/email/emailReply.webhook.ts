@@ -281,7 +281,7 @@ async function handleInboundEmail(req: Request, res: Response): Promise<void> {
     );
 
     res.status(200).json({ success: true, outcome: outcome.status });
-  } catch (error) {
+  } catch (error: any) {
     // 5xx de propósito: um provedor real reentrega com backoff, e a idempotência por
     // providerMessageId garante que a reentrega não duplica a mensagem já persistida.
     logger.error(

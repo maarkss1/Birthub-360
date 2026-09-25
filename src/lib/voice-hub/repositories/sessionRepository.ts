@@ -99,7 +99,7 @@ export async function createInboundPhoneSessionIfNoneForCallSid(
       },
       { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
     );
-  } catch (error) {
+  } catch (error: any) {
     // Under a real concurrent replay one serializable transaction may be aborted with P2034 after
     // the other commits. Re-read the winner rather than turning a harmless provider retry into a
     // 500. If no winner exists, propagate the database failure.

@@ -20,18 +20,18 @@ import {
   Wrench,
 } from 'lucide-react';
 import { useState } from 'react';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
-import { api } from '../../../../lib/api';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon.js';
+import { api } from '../../../../lib/api.js';
 import {
   getTelephoneLink,
   getWhatsAppLink,
   validContactEmails,
-} from '../../../../shared/utils/contact-links';
-import { WhatsAppChatPanel } from '../../../integrations/whatsapp/components/WhatsAppChatPanel';
-import type { FitScoreResult } from '../../services/enrichment.service';
-import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service';
-import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
-import { DecisionMakerSearch } from './DecisionMakerSearch';
+} from '../../../../shared/utils/contact-links.js';
+import { WhatsAppChatPanel } from '../../../integrations/whatsapp/components/WhatsAppChatPanel.js';
+import type { FitScoreResult } from '../../services/enrichment.service.js';
+import type { ProspectCandidate, RequirementEvaluation } from '../../services/prospecting.service.js';
+import { getDecisionMakerLinkedInLink } from '../../utils/linkedin.js';
+import { DecisionMakerSearch } from './DecisionMakerSearch.js';
 
 interface PromoteResult {
   lead: { id: string };

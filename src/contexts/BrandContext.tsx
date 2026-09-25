@@ -1,7 +1,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { type ReactNode, useEffect } from 'react';
 
-import { BRAND, type BrandInfo } from '../config/brand';
+import { BRAND, type BrandInfo } from '../config/brand.js';
 
 export type { BrandInfo };
 

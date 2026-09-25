@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { describe, it, expect, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
-import { usePrefersReducedMotion } from './useReducedMotion';
+import { usePrefersReducedMotion } from './useReducedMotion.js';
 
 afterEach(() => {
   delete document.documentElement.dataset.reducedMotion;

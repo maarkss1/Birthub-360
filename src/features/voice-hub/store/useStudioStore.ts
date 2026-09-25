@@ -1,8 +1,8 @@
 import { create } from 'zustand';
-import type { StudioNode, StudioEdge, NodeType, ValidationIssue, WorkflowVersionSummary } from '../lib/studio/types';
-import { validationEngine } from '../../../lib/studio/ValidationEngine';
+import type { StudioNode, StudioEdge, NodeType, ValidationIssue, WorkflowVersionSummary } from '../lib/studio/types.js';
+import { validationEngine } from '../../../lib/studio/ValidationEngine.js';
 import { addEdge, type Connection } from '@xyflow/react';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export type NodeLifecycleState = 
   | 'Created'
@@ -1272,7 +1272,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
           });
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error loading workflow from server', { err });
     }
   },
@@ -1294,7 +1294,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         type: 'info',
         message: 'Progresso do Canvas salvo de forma segura e persistente no banco de dados.'
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error saving workflow to server', { err });
     }
   },
@@ -1346,7 +1346,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         type: 'error',
         message: `Falha ao publicar: ${data.error || res.statusText || 'erro desconhecido no servidor'}`
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error publishing workflow to server', { err });
       set({ publishState: 'error', publishIssues: [] });
       get().addSimulationLog({
@@ -1394,7 +1394,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
 
       const versions: WorkflowVersionSummary[] = Array.isArray(data.versions) ? data.versions : [];
       set({ versionHistoryState: 'idle', workflowVersions: versions, versionHistoryError: null });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error fetching workflow version history', { err });
       set({
         versionHistoryState: 'error',
@@ -1457,7 +1457,7 @@ export const useStudioStore = create<StudioState>((set, get) => ({
         type: 'error',
         message: `Falha ao restaurar versão ${version}: ${data.error || res.statusText || 'erro desconhecido no servidor'}`
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error rolling back workflow version', { err });
       set({
         rollbackState: 'error',

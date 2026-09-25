@@ -86,7 +86,7 @@ export async function runAutoAnonymizeSweep(): Promise<{ anonymizedCount: number
 
     logger.info({ anonymizedCount }, 'Anonimização automática de leads concluída');
     return { anonymizedCount };
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Erro ao executar worker de anonimização automática');
     throw err;
   }

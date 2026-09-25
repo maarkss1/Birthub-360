@@ -1,9 +1,9 @@
 import { AlertCircle, Check, Loader2, ShieldCheck } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import type { ModuleCatalogEntry } from '../../../config/module-catalog';
-import { invalidateModuleAccessCache } from '../../../hooks/useModuleAccess';
-import { toast } from '../../../lib/toast';
-import { type ModuleAccessMatrixUser, moduleAccessApi } from '../moduleAccess.api';
+import type { ModuleCatalogEntry } from '../../../config/module-catalog.js';
+import { invalidateModuleAccessCache } from '../../../hooks/useModuleAccess.js';
+import { toast } from '../../../lib/toast.js';
+import { type ModuleAccessMatrixUser, moduleAccessApi } from '../moduleAccess.api.js';
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: 'Administrador',
@@ -34,7 +34,7 @@ export function ModuleAccessAdmin() {
       const data = await moduleAccessApi.matrix();
       setUsers(data.users);
       setModules(data.modules);
-    } catch (error) {
+    } catch (error: any) {
       setLoadError(error instanceof Error ? error.message : 'Falha ao carregar o painel.');
     } finally {
       setIsLoading(false);
@@ -69,7 +69,7 @@ export function ModuleAccessAdmin() {
         await moduleAccessApi.revoke(user.id, moduleKey);
       }
       invalidateModuleAccessCache();
-    } catch (error) {
+    } catch (error: any) {
       // Reverte o otimismo em caso de falha.
       setUsers((prev) =>
         prev.map((u) =>

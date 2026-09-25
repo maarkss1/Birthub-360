@@ -1,5 +1,5 @@
 import { Fragment, type ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Novo primitivo — tabela comparativa com linhas de grupo e células marcadas melhor/pior
    (equivalente tabular ao CompareBar, pra métricas melhor lidas em grade do que em barra). */

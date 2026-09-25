@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface UpcomingEvent {
   id: string;
@@ -35,7 +35,7 @@ export function useGoogleIntegration() {
           if (eventsData.success) setUpcomingEvents(eventsData.data);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch Google status');
     }
   }, []);
@@ -72,7 +72,7 @@ export function useGoogleIntegration() {
         return;
       }
       toast.error(data.error || 'Não foi possível iniciar a conexão com o Google.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to start Google connect');
       toast.error('Não foi possível iniciar a conexão com o Google.');
     }
@@ -87,7 +87,7 @@ export function useGoogleIntegration() {
       setGoogleEmail(null);
       setUpcomingEvents([]);
       setHasCalendarWriteScope(false);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to disconnect Google');
     }
     setGoogleLoading(false);

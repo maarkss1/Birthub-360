@@ -8,7 +8,7 @@ import {
   isSameDay,
   monthGridRange,
   moveToDay,
-} from '../calendar.util';
+} from '../calendar.util.js';
 
 describe('dayKey', () => {
   it('usa o fuso local e preenche com zero à esquerda', () => {

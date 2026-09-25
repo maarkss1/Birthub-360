@@ -138,7 +138,7 @@ export async function testVoiceHubConnection(
         : `Birth Voices Hub respondeu com erro (HTTP ${res.status}).`,
       baseUrl: conn.baseUrl,
     };
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof AppError) throw err;
     logger.warn(
       { err, organizationId, connectionId, baseUrl: conn.baseUrl },

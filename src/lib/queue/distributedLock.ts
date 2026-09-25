@@ -50,7 +50,7 @@ export async function acquireDistributedLock(
         key,
         runId,
       );
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err, key, runId }, 'Falha ao liberar a trava distribuída; TTL fará a limpeza.');
     }
   };
@@ -76,7 +76,7 @@ export async function acquireDistributedLock(
         ttlSeconds,
       );
       return result === 1;
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err, key, runId },
         'Falha ao renovar a trava distribuída; tratando como perda de posse (fail-closed).',
@@ -94,7 +94,7 @@ export async function acquireDistributedLock(
       renew,
       release,
     };
-  } catch (err) {
+  } catch (err: any) {
     logger.error(
       { err, key, runId },
       'Redis indisponível para distributed lock; execução bloqueada por fail-closed.',

@@ -1,6 +1,6 @@
 import { AlertCircle, AlertTriangle, CheckCircle2, Info } from 'lucide-react';
-import { Card } from '../../../components/ui/Card';
-import type { ExecutiveAlert } from '../commercialIntelligence.api';
+import { Card } from '../../../components/ui/Card.js';
+import type { ExecutiveAlert } from '../commercialIntelligence.api.js';
 
 const SEVERITY_STYLE: Record<
   ExecutiveAlert['severity'],

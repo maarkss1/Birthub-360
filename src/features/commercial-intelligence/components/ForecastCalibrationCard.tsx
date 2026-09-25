@@ -1,14 +1,14 @@
 import { AlertTriangle, Gauge } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   type ForecastCalibrationResult,
   formatCurrency,
-} from '../commercialIntelligence.api';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { MetricInfo } from './MetricInfo.js';
 
 const BIAS_LABEL: Record<NonNullable<ForecastCalibrationResult['biasDirection']>, string> = {
   superestimando: 'Historicamente superestimando',

@@ -123,7 +123,7 @@ async function persistRun(result: ColdCallRunResult): Promise<ColdCallRunResult>
         haltedBy: result.haltedBy ?? null,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, organizationId: result.organizationId },
       'Falha ao registrar a execução da campanha fria.',
@@ -256,7 +256,7 @@ export async function runColdCallCampaign(
         // intervalo mínimo ainda impede a campanha de rediscar este lead em toda execução.
         await prisma.lead.update({ where: { id: candidate.id }, data: { lastInteraction: now } });
         result.called++;
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof SuppressedNumberError) {
           result.skipped.suppressed++;
         } else if (error instanceof NoPhoneNumberError) {

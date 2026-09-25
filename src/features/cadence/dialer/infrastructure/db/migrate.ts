@@ -39,7 +39,7 @@ async function run(): Promise<void> {
         await client.query("COMMIT");
         // eslint-disable-next-line no-console
         console.log(`aplicada: ${file}`);
-      } catch (error) {
+      } catch (error: any) {
         await client.query("ROLLBACK");
         throw error;
       } finally {

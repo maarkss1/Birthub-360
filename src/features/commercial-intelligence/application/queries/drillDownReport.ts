@@ -10,10 +10,10 @@ import type {
   DealDrillDownRow,
   ForecastExplain,
   ForecastTier,
-} from '../../domain/CommercialIntelligence';
-import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility';
-import { loadScoredDeals, riskImpactValue, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
+} from '../../domain/CommercialIntelligence.js';
+import { isDealOpen, STAGE_AGING_CRITICAL_DAYS } from '../pipelineEligibility.js';
+import { loadScoredDeals, riskImpactValue, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
 
 export async function buildDealsDrillDown(
   repository: CommercialIntelligenceRepository,

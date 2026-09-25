@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Play, Mic, MicOff, Save, RotateCcw } from 'lucide-react';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 interface SpeechRecognitionResultLike {
   0: { transcript: string };
@@ -125,7 +125,7 @@ export default function PlaygroundPage() {
       requestAnimationFrame(() => {
         drawWaveform();
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error fetching stream for waveform', { err });
     }
   };
@@ -196,7 +196,7 @@ export default function PlaygroundPage() {
               utterance.rate = 1.0;
               window.speechSynthesis.speak(utterance);
             }
-          } catch (e) {
+          } catch (e: any) {
             logger.error('Falha ao tocar áudio local', { e });
           }
         }

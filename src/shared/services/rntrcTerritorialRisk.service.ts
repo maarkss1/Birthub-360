@@ -210,7 +210,7 @@ export function rntrcTerritorialSnapshot(): RntrcTerritorialSnapshot {
       },
     };
     return cached;
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { event: 'rntrc_territorial_unavailable', error },
       'RNTRC territorial snapshot unavailable',

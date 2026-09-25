@@ -215,7 +215,7 @@ router.get(
           leadStatuses,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -348,7 +348,7 @@ router.post(
       }
 
       res.json({ success: true, data: { registered: true } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -378,7 +378,7 @@ router.post(
       });
 
       res.json({ success: true, data: { logged: true } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -434,7 +434,7 @@ router.get(
           kpis: computeDashboardKpis(treatments, pomodoroSessions),
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -500,7 +500,7 @@ router.post(
         success: true,
         data: { reassigned: true, ownerId: newOwnerId, ownerName: chosen.name },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -531,7 +531,7 @@ router.post(
       );
 
       res.json({ success: true, data: { commented: true } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -571,7 +571,7 @@ router.post(
       });
 
       res.json({ success: true, data: { decided: true } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

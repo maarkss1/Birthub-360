@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState } from 'react';
-import type { AIConfig } from '../types';
+import type { AIConfig } from '../types.js';
 import { 
   Terminal, 
   Play, 

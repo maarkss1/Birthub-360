@@ -11,9 +11,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
 
 interface B2BMatrixResult {
   pains: string[];
@@ -46,7 +46,7 @@ export function B2BGenerator() {
         { timeoutMs: 90_000 },
       );
       setResult(response.result);
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

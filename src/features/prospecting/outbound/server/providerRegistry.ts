@@ -3,12 +3,12 @@
 // diretamente de 'Apollo'. A aplicação depende de capacidades." O Query
 // Planner (Wave 3) consulta este registry em vez de um mapa hardcoded.
 
-import type { ProviderCapability, SearchProvider } from './search/providers/types';
-import { googlePlacesProvider } from './search/providers/googlePlaces.provider';
-import { apolloProvider } from './search/providers/apollo.provider';
-import { cnpjOficialProvider } from './search/providers/cnpjOficial.provider';
-import { hunterProvider } from './search/providers/hunter.provider';
-import { bitrixProvider } from './search/providers/bitrix.provider';
+import type { ProviderCapability, SearchProvider } from './search/providers/types.js';
+import { googlePlacesProvider } from './search/providers/googlePlaces.provider.js';
+import { apolloProvider } from './search/providers/apollo.provider.js';
+import { cnpjOficialProvider } from './search/providers/cnpjOficial.provider.js';
+import { hunterProvider } from './search/providers/hunter.provider.js';
+import { bitrixProvider } from './search/providers/bitrix.provider.js';
 
 // Providers com adapter formal implementado (Wave 4 + follow-up CPI: Hunter e
 // Bitrix formalizados depois da Wave 4 original) - ver server/search/providers/.

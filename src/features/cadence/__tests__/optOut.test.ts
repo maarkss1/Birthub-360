@@ -4,15 +4,15 @@ import {
   isOptedOut,
   OptOutBlockedError,
   recordOptOut,
-} from '../application/optOutService';
+} from '../application/optOutService.js';
 import {
   type CadenceChannel,
   hasAnyIdentifier,
   normalizeOptOutSubject,
   scopeBlocksChannel,
   subjectsMatch,
-} from '../domain/optOut';
-import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
+} from '../domain/optOut.js';
+import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository.js';
 
 const ORG = 'org-1';
 const OTHER_ORG = 'org-2';

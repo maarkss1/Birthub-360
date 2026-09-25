@@ -97,7 +97,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       }
 
       return parsed;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro no roteamento inteligente de lead');
       return this.fallbackByWinRate(availableReps);
     }

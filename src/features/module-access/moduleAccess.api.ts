@@ -1,5 +1,5 @@
-import type { ModuleCatalogEntry } from '../../config/module-catalog';
-import { api } from '../../lib/api';
+import type { ModuleCatalogEntry } from '../../config/module-catalog.js';
+import { api } from '../../lib/api.js';
 
 export interface ModuleAccessMatrixUser {
   id: string;

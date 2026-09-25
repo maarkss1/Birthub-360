@@ -2,9 +2,9 @@ import type React from 'react';
 import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Layers, UserX, Compass, Loader2 } from 'lucide-react';
-import { BlockedState } from '../../../components/ui/BlockedState';
-import { useWorkspace } from '../../../hooks/useWorkspace';
-import { cn } from '../../../lib/utils';
+import { BlockedState } from '../../../components/ui/BlockedState.js';
+import { useWorkspace } from '../../../hooks/useWorkspace.js';
+import { cn } from '../../../lib/utils.js';
 // We can re-use some blocks from WorkspaceReadySection if needed, or import them.
 // But we'll define the new dynamic schema here.
 

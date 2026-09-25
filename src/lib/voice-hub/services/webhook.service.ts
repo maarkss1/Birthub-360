@@ -78,7 +78,7 @@ export class WebhookService {
         const resolution = await resolveActiveEndpointsForEvent(organizationId, event);
         hasAnyActiveEndpoint = resolution.hasAnyActiveEndpoint;
         targets = resolution.targets;
-      } catch (resolutionError) {
+      } catch (resolutionError: any) {
         logger.error(
           `[WebhookService] Could not resolve tenant webhook endpoints for tenant ${organizationId} — dropping event ${event} instead of risking delivery to the wrong destination`,
           resolutionError,
@@ -110,7 +110,7 @@ export class WebhookService {
 
       await this.enqueue({ url: webhookUrl, payload });
       logger.info(`[WebhookService] Queued event ${event} for tenant ${organizationId} (deployment-wide fallback)`);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(`[WebhookService] Error dispatching webhook event ${event}`, error);
     }
   }

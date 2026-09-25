@@ -41,7 +41,7 @@ if (subscriber) {
 
     try {
       deliverLocally(JSON.parse(message) as VoiceNotification);
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { message: err instanceof Error ? err.message : String(err) },
         'Invalid voice notification payload received from Redis',

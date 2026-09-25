@@ -22,12 +22,12 @@ import {
 } from 'lucide-react';
 import { type ReactNode, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
-import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo';
-import { isAuthorizedLoginEmail } from '../../../config/access-policy';
-import { BRAND } from '../../../config/brand';
-import { useAuth } from '../../../contexts/AuthContext';
-import { authClient } from '../../../lib/auth-client';
-import { EASE_OUT_EXPO, staggerContainer, staggerItem } from '../../../lib/motion';
+import { BirthHubLogo, BirthHubWordmark } from '../../../components/brand/BirthHubLogo.js';
+import { isAuthorizedLoginEmail } from '../../../config/access-policy.js';
+import { BRAND } from '../../../config/brand.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { authClient } from '../../../lib/auth-client.js';
+import { EASE_OUT_EXPO, staggerContainer, staggerItem } from '../../../lib/motion.js';
 
 /** Linha do slogan: sobe de dentro de uma máscara (overflow-hidden) — entrada em cascata linha a linha. */
 function RevealLine({ children, delay }: { children: ReactNode; delay: number }) {

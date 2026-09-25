@@ -1,8 +1,8 @@
 import { Activity, AlertTriangle } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card';
-import { readSseStream, type SseEvent } from '../../../lib/sse';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/Card.js';
+import { readSseStream, type SseEvent } from '../../../lib/sse.js';
 
 interface FeedEvent {
   id: string;
@@ -60,7 +60,7 @@ export function RealtimeFeed() {
             setEvents((prev) => [newEvent, ...prev].slice(0, 10)); // keep last 10
           }
         });
-      } catch (err) {
+      } catch (err: any) {
         if (cancelled || controller.signal.aborted) return;
         console.error('SSE Error:', err);
         setConnectionError(true);

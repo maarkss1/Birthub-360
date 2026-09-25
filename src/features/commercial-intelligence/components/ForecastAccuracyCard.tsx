@@ -2,16 +2,16 @@
 
 import { AlertTriangle, History } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   commercialIntelligenceApi,
   type ForecastAccuracyResult,
   type ForecastAccuracySummary,
   formatCurrency,
   formatPercent,
-} from '../commercialIntelligence.api';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { MetricInfo } from './MetricInfo.js';
 
 const REASON_LABEL: Record<NonNullable<ForecastAccuracyResult['reason']>, string> = {
   periodo_nao_fechou: 'Mês ainda em andamento',

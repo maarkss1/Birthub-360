@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
-import { WorkspaceReadySection } from '../../../components/workspace/WorkspaceReadySection';
-import { useWorkspace } from '../../../hooks/useWorkspace';
-import { SinglePageDashboard } from './SinglePageDashboard';
+import { WorkspaceReadySection } from '../../../components/workspace/WorkspaceReadySection.js';
+import { useWorkspace } from '../../../hooks/useWorkspace.js';
+import { SinglePageDashboard } from './SinglePageDashboard.js';
 
 /**
  * Home unificada (item 105 da constituição de produto — Adaptive Command Center). Antes desta

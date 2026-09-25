@@ -1,12 +1,12 @@
 import type React from 'react';
 import { useState, useEffect, useMemo } from 'react';
-import type { Lead, AIConfig, ThemeMode, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from '../types';
-import { LeadCard } from './LeadCard';
-import { resolveBitrixWebhook } from '../utils/bitrix';
-import { SearchCombobox } from './SearchCombobox';
-import { MetricsChart } from './MetricsChart';
-import { ProspectRunSummary } from './ProspectRunSummary';
-import { SEARCH_SCHEMA_CONFIG } from '../utils/searchOptions';
+import type { Lead, AIConfig, ThemeMode, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from '../types.js';
+import { LeadCard } from './LeadCard.js';
+import { resolveBitrixWebhook } from '../utils/bitrix.js';
+import { SearchCombobox } from './SearchCombobox.js';
+import { MetricsChart } from './MetricsChart.js';
+import { ProspectRunSummary } from './ProspectRunSummary.js';
+import { SEARCH_SCHEMA_CONFIG } from '../utils/searchOptions.js';
 import { 
   Search, 
   Sparkles, 
@@ -249,7 +249,7 @@ export const ProspectorTab: React.FC<ProspectorTabProps> = ({
       setBulkExportSuccess(true);
       confetti({ particleCount: 60, spread: 50, origin: { y: 0.6 } });
       setTimeout(() => setBulkExportSuccess(false), 4000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro na exportação em lote:', err);
     } finally {
       setIsBulkExporting(false);

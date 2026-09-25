@@ -296,7 +296,7 @@ export async function fetchUserDailyPlan(
             (p) => (p as { result?: { tasks?: BitrixTaskRaw[] } }).result?.tasks,
             MAX_BITRIX_TASKS,
           );
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, organizationId, bitrixUserId },
             '[daily-plan] Falha ao listar tarefas do Bitrix24',
@@ -328,7 +328,7 @@ export async function fetchUserDailyPlan(
             (p) => (p as { result?: BitrixActivityRaw[] }).result,
             MAX_BITRIX_ACTIVITIES,
           );
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, organizationId, bitrixUserId },
             '[daily-plan] Falha ao listar atividades CRM do Bitrix24',
@@ -357,7 +357,7 @@ export async function fetchUserDailyPlan(
             },
           );
           rawBitrixLeads = (leadRes?.result || []).slice(0, MAX_BITRIX_LEADS);
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, organizationId, bitrixUserId },
             '[daily-plan] Falha ao listar leads do Bitrix24',
@@ -382,14 +382,14 @@ export async function fetchUserDailyPlan(
             .filter((ref): ref is { type: CrmEntityType; id: string } => ref != null);
 
           crmEnrichment = await resolveCrmEnrichment(webhookUrl, [...activityRefs, ...taskRefs]);
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, organizationId, bitrixUserId },
             '[daily-plan] Falha ao enriquecer atividades/tarefas com contato/empresa do Bitrix24 — seguem sem esses dados',
           );
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err, organizationId, userId },
         '[daily-plan] Bitrix24 indisponível — plano montado só com dados locais',
@@ -839,7 +839,7 @@ export async function createDailyPlanActivity(
           },
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       // Banco local já salvou — não falha a criação, mas deixa rastro para diagnóstico.
       logger.warn(
         { err, organizationId, userId },

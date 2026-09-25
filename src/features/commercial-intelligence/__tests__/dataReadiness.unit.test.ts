@@ -3,7 +3,7 @@ import {
   classifyCompleteness,
   DEAL_FIELD_TESTS,
   weightedCompletenessScore,
-} from '../application/dataReadiness';
+} from '../application/dataReadiness.js';
 
 describe('dataReadiness', () => {
   describe('classifyCompleteness', () => {

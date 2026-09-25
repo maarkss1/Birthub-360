@@ -10,10 +10,10 @@
 // risco residual e que o pacote CPI proíbe explicitamente ("Nunca transformar
 // filtro solicitado pelo usuário em atributo observado da empresa").
 
-import type { SearchIntent } from './searchIntent';
-import type { RequirementType, RequirementStatus, RequirementEvaluation, UnknownHardFilterPolicy } from '../src/types';
+import type { SearchIntent } from './searchIntent.js';
+import type { RequirementType, RequirementStatus, RequirementEvaluation, UnknownHardFilterPolicy } from '../src/types.js';
 
-export type { RequirementType, RequirementStatus, UnknownHardFilterPolicy, RequirementEvaluation } from '../src/types';
+export type { RequirementType, RequirementStatus, UnknownHardFilterPolicy, RequirementEvaluation } from '../src/types.js';
 
 // Política para quando um HARD_FILTER não pode ser confirmado nem negado
 // (nenhum provider disponível informou o dado observado):

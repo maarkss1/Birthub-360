@@ -19,7 +19,7 @@ vi.mock('../../../../lib/logger.js', () => ({
   logger: { warn: vi.fn(), error: vi.fn(), info: vi.fn() },
 }));
 
-const { requestContext } = await import('../../../../lib/async-context');
+const { requestContext } = await import('../../../../lib/async-context.js');
 const { SwarmOrchestrator } = await import('../supervisor.agent');
 const { PiiConsentRequiredError } = await import('../../services/guardrails.service');
 const checkpointerModule = await import('../../../../lib/ai/checkpointer.js');

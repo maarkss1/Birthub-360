@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeAiProbabilityAdjustment } from '../forecastAdjustment';
+import { computeAiProbabilityAdjustment } from '../forecastAdjustment.js';
 
 describe('computeAiProbabilityAdjustment', () => {
   it('usa 50% como ponto de partida quando o CRM não tem probabilidade preenchida', () => {

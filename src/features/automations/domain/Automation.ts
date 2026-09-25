@@ -1,5 +1,5 @@
-import type { AutomationActionLabel, AutomationTriggerLabel } from '../../../lib/enumMap';
-import type { Repository } from '../../../shared/domain/Repository';
+import type { AutomationActionLabel, AutomationTriggerLabel } from '../../../lib/enumMap.js';
+import type { Repository } from '../../../shared/domain/Repository.js';
 
 export interface Automation {
   id: string;

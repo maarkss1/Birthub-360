@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   buildSellerBenchmark,
   MIN_DEALS_FOR_RANKING,
-} from '../application/queries/sellerBenchmarkReport';
+} from '../application/queries/sellerBenchmarkReport.js';
 import type {
   CommercialGoalDTO,
   CommercialIntelligenceRepository,
@@ -11,7 +11,7 @@ import type {
   GoalMetric,
   LeadFieldChangeRow,
   StageDefinition,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';

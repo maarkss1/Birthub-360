@@ -25,7 +25,7 @@
 
 import type { Prisma } from '@prisma/client';
 import type { PlaybookKey } from '../../../config/playbooks.js';
-import { fromPrismaCompanyStatus } from '../../../lib/enumMap';
+import { fromPrismaCompanyStatus } from '../../../lib/enumMap.js';
 import { logger } from '../../../lib/logger.js';
 import type { prisma } from '../../../lib/prisma.js';
 import {
@@ -34,11 +34,11 @@ import {
 } from '../infra/PrismaEnrichmentRepository.js';
 export { defaultEnrichmentRepository, type IEnrichmentRepository };
 import { AppError } from '../../../shared/middlewares/errorHandler.js';
-import { IcebreakerService } from '../../intelligence/services/IcebreakerService';
+import { IcebreakerService } from '../../intelligence/services/IcebreakerService.js';
 import { filterNewContacts } from '../utils/contactDedupe.js';
-import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service';
-import { discoverCnpjByName, isValidCnpj, sanitizeCnpj } from './cnpj.util';
-import { checkEmailDeliverability } from './email-verification.service';
+import { enrichOrganizationByDomain, enrichOrganizationWithContacts } from './apollo.service.js';
+import { discoverCnpjByName, isValidCnpj, sanitizeCnpj } from './cnpj.util.js';
+import { checkEmailDeliverability } from './email-verification.service.js';
 import { fetchCnpjData } from './enrichment/cnpjLookup.js';
 import {
   type DomainGuess,
@@ -52,10 +52,10 @@ import {
   computeLookalikeScore,
   type LookalikeMatch,
   type LookalikeScoreResult,
-} from './lookalike-scoring.service';
-import { type NewsMention, searchCompanyNews } from './news.service';
-import { searchNominatimPlace } from './nominatim.service';
-import { searchGooglePlace } from './places.service';
+} from './lookalike-scoring.service.js';
+import { type NewsMention, searchCompanyNews } from './news.service.js';
+import { searchNominatimPlace } from './nominatim.service.js';
+import { searchGooglePlace } from './places.service.js';
 
 export {
   type CepLookupResult,
@@ -198,7 +198,7 @@ export async function enrichCompany(
 
   try {
     return await runEnrichment(company, options, repo);
-  } catch (error) {
+  } catch (error: any) {
     await repo.updateCompany(companyId, { enrichmentStatus: 'Falhou' }).catch(() => {});
     throw error;
   }

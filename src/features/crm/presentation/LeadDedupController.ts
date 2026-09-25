@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { LeadDeduplicationService } from '../application/LeadDeduplicationService';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { LeadDeduplicationService } from '../application/LeadDeduplicationService.js';
 
 /**
  * CRM-002/003 (auditoria de débito técnico): caller real de LeadDeduplicationService, que até
@@ -17,7 +17,7 @@ export class LeadDedupController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.leadDeduplicationService.previewDuplicates(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -27,7 +27,7 @@ export class LeadDedupController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.leadDeduplicationService.deduplicateByEmail(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

@@ -1,5 +1,5 @@
 import { useCallback, useRef, useState } from 'react';
-import { toast } from '../../../lib/toast';
+import { toast } from '../../../lib/toast.js';
 
 // SpeechRecognitionLike / Window.SpeechRecognition são tipos ambient globais definidos em
 // src/types/speech-recognition.d.ts (Web Speech API não faz parte da lib "DOM" do TypeScript) —

@@ -49,7 +49,7 @@ export const AuditService = {
           details: details,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, auditParams: params }, 'Failed to save audit log');
     }
   },

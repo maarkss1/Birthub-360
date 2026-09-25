@@ -44,7 +44,7 @@ async function preprocessForOcr(buffer: Buffer): Promise<Buffer> {
       });
     }
     return await pipeline.greyscale().normalise().sharpen().png().toBuffer();
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err }, 'Pré-processamento de imagem para OCR falhou; usando imagem original');
     return buffer;
   }

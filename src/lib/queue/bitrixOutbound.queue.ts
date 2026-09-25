@@ -64,7 +64,7 @@ export function createBitrixOutboundWorker() {
         try {
           await pushLeadToBitrix(organizationId, leadId);
           logger.info({ organizationId, leadId }, 'Bitrix outbound job completed successfully');
-        } catch (error) {
+        } catch (error: any) {
           logger.error({ err: error, jobId: job.id, leadId }, 'Bitrix outbound job failed');
           throw error;
         }

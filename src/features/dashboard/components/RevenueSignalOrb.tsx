@@ -4,7 +4,7 @@ import { useReducedMotion } from 'framer-motion';
 import { Activity, Handshake, Target } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import type * as THREE from 'three';
-import { BRAND } from '../../../config/brand';
+import { BRAND } from '../../../config/brand.js';
 
 interface RevenueSignalOrbProps {
   conversionRate: number;

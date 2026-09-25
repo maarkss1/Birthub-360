@@ -1,2 +1,2 @@
-export { NotificationCenter, default } from './NotificationCenter';
-export type { NotificationItem } from './NotificationCenter';
+export { NotificationCenter, default } from './NotificationCenter.js';
+export type { NotificationItem } from './NotificationCenter.js';

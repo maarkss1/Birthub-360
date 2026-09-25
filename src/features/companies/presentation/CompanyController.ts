@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import { clampQueryLimit } from '../../../shared/http/queryLimit';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { CompanyUseCases } from '../application/CompanyUseCases';
+import { clampQueryLimit } from '../../../shared/http/queryLimit.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { CompanyUseCases } from '../application/CompanyUseCases.js';
 
 export class CompanyController {
   constructor(private companyUseCases: CompanyUseCases) {}
@@ -19,7 +19,7 @@ export class CompanyController {
       const query = typeof req.query.q === 'string' ? req.query.q : undefined;
       const result = await this.companyUseCases.findCompanies(orgId, query, page, limit);
       res.json({ success: true, data: result.data, meta: result.meta });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -36,7 +36,7 @@ export class CompanyController {
         return;
       }
       res.json({ success: true, data: company });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -46,7 +46,7 @@ export class CompanyController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const company = await this.companyUseCases.createCompany(orgId, req.body);
       res.status(201).json({ success: true, data: company });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -60,7 +60,7 @@ export class CompanyController {
         req.body,
       );
       res.json({ success: true, data: company });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -70,7 +70,7 @@ export class CompanyController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.companyUseCases.deleteCompany(orgId, routeParam(req.params.id, 'id'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -87,7 +87,7 @@ export class CompanyController {
         },
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

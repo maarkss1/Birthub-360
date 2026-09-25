@@ -174,7 +174,7 @@ export async function scanAndAdvanceCadenceRuns(
           { organizationId: run.organizationId, runId: run.id, sequenceId: run.sequenceId },
           'CadenceRun encerrado como failed: sequência associada inválida/inacessível.',
         );
-      } catch (err) {
+      } catch (err: any) {
         errors++;
         logger.error(
           { err, organizationId: run.organizationId, runId: run.id },
@@ -188,7 +188,7 @@ export async function scanAndAdvanceCadenceRuns(
         advanceCadenceRun(deps, run.organizationId, run.id, sequence, now),
       );
       processed++;
-    } catch (err) {
+    } catch (err: any) {
       errors++;
       logger.error(
         { err, organizationId: run.organizationId, runId: run.id },

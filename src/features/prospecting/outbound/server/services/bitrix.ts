@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { isUrlSafeForOutboundWebhook } from '../validators';
+import { isUrlSafeForOutboundWebhook } from '../validators.js';
 
 export type BitrixCheckStatus = 'existing_client' | 'existing_lead' | 'new' | 'unchecked';
 
@@ -78,7 +78,7 @@ export async function checkBitrixDuplicate(
       (result.LEAD || []).forEach((id: any) => leadIds.add(id));
       (result.CONTACT || []).forEach((id: any) => contactIds.add(id));
       (result.COMPANY || []).forEach((id: any) => companyIds.add(id));
-    } catch (err) {
+    } catch (err: any) {
       // Bitrix indisponível/timeout — segue sem bloquear a prospecção.
     } finally {
       clearTimeout(timeoutId);
@@ -165,7 +165,7 @@ export async function fetchWithRetry(
         return response;
       }
       lastError = new Error(`Bitrix24 respondeu HTTP ${response.status} na tentativa ${attempt}/${attempts}.`);
-    } catch (err) {
+    } catch (err: any) {
       lastError = err;
       if (attempt === attempts) {
         throw err;

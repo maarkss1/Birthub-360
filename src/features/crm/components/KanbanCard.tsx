@@ -11,8 +11,8 @@ import {
   User,
 } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { TechToolLogo } from '../../../components/ui/TechToolLogo';
-import type { Lead } from '../../../types';
+import { TechToolLogo } from '../../../components/ui/TechToolLogo.js';
+import type { Lead } from '../../../types.js';
 
 const TEMPERATURE_EMOJI: Record<string, string> = { Quente: '🔥', Morno: '🌤️', Frio: '❄️' };
 

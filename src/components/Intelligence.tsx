@@ -28,15 +28,15 @@ import {
   Zap,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { BRAND } from '../config/brand';
-import { AIPendingActions } from '../features/intelligence/components/AIPendingActions';
-import { useActivePlaybook } from '../hooks/useActivePlaybook';
-import { useBrandAccent } from '../hooks/useBrandAccent';
-import { api } from '../lib/api';
-import { clientLogger } from '../lib/clientLogger';
-import { PIC_OPTIONS } from '../shared/constants/icp-options';
-import type { Lead } from '../types';
-import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon';
+import { BRAND } from '../config/brand.js';
+import { AIPendingActions } from '../features/intelligence/components/AIPendingActions.js';
+import { useActivePlaybook } from '../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../hooks/useBrandAccent.js';
+import { api } from '../lib/api.js';
+import { clientLogger } from '../lib/clientLogger.js';
+import { PIC_OPTIONS } from '../shared/constants/icp-options.js';
+import type { Lead } from '../types.js';
+import { LinkedinIcon as Linkedin } from './ui/icons/LinkedinIcon.js';
 
 type ToolType =
   | 'script_call'
@@ -217,7 +217,7 @@ export function Intelligence() {
       setLeads((prev) =>
         prev.map((l) => (l.id === selectedLead.id ? { ...l, pic: nextPic as Lead['pic'] } : l)),
       );
-    } catch (e) {
+    } catch (e: any) {
       clientLogger.error({ err: e }, 'Error setting PIC');
     }
   };
@@ -260,7 +260,7 @@ export function Intelligence() {
         { timeoutMs: 90_000 },
       );
       setResult(response.result);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error generating intelligence');
       setResult(
         error instanceof Error

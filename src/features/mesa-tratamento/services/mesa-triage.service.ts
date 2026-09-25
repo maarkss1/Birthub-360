@@ -156,7 +156,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       };
 
       return applySeverityFloor(result, alert);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, alertId: alert.alertId },
         'Erro na triagem da mesa de tratamento — aplicando fallback determinístico de segurança',

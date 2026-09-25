@@ -67,7 +67,7 @@ export class VectorService {
         .filter((row) => row.distance < threshold)
         .sort((a, b) => a.distance - b.distance)
         .slice(0, limit);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, query }, 'Failed to perform hybrid semantic search');
       return [];
     }

@@ -21,7 +21,7 @@ vi.mock('../../../../lib/prisma.js', () => ({
   prisma: { lead: { findFirst: (...args: unknown[]) => leadFindFirstMock(...args) } },
 }));
 
-import { createFollowUpTaskTool, notifyTeamTool } from '../opsTools';
+import { createFollowUpTaskTool, notifyTeamTool } from '../opsTools.js';
 
 describe('createFollowUpTaskTool', () => {
   beforeEach(() => {

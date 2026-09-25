@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseLeadLookupQuery } from '../leadLookup';
+import { parseLeadLookupQuery } from '../leadLookup.js';
 
 describe('parseLeadLookupQuery', () => {
   it('reconhece URL de lead do Bitrix24 e extrai o id numérico', () => {

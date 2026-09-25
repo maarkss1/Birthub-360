@@ -2,16 +2,16 @@
 
 import { AlertTriangle, Waypoints } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type BottleneckSeverity,
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   type FunnelBottleneckReport,
-} from '../commercialIntelligence.api';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { MetricInfo } from './MetricInfo.js';
 
 const SEVERITY_LABEL: Record<BottleneckSeverity, string> = {
   critico: 'Gargalo crítico',

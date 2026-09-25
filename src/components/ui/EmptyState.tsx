@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
-import { Button } from './Button';
+import { Button } from './Button.js';
 
 interface EmptyStateProps {
   title: string;

@@ -78,7 +78,7 @@ async function trackPiiRedactionEvent(source: string): Promise<void> {
     await prisma.aIGuardrailEvent.create({
       data: { type: 'pii_redacted', source, organizationId },
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, source, organizationId },
       'Falha ao registrar evento de guardrail de PII (a redação em si já aconteceu).',

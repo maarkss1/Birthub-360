@@ -93,7 +93,7 @@ Retorne SEMPRE e APENAS um JSON válido no seguinte formato:
         ...parsed,
         companyContext,
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao mapear comitê de decisão');
       return {
         companyContext,

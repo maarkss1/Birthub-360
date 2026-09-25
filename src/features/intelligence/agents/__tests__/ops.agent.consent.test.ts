@@ -48,7 +48,7 @@ vi.mock('../../../../lib/ai/checkpointer.js', async () => {
   };
 });
 
-const { requestContext } = await import('../../../../lib/async-context');
+const { requestContext } = await import('../../../../lib/async-context.js');
 const { OpsAgent } = await import('../ops.agent');
 
 afterEach(() => {

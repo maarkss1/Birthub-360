@@ -35,8 +35,8 @@
 // empresarial). Para esses, este módulo não gera nada — nunca um sinal
 // "plausível" sem uma fonte real por trás.
 
-import type { Signal, SignalType } from '../src/types';
-import type { CnpjData } from './cnpj';
+import type { Signal, SignalType } from '../src/types.js';
+import type { CnpjData } from './cnpj.js';
 
 export type { Signal, SignalType };
 

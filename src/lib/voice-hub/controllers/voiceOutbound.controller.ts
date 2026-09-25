@@ -18,7 +18,7 @@ export async function initiateOutboundCallHandler(req: Request, res: Response) {
     });
 
     return res.status(202).json({ success: true, ...result });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof AgentNotFoundError) {
       return res.status(404).json({ error: err.message });
     }

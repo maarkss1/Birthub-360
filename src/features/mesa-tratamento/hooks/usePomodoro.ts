@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
-import { mesaTratamentoApi } from '../mesaTratamento.api';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
+import { mesaTratamentoApi } from '../mesaTratamento.api.js';
 
 type PomodoroPhase = 'idle' | 'focus' | 'break' | 'long_break';
 

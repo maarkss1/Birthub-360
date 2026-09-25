@@ -48,7 +48,7 @@ export async function dispatchN8nWebhook(
       return { dispatched: false, reason: 'request-failed' };
     }
     return { dispatched: true };
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err, event }, 'Falha ao disparar webhook de saída para o n8n.');
     return { dispatched: false, reason: 'request-failed' };
   }

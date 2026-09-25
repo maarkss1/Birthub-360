@@ -3,7 +3,7 @@
  * forecast". Só entram negócios com condição mínima real de fechar. Critérios deterministas,
  * baseados em campos que já existem no schema (`Lead`) — nenhum deles é inferido/fabricado.
  */
-import type { DealRow } from '../domain/CommercialIntelligence';
+import type { DealRow } from '../domain/CommercialIntelligence.js';
 
 /**
  * Limiar de aging crítico por etapa. Hoje é um único valor global (não há SLA configurado por

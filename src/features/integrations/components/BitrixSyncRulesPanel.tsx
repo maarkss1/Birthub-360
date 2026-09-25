@@ -1,9 +1,9 @@
 import { Loader2, Lock, Plus, Trash2, Zap } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { BRAND } from '../../../config/brand';
-import { useAuth } from '../../../contexts/AuthContext';
-import { api } from '../../../lib/api';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
+import { BRAND } from '../../../config/brand.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { api } from '../../../lib/api.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
 
 interface BitrixDealPipeline {
   id: string;
@@ -147,7 +147,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
       setNewStageId('');
       setNewAssignedById('');
       await loadRules();
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao criar a regra.');
     } finally {
       setCreating(false);
@@ -158,7 +158,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
     setRules((prev) => prev.map((r) => (r.id === rule.id ? { ...r, active: !r.active } : r)));
     try {
       await api.put(`/api/bitrix/sync-rules/${rule.id}`, { active: !rule.active });
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao atualizar a regra.');
       await loadRules();
     }
@@ -168,7 +168,7 @@ export function BitrixSyncRulesPanel({ connectionId }: BitrixSyncRulesPanelProps
     setRules((prev) => prev.filter((r) => r.id !== ruleId));
     try {
       await api.delete(`/api/bitrix/sync-rules/${ruleId}`);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao remover a regra.');
       await loadRules();
     }

@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import type { NoteUseCases } from '../application/NoteUseCases';
-import type { NoteEntityType } from '../domain/Note';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import type { NoteUseCases } from '../application/NoteUseCases.js';
+import type { NoteEntityType } from '../domain/Note.js';
 
 /**
  * O mesmo router (note.routes.ts) é montado em três prefixos diferentes
@@ -29,7 +29,7 @@ export class NoteController {
       const { entityType, entityId } = resolveEntity(req);
       const note = await this.noteUseCases.createNote(orgId, entityType, entityId, req.body);
       res.status(201).json({ success: true, data: note });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -40,7 +40,7 @@ export class NoteController {
       const { entityType, entityId } = resolveEntity(req);
       const notes = await this.noteUseCases.findNotesByEntity(orgId, entityType, entityId);
       res.json({ success: true, data: notes });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -50,7 +50,7 @@ export class NoteController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.noteUseCases.deleteNote(orgId, routeParam(req.params.noteId, 'noteId'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

@@ -5,8 +5,8 @@
 // para que o Provider Registry e o Query Planner tratem esta fonte como
 // qualquer outra, por capacidade.
 
-import { fetchCnpjPublicData, type CnpjData } from '../../cnpj';
-import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types';
+import { fetchCnpjPublicData, type CnpjData } from '../../cnpj.js';
+import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types.js';
 
 const CAPABILITIES: ProviderCapability[] = ['company_cnae_lookup', 'company_location_lookup'];
 

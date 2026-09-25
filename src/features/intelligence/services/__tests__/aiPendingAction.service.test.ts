@@ -49,7 +49,7 @@ vi.mock('@/features/notifications/notification.service', () => ({
 }));
 
 import { prisma } from '@/lib/prisma';
-import { executeAction, executeAndRecord } from '../aiPendingAction.service';
+import { executeAction, executeAndRecord } from '../aiPendingAction.service.js';
 
 const updateMock = prisma.aIPendingAction as unknown as { update: ReturnType<typeof vi.fn> };
 

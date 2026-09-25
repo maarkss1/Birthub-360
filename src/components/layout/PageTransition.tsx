@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type React from 'react';
-import { EASE_PREMIUM } from '../../lib/motion';
-import { cn } from '../../lib/utils';
+import { EASE_PREMIUM } from '../../lib/motion.js';
+import { cn } from '../../lib/utils.js';
 
 export interface PageTransitionProps {
   children: React.ReactNode;

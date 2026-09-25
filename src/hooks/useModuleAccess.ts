@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { ModuleKey } from '../config/module-catalog';
-import { moduleAccessApi } from '../features/module-access/moduleAccess.api';
+import type { ModuleKey } from '../config/module-catalog.js';
+import { moduleAccessApi } from '../features/module-access/moduleAccess.api.js';
 
 // Mesmo padrão de cache em memória de useFeatureFlags.ts (ver comentário lá sobre não introduzir
 // react-query só para isto) — evita um GET /api/module-access/me redundante por componente

@@ -13,9 +13,9 @@ import type {
   ForecastAccuracySummary,
   ForecastSnapshotRecord,
   PeriodMonth,
-} from '../domain/CommercialIntelligence';
-import { roundMoney } from './shared/mathUtils';
-import { monthRange } from './shared/period';
+} from '../domain/CommercialIntelligence.js';
+import { roundMoney } from './shared/mathUtils.js';
+import { monthRange } from './shared/period.js';
 
 /** `true` quando o período (mês de calendário) já terminou por completo em relação a `now`. */
 export function hasPeriodClosed(period: PeriodMonth, now: Date): boolean {

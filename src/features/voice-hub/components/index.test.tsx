@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Button, Input, EmptyState, Modal, Switch, Tabs, Card } from './index';
+import { Button, Input, EmptyState, Modal, Switch, Tabs, Card } from './index.js';
 
 describe('design-system primitives', () => {
   describe('Button', () => {

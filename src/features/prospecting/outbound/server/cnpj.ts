@@ -146,7 +146,7 @@ export async function fetchCnpjPublicData(cnpjInput: string): Promise<CnpjData |
         source: 'brasilapi'
       };
     }
-  } catch (err) {
+  } catch (err: any) {
     console.warn(`[CNPJ API] Falha na consulta BrasilAPI para ${cleanCnpj}:`, err);
   }
 
@@ -204,7 +204,7 @@ export async function fetchCnpjPublicData(cnpjInput: string): Promise<CnpjData |
         source: 'minhareceita'
       };
     }
-  } catch (err) {
+  } catch (err: any) {
     console.warn(`[CNPJ API] Falha na consulta Minha Receita para ${cleanCnpj}:`, err);
   }
 

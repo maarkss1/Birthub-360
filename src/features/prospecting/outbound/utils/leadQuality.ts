@@ -1,4 +1,4 @@
-import type { Lead, LeadQualityMetric } from '../types';
+import type { Lead, LeadQualityMetric } from '../types.js';
 
 export function calculateLeadQuality(lead: Lead): LeadQualityMetric {
   const mainDm = lead.decision_makers?.[0] || {

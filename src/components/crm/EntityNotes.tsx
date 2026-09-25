@@ -1,9 +1,9 @@
 import { Clock, FileText, Loader2, Send } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { api } from '../../lib/api';
-import { toast } from '../../lib/toast';
-import type { Note } from '../../types';
+import { useAuth } from '../../contexts/AuthContext.js';
+import { api } from '../../lib/api.js';
+import { toast } from '../../lib/toast.js';
+import type { Note } from '../../types.js';
 
 type NoteEntityType = 'lead' | 'company' | 'contact';
 

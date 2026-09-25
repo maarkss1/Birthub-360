@@ -6,7 +6,7 @@
  * não faz parte do bundle do cliente), então são redeclarados aqui. Datas chegam como string ISO
  * (serialização JSON), nunca como `Date`.
  */
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 
 const BASE = '/api/copiloto-ia';
 

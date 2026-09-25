@@ -44,7 +44,7 @@ export async function createWebhookEndpointHandler(req: Request, res: Response) 
       },
       secret: endpoint.secret,
     });
-  } catch (err) {
+  } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
   }
@@ -56,7 +56,7 @@ export async function listWebhookEndpointsHandler(req: Request, res: Response) {
   try {
     const webhookEndpoints = await listWebhookEndpointsForTenant(req.organizationId!);
     res.json({ webhookEndpoints });
-  } catch (err) {
+  } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
   }
@@ -69,7 +69,7 @@ export async function deleteWebhookEndpointHandler(req: Request, res: Response) 
     await deleteWebhookEndpointForTenant(req.organizationId!, String(req.params.id));
     writeAuditLog(req.organizationId, req.user!.id, 'WEBHOOK_ENDPOINT_DELETE', { webhookEndpointId: req.params.id });
     res.json({ success: true });
-  } catch (err) {
+  } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
   }
@@ -93,7 +93,7 @@ export async function regenerateWebhookEndpointSecretHandler(req: Request, res: 
       },
       secret: endpoint.secret,
     });
-  } catch (err) {
+  } catch (err: any) {
     if (handleKnownError(err, res)) return;
     throw err;
   }

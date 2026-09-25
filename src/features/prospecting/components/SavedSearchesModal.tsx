@@ -1,8 +1,8 @@
 import { Bookmark, Calendar, Loader2, Play, Plus, Sparkles, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Dialog } from '../../../components/ui/Dialog';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
 import { api } from '../../../lib/api.js';
 import { toast } from '../../../lib/toast.js';
 import type { ProspectCandidate, ProspectCriteria } from '../domain/prospectTypes.js';

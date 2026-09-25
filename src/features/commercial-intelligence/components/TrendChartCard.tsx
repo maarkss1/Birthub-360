@@ -8,9 +8,9 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { Card } from '../../../components/ui/Card';
-import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette';
-import { formatPercent, type HistoricalTrendsReport } from '../commercialIntelligence.api';
+import { Card } from '../../../components/ui/Card.js';
+import { INK, SINGLE, tooltipStyle } from '../../../shared/constants/chartPalette.js';
+import { formatPercent, type HistoricalTrendsReport } from '../commercialIntelligence.api.js';
 
 interface TrendChartCardProps {
   trends: HistoricalTrendsReport | null;

@@ -79,7 +79,7 @@ export async function refreshHandler(req: Request, res: Response) {
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
     res.json(result);
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Refresh Token Error', err);
     res.status(500).json({ error: 'Erro interno no servidor.' });
   }

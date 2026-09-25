@@ -24,7 +24,7 @@ export async function withRetry<T>(operation: () => Promise<T>, options: RetryOp
   for (;;) {
     try {
       return await operation();
-    } catch (error) {
+    } catch (error: any) {
       attempt += 1;
       if (attempt >= options.maxAttempts || !options.isRetryable(error)) {
         throw error;

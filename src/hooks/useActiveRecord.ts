@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ActiveRecordContext, type ActiveRecordContextValue } from '../contexts/activeRecord';
+import { ActiveRecordContext, type ActiveRecordContextValue } from '../contexts/activeRecord.js';
 
 export function useActiveRecord(): ActiveRecordContextValue {
   const context = useContext(ActiveRecordContext);

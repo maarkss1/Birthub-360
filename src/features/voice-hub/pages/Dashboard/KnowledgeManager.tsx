@@ -14,8 +14,8 @@ import {
   Sparkles,
   Bot,
 } from 'lucide-react';
-import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system';
-import { logger } from '../../../../lib/logger';
+import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system.js';
+import { logger } from '../../../../lib/logger.js';
 
 interface KnowledgeDoc {
   id: string;
@@ -92,7 +92,7 @@ export default function KnowledgeManager() {
         if (current && list.some((a) => a.id === current)) return current;
         return list.length > 0 ? list[0].id : null;
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to load agents for knowledge manager', { err });
       setAgentsState({ status: 'error', agents: [] });
     }
@@ -152,7 +152,7 @@ export default function KnowledgeManager() {
       setUploadKeyword('');
       setUploadFile(null);
       await fetchAgents();
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Knowledge upload failed', { err });
       setUploadError(err instanceof Error ? err.message : 'Falha ao enviar documento.');
     } finally {
@@ -189,7 +189,7 @@ export default function KnowledgeManager() {
       setAddKeyword('');
       setAddContent('');
       await fetchAgents();
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Manual knowledge add failed', { err });
       setAddError(err instanceof Error ? err.message : 'Falha ao adicionar documento.');
     } finally {
@@ -218,7 +218,7 @@ export default function KnowledgeManager() {
       }
 
       await fetchAgents();
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to delete knowledge document', { err });
     } finally {
       setDeletingId(null);
@@ -249,7 +249,7 @@ export default function KnowledgeManager() {
       }
 
       setRagResult(data.result);
-    } catch (err) {
+    } catch (err: any) {
       logger.error('RAG test failed', { err });
       setRagError(err instanceof Error ? err.message : 'Falha ao avaliar pergunta no RAG.');
     } finally {

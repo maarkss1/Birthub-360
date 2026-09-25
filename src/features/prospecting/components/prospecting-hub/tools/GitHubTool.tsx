@@ -1,10 +1,10 @@
 import { CheckCircle2, ExternalLink, Loader2, Search, ShieldCheck } from 'lucide-react';
 import { useState } from 'react';
-import { GithubIcon as Github } from '../../../../../components/ui/icons/GithubIcon';
-import { BRAND } from '../../../../../config/brand';
-import { api } from '../../../../../lib/api';
-import type { GithubOrgSummary } from '../../../services/github.service';
-import { getErrorMessage, type PromoteResult } from './shared';
+import { GithubIcon as Github } from '../../../../../components/ui/icons/GithubIcon.js';
+import { BRAND } from '../../../../../config/brand.js';
+import { api } from '../../../../../lib/api.js';
+import type { GithubOrgSummary } from '../../../services/github.service.js';
+import { getErrorMessage, type PromoteResult } from './shared.js';
 
 export function GitHubTool(_props: { configured: boolean }) {
   const [query, setQuery] = useState('');
@@ -30,7 +30,7 @@ export function GitHubTool(_props: { configured: boolean }) {
       );
       setOrganizations(result.organizations);
       if (result.error) setError(result.error);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar no GitHub'));
     } finally {
       setIsSearching(false);
@@ -65,7 +65,7 @@ export function GitHubTool(_props: { configured: boolean }) {
         website: profile.blog || org.htmlUrl,
       });
       setPromoted((prev) => ({ ...prev, [org.login]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

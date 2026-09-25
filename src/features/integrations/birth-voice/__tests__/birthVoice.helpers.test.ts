@@ -10,7 +10,7 @@ import {
   detectRecordingConsentFromRawTranscript,
   isValidSignature,
   pickCallablePhone,
-} from '../birthVoice.helpers';
+} from '../birthVoice.helpers.js';
 
 const SECRET = 'segredo-compartilhado';
 

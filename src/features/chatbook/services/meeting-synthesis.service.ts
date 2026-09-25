@@ -73,7 +73,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<MeetingSynthesisOutput>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao sintetizar reunião');
       return {
         executiveSummary: 'Reunião realizada com o cliente para alinhamento de oportunidades.',

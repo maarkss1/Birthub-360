@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { calculateLeadScore } from '../domain/leadScoreCalculator';
+import { calculateLeadScore } from '../domain/leadScoreCalculator.js';
 
 describe('Lead Score Calculator (BANT / SPIN)', () => {
   it('calculates perfect score (100) for ideal BANT qualification', () => {

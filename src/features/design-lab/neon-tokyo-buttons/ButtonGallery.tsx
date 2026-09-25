@@ -3,7 +3,7 @@
  * rota de produto. Ver README.md nesta pasta para como abrir isto dentro do app.
  */
 import type * as React from 'react';
-import { NeonTokyoButton } from './NeonTokyoButton';
+import { NeonTokyoButton } from './NeonTokyoButton.js';
 
 const VARIANTS: {
   variant: React.ComponentProps<typeof NeonTokyoButton>['variant'];

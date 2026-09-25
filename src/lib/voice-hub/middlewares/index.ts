@@ -151,7 +151,7 @@ export const attachAuthIfPresent = async (req: express.Request, res: express.Res
             passwordHash: 'dummy'
           }
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Failed to auto-upsert dev tenant/user:', err);
       }
     }

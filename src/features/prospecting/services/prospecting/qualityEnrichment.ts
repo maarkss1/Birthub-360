@@ -1,8 +1,8 @@
-import { logger } from '../../../../lib/logger';
-import { validContactEmails } from '../../../../shared/utils/contact-links';
+import { logger } from '../../../../lib/logger.js';
+import { validContactEmails } from '../../../../shared/utils/contact-links.js';
 import { findCompanyDomain } from '../../utils/domain.js';
-import { enrichOrganizationWithContacts } from '../apollo.service';
-import { discoverCnpjByName } from '../cnpj.util';
+import { enrichOrganizationWithContacts } from '../apollo.service.js';
+import { discoverCnpjByName } from '../cnpj.util.js';
 import { searchCompanyNews } from '../news.service.js';
 import type { SearchExecutionTracker } from '../searchExecution.service.js';
 import type { ProspectCandidate } from './types.js';
@@ -36,7 +36,7 @@ export async function enrichCandidatesWithQualityData(
               resultCount: cnpj ? 1 : 0,
               status: 'ok',
             });
-          } catch (err) {
+          } catch (err: any) {
             logger.error(
               { err, searchId: tracker?.searchId, companyName: candidate.tradeName },
               'Falha ao descobrir CNPJ do candidato',
@@ -71,7 +71,7 @@ export async function enrichCandidatesWithQualityData(
               resultCount: contacts.length,
               status: 'ok',
             });
-          } catch (err) {
+          } catch (err: any) {
             logger.error(
               { err, searchId: tracker?.searchId, companyName: candidate.tradeName, domain },
               'Falha ao buscar decisores do candidato',
@@ -100,7 +100,7 @@ export async function enrichCandidatesWithQualityData(
               resultCount: mentions?.length ?? 0,
               status: 'ok',
             });
-          } catch (err) {
+          } catch (err: any) {
             logger.error(
               { err, searchId: tracker?.searchId, companyName: candidate.tradeName },
               'Falha ao buscar notícias para candidato',

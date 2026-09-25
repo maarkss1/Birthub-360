@@ -18,7 +18,7 @@ router.get('/connections', async (req: Request, res: Response, next: NextFunctio
     const { organizationId } = (req as AuthRequest).user;
     const data = await listSlackConnections(organizationId);
     res.json({ success: true, data });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -31,7 +31,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const data = await connectSlack(organizationId, req.body);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -45,7 +45,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnectSlack(organizationId, routeParam(req.params.connectionId, 'connectionId'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -62,7 +62,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -82,7 +82,7 @@ router.post(
         channel,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

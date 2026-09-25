@@ -36,7 +36,7 @@ export function mountMetricsEndpoint(app: Express): void {
     try {
       res.set('Content-Type', client.register.contentType);
       res.end(await client.register.metrics());
-    } catch (ex) {
+    } catch (ex: any) {
       logger.error({ err: ex }, 'mountMetricsEndpoint: failed to collect metrics');
       res.status(500).end('Falha ao coletar métricas.');
     }

@@ -6,7 +6,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useActivities } from '../../hooks/useDatabase';
+import { useActivities } from '../../hooks/useDatabase.js';
 
 export function ClockCalendarWidget() {
   const [time, setTime] = useState<Date>(new Date());

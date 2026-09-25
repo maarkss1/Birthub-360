@@ -1,15 +1,15 @@
 import { Plus, Trash2 } from 'lucide-react';
 import { type FormEvent, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type CopilotoBitrixFieldMappingDTO,
   type CopilotoCrmEntityType,
   copilotoIaApi,
-} from '../copilotoIa.api';
+} from '../copilotoIa.api.js';
 
 const ENTITY_TYPES: CopilotoCrmEntityType[] = ['LEAD', 'COMPANY', 'CONTACT'];
 

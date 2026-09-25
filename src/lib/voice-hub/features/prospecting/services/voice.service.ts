@@ -201,7 +201,7 @@ Pessoa de Contato: ${payload.name}
         callId: data.call_id,
         status: data.status,
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Error triggering voice call', {
         organizationId,
         error: error instanceof Error ? error.message : String(error),

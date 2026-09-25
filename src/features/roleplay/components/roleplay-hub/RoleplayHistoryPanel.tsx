@@ -3,12 +3,12 @@ import { ptBR } from 'date-fns/locale';
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, History } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Dialog } from '../../../../components/ui/Dialog';
-import { ListSkeleton } from '../../../../components/ui/Skeleton';
-import type { PlaybookKey } from '../../../../config/playbooks';
-import { api } from '../../../../lib/api';
-import { scoreTextClassOnSurface } from './scoreColor';
-import type { RoleplayHistoryItem } from './types';
+import { Dialog } from '../../../../components/ui/Dialog.js';
+import { ListSkeleton } from '../../../../components/ui/Skeleton.js';
+import type { PlaybookKey } from '../../../../config/playbooks.js';
+import { api } from '../../../../lib/api.js';
+import { scoreTextClassOnSurface } from './scoreColor.js';
+import type { RoleplayHistoryItem } from './types.js';
 
 const DIFFICULTY_LABELS: Record<RoleplayHistoryItem['difficulty'], string> = {
   facil: 'Fácil',

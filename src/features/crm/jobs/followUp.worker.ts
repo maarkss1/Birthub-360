@@ -77,7 +77,7 @@ export async function runDailyFollowUpScan(): Promise<{ eligible: number; sentCo
 
         sentCount++;
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.warn({ err, leadId: lead.id }, 'Falha ao enviar follow-up de WhatsApp');
     }
   }

@@ -15,25 +15,25 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Pagination } from '../../../components/ui/Pagination';
-import { PLAYBOOKS } from '../../../config/playbooks';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Pagination } from '../../../components/ui/Pagination.js';
+import { PLAYBOOKS } from '../../../config/playbooks.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type ObjectionMatrixItem,
   type ObjectionSuggestion,
   type PlaybookListMeta,
   playbookApi,
   type WinningPatternSuggestion,
-} from '../playbook.api';
-import { LivingPlaybookReview } from './LivingPlaybookReview';
-import { ObjectionItemForm } from './ObjectionItemForm';
-import { ObjectionSuggestionsReview } from './ObjectionSuggestionsReview';
+} from '../playbook.api.js';
+import { LivingPlaybookReview } from './LivingPlaybookReview.js';
+import { ObjectionItemForm } from './ObjectionItemForm.js';
+import { ObjectionSuggestionsReview } from './ObjectionSuggestionsReview.js';
 
 // Mesmo tamanho de página usado em CompanyList/ContactList (via Pagination compartilhado).
 const PAGE_SIZE = 20;
@@ -77,7 +77,7 @@ export function ObjectionsMatrixPage() {
       setSuggestions(res.data);
       setSuggestionsEmptyReason(res.meta?.emptyReason);
       setIsReviewOpen(true);
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao gerar sugestões de objeções via IA');
       toast.error(err instanceof Error ? err.message : 'Falha ao gerar sugestões.');
     } finally {
@@ -102,7 +102,7 @@ export function ObjectionsMatrixPage() {
       setWinningPatterns(res.data);
       setPatternsEmptyReason(res.meta?.emptyReason);
       setIsPatternsReviewOpen(true);
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao gerar padrões vencedores do Playbook Vivo');
       toast.error(err instanceof Error ? err.message : 'Falha ao gerar padrões vencedores.');
     } finally {
@@ -173,7 +173,7 @@ export function ObjectionsMatrixPage() {
       await playbookApi.deleteObjection(item.id);
       toast.success('Objeção excluída.');
       load();
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao excluir objeção da matriz');
       toast.error(err instanceof Error ? err.message : 'Falha ao excluir a objeção.');
     }

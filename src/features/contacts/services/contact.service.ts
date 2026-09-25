@@ -1,9 +1,9 @@
 import type { Prisma } from '@prisma/client';
 import type { z } from 'zod';
 import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
-import { prisma } from '../../../lib/prisma';
-import { contactSchema } from '../../../lib/zod';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
+import { prisma } from '../../../lib/prisma.js';
+import { contactSchema } from '../../../lib/zod.js';
+import { enrichCompany } from '../../prospecting/services/enrichment.service.js';
 
 export class ContactService {
   async findAll(organizationId: string, query?: string, page: number = 1, limit: number = 50) {

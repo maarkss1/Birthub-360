@@ -1,10 +1,10 @@
 import { Check, Info, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Dialog } from '../../../components/ui/Dialog';
-import type { PlaybookKey } from '../../../config/playbooks';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { type ObjectionSuggestion, playbookApi } from '../playbook.api';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import type { PlaybookKey } from '../../../config/playbooks.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { type ObjectionSuggestion, playbookApi } from '../playbook.api.js';
 
 interface ObjectionSuggestionsReviewProps {
   isOpen: boolean;
@@ -55,7 +55,7 @@ export function ObjectionSuggestionsReview({
       setAddedKeys((prev) => new Set(prev).add(key));
       toast.success('Objeção adicionada à matriz.');
       onAdded();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao adicionar sugestão de objeção à matriz');
       toast.error(error instanceof Error ? error.message : 'Falha ao adicionar a objeção.');
     } finally {

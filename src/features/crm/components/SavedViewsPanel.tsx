@@ -1,10 +1,10 @@
 import { Bookmark, Loader2, Play, Plus, Save, Trash2 } from 'lucide-react';
 import type React from 'react';
 import { useCallback, useEffect, useState } from 'react';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Dialog } from '../../../components/ui/Dialog';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 export interface SavedViewFilters {
   owner?: string;
@@ -85,7 +85,7 @@ export function SavedViewsPanel({
       setNewName('');
       setShowCreateForm(false);
       loadViews();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Erro ao salvar view');
     } finally {
       setCreating(false);

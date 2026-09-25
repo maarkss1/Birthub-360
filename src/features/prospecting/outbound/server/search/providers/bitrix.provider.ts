@@ -13,9 +13,9 @@
 // genérico. O padrão segue o já usado por cnpjOficial.provider.ts: a lógica
 // de negócio/resiliência fica no serviço, o adapter só empacota o resultado.
 
-import { checkBitrixDuplicate, fetchWithRetry, type BitrixDuplicateResult } from '../../services/bitrix';
-import { isUrlSafeForOutboundWebhook } from '../../validators';
-import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types';
+import { checkBitrixDuplicate, fetchWithRetry, type BitrixDuplicateResult } from '../../services/bitrix.js';
+import { isUrlSafeForOutboundWebhook } from '../../validators.js';
+import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types.js';
 
 const CAPABILITIES: ProviderCapability[] = ['crm_duplicate_check', 'crm_export'];
 

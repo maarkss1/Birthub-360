@@ -16,10 +16,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { SWARM_BRAND } from '../agents/swarm.constants';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { SWARM_BRAND } from '../agents/swarm.constants.js';
 
 type SwarmAgent = 'supervisor' | 'sdr' | 'bdr' | 'closer' | 'crm' | 'ops';
 type SwarmEventType = 'routing' | 'agent_result' | 'agent_error' | 'final';
@@ -142,7 +142,7 @@ export function SwarmDashboard() {
     try {
       const data = await api.get<SwarmSloSnapshot>('/api/agent/swarm/slo?days=30');
       setSloSnapshot(data);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao buscar o painel de SLO do enxame');
       setSloError(
         'Painel de SLO ainda não disponível nesta instância (rota pendente ou base sem dados).',
@@ -279,7 +279,7 @@ export function SwarmDashboard() {
           try {
             const event = JSON.parse(dataStr) as SwarmEvent;
             applyEvent(event);
-          } catch (e) {
+          } catch (e: any) {
             clientLogger.error({ err: e }, 'Erro ao fazer parse SSE data');
           }
         }
@@ -291,7 +291,7 @@ export function SwarmDashboard() {
         );
 
       setIsExecuting(false);
-    } catch (error) {
+    } catch (error: any) {
       if ((error as Error).name === 'AbortError') {
         resolvePendingThinking('Cancelado pelo usuário.');
         setMessages((prev) => [

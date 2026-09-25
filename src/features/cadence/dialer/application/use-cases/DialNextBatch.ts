@@ -64,7 +64,7 @@ export class DialNextBatch {
 
       try {
         await this.callAttemptRepository.save(attempt);
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof AgentDnConflictError) {
           // `freeAgentDns` era uma pré-checagem otimista; outro processo
           // reservou este DN entre essa leitura e agora. Devolve o lead à

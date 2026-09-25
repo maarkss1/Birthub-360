@@ -1,4 +1,4 @@
-import type { CrmCommercialDocumentVersionDTO } from '../crm360.types';
+import type { CrmCommercialDocumentVersionDTO } from '../crm360.types.js';
 
 /**
  * Diferença legível entre duas versões de um documento comercial — mesma lógica de

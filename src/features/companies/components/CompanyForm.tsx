@@ -2,17 +2,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { Input } from '../../../components/ui/Input';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { Textarea } from '../../../components/ui/Textarea';
-import { clientLogger } from '../../../lib/clientLogger';
-import { companiesDB } from '../../../lib/db';
-import { toast } from '../../../lib/toast';
-import { COMPANY_STATUS, companySchema } from '../../../lib/zod';
-import type { Company } from '../../../types';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { Textarea } from '../../../components/ui/Textarea.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { companiesDB } from '../../../lib/db.js';
+import { toast } from '../../../lib/toast.js';
+import { COMPANY_STATUS, companySchema } from '../../../lib/zod.js';
+import type { Company } from '../../../types.js';
 
 interface CompanyFormProps {
   company?: Company | null;
@@ -98,7 +98,7 @@ export function CompanyForm({ company, onClose, onSave }: CompanyFormProps) {
       }
       toast.success(company ? 'Empresa atualizada.' : 'Empresa criada.');
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error saving company');
       toast.error(error instanceof Error ? error.message : 'Falha ao salvar a empresa.');
     }

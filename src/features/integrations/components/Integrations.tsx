@@ -11,27 +11,27 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { type ReactNode, useState } from 'react';
-import { IconWrench } from '../../../components/icons';
-import { Card } from '../../../components/ui/Card';
-import { BRAND } from '../../../config/brand';
-import { useAuth } from '../../../contexts/AuthContext';
-import { use3CXIntegration } from '../../../hooks/use3CXIntegration';
-import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
-import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration';
-import { useWhatsAppIntegration } from '../../../hooks/useWhatsAppIntegration';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { SoundFX } from '../../../lib/soundEffects';
-import { VoiceHubConnectionPanel } from '../birth-voice/components/VoiceHubConnectionPanel';
-import { OmieConnectionPanel } from '../omie/components/OmieConnectionPanel';
-import { SlackConnectionPanel } from '../slack/components/SlackConnectionPanel';
-import { StripeConnectionPanel } from '../stripe/components/StripeConnectionPanel';
-import { WhatsAppWebPanel } from '../whatsapp/components/WhatsAppWebPanel';
-import { BitrixExtractionPanel } from './BitrixExtractionPanel';
-import { BitrixImportPanel } from './BitrixImportPanel';
-import { BitrixSyncRulesPanel } from './BitrixSyncRulesPanel';
-import { IntegrationStatusBadge } from './IntegrationStatusBadge';
-import { WebhookMonitor } from './WebhookMonitor';
-import { ExternalCrmPanel } from './ExternalCrmPanel';
+import { IconWrench } from '../../../components/icons.js';
+import { Card } from '../../../components/ui/Card.js';
+import { BRAND } from '../../../config/brand.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { use3CXIntegration } from '../../../hooks/use3CXIntegration.js';
+import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration.js';
+import { useGoogleIntegration } from '../../../hooks/useGoogleIntegration.js';
+import { useWhatsAppIntegration } from '../../../hooks/useWhatsAppIntegration.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { VoiceHubConnectionPanel } from '../birth-voice/components/VoiceHubConnectionPanel.js';
+import { OmieConnectionPanel } from '../omie/components/OmieConnectionPanel.js';
+import { SlackConnectionPanel } from '../slack/components/SlackConnectionPanel.js';
+import { StripeConnectionPanel } from '../stripe/components/StripeConnectionPanel.js';
+import { WhatsAppWebPanel } from '../whatsapp/components/WhatsAppWebPanel.js';
+import { BitrixExtractionPanel } from './BitrixExtractionPanel.js';
+import { BitrixImportPanel } from './BitrixImportPanel.js';
+import { BitrixSyncRulesPanel } from './BitrixSyncRulesPanel.js';
+import { IntegrationStatusBadge } from './IntegrationStatusBadge.js';
+import { WebhookMonitor } from './WebhookMonitor.js';
+import { ExternalCrmPanel } from './ExternalCrmPanel.js';
 
 type IntegrationCapabilityStatus = 'connected' | 'read' | 'write' | 'stub' | 'error' | 'pending';
 

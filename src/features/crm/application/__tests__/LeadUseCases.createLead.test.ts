@@ -24,7 +24,7 @@ vi.mock('../../services/assignment.service.js', () => ({
 const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 vi.mock('../../../../lib/logger.js', () => ({ logger }));
 
-const { LeadUseCases } = await import('../LeadUseCases');
+const { LeadUseCases } = await import('../LeadUseCases.js');
 
 function makeUseCases(created: Record<string, unknown> = { id: 'lead-new' }) {
   const repository = {

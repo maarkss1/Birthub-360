@@ -4,10 +4,10 @@ import {
   Play, Pause, Square, AlertCircle, List,
   Terminal, BarChart2, Sparkles, Variable, Plus, Trash2, FastForward
 } from 'lucide-react';
-import { useStudioStore } from '../../../store/useStudioStore';
-import { validationEngine } from '../../../../../lib/studio/ValidationEngine';
+import { useStudioStore } from '../../../store/useStudioStore.js';
+import { validationEngine } from '../../../../../lib/studio/ValidationEngine.js';
 import { motion, AnimatePresence } from 'motion/react';
-import { ValidationIssuesList } from './ValidationIssuesList';
+import { ValidationIssuesList } from './ValidationIssuesList.js';
 
 export function BottomDrawer() {
   const [activeTab, setActiveTab] = useState<'runtime' | 'errors' | 'events' | 'analytics' | 'catarina'>('runtime');

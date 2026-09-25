@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState } from 'react';
 import { Bug, X, Send, CheckCircle2 } from 'lucide-react';
-import type { User } from '../types';
+import type { User } from '../types.js';
 
 interface ReportErrorButtonProps {
   user?: User | null;
@@ -46,7 +46,7 @@ export function ReportErrorButton({ user, page, isDark = true }: ReportErrorButt
         setIsOpen(false);
         setSent(false);
       }, 2000);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao enviar reporte:', err);
     } finally {
       setSending(false);

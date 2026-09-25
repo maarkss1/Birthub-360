@@ -122,7 +122,7 @@ export const auth = betterAuth({
             'Se você não solicitou essa alteração, ignore este e-mail — sua senha atual continua válida.',
           ].join('\n'),
         });
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof MailerNotConfiguredError) {
           logger.warn(
             { email: user.email, url },
@@ -167,7 +167,7 @@ export const auth = betterAuth({
             'Se você não fez esse cadastro, ignore este e-mail — nenhuma conta será ativada.',
           ].join('\n'),
         });
-      } catch (error) {
+      } catch (error: any) {
         // Diferente de sendResetPassword (abaixo): a conta JÁ foi criada em banco neste ponto do
         // fluxo de sign-up (ver sign-up.mjs do better-auth), então relançar aqui faria o cliente
         // ver "cadastro falhou" para uma conta que na verdade existe (só não verificada) — a

@@ -15,8 +15,8 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 type ExtractionEntity = 'lead' | 'deal' | 'company' | 'contact' | 'activity' | 'user';
 type ExtractionPeriod =
@@ -247,7 +247,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
       });
       toast.success('Extração iniciada — acompanhe o progresso abaixo.');
       await loadRuns();
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao iniciar a extração.');
     } finally {
       setSubmitting(false);
@@ -258,7 +258,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
     try {
       await api.post(`/api/bitrix/extractions/${runId}/cancel`);
       await loadRuns();
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e instanceof Error ? e.message : 'Falha ao cancelar a extração.');
     }
   };
@@ -267,7 +267,7 @@ export function BitrixExtractionPanel({ connectionId, canManage }: BitrixExtract
     try {
       await api.delete(`/api/bitrix/extractions/${runId}`);
       setRuns((prev) => prev.filter((r) => r.id !== runId));
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e instanceof Error ? e.message : 'Falha ao remover a extração do histórico.');
     }
   };

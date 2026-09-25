@@ -14,11 +14,11 @@ import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
   DealRow,
-} from '../../domain/CommercialIntelligence';
-import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../../domain/CommercialIntelligence.js';
+import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 const NOT_INFORMED = 'Não informado';
 

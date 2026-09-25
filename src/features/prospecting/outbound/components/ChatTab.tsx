@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import type { AIConfig, ChatMessage, ChatSession, ThemeMode } from '../types';
-import { AtlasLogo } from './AtlasLogo';
+import type { AIConfig, ChatMessage, ChatSession, ThemeMode } from '../types.js';
+import { AtlasLogo } from './AtlasLogo.js';
 import { 
   Send, 
   Bot, 
@@ -59,7 +59,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ aiConfig, theme = 'dark' }) =>
           createNewSession();
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao carregar sessões:', err);
     }
   };
@@ -71,7 +71,7 @@ export const ChatTab: React.FC<ChatTabProps> = ({ aiConfig, theme = 'dark' }) =>
         const data = await res.json();
         setMessages(data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao carregar mensagens:', err);
     }
   };

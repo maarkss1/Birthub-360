@@ -1,16 +1,16 @@
 import { Cpu, Loader2, MapPin } from 'lucide-react';
 import { useState } from 'react';
-import { BRAND } from '../../../../../config/brand';
-import { api } from '../../../../../lib/api';
+import { BRAND } from '../../../../../config/brand.js';
+import { api } from '../../../../../lib/api.js';
 import {
   ESTADO_OPTIONS,
   SEGMENTO_OPTIONS,
   BIRTHHUB360_SEGMENTO_OPTIONS,
-} from '../../../../../shared/constants/icp-options';
-import type { ProspectCandidate } from '../../../services/prospecting.service';
-import { CandidateCard } from '../CandidateCard';
-import { NotConfiguredBanner } from './NotConfiguredBanner';
-import { getErrorMessage, type PromoteResult } from './shared';
+} from '../../../../../shared/constants/icp-options.js';
+import type { ProspectCandidate } from '../../../services/prospecting.service.js';
+import { CandidateCard } from '../CandidateCard.js';
+import { NotConfiguredBanner } from './NotConfiguredBanner.js';
+import { getErrorMessage, type PromoteResult } from './shared.js';
 
 interface GooglePlacesCriteria {
   segmento: string;
@@ -59,7 +59,7 @@ export function GooglePlacesTool({ configured }: { configured: boolean }) {
         { timeoutMs: 30_000 },
       );
       setCandidates(result.candidates);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar no Google Places'));
     } finally {
       setIsSearching(false);
@@ -80,7 +80,7 @@ export function GooglePlacesTool({ configured }: { configured: boolean }) {
         website: candidate.website,
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

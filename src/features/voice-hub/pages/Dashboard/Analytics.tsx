@@ -1,6 +1,6 @@
 import type React from 'react';
 import { BarChart3, PieChart, Activity, Users, FlaskConical } from 'lucide-react';
-import LineChart from '../../components/D3Chart';
+import LineChart from '../../components/D3Chart.js';
 
 // This page has no real backend aggregation wired yet (no endpoint rolls up CallLog/Metric rows
 // into call volume, conversion funnel or per-agent cost/CSAT). AGENTS.md §14 is explicit that a

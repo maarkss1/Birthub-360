@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import { clampQueryLimit } from '../../../shared/http/queryLimit';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { ContactUseCases } from '../application/ContactUseCases';
+import { clampQueryLimit } from '../../../shared/http/queryLimit.js';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { ContactUseCases } from '../application/ContactUseCases.js';
 
 export class ContactController {
   constructor(private contactUseCases: ContactUseCases) {}
@@ -22,7 +22,7 @@ export class ContactController {
       const query = typeof req.query.q === 'string' ? req.query.q : undefined;
       const result = await this.contactUseCases.findContacts(orgId, query, page, limit);
       res.json({ success: true, data: result.data, meta: result.meta });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -39,7 +39,7 @@ export class ContactController {
         return;
       }
       res.json({ success: true, data: contact });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -49,7 +49,7 @@ export class ContactController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const contact = await this.contactUseCases.createContact(orgId, req.body);
       res.status(201).json({ success: true, data: contact });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -63,7 +63,7 @@ export class ContactController {
         req.body,
       );
       res.json({ success: true, data: contact });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -73,7 +73,7 @@ export class ContactController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       await this.contactUseCases.deleteContact(orgId, routeParam(req.params.id, 'id'));
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -86,7 +86,7 @@ export class ContactController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

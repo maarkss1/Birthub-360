@@ -10,10 +10,10 @@ import {
   ArrowUpRight, Check, Layers2,
   LockKeyhole, Server, UserCheck, Sun, Moon, Mic
 } from 'lucide-react';
-import { useTheme } from '../components/design-system/ThemeContext';
-import { Card, Button, Badge, Progress, useToast, ToastContainer, AtlasLogo } from '../components/design-system';
-import { getAccessibleTextOnBrand } from '../components/design-system/tokens';
-import { useSessionStore } from '../store/useSessionStore';
+import { useTheme } from '../components/design-system/ThemeContext.js';
+import { Card, Button, Badge, Progress, useToast, ToastContainer, AtlasLogo } from '../components/design-system.js';
+import { getAccessibleTextOnBrand } from '../components/design-system/tokens.js';
+import { useSessionStore } from '../store/useSessionStore.js';
 
 export default function LandingPage() {
   const { theme, setTheme } = useTheme();

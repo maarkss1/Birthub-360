@@ -17,20 +17,20 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import { validationEngine } from '../../../../lib/studio/ValidationEngine';
-import { useStudioStore } from '../../store/useStudioStore';
-import type { StudioNode, StudioEdge } from '../../lib/studio/types';
+import { validationEngine } from '../../../../lib/studio/ValidationEngine.js';
+import { useStudioStore } from '../../store/useStudioStore.js';
+import type { StudioNode, StudioEdge } from '../../lib/studio/types.js';
 import { 
   StartNode, EndNode, PromptNode, ConditionNode, ToolNode, LlmNode, VoiceNode, 
   QuestionNode, SwitchNode, MemoryNode, KnowledgeNode, HumanHandoffNode 
-} from './nodes';
-import { StudioEdge as CustomStudioEdge } from './edges/StudioEdge';
-import { TopBar } from './panels/TopBar';
-import { LayersPanel } from './panels/LayersPanel';
-import { InspectorPanel } from './panels/InspectorPanel';
-import { BottomDrawer } from './panels/BottomDrawer';
+} from './nodes.js';
+import { StudioEdge as CustomStudioEdge } from './edges/StudioEdge.js';
+import { TopBar } from './panels/TopBar.js';
+import { LayersPanel } from './panels/LayersPanel.js';
+import { InspectorPanel } from './panels/InspectorPanel.js';
+import { BottomDrawer } from './panels/BottomDrawer.js';
 const TestSimulatorModal = lazy(() =>
-  import('./panels/TestSimulatorModal').then((m) => ({ default: m.TestSimulatorModal }))
+  import('./panels/TestSimulatorModal.js').then((m) => ({ default: m.TestSimulatorModal }))
 );
 
 const nodeTypes = {

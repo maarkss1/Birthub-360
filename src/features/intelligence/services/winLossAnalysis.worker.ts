@@ -168,7 +168,7 @@ export async function runWinLossAnalysis(): Promise<WinLossOrgAnalysis[]> {
           'Win/Loss Analysis concluída e persistida para a organização',
         );
         analyses.push(result);
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err, organizationId }, 'Falha na análise Win/Loss com IA');
       }
     });

@@ -1,6 +1,6 @@
 import { ArrowLeft, Maximize2, Minimize2, RefreshCw, Share2, ShieldCheck } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useModuleAccess } from '../../hooks/useModuleAccess';
+import { useModuleAccess } from '../../hooks/useModuleAccess.js';
 
 interface ExecutiveHeaderProps {
   title: string;

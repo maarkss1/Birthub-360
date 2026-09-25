@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { FORECAST_RULES, scoreOpportunity } from '../application/forecastEngine';
+import { FORECAST_RULES, scoreOpportunity } from '../application/forecastEngine.js';
 
 const NOW = new Date('2026-08-10T12:00:00Z');
 

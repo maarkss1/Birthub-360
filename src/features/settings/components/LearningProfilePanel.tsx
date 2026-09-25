@@ -1,15 +1,15 @@
 import { Check, RefreshCw, Sparkles, X } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
+} from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
 
 // Consome só `/api/agent/swarm/learn/**` (feature intelligence) via HTTP — mesmo motivo de
 // `MemoryGovernancePanel.tsx` viver aqui em vez de na feature dona da rota
@@ -45,7 +45,7 @@ export function LearningProfilePanel() {
     try {
       const res = await api.get<LearningProfileState>('/api/agent/swarm/learn/history');
       setState(res);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar o estilo aprendido.');
     } finally {
       setLoading(false);
@@ -62,7 +62,7 @@ export function LearningProfilePanel() {
     try {
       await api.post('/api/agent/swarm/learn');
       await load();
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Erro ao gerar reflexão.');
     } finally {
       setReflecting(false);
@@ -74,7 +74,7 @@ export function LearningProfilePanel() {
     try {
       await api.post(`/api/agent/swarm/learn/${outcome}`, { targetVersion: version });
       await load();
-    } catch (err) {
+    } catch (err: any) {
       setError(
         err instanceof Error
           ? err.message

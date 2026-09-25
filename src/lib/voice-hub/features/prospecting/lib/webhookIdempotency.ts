@@ -99,7 +99,7 @@ export async function claimIdempotencyKey(
     const client = getClient();
     const result = await client.set(key, '1', 'EX', ttlSeconds, 'NX');
     return result === 'OK';
-  } catch (error) {
+  } catch (error: any) {
     throw new IdempotencyCheckFailedError(error);
   }
 }
@@ -121,7 +121,7 @@ export async function beginBlandCallbackProcessing(callId: string): Promise<Call
 
     const current = await client.get(key);
     return current === 'done' ? 'duplicate' : 'in_progress';
-  } catch (error) {
+  } catch (error: any) {
     throw new IdempotencyCheckFailedError(error);
   }
 }
@@ -133,7 +133,7 @@ export async function completeBlandCallbackProcessing(
 ): Promise<void> {
   try {
     await getClient().set(buildBlandCallbackIdempotencyKey(callId), 'done', 'EX', ttlSeconds);
-  } catch (error) {
+  } catch (error: any) {
     throw new IdempotencyCheckFailedError(error);
   }
 }
@@ -145,7 +145,7 @@ export async function completeBlandCallbackProcessing(
 export async function releaseBlandCallbackProcessing(callId: string): Promise<void> {
   try {
     await getClient().del(buildBlandCallbackIdempotencyKey(callId));
-  } catch (error) {
+  } catch (error: any) {
     throw new IdempotencyCheckFailedError(error);
   }
 }

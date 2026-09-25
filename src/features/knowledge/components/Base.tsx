@@ -15,21 +15,21 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { toast } from '../../../lib/toast.js';
 import {
   ACCEPTED_EXTENSIONS,
   fileToBase64,
   type KnowledgeDocumentSummary,
   type KnowledgeSearchResponse,
   knowledgeApi,
-} from '../knowledge.api';
-import { EditorIA } from './EditorIA';
+} from '../knowledge.api.js';
+import { EditorIA } from './EditorIA.js';
 
 /** Realça no trecho os termos que o usuário digitou, para ele achar o ponto sem reler tudo. */
 function Highlighted({ text, query }: { text: string; query: string }) {
@@ -119,7 +119,7 @@ export function Base() {
     setLoadError(null);
     try {
       setDocuments(await knowledgeApi.list());
-    } catch (err) {
+    } catch (err: any) {
       setLoadError((err as Error).message);
     } finally {
       setLoadingDocs(false);
@@ -165,7 +165,7 @@ export function Base() {
             const base64 = await fileToBase64(file);
             const result = await knowledgeApi.upload(file.name, base64);
             reportIngestion(result.title, result.chunkCount, result.embeddingFailures);
-          } catch (err) {
+          } catch (err: any) {
             toast.error(`${file.name}: ${(err as Error).message}`);
           }
         }
@@ -202,7 +202,7 @@ export function Base() {
         if (!response.semanticAvailable) {
           toast.info('Busca semântica indisponível agora — exibindo resultados por palavra-chave.');
         }
-      } catch (err) {
+      } catch (err: any) {
         toast.error((err as Error).message);
         setResults(null);
       } finally {
@@ -235,7 +235,7 @@ export function Base() {
     try {
       const full = await knowledgeApi.get(doc.id);
       setPasteContent(full.content);
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message || 'Falha ao carregar o conteúdo do documento.');
     } finally {
       setLoadingEditContent(false);
@@ -261,7 +261,7 @@ export function Base() {
       }
       closePasteModal();
       await loadDocuments();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setUploading(false);
@@ -288,7 +288,7 @@ export function Base() {
           (prev) => prev && { ...prev, hits: prev.hits.filter((h) => h.documentId !== doc.id) },
         );
         await loadDocuments();
-      } catch (err) {
+      } catch (err: any) {
         toast.error((err as Error).message);
       } finally {
         setBusyDocId(null);
@@ -308,7 +308,7 @@ export function Base() {
           `${repaired} trecho(s) revetorizado(s).${remaining > 0 ? ` ${remaining} ainda falharam.` : ''}`,
         );
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setBusyDocId(null);
@@ -335,7 +335,7 @@ export function Base() {
       } else {
         throw new Error(data.error || 'Erro desconhecido');
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setBusyDocId(null);

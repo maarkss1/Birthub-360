@@ -7,7 +7,7 @@ import {
   Card, Button, Badge,
   Tabs, Avatar,
   Alert, Checkbox, Switch, Input, Select
-} from '../../components/design-system';
+} from '../../components/design-system.js';
 
 export default function DesignSystemDocs() {
   const [activeTab, setActiveTab] = useState('tokens');

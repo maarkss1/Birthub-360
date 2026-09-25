@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { BRAND } from '../config/brand';
-import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
+import { BRAND } from '../config/brand.js';
+import type { PlaybookInfo, PlaybookKey } from '../config/playbooks.js';
 import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
-} from '../features/playbook/playbook.api';
-import { api } from '../lib/api';
-import { clientLogger } from '../lib/clientLogger';
-import { readSseStream, sseRequestInit } from '../lib/sse';
+} from '../features/playbook/playbook.api.js';
+import { api } from '../lib/api.js';
+import { clientLogger } from '../lib/clientLogger.js';
+import { readSseStream, sseRequestInit } from '../lib/sse.js';
 import {
   type AssistantContextSource,
   buildAssistantLocalContext,
   getAssistantRouteContext,
-} from './assistantContext';
-import { useActiveRecord } from './useActiveRecord';
+} from './assistantContext.js';
+import { useActiveRecord } from './useActiveRecord.js';
 
 export interface ChatMessage {
   id: string;
@@ -238,7 +238,7 @@ export function useAssistantChat(
 
       if (streamError) throw new Error(streamError);
       if (!sawDelta) throw new Error('O motor de IA não retornou nenhuma resposta.');
-    } catch (error) {
+    } catch (error: any) {
       if (controller.signal.aborted) return;
       const reason = error instanceof Error ? error.message : 'Falha inesperada';
       setMessages((prev) =>

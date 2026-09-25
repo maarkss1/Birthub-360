@@ -1,16 +1,16 @@
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   type LossAnalysis,
-} from '../commercialIntelligence.api';
-import { KpiTile } from './KpiTile';
-import { LossReasonAiCheck } from './LossReasonAiCheck';
+} from '../commercialIntelligence.api.js';
+import { KpiTile } from './KpiTile.js';
+import { LossReasonAiCheck } from './LossReasonAiCheck.js';
 
 export function LossesTab({ filter }: { filter: CommercialFilter }) {
   const [data, setData] = useState<LossAnalysis | null>(null);

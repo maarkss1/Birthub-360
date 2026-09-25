@@ -383,7 +383,7 @@ export async function scanAndGenerateAccountInsights(
     // organização — não por conta, para não processar cada dupla duas vezes.
     try {
       await generateEconomicRelationshipsForOrganization(organizationId, companies, now);
-    } catch (err) {
+    } catch (err: any) {
       errors += 1;
       logger.error(
         { err, organizationId },
@@ -398,7 +398,7 @@ export async function scanAndGenerateAccountInsights(
     try {
       await computeAndPersistForAccount(account, now);
       processed += 1;
-    } catch (err) {
+    } catch (err: any) {
       errors += 1;
       logger.error(
         { err, organizationId: account.organizationId, companyId: account.id },

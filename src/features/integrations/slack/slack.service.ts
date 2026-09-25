@@ -155,7 +155,7 @@ export async function sendSlackMessage(
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ text }),
           });
-        } catch (err) {
+        } catch (err: any) {
           // AppError aqui vem da revalidação interna do próprio safeFetch — mesma lógica: nunca
           // transiente. Qualquer outro erro é falha de rede de verdade (recuperável).
           if (err instanceof AppError) throw err;
@@ -226,7 +226,7 @@ export async function sendSlackMessage(
             10_000,
             ['slack.com'],
           );
-        } catch (err) {
+        } catch (err: any) {
           if (err instanceof DisallowedHostError) throw err;
           if (err instanceof HttpTimeoutError) {
             throw new TransientHttpError(
@@ -295,7 +295,7 @@ export async function testSlackConnection(
       '✅ Teste de conexão do Birth Hub 360 — se você está vendo isto, a integração está funcionando.',
     );
     return { success: true, message: 'Mensagem de teste enviada com sucesso.' };
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof AppError) {
       return { success: false, message: err.message };
     }

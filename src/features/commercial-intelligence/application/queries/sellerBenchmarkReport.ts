@@ -18,12 +18,12 @@ import type {
   SellerBenchmarkRow,
   SellerBenchmarkSuggestion,
   SellerBenchmarkTeamAverages,
-} from '../../domain/CommercialIntelligence';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../../domain/CommercialIntelligence.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals, type ScoredDeal } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { daysBetween, mean, median, roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 /**
  * Amostra mínima de negócios FECHADOS (ganhos + perdidos) no período para um vendedor entrar no

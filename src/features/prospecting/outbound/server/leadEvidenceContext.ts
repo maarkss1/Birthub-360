@@ -13,8 +13,8 @@
 // 'unmatched'/'unknown', evidência 'unverified'/'inferred'/'conflicted') fica
 // de fora por construção - o prompt não tem como "ver" o que não está aqui.
 
-import type { DecisionMaker, Lead, NewsItem } from '../src/types';
-import type { EvidenceRecord } from './evidence';
+import type { DecisionMaker, Lead, NewsItem } from '../src/types.js';
+import type { EvidenceRecord } from './evidence.js';
 
 export type PersonalizationLevel = 'low' | 'medium' | 'high';
 

@@ -16,10 +16,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { KpiCard } from '../../../components/ui/KpiCard';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { toast } from '../../../lib/toast';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { KpiCard } from '../../../components/ui/KpiCard.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type DashboardPeriod,
   type LeadOutcome,
@@ -27,7 +27,7 @@ import {
   type MesaDashboardResponse,
   mesaTratamentoApi,
   OUTCOME_LABELS,
-} from '../mesaTratamento.api';
+} from '../mesaTratamento.api.js';
 
 const PERIOD_TABS: Array<{ value: DashboardPeriod; label: string }> = [
   { value: 'today', label: 'Hoje' },
@@ -82,7 +82,7 @@ export function SdrDashboard() {
     try {
       const result = await mesaTratamentoApi.dashboard(p);
       setData(result);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Não foi possível carregar o dashboard.');
       toast.error('Falha ao carregar o dashboard da Mesa de Tratamento.');
     } finally {

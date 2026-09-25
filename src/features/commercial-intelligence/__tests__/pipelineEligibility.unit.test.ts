@@ -4,8 +4,8 @@ import {
   checkEligibility,
   isDealOpen,
   STAGE_AGING_CRITICAL_DAYS,
-} from '../application/pipelineEligibility';
-import type { DealRow } from '../domain/CommercialIntelligence';
+} from '../application/pipelineEligibility.js';
+import type { DealRow } from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-10T00:00:00Z');
 

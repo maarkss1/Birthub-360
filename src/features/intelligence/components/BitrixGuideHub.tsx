@@ -1,10 +1,10 @@
 import { CheckCircle2, Clock, Layers, ShieldCheck, Table2, Workflow } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { LEAD_STATUS } from '../../../lib/zod';
-import { STAGE_AGING_CRITICAL_DAYS } from '../../commercial-intelligence/application/pipelineEligibility';
-import { BITRIX_FIELD_MAP } from '../../integrations/bitrix/bitrixFieldMap';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { LEAD_STATUS } from '../../../lib/zod.js';
+import { STAGE_AGING_CRITICAL_DAYS } from '../../commercial-intelligence/application/pipelineEligibility.js';
+import { BITRIX_FIELD_MAP } from '../../integrations/bitrix/bitrixFieldMap.js';
 
 // Funil real usado pelo Kanban/CRM (mesma fonte de verdade de `src/lib/zod.ts` → `LEAD_STATUS`,
 // consumida hoje pelo Kanban do CRM e pelo Comercial Inteligente) — não uma lista redigida à

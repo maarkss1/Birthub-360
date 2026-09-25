@@ -1,9 +1,9 @@
 import type React from 'react';
 import { useState } from 'react';
 import { Lock, Mail, Loader2, ArrowRight, Sun, Moon, Building2, Sparkles, ListChecks } from 'lucide-react';
-import type { User, ThemeMode } from '../types';
-import { AtlasLogo } from './AtlasLogo';
-import { TotalTracLogo } from './TotalTracLogo';
+import type { User, ThemeMode } from '../types.js';
+import { AtlasLogo } from './AtlasLogo.js';
+import { TotalTracLogo } from './TotalTracLogo.js';
 
 interface LoginScreenProps {
   onLogin: (user: User) => void;
@@ -93,7 +93,7 @@ export function LoginScreen({ onLogin, isDark, setTheme }: LoginScreenProps) {
       } else {
         setError(data.error || 'Falha ao autenticar.');
       }
-    } catch (err) {
+    } catch (err: any) {
       setError('Erro de conexão ao servidor.');
     } finally {
       setLoading(false);

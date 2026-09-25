@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { api } from '../../../lib/api';
-import { fadeInUp } from '../../../lib/motion';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { api } from '../../../lib/api.js';
+import { fadeInUp } from '../../../lib/motion.js';
 
 type SellerRole = 'SDR / Hunter' | 'Closer / Executivo de Contas' | 'Account Manager / Farmer';
 
@@ -65,7 +65,7 @@ export function SellerCoachingCard() {
       });
       setReport(data.report);
       setPeriod(data.period);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao gerar o coaching desta semana.');
     } finally {
       setLoading(false);

@@ -62,7 +62,7 @@ export async function fetchWithTimeout(
 
   try {
     return await fetch(url, { ...init, signal });
-  } catch (error) {
+  } catch (error: any) {
     if (controller.signal.aborted) throw new HttpTimeoutError(timeoutMs);
     throw error;
   } finally {

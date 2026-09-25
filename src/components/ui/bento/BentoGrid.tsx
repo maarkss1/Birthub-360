@@ -1,5 +1,5 @@
 import type React from 'react';
-import { cn } from '../../../lib/utils';
+import { cn } from '../../../lib/utils.js';
 
 export interface BentoGridProps extends React.HTMLAttributes<HTMLDivElement> {
   columns?: 2 | 3 | 4;

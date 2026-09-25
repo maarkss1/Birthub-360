@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system';
-import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '../../../../lib/logger';
+import { Card, Button, Badge, EmptyState, Skeleton } from '../../components/design-system.js';
+import { useSessionStore } from '../../store/useSessionStore.js';
+import { logger } from '../../../../lib/logger.js';
 import { Shield, Users, Lock, CheckCircle, XCircle, AlertTriangle } from 'lucide-react';
 
 interface TenantUser {

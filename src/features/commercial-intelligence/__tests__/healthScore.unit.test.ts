@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import type { HealthScoreInput } from '../application/healthScore';
+import type { HealthScoreInput } from '../application/healthScore.js';
 import {
   computeHealthScore,
   HEALTH_PILLAR_ORDER,
   HEALTH_SCORE_RULES,
-} from '../application/healthScore';
+} from '../application/healthScore.js';
 import type {
   AgingReport,
   CrmQualityIndex,
@@ -12,7 +12,7 @@ import type {
   ForecastAccuracySummary,
   LeadingIndicatorsReport,
   PerformanceMetrics,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 const PERIOD = '2026-08';

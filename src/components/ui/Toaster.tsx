@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { AlertTriangle, CheckCircle2, Info, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { type ToastMessage, toast } from '../../lib/toast';
+import { type ToastMessage, toast } from '../../lib/toast.js';
 
 // bg-green-600 + text-white (abaixo) mede 3.30:1 contra o mínimo de 4.5:1 exigido pra texto normal
 // (WCAG 2 AA) — achado real, medido com a fórmula oficial de luminância relativa, independente da

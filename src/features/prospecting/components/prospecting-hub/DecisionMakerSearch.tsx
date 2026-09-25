@@ -1,22 +1,22 @@
 import { Building2, Globe, Loader2, Mail, MessageCircle, Phone, Search, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
-import { useActivePlaybook } from '../../../../hooks/useActivePlaybook';
-import { api } from '../../../../lib/api';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon.js';
+import { useActivePlaybook } from '../../../../hooks/useActivePlaybook.js';
+import { api } from '../../../../lib/api.js';
 import {
   ATLAS_PERSONA_OPTIONS,
   BIRTHHUB360_PERSONA_OPTIONS,
-} from '../../../../shared/constants/icp-options';
+} from '../../../../shared/constants/icp-options.js';
 import {
   getTelephoneLink,
   getWhatsAppLink,
   validContactEmails,
   validContactPhones,
-} from '../../../../shared/utils/contact-links';
-import type { DecisionMakerCriteria } from '../../services/apollo.service';
-import type { DecisionMaker } from '../../services/prospecting.service';
-import { findCompanyDomain, normalizeCompanyDomain } from '../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../utils/linkedin';
+} from '../../../../shared/utils/contact-links.js';
+import type { DecisionMakerCriteria } from '../../services/apollo.service.js';
+import type { DecisionMaker } from '../../services/prospecting.service.js';
+import { findCompanyDomain, normalizeCompanyDomain } from '../../utils/domain.js';
+import { getDecisionMakerLinkedInLink } from '../../utils/linkedin.js';
 
 function getErrorMessage(error: unknown, fallback: string): string {
   return error instanceof Error ? error.message : fallback;
@@ -171,7 +171,7 @@ export function DecisionMakerSearch({
       );
       setResults(res.decisionMakers);
       if (res.error) setError(res.error);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar decisores.'));
     } finally {
       setIsSearching(false);
@@ -197,7 +197,7 @@ export function DecisionMakerSearch({
               error: 'Não encontramos contexto público suficiente para gerar um quebra-gelo agora.',
             },
       }));
-    } catch (err) {
+    } catch (err: any) {
       setIcebreakers((prev) => ({
         ...prev,
         [idx]: { loading: false, error: getErrorMessage(err, 'Falha ao gerar quebra-gelo.') },

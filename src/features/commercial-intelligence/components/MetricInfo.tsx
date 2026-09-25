@@ -1,6 +1,6 @@
 import { Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { commercialIntelligenceApi, type MetricDefinition } from '../commercialIntelligence.api';
+import { commercialIntelligenceApi, type MetricDefinition } from '../commercialIntelligence.api.js';
 
 /**
  * Cache em módulo — o dicionário de métricas é estático por sessão (não muda entre KPIs/telas),

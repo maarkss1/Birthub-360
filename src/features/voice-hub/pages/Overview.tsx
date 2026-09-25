@@ -10,8 +10,8 @@ import {
 import {
   Card, Button, Badge, Progress, Spinner, Skeleton, EmptyState, Alert,
   Tooltip, Modal, useToast, ToastContainer
-} from '../../components/design-system';
-import { logger } from '../../../lib/logger';
+} from '../../components/design-system.js';
+import { logger } from '../../../lib/logger.js';
 
 interface CallLogEntry {
   id: string;
@@ -142,7 +142,7 @@ export default function RebuiltExecutiveOverview() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setCallsState({ status: 'ready', calls: Array.isArray(data.callLogs) ? data.callLogs : [] });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error loading call logs', { err });
       setCallsState((prev) => ({ ...prev, status: 'error' }));
     }
@@ -155,7 +155,7 @@ export default function RebuiltExecutiveOverview() {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const data = await res.json();
       setAgentsState({ status: 'ready', agents: Array.isArray(data.agents) ? data.agents : [] });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error loading agents', { err });
       setAgentsState((prev) => ({ ...prev, status: 'error' }));
     }
@@ -167,7 +167,7 @@ export default function RebuiltExecutiveOverview() {
       const res = await fetch('/api/ready');
       const data = await res.json();
       setReadyState({ status: 'ready', checks: data.checks ?? null });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error loading platform readiness', { err });
       setReadyState({ status: 'error', checks: null });
     }
@@ -183,7 +183,7 @@ export default function RebuiltExecutiveOverview() {
       const data = await res.json();
       const allMetrics: MetricEntry[] = Array.isArray(data.metrics) ? data.metrics : [];
       setMetricsState({ status: 'ready', metrics: allMetrics });
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error loading metrics', { err });
       setMetricsState((prev) => ({ ...prev, status: 'error' }));
     }
@@ -196,7 +196,7 @@ export default function RebuiltExecutiveOverview() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setChecklist(data.checklist ?? {});
-      } catch (err) {
+      } catch (err: any) {
         logger.error('Error loading onboarding checklist from database', { err });
         setChecklistError(true);
         setChecklist({});
@@ -223,7 +223,7 @@ export default function RebuiltExecutiveOverview() {
         body: JSON.stringify({ checklist: updated }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error saving onboarding checklist to database', { err });
       showToast('Não foi possível salvar o checklist no servidor. Tente novamente.', 'error');
     }

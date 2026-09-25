@@ -38,7 +38,7 @@ aiSuiteRouter.use((req: Request, res: Response, next: NextFunction) => {
     const organizationId = (req as AuthRequest).user?.organizationId ?? null;
     assertPiiExternalConsent(organizationId);
     next();
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof PiiConsentRequiredError) {
       res.status(403).json({ success: false, error: error.message });
       return;
@@ -246,7 +246,7 @@ aiSuiteRouter.post(
       const { contacts, companyContext } = req.body;
       const result = await aiSuite.decisionCommittee.mapCommittee(contacts || [], companyContext);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -260,7 +260,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.bitrixHygiene.sanitizeLeadData(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -274,7 +274,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.cadenceAI.generateNextStep(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -288,7 +288,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.roleplayAI.simulateCustomerResponse(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -302,7 +302,7 @@ aiSuiteRouter.post(
       const { persona, history } = req.body;
       const result = await aiSuite.roleplayAI.evaluateSession(persona, history || []);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -316,7 +316,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.proposalAI.generateProposalSections(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -330,7 +330,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.nextBestAction.determineNextAction(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -344,7 +344,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.churnPrediction.analyzeChurnRisk(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -367,7 +367,7 @@ aiSuiteRouter.post(
       const { lead, reps } = req.body;
       const result = await aiSuite.leadRouter.matchLeadToRep(lead, reps || []);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -393,7 +393,7 @@ aiSuiteRouter.post(
         hits,
       });
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -407,7 +407,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.meetingSynthesis.synthesizeMeeting(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -421,7 +421,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.mesaTriage.triageIncident(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -435,7 +435,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.sellerCoaching.generateCoachingReport(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -449,7 +449,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.playbookAI.generatePlaybookChapter(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },
@@ -463,7 +463,7 @@ aiSuiteRouter.post(
     try {
       const result = await aiSuite.lgpdSanitizer.sanitizeText(req.body);
       res.json({ success: true, data: result });
-    } catch (err) {
+    } catch (err: any) {
       next(err);
     }
   },

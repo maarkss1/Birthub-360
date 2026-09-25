@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-import { BRAND } from '../../config/brand';
+import { BRAND } from '../../config/brand.js';
 
 /**
  * Marca Birth Hub 360 em SVG inline.

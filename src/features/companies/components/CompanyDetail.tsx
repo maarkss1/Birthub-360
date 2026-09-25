@@ -20,18 +20,18 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { EntityAttachments } from '../../../components/crm/EntityAttachments';
-import { EntityNotes } from '../../../components/crm/EntityNotes';
-import { ContextualTip } from '../../../components/ui/ContextualTip';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
-import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo';
-import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { formatCnpj } from '../../../lib/cnpj';
-import { toast } from '../../../lib/toast';
-import type { Company } from '../../../types';
+import { EntityAttachments } from '../../../components/crm/EntityAttachments.js';
+import { EntityNotes } from '../../../components/crm/EntityNotes.js';
+import { ContextualTip } from '../../../components/ui/ContextualTip.js';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon.js';
+import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo.js';
+import { ToolTechPopover } from '../../../components/ui/ToolTechPopover.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { formatCnpj } from '../../../lib/cnpj.js';
+import { toast } from '../../../lib/toast.js';
+import type { Company } from '../../../types.js';
 
 interface CompanyDetailProps {
   companyId: string;
@@ -57,7 +57,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
     try {
       const data = await api.get<Company>(`/api/companies/${companyId}`);
       setCompany(data);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error fetching company details');
     } finally {
       setLoading(false);
@@ -89,7 +89,7 @@ export function CompanyDetail({ companyId, onBack }: CompanyDetailProps) {
       await api.post(`/api/companies/${companyId}/enrich`, undefined, { timeoutMs: 60_000 });
       await fetchCompany();
       toast.success('Empresa enriquecida com sucesso.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error enriching company');
       toast.error(error instanceof Error ? error.message : 'Falha ao enriquecer a empresa.');
     } finally {

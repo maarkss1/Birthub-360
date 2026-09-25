@@ -1,7 +1,7 @@
 import { Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { toast } from '../../../lib/toast.js';
 
 export function EditorIA() {
   const [content, setContent] = useState('');
@@ -29,7 +29,7 @@ export function EditorIA() {
       } else {
         throw new Error(data.error || 'Erro desconhecido');
       }
-    } catch (error) {
+    } catch (error: any) {
       toast.error((error as Error).message);
     } finally {
       setIsGenerating(false);

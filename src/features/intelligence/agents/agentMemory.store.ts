@@ -124,7 +124,7 @@ export async function recordAgentFailure(input: {
       status: 'Failed',
       errorMessage: input.errorMessage,
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.error(
       { err, sessionId: input.sessionId, agentType: input.agentType },
       'Failed to record agent failure in AgentMemory',

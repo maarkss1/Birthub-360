@@ -4,8 +4,8 @@ import {
   Settings2, Code, Activity, Variable, Plus,
   BookOpen, Link, Trash2, ShieldAlert
 } from 'lucide-react';
-import type { StudioNode } from '../../../lib/studio/types';
-import { useStudioStore, nodeRegistry } from '../../../store/useStudioStore';
+import type { StudioNode } from '../../../lib/studio/types.js';
+import { useStudioStore, nodeRegistry } from '../../../store/useStudioStore.js';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface InspectorPanelProps {

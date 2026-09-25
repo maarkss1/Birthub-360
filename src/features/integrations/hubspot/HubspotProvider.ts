@@ -10,7 +10,7 @@ import {
   type CrmProvider,
   type NormalizedLead,
   registerCrmProvider,
-} from '../shared/CrmProvider';
+} from '../shared/CrmProvider.js';
 
 const HUBSPOT_API_BASE = 'https://api.hubapi.com';
 

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeWhatsAppResponseTimeStats } from '../whatsappResponseTime';
+import { computeWhatsAppResponseTimeStats } from '../whatsappResponseTime.js';
 
 const at = (isoOffset: string) =>
   new Date(`2026-09-02T10:00:00.000Z`.replace('10:00:00', isoOffset));

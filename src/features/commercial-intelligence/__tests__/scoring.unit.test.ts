@@ -5,13 +5,13 @@ import {
   riskImpactValue,
   type ScoredDeal,
   type StageHistoryRow,
-} from '../application/scoring/dealScoring';
-import { applyScope } from '../application/scoring/scopeFilter';
+} from '../application/scoring/dealScoring.js';
+import { applyScope } from '../application/scoring/scopeFilter.js';
 import {
   computeHistoricalStageReach,
   countAdvancedTransitions,
-} from '../application/scoring/stageHistoryAnalytics';
-import type { DealRow, ForecastTier } from '../domain/CommercialIntelligence';
+} from '../application/scoring/stageHistoryAnalytics.js';
+import type { DealRow, ForecastTier } from '../domain/CommercialIntelligence.js';
 
 /**
  * Testes de domínio isolados para os módulos extraídos de `CommercialIntelligenceUseCases.ts`

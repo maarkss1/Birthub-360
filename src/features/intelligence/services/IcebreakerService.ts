@@ -87,7 +87,7 @@ Escreva UM GATILHO DE ABORDAGEM (Hook) brutalmente personalizado de no máximo 2
       }
 
       return icebreaker;
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, companyName }, 'Falha ao gerar quebra-gelo via Playwright');
       return '';
     } finally {

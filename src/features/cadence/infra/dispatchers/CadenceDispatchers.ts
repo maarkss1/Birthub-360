@@ -69,7 +69,7 @@ export const whatsAppCadenceDispatcher: Pick<CadenceDispatcher, 'dispatch'> = {
       // sendWhatsAppMessage não devolve o id da mensagem do provedor (Baileys) hoje — ver
       // limitação documentada em docs/CADENCE-CYCLE-AUDIT.md.
       return { result: 'sent' as const, providerMessageId: null };
-    } catch (err) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : String(err);
       logger.warn(
         { err, organizationId: run.organizationId, leadId: run.leadId, touchOrder: touch.order },
@@ -106,7 +106,7 @@ export const emailCadenceDispatcher: Pick<CadenceDispatcher, 'dispatch'> = {
     try {
       const { messageId } = await sendEmail({ to: email, subject, text: body });
       return { result: 'sent' as const, providerMessageId: messageId };
-    } catch (err) {
+    } catch (err: any) {
       const message =
         err instanceof MailerNotConfiguredError
           ? 'Envio de e-mail não configurado (SMTP_HOST ausente).'
@@ -139,7 +139,7 @@ export function buildVoiceCadenceDispatcher(
           result: 'sent' as const,
           providerMessageId: result.callSid ?? result.sessionId ?? null,
         };
-      } catch (err) {
+      } catch (err: any) {
         const message = err instanceof Error ? err.message : String(err);
         logger.warn(
           { err, organizationId: run.organizationId, leadId: run.leadId, touchOrder: touch.order },

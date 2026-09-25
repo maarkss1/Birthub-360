@@ -7,9 +7,9 @@ import type {
   CommercialIntelligenceRepository,
   LeadingIndicatorPoint,
   LeadingIndicatorsReport,
-} from '../../domain/CommercialIntelligence';
-import { countAdvancedTransitions } from '../scoring/stageHistoryAnalytics';
-import { DAY_MS, roundMoney } from '../shared/mathUtils';
+} from '../../domain/CommercialIntelligence.js';
+import { countAdvancedTransitions } from '../scoring/stageHistoryAnalytics.js';
+import { DAY_MS, roundMoney } from '../shared/mathUtils.js';
 
 export async function buildLeadingIndicators(
   repository: CommercialIntelligenceRepository,

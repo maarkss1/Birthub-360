@@ -116,7 +116,7 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
 
     try {
       await scanBufferForViruses(buffer, fileName);
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof InfectedFileError) {
         logger.warn('Knowledge upload rejected: infected file', {
           agentId,

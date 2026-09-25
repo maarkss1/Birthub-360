@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { type AnalyticsUseCases, buildCohortCsv } from '../application/AnalyticsUseCases';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { type AnalyticsUseCases, buildCohortCsv } from '../application/AnalyticsUseCases.js';
 
 /** Limites do parâmetro `months` do dashboard. */
 const MIN_MONTHS = 3;
@@ -29,7 +29,7 @@ export class AnalyticsController {
       const { organizationId } = (req as AuthRequest).user;
       const data = await this.analyticsUseCases.overview(organizationId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -43,7 +43,7 @@ export class AnalyticsController {
         parseMonths(req.query.months),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -60,7 +60,7 @@ export class AnalyticsController {
       const { organizationId } = (req as AuthRequest).user;
       const cohorts = await this.analyticsUseCases.cohortAnalysis(organizationId);
       res.json({ success: true, data: { cohorts } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -83,7 +83,7 @@ export class AnalyticsController {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
       res.setHeader('Content-Disposition', 'attachment; filename="relatorio-cohort.csv"');
       res.send(csv);
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

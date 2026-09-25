@@ -1,9 +1,9 @@
 import { Check, Info, Loader2, Megaphone, Trophy } from 'lucide-react';
 import { useState } from 'react';
-import { Dialog } from '../../../components/ui/Dialog';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { playbookApi, type WinningPatternSuggestion } from '../playbook.api';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { playbookApi, type WinningPatternSuggestion } from '../playbook.api.js';
 
 interface LivingPlaybookReviewProps {
   isOpen: boolean;
@@ -45,7 +45,7 @@ export function LivingPlaybookReview({
       });
       setBroadcastedKeys((prev) => new Set(prev).add(key));
       toast.success('Padrão anunciado para o time.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Falha ao anunciar padrão vencedor do Playbook Vivo');
       toast.error(error instanceof Error ? error.message : 'Falha ao anunciar o padrão.');
     } finally {

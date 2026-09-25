@@ -10,8 +10,8 @@ import type {
   ForecastAccuracyResult,
   ForecastBiasDirection,
   ForecastCalibrationResult,
-} from '../domain/CommercialIntelligence';
-import { roundMoney } from './shared/mathUtils';
+} from '../domain/CommercialIntelligence.js';
+import { roundMoney } from './shared/mathUtils.js';
 
 /**
  * Meses encerrados com snapshot exigidos antes de confiar num fator de calibração — abaixo disso,

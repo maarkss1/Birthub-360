@@ -702,7 +702,7 @@ async function executeToolNodeAsync(state: WorkflowRuntimeState, node: RuntimeNo
       applyToolFallback(state, node, 'consent_not_granted');
       return;
     }
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to verify tenant consent before executing workflow tool node', {
       workflowId: state.workflowId,
       organizationId,
@@ -763,7 +763,7 @@ async function loadAgentKnowledgeDocuments(organizationId: string, agentId: stri
     if (!agent) return [];
     const config = (agent.configuration as unknown as AgentConfiguration) || {};
     return Array.isArray(config.knowledge) ? config.knowledge : [];
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Failed to load agent knowledge documents for workflow runtime', {
       organizationId,
       agentId,

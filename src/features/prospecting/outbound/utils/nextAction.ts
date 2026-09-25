@@ -1,4 +1,4 @@
-import type { Lead } from '../types';
+import type { Lead } from '../types.js';
 
 export type NextActionUrgency = 'alta' | 'media' | 'baixa';
 

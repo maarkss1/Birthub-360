@@ -24,12 +24,12 @@ import type {
   HealthScoreResult,
   LeadingIndicatorsReport,
   PerformanceMetrics,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 import {
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
   classifyCoverageProtection,
-} from './coverageProtection';
-import { roundMoney } from './shared/mathUtils';
+} from './coverageProtection.js';
+import { roundMoney } from './shared/mathUtils.js';
 
 export interface HealthScoreInput {
   overview: ExecutiveOverview;

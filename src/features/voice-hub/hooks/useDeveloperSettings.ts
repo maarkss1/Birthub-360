@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useSessionStore } from '../store/useSessionStore';
-import { logger } from '../../../lib/logger';
+import { useSessionStore } from '../store/useSessionStore.js';
+import { logger } from '../../../lib/logger.js';
 
 // Real backend now exists for API Keys (.agents/handoffs/onda-4/01-para-02-api-key-endpoints-prontos.md):
 // POST/GET/DELETE /api/developers/keys, admin-only within the tenant (403 for other roles) — same
@@ -169,7 +169,7 @@ export function useDeveloperSettings() {
       setNewKeyName('');
       setShowCreateModal(false);
       fetchKeys();
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to create API key', { err });
       setCreateError(err instanceof Error ? err.message : 'Não foi possível criar a chave de API.');
     } finally {
@@ -193,7 +193,7 @@ export function useDeveloperSettings() {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
           fetchKeys();
-        } catch (err) {
+        } catch (err: any) {
           logger.error('Failed to revoke API key', { err });
           setRevokeError(err instanceof Error ? err.message : 'Não foi possível revogar a chave de API.');
         } finally {
@@ -243,7 +243,7 @@ export function useDeveloperSettings() {
       setNewWebhookEvents('');
       setShowCreateWebhookModal(false);
       fetchWebhooks();
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to create webhook endpoint', { err });
       setCreateWebhookError(err instanceof Error ? err.message : 'Não foi possível criar o endpoint de webhook.');
     } finally {
@@ -267,7 +267,7 @@ export function useDeveloperSettings() {
           const data = await res.json().catch(() => ({}));
           if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
           fetchWebhooks();
-        } catch (err) {
+        } catch (err: any) {
           logger.error('Failed to delete webhook endpoint', { err });
           setWebhookActionError(err instanceof Error ? err.message : 'Não foi possível remover o endpoint de webhook.');
         } finally {
@@ -296,7 +296,7 @@ export function useDeveloperSettings() {
             secret: data.secret,
           });
           fetchWebhooks();
-        } catch (err) {
+        } catch (err: any) {
           logger.error('Failed to regenerate webhook secret', { err });
           setWebhookActionError(err instanceof Error ? err.message : 'Não foi possível regenerar o segredo do webhook.');
         } finally {

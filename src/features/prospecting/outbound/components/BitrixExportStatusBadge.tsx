@@ -1,5 +1,5 @@
 import type React from 'react';
-import type { ThemeMode } from '../types';
+import type { ThemeMode } from '../types.js';
 import { CheckCircle2, XCircle, ShieldOff, Clock } from 'lucide-react';
 
 export type BitrixExportStatus = 'not_exported' | 'exported' | 'error' | 'blocked';

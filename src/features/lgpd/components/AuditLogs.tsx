@@ -1,15 +1,15 @@
 import { AlertTriangle, Clock, Filter, HardDrive, RefreshCw, Shield, User } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
+} from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
 
 interface AuditLogItem {
   id: string;
@@ -38,7 +38,7 @@ export function AuditLogs() {
       // inteira nunca mostrava nenhum registro, pra nenhum usuário.
       const res = await api.get<{ logs: AuditLogItem[] }>('/api/lgpd/audit-logs');
       setLogs(res.logs || []);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar logs de auditoria.');
     } finally {
       setLoading(false);

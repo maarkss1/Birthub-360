@@ -72,7 +72,7 @@ export const authenticateToken = async (
     requestContext.run({ tenantId: user.organizationId, userId: user.id, role: user.role }, () => {
       next();
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Authentication middleware error');
     res.status(401).json({ success: false, error: 'Invalid session.' });
   }

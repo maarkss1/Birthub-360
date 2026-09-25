@@ -6,7 +6,7 @@
  * `application/metricsDictionary.ts`), e ausência de histórico é `trackingSince: null`, nunca dado
  * fabricado.
  */
-import type { ForecastRulesVersion, ForecastTier, PeriodMonth } from './CommercialIntelligence';
+import type { ForecastRulesVersion, ForecastTier, PeriodMonth } from './CommercialIntelligence.js';
 
 // ─── CLOSEDATE Intelligence ─────────────────────────────────────────────────
 

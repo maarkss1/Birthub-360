@@ -19,7 +19,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const jobRoleId = typeof req.query.jobRoleId === 'string' ? req.query.jobRoleId : undefined;
     const agents = await listAgentDefinitions({ activeOnly, jobRoleId });
     res.json({ success: true, data: { agents } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -32,7 +32,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
     res.json({ success: true, data: { agent } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -51,7 +51,7 @@ router.get(
       }
       const capabilities = await listCapabilitiesForAgent(agentId);
       res.json({ success: true, data: { agent, capabilities } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -90,7 +90,7 @@ router.post(
       res
         .status(result.status === 'SUCCEEDED' ? 200 : result.status === 'DENIED' ? 403 : 200)
         .json({ success: result.status === 'SUCCEEDED', data: { execution: result } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

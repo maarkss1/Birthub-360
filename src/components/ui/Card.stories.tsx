@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { Button } from './Button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './Card';
+import { Button } from './Button.js';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './Card.js';
 
 const meta = {
   title: 'UI/Card',

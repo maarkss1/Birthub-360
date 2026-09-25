@@ -3,7 +3,7 @@
 // para isolar a integração externa e normalizar timeout/erro/latência/
 // proveniência num formato comum.
 
-import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types';
+import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types.js';
 
 export interface ApolloPerson {
   name: string;

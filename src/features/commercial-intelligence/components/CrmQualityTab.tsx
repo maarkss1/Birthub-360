@@ -1,23 +1,23 @@
 import { AlertTriangle, Link2, Link2Off, Loader2, PlugZap, RefreshCw, Zap } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
-import { BitrixImportPanel } from '../../integrations/components/BitrixImportPanel';
-import { BitrixSyncRulesPanel } from '../../integrations/components/BitrixSyncRulesPanel';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useBitrixIntegration } from '../../../hooks/useBitrixIntegration.js';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
+import { BitrixImportPanel } from '../../integrations/components/BitrixImportPanel.js';
+import { BitrixSyncRulesPanel } from '../../integrations/components/BitrixSyncRulesPanel.js';
 import {
   type CommercialFilter,
   type CrmQualityIndex,
   commercialIntelligenceApi,
   type DataReadinessScore,
   formatPercent,
-} from '../commercialIntelligence.api';
-import { KpiTile } from './KpiTile';
+} from '../commercialIntelligence.api.js';
+import { KpiTile } from './KpiTile.js';
 
 const IMPACT_LABEL: Record<'alto' | 'medio' | 'baixo', string> = {
   alto: 'Alto impacto',
@@ -79,7 +79,7 @@ function BitrixSyncCard({ data }: { data: CrmQualityIndex['bitrixSync'] }) {
     try {
       await api.post('/api/leads/export/bitrix24', { leadId });
       toast.success('Reenviado ao Bitrix24 com sucesso.');
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e instanceof Error ? e.message : 'Falha ao reenviar ao Bitrix24.');
     } finally {
       setRetrying(null);

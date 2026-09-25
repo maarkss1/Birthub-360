@@ -85,7 +85,7 @@ export async function updateCompanyProfileEmbedding(
         `,
     );
     return true;
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, companyId }, 'Falha ao gerar embedding de perfil da empresa');
     return false;
   }
@@ -168,7 +168,7 @@ export async function computeLookalikeScore(
     });
 
     return result;
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, companyId }, 'Falha ao calcular lookalike score');
     return null;
   }

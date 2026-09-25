@@ -1,16 +1,16 @@
 import { FileEdit, HelpCircle, MessageSquare, Mic, Phone, RotateCcw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CopilotoConversationDTO,
   type CopilotoConversationStatus,
   copilotoIaApi,
-} from '../copilotoIa.api';
-import { ConversationDetailDrawer } from './ConversationDetailDrawer';
+} from '../copilotoIa.api.js';
+import { ConversationDetailDrawer } from './ConversationDetailDrawer.js';
 
 const STATUS_LABEL: Record<CopilotoConversationStatus, string> = {
   SCHEDULED: 'Agendada',

@@ -1,16 +1,16 @@
 import { AlertTriangle, FileText, Loader2, RotateCcw, Save, Search } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type KnowledgeDocument,
   type KnowledgeDocumentSummary,
   knowledgeApi,
-} from '../../knowledge/knowledge.api';
+} from '../../knowledge/knowledge.api.js';
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString('pt-BR', {
@@ -59,7 +59,7 @@ export function Editor() {
       const list = await knowledgeApi.list();
       setDocuments(list);
       setSelectedId((current) => current ?? list[0]?.id ?? null);
-    } catch (err) {
+    } catch (err: any) {
       setListError((err as Error).message);
     } finally {
       setLoadingList(false);
@@ -89,7 +89,7 @@ export function Editor() {
         setDoc(full);
         setTitle(full.title);
         setContent(full.content);
-      } catch (err) {
+      } catch (err: any) {
         if (!cancelled) toast.error((err as Error).message);
       } finally {
         if (!cancelled) setLoadingDoc(false);
@@ -139,7 +139,7 @@ export function Editor() {
         updatedAt: new Date().toISOString(),
       });
       await loadList();
-    } catch (err) {
+    } catch (err: any) {
       toast.error((err as Error).message);
     } finally {
       setSaving(false);

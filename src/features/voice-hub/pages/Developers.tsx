@@ -1,7 +1,7 @@
 import React from 'react';
 import { Key, Webhook, Copy, Check, Plus, Trash2, RefreshCw, X, AlertTriangle, Lock, ShieldOff, CloudOff } from 'lucide-react';
-import { useDeveloperSettings } from '../../hooks/useDeveloperSettings';
-import { Badge, Button, EmptyState, Skeleton } from '../../components/design-system';
+import { useDeveloperSettings } from '../../hooks/useDeveloperSettings.js';
+import { Badge, Button, EmptyState, Skeleton } from '../../components/design-system.js';
 
 // API Keys: connected to the real backend (.agents/handoffs/onda-4/01-para-02-api-key-endpoints-prontos.md)
 // — POST/GET/DELETE /api/developers/keys, admin-only within the tenant (same authorization level

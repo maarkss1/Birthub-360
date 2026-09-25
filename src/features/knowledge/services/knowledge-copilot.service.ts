@@ -115,7 +115,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
         confidenceScore: raw.confidenceScore,
         sourceReferences: this.resolveCitations(raw.citedSnippetIndexes, input.hits),
       };
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro no Copiloto de Conhecimento');
       return {
         directAnswer:

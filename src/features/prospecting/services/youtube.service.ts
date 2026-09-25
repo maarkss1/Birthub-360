@@ -1,5 +1,5 @@
 import { fetchWithProviderRetry } from '../../../lib/enrichment/providerFetch.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 import { buildProviderCacheKey, withProviderCache } from './providerCache.js';
 
 /**
@@ -84,7 +84,7 @@ async function getYoutubeVideoInfoUncached(
         videoUrl: url,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error, url }, 'Error querying YouTube oEmbed');
     return {
       info: null,

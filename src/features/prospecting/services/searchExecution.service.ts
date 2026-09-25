@@ -190,7 +190,7 @@ export class SearchExecutionTracker {
           durationMs,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, searchId: this.searchId },
         'Falha ao persistir ProspectingSearchExecution — Search-ID segue válido nos logs, só a auditoria persistida falhou',
@@ -214,7 +214,7 @@ export async function findSearchExecution(
     return await prisma.prospectingSearchExecution.findFirst({
       where: { id: searchId, organizationId },
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, searchId, organizationId },
       'Falha ao buscar ProspectingSearchExecution',

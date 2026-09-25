@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { prisma } from '../../prisma';
-import { AuditService } from '../audit.service';
+import { prisma } from '../../prisma.js';
+import { AuditService } from '../audit.service.js';
 
 vi.mock('../../prisma', () => ({
   prisma: {

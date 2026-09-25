@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 export interface SessionUser {
   id: string;
@@ -91,7 +91,7 @@ export const useSessionStore = create<SessionState>((set) => ({
         : null;
       set({ user, sessionStatus: user ? 'authenticated' : 'unauthenticated' });
       return user;
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to fetch current session', { err });
       set({ user: null, sessionStatus: 'unauthenticated' });
       return null;

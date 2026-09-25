@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { type CommercialGoalDTO, commercialIntelligenceApi } from '../commercialIntelligence.api';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { type CommercialGoalDTO, commercialIntelligenceApi } from '../commercialIntelligence.api.js';
 
 interface GoalEditorDialogProps {
   isOpen: boolean;
@@ -50,7 +50,7 @@ export function GoalEditorDialog({
       );
       onSaved(goal);
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setSaving(false);

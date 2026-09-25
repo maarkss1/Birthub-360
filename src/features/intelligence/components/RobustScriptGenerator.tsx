@@ -16,10 +16,10 @@ import {
   TerminalSquare,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
-import { BorderBeam } from '../../../components/ui/BorderBeam';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
+import { BorderBeam } from '../../../components/ui/BorderBeam.js';
 
 const LANGUAGES = [
   { id: 'prompt', label: 'Prompt de Sistema IA (System Prompt)', ext: 'txt' },
@@ -125,7 +125,7 @@ export function RobustScriptGenerator() {
       setResult(response.result.content);
       setResultSource('ai');
       setCopied(false);
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

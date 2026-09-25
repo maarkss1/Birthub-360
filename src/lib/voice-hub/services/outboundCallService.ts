@@ -71,7 +71,7 @@ export async function initiateOutboundCall(params: OutboundCallRequest): Promise
       params.targetNumber,
       metadata,
     );
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2034') {
       logger.warn('[OutboundCall] Concurrent dial to the same number lost the double-submit race', {
         organizationId: agent.organizationId,
@@ -108,7 +108,7 @@ export async function initiateOutboundCall(params: OutboundCallRequest): Promise
     });
 
     return { sessionId: session.id, callSid: call.callId, status: call.status };
-  } catch (err) {
+  } catch (err: any) {
     // The session was already created, so leaving it "active" would block every future call to
     // this number via the duplicate guard above.
     await sessionRepository.updateSession(session.id, { status: 'failed' });

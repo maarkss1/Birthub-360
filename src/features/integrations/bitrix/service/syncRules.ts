@@ -237,7 +237,7 @@ export async function runBitrixSyncTick(): Promise<{
               '[bitrix] Varredura de paginação parou pelo teto de segurança antes de esgotar o portal — retoma no próximo tick',
             );
           }
-        } catch (err) {
+        } catch (err: any) {
           rulesFailed++;
           // Sinal agregado/acionável por alerta (mesmo bloqueador #11) — complementa o
           // lastError abaixo (visível só na tela de Integrações desta organização) com

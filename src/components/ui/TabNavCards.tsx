@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Novo primitivo — navegação em cards grandes (ícone + título + subtítulo), usado como troca de
    aba/seção quando cada opção carrega contexto suficiente pra merecer um card em vez de um tab

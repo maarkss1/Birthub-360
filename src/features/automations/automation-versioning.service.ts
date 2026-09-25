@@ -1,5 +1,5 @@
 import { logger } from '../../lib/logger.js';
-import type { Automation } from './domain/Automation';
+import type { Automation } from './domain/Automation.js';
 import {
   type AutomationDiffLine,
   type AutomationVersionChangeReason,
@@ -7,7 +7,7 @@ import {
   type AutomationVersionSnapshot,
   type AutomationVersionStore,
   diffAutomationSnapshots,
-} from './domain/AutomationVersion';
+} from './domain/AutomationVersion.js';
 import { PrismaAutomationVersionStore } from './infra/PrismaAutomationVersionStore.js';
 
 /**
@@ -78,7 +78,7 @@ export const automationVersioningService = {
         changeReason,
         ...snapshotFrom(priorState),
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, automationId, organizationId },
         'Falha ao registrar versão anterior da automação.',

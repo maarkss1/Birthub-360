@@ -1,8 +1,8 @@
 import { AlertTriangle, ExternalLink, Loader2, Search } from 'lucide-react';
 import { useState } from 'react';
-import { YoutubeIcon as Youtube } from '../../../../../components/ui/icons/YoutubeIcon';
-import { api } from '../../../../../lib/api';
-import { getErrorMessage } from './shared';
+import { YoutubeIcon as Youtube } from '../../../../../components/ui/icons/YoutubeIcon.js';
+import { api } from '../../../../../lib/api.js';
+import { getErrorMessage } from './shared.js';
 
 interface YoutubeVideoInfo {
   title: string;
@@ -34,7 +34,7 @@ export function YoutubeTool(_props: { configured: boolean }) {
       );
       setInfo(result.info);
       if (result.error) setError(result.error);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao consultar o YouTube'));
     } finally {
       setIsSearching(false);

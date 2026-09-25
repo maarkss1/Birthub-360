@@ -1,4 +1,4 @@
-import type { AuthenticatedUser } from '../auth';
+import type { AuthenticatedUser } from '../auth.js';
 
 // Auth & RBAC (CPI follow-up): augmenta o Request do Express com `user`,
 // populado pelo middleware `attachUser` (ver server/auth.ts) a partir do

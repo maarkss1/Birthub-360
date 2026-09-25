@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useId, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AlertTriangle, AlertCircle, Info, CheckCircle, X, ChevronDown, RefreshCw, ChevronRight } from 'lucide-react';
-import { useSessionStore } from '../../store/useSessionStore';
-import { getAccessibleTextOnBrand, getAccessibleBrandForeground, colors } from './tokens';
-import { usePrefersReducedMotion } from './useReducedMotion';
+import { useSessionStore } from '../../store/useSessionStore.js';
+import { getAccessibleTextOnBrand, getAccessibleBrandForeground, colors } from './tokens.js';
+import { usePrefersReducedMotion } from './useReducedMotion.js';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';

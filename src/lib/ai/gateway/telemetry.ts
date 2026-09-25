@@ -42,7 +42,7 @@ export function traceAiGeneration(params: {
       endTime: new Date(),
       metadata: { organizationId: requestContext.getStore()?.tenantId ?? null },
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.warn({ err: error }, 'Falha ao registrar trace no Langfuse');
   }
 }

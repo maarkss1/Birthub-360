@@ -7,12 +7,12 @@ import {
   ChevronRight, Sparkles, BookMarked,
   Activity, Shield, StarOff
 } from 'lucide-react';
-import { auth } from '../lib/auth';
-import { useSessionStore } from '../store/useSessionStore';
-import { useTheme } from './design-system/ThemeContext';
-import { useToast, AtlasLogo } from './design-system';
-import { getAccessibleTextOnBrand } from './design-system/tokens';
-import { NotificationCenter } from './NotificationCenter';
+import { auth } from '../lib/auth.js';
+import { useSessionStore } from '../store/useSessionStore.js';
+import { useTheme } from './design-system/ThemeContext.js';
+import { useToast, AtlasLogo } from './design-system.js';
+import { getAccessibleTextOnBrand } from './design-system/tokens.js';
+import { NotificationCenter } from './NotificationCenter.js';
 
 export function Sidebar() {
   const location = useLocation();

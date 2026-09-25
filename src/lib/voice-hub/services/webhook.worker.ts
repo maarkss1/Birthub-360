@@ -94,7 +94,7 @@ export function startWebhookWorker() {
       let signature: string | null;
       try {
         signature = await signBody(body, endpointId);
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof WebhookEndpointGoneError) {
           // The endpoint was deleted/deactivated after this job was enqueued — there is no secret
           // left to sign with and no admin left who configured this destination. Same reasoning

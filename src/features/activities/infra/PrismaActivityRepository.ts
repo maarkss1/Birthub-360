@@ -6,15 +6,15 @@ import {
   fromPrismaLeadStatus,
   toPrismaActivityStatus,
   toPrismaActivityType,
-} from '../../../lib/enumMap';
-import { prisma } from '../../../lib/prisma';
-import type { ActivityStatus, ActivityType } from '../../../lib/zod';
+} from '../../../lib/enumMap.js';
+import { prisma } from '../../../lib/prisma.js';
+import type { ActivityStatus, ActivityType } from '../../../lib/zod.js';
 import type {
   Activity,
   ActivityListFilters,
   ActivityPage,
   ActivityRepository,
-} from '../domain/Activity';
+} from '../domain/Activity.js';
 
 function serializeActivity<
   T extends {

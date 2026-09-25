@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import type { Automation } from '../domain/Automation';
-import { diffAutomationSnapshots } from '../domain/AutomationVersion';
+import type { Automation } from '../domain/Automation.js';
+import { diffAutomationSnapshots } from '../domain/AutomationVersion.js';
 
 // Versionamento de regras (Onda 42 — dossiê CPI DEC-14, opção A): cada edição/remoção grava o
 // estado ANTERIOR como uma versão histórica, com timestamp e quem editou. Cobre: gravação

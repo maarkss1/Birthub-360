@@ -71,7 +71,7 @@ export function CompanyBranchesView({
         `/api/companies/market-intelligence/${encodeURIComponent(branchCnpj)}/approve-to-pipeline`,
       );
       toast.success(res.message || 'Filial aprovada para o Pipeline CRM!');
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao aprovar filial');
     } finally {
       setApprovingCnpj(null);

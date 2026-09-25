@@ -4,9 +4,9 @@
  * Isoladas aqui porque nenhuma delas depende de forecast/scoring, só de movimentação real de etapa.
  */
 
-import { isDealOpen } from '../pipelineEligibility';
-import { roundMoney } from '../shared/mathUtils';
-import type { ScoredDeal, StageHistoryRow } from './dealScoring';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import type { ScoredDeal, StageHistoryRow } from './dealScoring.js';
 
 /** Quantas transições de etapa (2ª+ linha de histórico de um lead) aconteceram dentro de [start, end). */
 export function countAdvancedTransitions(

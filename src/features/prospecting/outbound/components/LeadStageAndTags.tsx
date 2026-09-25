@@ -1,7 +1,7 @@
 import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import type { Lead, LeadStage, ThemeMode } from '../types';
-import { PREDEFINED_TAGS_SUGGESTIONS } from '../utils/searchOptions';
+import type { Lead, LeadStage, ThemeMode } from '../types.js';
+import { PREDEFINED_TAGS_SUGGESTIONS } from '../utils/searchOptions.js';
 import { 
   Tag, 
   Plus, 
@@ -186,7 +186,7 @@ export const LeadStageAndTags: React.FC<LeadStageAndTagsProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ stage: newStage, userId, lossReason, winReason })
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erro ao persistir novo stage:', err);
       } finally {
         setIsSaving(false);
@@ -230,7 +230,7 @@ export const LeadStageAndTags: React.FC<LeadStageAndTagsProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tags: newTags, userId })
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erro ao salvar tags:', err);
       }
     }
@@ -251,7 +251,7 @@ export const LeadStageAndTags: React.FC<LeadStageAndTagsProps> = ({
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ tags: newTags, userId })
         });
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erro ao remover tag:', err);
       }
     }

@@ -97,7 +97,7 @@ async function stripeRequest(
           STRIPE_TIMEOUT_MS,
           STRIPE_ALLOWED_HOSTS,
         );
-      } catch (err) {
+      } catch (err: any) {
         // DisallowedHostError nunca é transiente (bug de configuração, não vai se resolver numa
         // próxima tentativa). HttpTimeoutError e qualquer outra falha de rede (DNS, conexão
         // recusada) são recuperáveis — mesma classificação de attemptBitrixCall.
@@ -267,7 +267,7 @@ export async function testStripeConnection(
         ? 'Chave da API do Stripe válida e respondendo normalmente.'
         : `Stripe respondeu com erro (HTTP ${check.status}).`,
     };
-  } catch (err) {
+  } catch (err: any) {
     logger.warn({ err, organizationId, connectionId }, '[stripe] Falha ao testar comunicação');
     return { success: false, message: 'Não foi possível comunicar com a API do Stripe.' };
   }

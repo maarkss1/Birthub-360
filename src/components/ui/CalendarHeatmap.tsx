@@ -1,4 +1,4 @@
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Novo primitivo — heatmap de calendário (ex.: atividades por dia). Implementado como grade
    simples (não o módulo Calendar/Heatmap do ECharts já registrado em src/components/charts):

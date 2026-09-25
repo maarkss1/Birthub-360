@@ -1,5 +1,5 @@
-import type { DecisionMakerCriteria } from '../apollo.service';
-import { searchDecisionMakersAdvanced } from '../apollo.service';
+import type { DecisionMakerCriteria } from '../apollo.service.js';
+import { searchDecisionMakersAdvanced } from '../apollo.service.js';
 
 /**
  * Busca de decisores para uma empresa específica (por domínio).

@@ -1,13 +1,13 @@
 import { AlertTriangle, History, Loader2, Pencil, RefreshCw, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
 import {
   type Automation,
   type AutomationVersionTimelineEntry,
   automationsApi,
-} from '../automations.api';
+} from '../automations.api.js';
 
 function formatEditedAt(iso: string): string {
   return new Date(iso).toLocaleString('pt-BR', {
@@ -82,7 +82,7 @@ export function AutomationVersionsDialog({ automation, onClose }: AutomationVers
     setError(null);
     try {
       setTimeline(await automationsApi.versions(id));
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);

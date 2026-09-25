@@ -3,13 +3,13 @@ import {
   fromPrismaCompanyStatus,
   fromPrismaLeadStatus,
   toPrismaLeadStatus,
-} from '../../../../lib/enumMap';
-import { logger } from '../../../../lib/logger';
+} from '../../../../lib/enumMap.js';
+import { logger } from '../../../../lib/logger.js';
 import { prisma } from '../../../../lib/prisma.js';
 import { queueLeadPushToBitrix } from '../../../../lib/queue/bitrixOutbound.queue.js';
-import { toDeterministicCnpj } from '../cnpj.util';
-import { resolveCompanyIdentity } from '../companyIdentity.service';
-import { enrichCompany } from '../enrichment.service';
+import { toDeterministicCnpj } from '../cnpj.util.js';
+import { resolveCompanyIdentity } from '../companyIdentity.service.js';
+import { enrichCompany } from '../enrichment.service.js';
 import type { PromoteInput } from './types.js';
 
 function splitLocation(location?: string | null): { city?: string; state?: string } {
@@ -132,7 +132,7 @@ export async function promoteToCrm(input: PromoteInput) {
         fleetSizeHint: input.size || undefined,
         preFetchedDecisionMakers: input.decisionMakers?.length ? input.decisionMakers : undefined,
       });
-    } catch (error) {
+    } catch (error: any) {
       // Enriquecimento é um extra sobre um lead já persistido de verdade — sua falha não
       // pode impedir a criação do lead, só deixá-lo sem o fit score automático.
       logger.error({ err: error }, 'Auto-enrichment failed during promote');

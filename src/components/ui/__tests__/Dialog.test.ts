@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { Dialog } from '../Dialog';
+import { Dialog } from '../Dialog.js';
 
 describe('Dialog', () => {
   beforeEach(() => {

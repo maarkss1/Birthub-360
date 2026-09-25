@@ -1,5 +1,5 @@
 import { AlertTriangle, Eye, FlaskConical, Lock, PenLine } from 'lucide-react';
-import { Badge } from '../../../components/ui/Badge';
+import { Badge } from '../../../components/ui/Badge.js';
 
 /**
  * Taxonomia de maturidade real por integração (Onda 3 — "Integrações honestas"): o que a tela de

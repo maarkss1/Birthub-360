@@ -1,10 +1,10 @@
 import type React from 'react';
 import { useId, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { SoundFX } from '../../../lib/soundEffects';
-import type { DailyPlanItemChannel } from '../../../shared/contracts/dailyPlan.contract';
-import { commercialIntelligenceApi } from '../commercialIntelligence.api';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import type { DailyPlanItemChannel } from '../../../shared/contracts/dailyPlan.contract.js';
+import { commercialIntelligenceApi } from '../commercialIntelligence.api.js';
 
 interface NewActivityModalProps {
   open: boolean;
@@ -46,7 +46,7 @@ export function NewActivityModal({ open, onClose, onCreated }: NewActivityModalP
       setObservations('');
       onClose();
       onCreated();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao criar atividade:', err);
     } finally {
       setIsCreating(false);

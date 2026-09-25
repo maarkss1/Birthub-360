@@ -1,10 +1,10 @@
-import { useSessionStore } from '../../store/useSessionStore';
+import { useSessionStore } from '../../store/useSessionStore.js';
 import type React from 'react';
 import { useState, useEffect, useRef, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Users, BookOpen, BarChart3, Mic, CreditCard, Code, Building2, Settings, Sun, Moon, Laptop, Command, X } from 'lucide-react';
-import { useTheme } from './ThemeContext';
-import { getAccessibleTextOnBrand, getAccessibleBrandForeground, colors } from './tokens';
+import { useTheme } from './ThemeContext.js';
+import { getAccessibleTextOnBrand, getAccessibleBrandForeground, colors } from './tokens.js';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';

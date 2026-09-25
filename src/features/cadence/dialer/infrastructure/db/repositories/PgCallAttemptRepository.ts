@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from '../../../../../../lib/prisma';
+import { prisma } from '../../../../../../lib/prisma.js';
 import {
   CallAttempt,
   TERMINAL_CALL_ATTEMPT_STATUSES,
@@ -84,7 +84,7 @@ export class PgCallAttemptRepository implements CallAttemptRepository {
           props.endedAt,
         ],
       );
-    } catch (error) {
+    } catch (error: any) {
       if (isActiveAgentDnViolation(error)) {
         throw new AgentDnConflictError(props.agentDn);
       }

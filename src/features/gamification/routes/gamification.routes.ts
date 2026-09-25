@@ -66,7 +66,7 @@ router.post('/coaching/weekly', async (req: Request, res: Response, next: NextFu
     });
 
     res.json({ success: true, data: { report, performance, period: periodLabel } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

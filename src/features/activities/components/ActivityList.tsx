@@ -25,17 +25,17 @@ import {
 import type React from 'react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/ui/Button';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useActivities } from '../../../hooks/useDatabase';
-import { api, downloadFile } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { leadsDB } from '../../../lib/db';
-import type { PaletteIntent } from '../../../lib/paletteIntent';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
-import type { Activity, Lead } from '../../../types';
+import { Button } from '../../../components/ui/Button.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useActivities } from '../../../hooks/useDatabase.js';
+import { api, downloadFile } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { leadsDB } from '../../../lib/db.js';
+import type { PaletteIntent } from '../../../lib/paletteIntent.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
+import type { Activity, Lead } from '../../../types.js';
 
 const TYPE_ICONS: Record<string, React.JSX.Element> = {
   ligação: <Phone className="w-4 h-4" />,
@@ -282,7 +282,7 @@ export function ActivityList() {
     try {
       await deleteActivity(id);
       toast.success('Atividade excluída.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error deleting activity');
       toast.error(error instanceof Error ? error.message : 'Falha ao excluir a atividade.');
     }
@@ -297,13 +297,13 @@ export function ActivityList() {
     setIsSaving(true);
     try {
       await createActivity({
-        type: form.type as import('../../../lib/zod').ActivityType,
+        type: form.type as import('../../../lib/zod.js').ActivityType,
         date: form.date,
         time: form.time || null,
         owner: form.owner || currentUser?.name || 'Vendedor',
         observations: form.observations || null,
         leadId: form.leadId,
-        status: 'Pendente' as import('../../../lib/zod').ActivityStatus,
+        status: 'Pendente' as import('../../../lib/zod.js').ActivityStatus,
       });
       setIsFormOpen(false);
       setForm({

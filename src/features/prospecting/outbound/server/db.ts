@@ -1,4 +1,4 @@
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma.js';
 
 export function toPgQuery(sql: string): string {
   let out = '';
@@ -62,7 +62,7 @@ export async function logActivity(
       'INSERT INTO activity_log (lead_id, user_id, action, from_value, to_value) VALUES (?, ?, ?, ?, ?)',
       [entry.leadId || null, entry.userId || null, entry.action, entry.fromValue ?? null, entry.toValue ?? null]
     );
-  } catch (err) {
+  } catch (err: any) {
     console.error('Falha ao gravar activity_log:', err);
   }
 }

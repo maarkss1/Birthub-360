@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { clientLogger } from '../lib/clientLogger';
-import { toast } from '../lib/toast';
+import { clientLogger } from '../lib/clientLogger.js';
+import { toast } from '../lib/toast.js';
 
 interface StripeConnection {
   id: string;
@@ -22,7 +22,7 @@ export function useStripeIntegration() {
       if (data.success) {
         setStripeConnections(data.data);
       }
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Failed to fetch Stripe connections');
     }
   }, []);
@@ -54,7 +54,7 @@ export function useStripeIntegration() {
       setStripeLabelInput('');
       setStripeSecretKeyInput('');
       fetchStripeConnections();
-    } catch (error) {
+    } catch (error: any) {
       toast.error((error as Error).message);
     } finally {
       setStripeLoading(false);

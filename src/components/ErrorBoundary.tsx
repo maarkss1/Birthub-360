@@ -1,5 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { clientLogger } from '../lib/clientLogger';
+import { clientLogger } from '../lib/clientLogger.js';
 
 interface Props {
   children?: ReactNode;

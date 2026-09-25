@@ -79,7 +79,7 @@ async function callWithFallback(
         timeoutMs,
       });
       return { response, providerUsed: provider.name };
-    } catch (error) {
+    } catch (error: any) {
       errorsByProvider.set(provider.name, error);
     }
   }

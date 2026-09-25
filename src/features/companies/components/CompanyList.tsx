@@ -16,22 +16,22 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { ContextualTip } from '../../../components/ui/ContextualTip';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Pagination } from '../../../components/ui/Pagination';
-import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo';
-import { ToolTechPopover } from '../../../components/ui/ToolTechPopover';
-import { type ColumnDef, VirtualTable } from '../../../components/ui/VirtualTable';
-import { useCompanies } from '../../../hooks/useDatabase';
-import { clientLogger } from '../../../lib/clientLogger';
-import { formatCnpj } from '../../../lib/cnpj';
-import { companiesDB } from '../../../lib/db';
-import type { PaletteIntent } from '../../../lib/paletteIntent';
-import { toast } from '../../../lib/toast';
-import type { Company } from '../../../types';
-import { CompanyDetail } from './CompanyDetail';
-import { CompanyForm } from './CompanyForm';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { ContextualTip } from '../../../components/ui/ContextualTip.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Pagination } from '../../../components/ui/Pagination.js';
+import { type TechToolInfo, TechToolLogo } from '../../../components/ui/TechToolLogo.js';
+import { ToolTechPopover } from '../../../components/ui/ToolTechPopover.js';
+import { type ColumnDef, VirtualTable } from '../../../components/ui/VirtualTable.js';
+import { useCompanies } from '../../../hooks/useDatabase.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { formatCnpj } from '../../../lib/cnpj.js';
+import { companiesDB } from '../../../lib/db.js';
+import type { PaletteIntent } from '../../../lib/paletteIntent.js';
+import { toast } from '../../../lib/toast.js';
+import type { Company } from '../../../types.js';
+import { CompanyDetail } from './CompanyDetail.js';
+import { CompanyForm } from './CompanyForm.js';
 
 export function CompanyList() {
   const [inputValue, setInputValue] = useState('');
@@ -94,7 +94,7 @@ export function CompanyList() {
     try {
       await deleteCompany(id);
       toast.success('Empresa excluída.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error deleting company');
       toast.error(error instanceof Error ? error.message : 'Falha ao excluir a empresa.');
     }
@@ -111,7 +111,7 @@ export function CompanyList() {
       await companiesDB.enrich(id);
       await refetch();
       toast.success('Empresa enriquecida com sucesso.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error enriching company');
       toast.error(error instanceof Error ? error.message : 'Falha ao enriquecer a empresa.');
     } finally {
@@ -150,7 +150,7 @@ export function CompanyList() {
         try {
           await companiesDB.enrich(company.id);
           succeeded += 1;
-        } catch (error) {
+        } catch (error: any) {
           clientLogger.error({ err: error }, `Error enriching company ${company.id}`);
           failed += 1;
         }

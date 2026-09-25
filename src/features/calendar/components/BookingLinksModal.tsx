@@ -1,10 +1,10 @@
 import { Check, Copy, Globe, Link2, Loader2, Plus, Trash2 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { Dialog } from '../../../components/ui/Dialog';
-import { api } from '../../../lib/api';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { api } from '../../../lib/api.js';
+import { toast } from '../../../lib/toast.js';
 
 interface BookingLink {
   id: string;
@@ -103,7 +103,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
         durationMin: 30,
         description: '',
       });
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao criar link');
     } finally {
       setCreating(false);
@@ -137,7 +137,7 @@ export function BookingLinksModal({ isOpen, onClose }: BookingLinksModalProps) {
     try {
       await api.patch(`/api/calendar/booking-links/${link.id}`, { active: !link.active });
       toast.success(link.active ? 'Link desativado' : 'Link reativado');
-    } catch (err) {
+    } catch (err: any) {
       setLinks((prev) => prev.map((l) => (l.id === link.id ? { ...l, active: link.active } : l)));
       toast.error(err instanceof Error ? err.message : 'Erro ao alterar status do link');
     } finally {

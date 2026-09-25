@@ -1,13 +1,13 @@
 import type { LeadFunnel } from '@prisma/client';
 import type { z } from 'zod';
-import { fromPrismaLeadStatus } from '../../../lib/enumMap';
+import { fromPrismaLeadStatus } from '../../../lib/enumMap.js';
 import { broadcastEvent } from '../../../lib/eventsBus.js';
 import { logger } from '../../../lib/logger.js';
-import { leadSchema } from '../../../lib/zod';
-import { BaseUseCases } from '../../../shared/application/BaseUseCases';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import { enrichCompany } from '../../prospecting/services/enrichment.service';
-import type { Lead, LeadRepository } from '../domain/Lead';
+import { leadSchema } from '../../../lib/zod.js';
+import { BaseUseCases } from '../../../shared/application/BaseUseCases.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import { enrichCompany } from '../../prospecting/services/enrichment.service.js';
+import type { Lead, LeadRepository } from '../domain/Lead.js';
 import { prismaDealClosureGate } from '../infra/PrismaDealClosureGate.js';
 import { ensureManualDealClosureAllowed } from './dealClosureGate.js';
 
@@ -113,7 +113,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
         if (owner) {
           lead.owner = owner;
         }
-      } catch (err) {
+      } catch (err: any) {
         // Log and swallow so the creation succeeds even if assignment fails
         logger.error({ err }, 'Failed to assign lead via Round-Robin');
       }
@@ -680,7 +680,7 @@ export class LeadUseCases extends BaseUseCases<Lead, LeadRepository> {
           }
           updatedCount++;
         }
-      } catch (err) {
+      } catch (err: any) {
         failedCount++;
         logger.error(
           { err, leadId: lead.id, organizationId },

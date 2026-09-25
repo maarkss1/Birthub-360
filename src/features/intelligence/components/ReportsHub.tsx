@@ -1,20 +1,20 @@
 import { CalendarClock, FileBarChart, Loader2, RefreshCw, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { api } from '../../../lib/api';
-import { analyticsDB } from '../../../lib/db';
-import { readSseStream, sseRequestInit } from '../../../lib/sse';
-import { analyticsApi, type MonthlyPoint } from '../../analytics/analytics.api';
-import { GlowChart } from '../../analytics/components/GlowChart';
+} from '../../../components/ui/Card.js';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { api } from '../../../lib/api.js';
+import { analyticsDB } from '../../../lib/db.js';
+import { readSseStream, sseRequestInit } from '../../../lib/sse.js';
+import { analyticsApi, type MonthlyPoint } from '../../analytics/analytics.api.js';
+import { GlowChart } from '../../analytics/components/GlowChart.js';
 
 interface DailySummary {
   id: string;
@@ -164,7 +164,7 @@ export function ReportsHub() {
 
       if (streamError) throw new Error(streamError);
       if (!sawDelta) throw new Error('O motor de IA não retornou nenhuma resposta.');
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Falha ao gerar o relatório.');
       setReport(null);
     } finally {

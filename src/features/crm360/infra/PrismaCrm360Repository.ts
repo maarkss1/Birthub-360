@@ -1077,7 +1077,7 @@ export class PrismaCrm360Repository implements ICrm360Repository {
         },
         include: { lead: true, company: true, contact: true },
       });
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
         throw new AppError('Esta cobrança Stripe já foi usada para reconciliar outra Fatura.', 409);
       }

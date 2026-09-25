@@ -22,7 +22,7 @@ import type {
   AutomationVersionInput,
   AutomationVersionRecord,
   AutomationVersionStore,
-} from '../domain/AutomationVersion';
+} from '../domain/AutomationVersion.js';
 
 function toRecord(row: {
   id: string;

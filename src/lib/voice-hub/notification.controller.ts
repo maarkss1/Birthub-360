@@ -43,7 +43,7 @@ export async function markNotificationReadHandler(req: Request, res: Response) {
   try {
     const notification = await markAsRead(String(req.params.id), req.user!.id);
     res.json({ notification });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof NotificationNotFoundError) {
       return res.status(404).json({ error: 'Notificação não encontrada.' });
     }

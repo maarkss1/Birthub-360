@@ -84,7 +84,7 @@ export async function startWorkerServer(
             timestamp: new Date().toISOString(),
           }),
         );
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err }, `${domainName} readiness failed`);
         res.writeHead(503, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ status: 'error', message: 'Redis or database unavailable' }));
@@ -123,7 +123,7 @@ export async function startWorkerServer(
       try {
         res.writeHead(200, { 'Content-Type': client.register.contentType });
         res.end(await client.register.metrics());
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err }, `${domainName}: failed to collect metrics`);
         res.writeHead(500);
         res.end('Falha ao coletar métricas.');

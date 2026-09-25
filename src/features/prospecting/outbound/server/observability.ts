@@ -32,9 +32,9 @@
 // rodando atrás de um load balancer. Documentado, não escondido.
 
 import { randomUUID } from 'crypto';
-import type { SearchIntent } from './searchIntent';
-import type { SearchPlan } from './queryPlanner';
-import type { ProviderResultStatus } from './search/providers/types';
+import type { SearchIntent } from './searchIntent.js';
+import type { SearchPlan } from './queryPlanner.js';
+import type { ProviderResultStatus } from './search/providers/types.js';
 
 // ---------------------------------------------------------------------------
 // Tipos

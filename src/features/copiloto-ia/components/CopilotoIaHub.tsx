@@ -1,8 +1,8 @@
 import { useSearchParams } from 'react-router-dom';
-import { useAuth } from '../../../contexts/AuthContext';
-import { SoundFX } from '../../../lib/soundEffects';
-import { BitrixMappingSettingsTab } from './BitrixMappingSettingsTab';
-import { ConversationsTab } from './ConversationsTab';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { BitrixMappingSettingsTab } from './BitrixMappingSettingsTab.js';
+import { ConversationsTab } from './ConversationsTab.js';
 
 type TabId = 'conversas' | 'configuracoes';
 

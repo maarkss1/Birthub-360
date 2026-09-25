@@ -194,7 +194,7 @@ export async function statusCallbackHandler(req: Request, res: Response) {
     if (callSid && status) {
       await telephonyService.endCall({ callSid, status, durationSeconds });
     }
-  } catch (err) {
+  } catch (err: any) {
     logger.error('Failed to finalize call from status callback', err);
   }
 

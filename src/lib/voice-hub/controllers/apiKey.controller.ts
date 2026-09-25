@@ -49,7 +49,7 @@ export async function revokeApiKeyHandler(req: Request, res: Response) {
     const apiKey = await revokeApiKeyForTenant(req.organizationId!, String(req.params.id));
     writeAuditLog(req.organizationId, req.user!.id, 'API_KEY_REVOKE', { apiKeyId: apiKey.id });
     res.json({ success: true, apiKey });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof ApiKeyServiceError) return res.status(err.status).json({ error: err.message });
     throw err;
   }

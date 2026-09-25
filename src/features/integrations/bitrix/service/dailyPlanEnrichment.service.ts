@@ -62,7 +62,7 @@ async function callBitrixBatch(
         { halt: 0, cmd: chunk },
       );
       Object.assign(out, payload?.result?.result || {});
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err },
         '[daily-plan] Falha ao resolver lote de contato/empresa/negócio do Bitrix24',

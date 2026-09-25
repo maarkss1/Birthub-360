@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from '../../../../../../lib/prisma';
+import { prisma } from '../../../../../../lib/prisma.js';
 import { Campaign, type CampaignProps, type CampaignStatus } from "../../../domain/entities/Campaign.js";
 import type { CampaignRepository } from "../../../application/ports/CampaignRepository.js";
 

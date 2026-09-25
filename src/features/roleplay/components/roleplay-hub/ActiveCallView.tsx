@@ -1,6 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { Bot, Mic, MicOff, PhoneOff, Send } from 'lucide-react';
-import type { CallMessage, Persona } from './types';
+import type { CallMessage, Persona } from './types.js';
 
 // Fundo sempre escuro (independente do tema claro/escuro do resto do app): exceção justificada
 // (CLAUDE.md §5) — a tela de ligação ativa é imersiva por design, seguindo a convenção de UI de

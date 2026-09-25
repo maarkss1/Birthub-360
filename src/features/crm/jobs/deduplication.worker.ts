@@ -102,7 +102,7 @@ export function createDeduplicationWorker() {
           duplicatesByEmail: results.reduce((sum, r) => sum + r.duplicatesByEmail, 0),
           duplicatesByPhone: results.reduce((sum, r) => sum + r.duplicatesByPhone, 0),
         };
-      } catch (err) {
+      } catch (err: any) {
         logger.error({ err }, 'Falha na rotina de deduplicação');
         throw err;
       }

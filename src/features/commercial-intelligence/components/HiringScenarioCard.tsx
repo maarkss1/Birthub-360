@@ -1,15 +1,15 @@
 import { AlertTriangle, UserPlus } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
   formatPercent,
   type HiringScenarioResult,
-} from '../commercialIntelligence.api';
-import { MetricInfo } from './MetricInfo';
+} from '../commercialIntelligence.api.js';
+import { MetricInfo } from './MetricInfo.js';
 
 const REASON_LABEL: Record<NonNullable<HiringScenarioResult['reason']>, string> = {
   numero_de_reps_invalido: 'Informe um número de vendedores maior que zero.',

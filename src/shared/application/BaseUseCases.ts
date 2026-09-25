@@ -1,4 +1,4 @@
-import type { Repository } from '../domain/Repository';
+import type { Repository } from '../domain/Repository.js';
 
 /**
  * Repositórios de listagem paginada e filtrada usados pelas features de CRM

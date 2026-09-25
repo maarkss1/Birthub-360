@@ -108,7 +108,7 @@ router.post(
         exclusions,
       );
       res.json({ success: true, data: { candidates } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -127,7 +127,7 @@ router.post(
       const exclusions = await resolveExclusions(req);
       const result = await fetchApolloCandidates(criteria, criteria.quantidade || 10, exclusions);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -153,7 +153,7 @@ router.post(
       }
       const result = await findPeopleViaDomainSearch(normalizedDomain, limit);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -179,7 +179,7 @@ router.post(
       }
       const result = await findEmailViaHunter(normalizedDomain, fullName);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -195,7 +195,7 @@ router.post(
       const { query, limit } = req.body as { query: string; limit: number };
       const result = await searchGithubOrganizations(query, limit);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -211,7 +211,7 @@ router.post(
       const { login } = req.body as { login: string };
       const result = await getGithubOrganizationProfile(login);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -228,7 +228,7 @@ router.post(
       const { companyName } = req.body as { companyName: string };
       const mentions = await searchCompanyNews(companyName);
       res.json({ success: true, data: { mentions } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -244,7 +244,7 @@ router.post(
       const { url } = req.body as { url: string };
       const result = await getYoutubeVideoInfo(url);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

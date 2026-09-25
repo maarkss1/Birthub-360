@@ -97,7 +97,7 @@ export async function recordDeadLetter(input: DeadLetterInput): Promise<void> {
         }),
       },
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.error(
       { err, queue: input.queue, jobId: input.jobId },
       'Falha ao registrar job na dead-letter',

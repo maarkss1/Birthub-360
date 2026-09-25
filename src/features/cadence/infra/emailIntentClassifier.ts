@@ -70,7 +70,7 @@ export const emailIntentClassifier: IntentClassifierPort = {
 
     try {
       return parseModelOutput(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.warn({ err: error }, 'Falha ao interpretar sinal de réplica de e-mail gerado pela IA');
       return {
         intent: null,

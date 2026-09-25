@@ -79,7 +79,7 @@ export function createAgentWorker() {
                 { jobId: job.id, leadId, ...whatsAppResult },
                 'SDR outbound (WhatsApp) job completed',
               );
-            } catch (whatsAppError) {
+            } catch (whatsAppError: any) {
               logger.error(
                 { err: whatsAppError, jobId: job.id, leadId },
                 'SDR outbound (WhatsApp) falhou — rascunho de e-mail (se gerado) permanece válido.',
@@ -87,7 +87,7 @@ export function createAgentWorker() {
             }
           });
         }
-      } catch (error) {
+      } catch (error: any) {
         logger.error({ err: error, jobId: job.id }, 'Agent job failed');
         throw error;
       }

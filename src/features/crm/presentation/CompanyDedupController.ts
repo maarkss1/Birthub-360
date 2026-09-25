@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from 'express';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import type { CompanyDeduplicationService } from '../application/CompanyDeduplicationService';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import type { CompanyDeduplicationService } from '../application/CompanyDeduplicationService.js';
 
 /**
  * Item 13 (Inteligência de Dados & Enriquecimento) — mesmo padrão de dois passos do
@@ -15,7 +15,7 @@ export class CompanyDedupController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.companyDeduplicationService.previewDuplicates(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -25,7 +25,7 @@ export class CompanyDedupController {
       const { organizationId: orgId } = (req as AuthRequest).user;
       const result = await this.companyDeduplicationService.deduplicate(orgId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

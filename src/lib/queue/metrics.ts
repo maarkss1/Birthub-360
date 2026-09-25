@@ -25,7 +25,7 @@ async function collectDepthGauge(
     registeredQueues.map(async ({ name, queue }) => {
       try {
         gauge.set({ queue: name }, await getCount(queue));
-      } catch (err) {
+      } catch (err: any) {
         logger.warn({ err, queue: name }, 'Falha ao coletar métrica de fila');
       }
     }),
@@ -78,7 +78,7 @@ export const bullmqOldestWaitingJobAgeSeconds = new client.Gauge({
           const [oldest] = await queue.getJobs(['waiting'], -1, -1, true);
           const age = oldest?.timestamp ? Math.max(0, (Date.now() - oldest.timestamp) / 1000) : 0;
           this.set({ queue: name }, age);
-        } catch (err) {
+        } catch (err: any) {
           logger.warn({ err, queue: name }, 'Falha ao coletar idade do job mais antigo');
         }
       }),

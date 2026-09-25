@@ -2,7 +2,7 @@ import { tool } from '@langchain/core/tools';
 import type { Prisma } from '@prisma/client';
 import { z } from 'zod';
 import { getTenantId } from '../../../lib/async-context.js';
-import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap';
+import { fromPrismaLeadStatus, toPrismaLeadStatus } from '../../../lib/enumMap.js';
 import { prisma } from '../../../lib/prisma.js';
 import { LEAD_STATUS, type LeadStatus } from '../../../lib/zod.js';
 import { minimizePii } from '../services/guardrails.service.js';
@@ -189,7 +189,7 @@ export const updateLeadQualificationTool = tool(
         return `Erro: Lead ${leadId} não encontrado no CRM.`;
       }
       return `Lead ${leadId} qualificado com sucesso com nota ${score}. Status atualizado para ${status}.`;
-    } catch (error) {
+    } catch (error: any) {
       return `Erro ao atualizar qualificação: ${error instanceof Error ? error.message : String(error)}`;
     }
   },

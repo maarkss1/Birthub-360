@@ -1,5 +1,5 @@
 import type { PrismaClient } from "@prisma/client";
-import { prisma } from '../../../../../../lib/prisma';
+import { prisma } from '../../../../../../lib/prisma.js';
 import type { DncRepository } from "../../../application/ports/DncRepository.js";
 
 // TODO: Refactor native SQL queries to use Prisma ORM directly.

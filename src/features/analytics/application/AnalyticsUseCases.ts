@@ -15,7 +15,7 @@ import {
   type MonthlyPoint,
   type OverviewMetrics,
   WON,
-} from '../domain/Analytics';
+} from '../domain/Analytics.js';
 
 // UTC, não hora local: `Lead.createdAt`/`closedAt` chegam do Postgres como instantes UTC, e o
 // mês/dia usado nos testes (e em qualquer chamador real) é sempre âncorado em UTC (ex.:

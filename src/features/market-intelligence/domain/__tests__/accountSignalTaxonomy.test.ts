@@ -3,7 +3,7 @@ import {
   ACCOUNT_SIGNAL_TAXONOMY_VERSION,
   accountSignalTypeLabel,
   classifySignalType,
-} from '../accountSignalTaxonomy';
+} from '../accountSignalTaxonomy.js';
 
 describe('classifySignalType', () => {
   it('classifica rodada de investimento', () => {

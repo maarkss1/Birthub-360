@@ -1,11 +1,11 @@
 import { Bot, Sparkles } from 'lucide-react';
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { BRAND } from '../../config/brand';
-import { useBrandAccent } from '../../hooks/useBrandAccent';
-import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent';
+import { BRAND } from '../../config/brand.js';
+import { useBrandAccent } from '../../hooks/useBrandAccent.js';
+import { OPEN_AI_CHAT_EVENT } from '../../lib/paletteIntent.js';
 
 const FloatingChatbook = lazy(() =>
-  import('../../features/chatbook/components/FloatingChatbook').then((module) => ({
+  import('../../features/chatbook/components/FloatingChatbook.js').then((module) => ({
     default: module.FloatingChatbook,
   })),
 );

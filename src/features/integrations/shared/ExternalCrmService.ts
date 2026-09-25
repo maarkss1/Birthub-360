@@ -4,13 +4,13 @@
  */
 
 import { prisma } from '@/lib/prisma';
-import { getCrmProvider, listCrmProviders, type CrmConnectionConfig } from './CrmProvider';
+import { getCrmProvider, listCrmProviders, type CrmConnectionConfig } from './CrmProvider.js';
 
 // Ensure all providers are registered before use
-import '../hubspot/HubspotProvider';
-import '../pipedrive/PipedriveProvider';
-import '../rdstation/RdStationProvider';
-import '../monday/MondayProvider';
+import '../hubspot/HubspotProvider.js';
+import '../pipedrive/PipedriveProvider.js';
+import '../rdstation/RdStationProvider.js';
+import '../monday/MondayProvider.js';
 
 export interface CreateCrmConnectionInput {
   organizationId: string;

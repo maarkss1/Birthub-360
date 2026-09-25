@@ -1,6 +1,6 @@
 import React from 'react';
-import { VisualCanvas } from '../components/studio/Canvas';
-import { VersionHistoryPanel } from '../components/studio/panels/VersionHistoryPanel';
+import { VisualCanvas } from '../components/studio/Canvas.js';
+import { VersionHistoryPanel } from '../components/studio/panels/VersionHistoryPanel.js';
 
 export default function VoiceStudioPage() {
   return (

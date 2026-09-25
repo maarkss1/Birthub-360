@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { BaseUseCases } from '../../../shared/application/BaseUseCases';
+import { BaseUseCases } from '../../../shared/application/BaseUseCases.js';
 import {
   type DryRunOptions,
   type DryRunResult,
@@ -10,7 +10,7 @@ import {
   type AutomationVersionTimeline,
   automationVersioningService,
 } from '../automation-versioning.service.js';
-import type { Automation, AutomationRepository } from '../domain/Automation';
+import type { Automation, AutomationRepository } from '../domain/Automation.js';
 
 // 'Lead estagnado' faltava aqui (achado do Piloto 018) apesar de já existir no enum Prisma
 // (Lead_Estagnado), no formulário da UI (`automations.api.ts` já oferecia a opção), no motor

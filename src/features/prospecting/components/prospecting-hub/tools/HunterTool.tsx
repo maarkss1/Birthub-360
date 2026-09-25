@@ -1,13 +1,13 @@
 import { CheckCircle2, Loader2, Mail, Phone, Search, ShieldCheck, User } from 'lucide-react';
 import { useState } from 'react';
-import { BRAND } from '../../../../../config/brand';
-import { api } from '../../../../../lib/api';
-import { getTelephoneLink, getWhatsAppLink } from '../../../../../shared/utils/contact-links';
-import type { HunterPersonContact } from '../../../services/hunter.service';
-import { normalizeCompanyDomain } from '../../../utils/domain';
-import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin';
-import { NotConfiguredBanner } from './NotConfiguredBanner';
-import { getErrorMessage, type PromoteResult } from './shared';
+import { BRAND } from '../../../../../config/brand.js';
+import { api } from '../../../../../lib/api.js';
+import { getTelephoneLink, getWhatsAppLink } from '../../../../../shared/utils/contact-links.js';
+import type { HunterPersonContact } from '../../../services/hunter.service.js';
+import { normalizeCompanyDomain } from '../../../utils/domain.js';
+import { getDecisionMakerLinkedInLink } from '../../../utils/linkedin.js';
+import { NotConfiguredBanner } from './NotConfiguredBanner.js';
+import { getErrorMessage, type PromoteResult } from './shared.js';
 
 export function HunterTool({ configured }: { configured: boolean }) {
   const [domainInput, setDomainInput] = useState('');
@@ -44,7 +44,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
       );
       setContacts(result.contacts);
       if (result.error) setError(result.error);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar no Hunter.io'));
     } finally {
       setIsSearching(false);
@@ -67,7 +67,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
         { timeoutMs: 15_000 },
       );
       setVerifyResult(result);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao verificar e-mail'));
     } finally {
       setIsVerifying(false);
@@ -96,7 +96,7 @@ export function HunterTool({ configured }: { configured: boolean }) {
         contact: { name: contact.name, role: contact.title || undefined },
       });
       setPromoted((prev) => ({ ...prev, [key]: result }));
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao adicionar ao CRM'));
     } finally {
       setPromotingKey(null);

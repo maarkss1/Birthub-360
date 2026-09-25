@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { classifyLossReason } from '../application/lossTaxonomy';
+import { classifyLossReason } from '../application/lossTaxonomy.js';
 
 describe('lossTaxonomy.classifyLossReason', () => {
   it('classifica null/vazio como "Não informado" — nunca "Outro" (ausência de dado ≠ dado não classificável)', () => {

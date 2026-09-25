@@ -3,8 +3,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, ShieldAlert, HeartPulse, Activity, Zap, Shield, Clock, Wifi, WifiOff, Loader2, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { io, type Socket } from 'socket.io-client';
-import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '../../../../lib/logger';
+import { useSessionStore } from '../../store/useSessionStore.js';
+import { logger } from '../../../../lib/logger.js';
 
 interface Alert {
   id: string;

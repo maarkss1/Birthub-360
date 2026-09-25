@@ -109,7 +109,7 @@ router.get('/opt-outs', async (req: Request, res: Response, next: NextFunction):
     const { organizationId } = (req as AuthRequest).user;
     const records = await prismaOptOutRepository.list(organizationId);
     res.json({ success: true, data: records });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -123,7 +123,7 @@ router.get('/runs', async (req: Request, res: Response, next: NextFunction): Pro
       status ? { status } : undefined,
     );
     res.json({ success: true, data: runs });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -163,7 +163,7 @@ router.post(
         },
       });
       res.status(201).json({ success: true, data: sequence });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -178,7 +178,7 @@ router.get('/sequences', async (req: Request, res: Response, next: NextFunction)
       take: 200,
     });
     res.json({ success: true, data: sequences });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -201,7 +201,7 @@ router.post(
         data: { organizationId, name, description, touches, createdBy: userId },
       });
       res.status(201).json({ success: true, data: sequence });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -231,7 +231,7 @@ router.post(
       );
       if (!sequence) throw new AppError('Sequência não encontrada nesta organização.', 404);
       res.json({ success: true, data: sequence });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -277,7 +277,7 @@ router.post(
 
       try {
         await prismaCadenceRunRepository.save(run);
-      } catch (err) {
+      } catch (err: any) {
         // `CadenceRun_leadId_active_unique` (índice único parcial, status=Active) — este lead já
         // tem uma cadência em andamento. Não é um erro de verdade, é uma regra de negócio real:
         // devolve 409 em vez de deixar o erro de banco cru subir.
@@ -288,7 +288,7 @@ router.post(
       }
 
       res.status(201).json({ success: true, data: { ...run, sequenceName: sequence.name } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -318,7 +318,7 @@ router.post(
       const updated = pauseCadenceRun(run, new Date());
       await prismaCadenceRunRepository.save(updated);
       res.json({ success: true, data: updated });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -334,7 +334,7 @@ router.post(
       const updated = resumeCadenceRun(run);
       await prismaCadenceRunRepository.save(updated);
       res.json({ success: true, data: updated });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -350,7 +350,7 @@ router.post(
       const updated = stopCadenceManually(run, new Date());
       await prismaCadenceRunRepository.save(updated);
       res.json({ success: true, data: updated });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -400,7 +400,7 @@ router.post(
       }
 
       res.status(201).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

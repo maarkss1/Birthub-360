@@ -109,7 +109,7 @@ export async function recordProspectingProviderSpend(
       await cacheConnection.incrbyfloat(key, costUsd);
       await cacheConnection.expire(key, REDIS_KEY_TTL_SECONDS);
       return;
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err, organizationId, provider },
         'providerBudget: falha ao gravar gasto no Redis — usando fallback em memória só para esta chamada',
@@ -126,7 +126,7 @@ export async function getOrgMonthProspectingCostUsd(organizationId: string): Pro
     try {
       const raw = await cacheConnection.get(key);
       return raw != null ? Number(raw) : 0;
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err, organizationId },
         'providerBudget: falha ao ler gasto do Redis — tratando como custo desconhecido (nunca bloqueia por falha de leitura)',
@@ -148,7 +148,7 @@ async function getOrgProspectingBudgetUsd(organizationId: string): Promise<numbe
       select: { monthlyProspectingBudgetUsd: true },
     });
     return org?.monthlyProspectingBudgetUsd ?? null;
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       'providerBudget: falha ao ler o teto mensal de prospecção da organização — tratando como sem teto configurado',

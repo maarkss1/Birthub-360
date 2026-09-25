@@ -5,10 +5,10 @@ import {
   Sparkles, X, Send, ArrowRight,
   Lightbulb, ShieldCheck
 } from 'lucide-react';
-import { Card, Button, Spinner } from './design-system';
-import { getAccessibleTextOnBrand } from './design-system/tokens';
-import { useSessionStore } from '../store/useSessionStore';
-import { logger } from '../../../lib/logger';
+import { Card, Button, Spinner } from './design-system.js';
+import { getAccessibleTextOnBrand } from './design-system/tokens.js';
+import { useSessionStore } from '../store/useSessionStore.js';
+import { logger } from '../../../lib/logger.js';
 
 interface Message {
   id: string;
@@ -119,7 +119,7 @@ export function GlobalHelpCenter() {
         sender: 'catarina',
         text: data.text || 'Desculpe, tive um problema para processar essa instrução.'
       }]);
-    } catch (error) {
+    } catch (error: any) {
       logger.error('Failed to get response from Catarina help chat', { error });
       setMessages(prev => [...prev, {
         id: (Date.now() + 1).toString(),

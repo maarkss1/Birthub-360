@@ -14,7 +14,7 @@ import {
   startCadenceRun,
   stopCadenceManually,
   validateSequence,
-} from '../domain/cadence';
+} from '../domain/cadence.js';
 
 const NOW = new Date('2026-08-03T12:00:00Z'); // segunda, 09:00 SP
 const ALWAYS_WITHIN_WINDOW = () => true;

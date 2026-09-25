@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getDecisionMakerLinkedInLink } from '../linkedin';
+import { getDecisionMakerLinkedInLink } from '../linkedin.js';
 
 describe('decision-maker LinkedIn links', () => {
   it('usa o perfil direto retornado pelo provedor', () => {

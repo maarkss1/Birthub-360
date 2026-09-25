@@ -1,17 +1,17 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { Input } from '../../../components/ui/Input';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { Textarea } from '../../../components/ui/Textarea';
-import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { type ObjectionMatrixItem, playbookApi } from '../playbook.api';
-import { type ObjectionMatrixItemInput, objectionMatrixItemSchema } from '../playbook.schema';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { Textarea } from '../../../components/ui/Textarea.js';
+import { PLAYBOOKS, type PlaybookKey } from '../../../config/playbooks.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { type ObjectionMatrixItem, playbookApi } from '../playbook.api.js';
+import { type ObjectionMatrixItemInput, objectionMatrixItemSchema } from '../playbook.schema.js';
 
 const emptyDefaults: ObjectionMatrixItemInput = {
   brand: 'geral',
@@ -67,7 +67,7 @@ export function ObjectionItemForm({ item, defaultBrand, onClose, onSave }: Objec
         toast.success('Objeção criada.');
       }
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error saving objection matrix item');
       toast.error(error instanceof Error ? error.message : 'Falha ao salvar a objeção.');
     }

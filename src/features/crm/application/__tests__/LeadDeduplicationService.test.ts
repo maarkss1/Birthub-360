@@ -82,7 +82,7 @@ vi.mock('../../../../lib/logger', () => ({
 }));
 
 const { requestContext } = await import('../../../../lib/async-context.js');
-const { LeadDeduplicationService } = await import('../LeadDeduplicationService');
+const { LeadDeduplicationService } = await import('../LeadDeduplicationService.js');
 
 afterEach(() => {
   vi.clearAllMocks();

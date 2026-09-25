@@ -39,7 +39,7 @@ export class FeatureFlagsUseCases {
         try {
           await this.featureFlagRepository.upsertCatalogEntry(flag);
           break;
-        } catch (error) {
+        } catch (error: any) {
           if (!isTransactionAcquireTimeout(error) || attempt === maxAttempts) {
             throw error;
           }

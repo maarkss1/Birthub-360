@@ -10,7 +10,7 @@ import {
   type CrmProvider,
   type NormalizedLead,
   registerCrmProvider,
-} from '../shared/CrmProvider';
+} from '../shared/CrmProvider.js';
 
 const PIPEDRIVE_BASE = 'https://api.pipedrive.com/v1';
 

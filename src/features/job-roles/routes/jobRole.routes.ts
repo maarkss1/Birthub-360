@@ -26,7 +26,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
     const activeOnly = req.query.activeOnly !== 'false';
     const jobRoles = await listJobRoles({ activeOnly });
     res.json({ success: true, data: { jobRoles } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -39,7 +39,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       return;
     }
     res.json({ success: true, data: { jobRole } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -56,7 +56,7 @@ router.get(
       }
       const agents = await listAgentsForJobRole(jobRoleId);
       res.json({ success: true, data: { jobRole, agents } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -76,7 +76,7 @@ router.get(
       }
       const capabilities = await listCapabilitiesForJobRole(jobRoleId);
       res.json({ success: true, data: { jobRole, capabilities } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -92,7 +92,7 @@ router.get(
     try {
       const users = await getJobRoleAssignmentMatrix((req as AuthRequest).user.organizationId);
       res.json({ success: true, data: { users } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -119,7 +119,7 @@ router.post(
         assignedBy: authReq.user.id,
       });
       res.status(201).json({ success: true, data: { assignment } });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof JobRoleServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;
@@ -141,7 +141,7 @@ router.delete(
         actorId: authReq.user.id,
       });
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof JobRoleServiceError) {
         res.status(error.statusCode).json({ success: false, error: error.message });
         return;

@@ -12,17 +12,17 @@ import {
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 import {
   OPEN_AI_CHAT_EVENT,
   OPEN_COMMAND_PALETTE_EVENT,
   type PaletteIntent,
-} from '../../lib/paletteIntent';
-import { SoundFX } from '../../lib/soundEffects';
-import type { Company, Contact, PaginatedResponse } from '../../types';
-import type { TabType } from '../layout/tabMeta';
-import { TAB_META } from '../layout/tabMeta';
-import { BorderBeam } from './BorderBeam';
+} from '../../lib/paletteIntent.js';
+import { SoundFX } from '../../lib/soundEffects.js';
+import type { Company, Contact, PaginatedResponse } from '../../types.js';
+import type { TabType } from '../layout/tabMeta.js';
+import { TAB_META } from '../layout/tabMeta.js';
+import { BorderBeam } from './BorderBeam.js';
 
 type ResultItem = {
   id: string;

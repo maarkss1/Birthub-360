@@ -1,7 +1,7 @@
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Card } from '../../../components/ui/Card';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Card } from '../../../components/ui/Card.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
@@ -9,13 +9,13 @@ import {
   formatPercent,
   type HistoricalTrendsReport,
   type PerformanceMetrics,
-} from '../commercialIntelligence.api';
-import { ChannelAttributionCard } from './ChannelAttributionCard';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
-import { FunnelBottleneckCard } from './FunnelBottleneckCard';
-import { FunnelConversionCard } from './FunnelConversionCard';
-import { KpiTile } from './KpiTile';
-import { SellerBenchmarkCard } from './SellerBenchmarkCard';
+} from '../commercialIntelligence.api.js';
+import { ChannelAttributionCard } from './ChannelAttributionCard.js';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer.js';
+import { FunnelBottleneckCard } from './FunnelBottleneckCard.js';
+import { FunnelConversionCard } from './FunnelConversionCard.js';
+import { KpiTile } from './KpiTile.js';
+import { SellerBenchmarkCard } from './SellerBenchmarkCard.js';
 
 function DaysLabel(days: number | null): string {
   if (days == null) return 'Não disponível';

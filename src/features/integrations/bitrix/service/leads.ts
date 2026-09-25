@@ -368,7 +368,7 @@ export async function importSelectedBitrixLeads(
           tenantId: organizationId,
           afterState: { bitrixLeadId: raw.ID, source: 'crm.lead.get' },
         });
-      } catch (err) {
+      } catch (err: any) {
         // P2002 = violação da unique constraint (organizationId, bitrixLeadId) — corrida real
         // com outra importação do MESMO registro entre o findFirst acima e este create. Não é
         // um erro de verdade: o resultado (lead existe, vinculado a este bitrixLeadId) é o
@@ -383,7 +383,7 @@ export async function importSelectedBitrixLeads(
           throw err;
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       failed++;
       logger.error(
         { err, organizationId, bitrixLeadId },

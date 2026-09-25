@@ -54,7 +54,7 @@ async function loadPlaybookGuidance(query: string): Promise<string> {
   try {
     const result = await searchPlaybookTool.invoke({ query });
     return typeof result === 'string' ? result : String(result);
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { err: error },
       'Negociador de IA: falha ao consultar o playbook, seguindo sem ele.',

@@ -1,8 +1,8 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type React from 'react';
 import { useState } from 'react';
-import { SoundFX } from '../../lib/soundEffects';
-import { cn } from '../../lib/utils';
+import { SoundFX } from '../../lib/soundEffects.js';
+import { cn } from '../../lib/utils.js';
 
 export interface CyberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   variant?: 'neon' | 'glass' | 'metallic';

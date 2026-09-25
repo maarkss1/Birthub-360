@@ -1,9 +1,9 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Loader2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import type { PlaybookKey } from '../../../config/playbooks';
-import { authClient } from '../../../lib/auth-client';
-import { clientLogger } from '../../../lib/clientLogger';
+import type { PlaybookKey } from '../../../config/playbooks.js';
+import { authClient } from '../../../lib/auth-client.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
 
 interface GoogleLoginModalProps {
   isOpen: boolean;
@@ -38,7 +38,7 @@ export function GoogleLoginModal({ isOpen, onClose, selectedBrand }: GoogleLogin
         callbackURL: '/app',
       });
       // The page will redirect to Google, so we just wait
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao iniciar login com Google');
       setStep('button');
       setIsLoading(false);

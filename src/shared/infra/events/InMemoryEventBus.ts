@@ -13,7 +13,7 @@ export class InMemoryEventBus implements EventBus {
       eventHandlers.map(async (handler) => {
         try {
           await handler(event);
-        } catch (error) {
+        } catch (error: any) {
           logger.error({ err: error, eventName: event.eventName }, 'Error handling domain event');
         }
       }),

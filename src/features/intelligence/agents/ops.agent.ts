@@ -148,7 +148,7 @@ export class OpsAgent {
     // `if (leadId)` deixava esse caminho sem nenhuma verificação.
     try {
       assertPiiExternalConsent(organizationId);
-    } catch (error) {
+    } catch (error: any) {
       const message = (error as Error).message;
       logger.warn(
         { err: error, leadId, organizationId },
@@ -178,7 +178,7 @@ export class OpsAgent {
       // primeira invocação real deste processo — memoizado.
       await ensureCheckpointerReady();
       finalState = await app.invoke(inputs, config);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, sessionId }, 'Ops Agent run failed');
       await recordAgentFailure({
         sessionId: sid,
@@ -201,7 +201,7 @@ export class OpsAgent {
 
     try {
       await this.updateMemory(sid, serializedMessages);
-    } catch (error) {
+    } catch (error: any) {
       logger.error(
         { err: error, sessionId: sid },
         'Failed to persist Ops agent memory after successful run',

@@ -21,21 +21,21 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { Dialog } from '../../../components/ui/Dialog';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { downloadFile } from '../../../lib/api';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { SoundFX } from '../../../lib/soundEffects';
-import { toast } from '../../../lib/toast';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { downloadFile } from '../../../lib/api.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type ActivityStatus,
   activitySubject,
   type CalendarActivity,
   calendarApi,
-} from '../calendar.api';
+} from '../calendar.api.js';
 import {
   addMonths,
   buildMonthGrid,
@@ -44,9 +44,9 @@ import {
   isSameDay,
   monthGridRange,
   moveToDay,
-} from '../calendar.util';
-import { PageHeader } from '../../../components/ui/PageHeader';
-import { BookingLinksModal } from './BookingLinksModal';
+} from '../calendar.util.js';
+import { PageHeader } from '../../../components/ui/PageHeader.js';
+import { BookingLinksModal } from './BookingLinksModal.js';
 
 const WEEKDAYS = ['dom', 'seg', 'ter', 'qua', 'qui', 'sex', 'sáb'];
 
@@ -216,7 +216,7 @@ export function Calendar() {
     try {
       const { from, to } = monthGridRange(ref);
       setActivities(await calendarApi.range(from, to));
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message);
     } finally {
       setLoading(false);
@@ -262,7 +262,7 @@ export function Calendar() {
       try {
         await calendarApi.update(act.id, { date: novaData.toISOString() });
         toast.success('Atividade remarcada.');
-      } catch (err) {
+      } catch (err: any) {
         setActivities(anterior);
         toast.error((err as Error).message);
       }
@@ -283,7 +283,7 @@ export function Calendar() {
       try {
         await calendarApi.update(activity.id, { status });
         toast.success(`Status atualizado para ${status}.`);
-      } catch (err) {
+      } catch (err: any) {
         setActivities(anterior);
         setSelected((s) => (s && s.id === activity.id ? { ...s, status: statusAnterior } : s));
         toast.error((err as Error).message);

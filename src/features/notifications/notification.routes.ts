@@ -16,7 +16,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
       notificationService.unreadCount(organizationId, userId),
     ]);
     res.json({ success: true, data: { items, unread } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -32,7 +32,7 @@ router.post('/:id/read', async (req: Request, res: Response, next: NextFunction)
       return;
     }
     res.json({ success: true, data: { id: notificationId } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -43,7 +43,7 @@ router.post('/read-all', async (req: Request, res: Response, next: NextFunction)
     const { organizationId, id: userId } = (req as AuthRequest).user;
     const count = await notificationService.markAllRead(organizationId, userId);
     res.json({ success: true, data: { count } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -68,7 +68,7 @@ router.delete('/:id', async (req: Request, res: Response, next: NextFunction) =>
       return;
     }
     res.status(204).send();
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

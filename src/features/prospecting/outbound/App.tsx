@@ -1,20 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
-import { ProspectorTab } from './components/ProspectorTab';
-import { PerformanceTab } from './components/PerformanceTab';
-import { LeadDistributionTab } from './components/LeadDistributionTab';
-import { TasksOverviewTab } from './components/TasksOverviewTab';
-import { ChatTab } from './components/ChatTab';
-import { DatabaseExplorerTab } from './components/DatabaseExplorerTab';
-import { OllamaTerminalTab } from './components/OllamaTerminalTab';
-import { BrandGuideModal } from './components/BrandGuideModal';
-import { LoginScreen } from './components/LoginScreen';
-import { ReportErrorButton } from './components/ReportErrorButton';
-import { UserKanbanBoard } from './components/UserKanbanBoard';
-import { MyTasksTab } from './components/MyTasksTab';
-import type { AIConfig, Lead, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from './types';
-import { resolveBitrixWebhook } from './utils/bitrix';
+import { Sidebar } from './components/Sidebar.js';
+import { Header } from './components/Header.js';
+import { ProspectorTab } from './components/ProspectorTab.js';
+import { PerformanceTab } from './components/PerformanceTab.js';
+import { LeadDistributionTab } from './components/LeadDistributionTab.js';
+import { TasksOverviewTab } from './components/TasksOverviewTab.js';
+import { ChatTab } from './components/ChatTab.js';
+import { DatabaseExplorerTab } from './components/DatabaseExplorerTab.js';
+import { OllamaTerminalTab } from './components/OllamaTerminalTab.js';
+import { BrandGuideModal } from './components/BrandGuideModal.js';
+import { LoginScreen } from './components/LoginScreen.js';
+import { ReportErrorButton } from './components/ReportErrorButton.js';
+import { UserKanbanBoard } from './components/UserKanbanBoard.js';
+import { MyTasksTab } from './components/MyTasksTab.js';
+import type { AIConfig, Lead, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from './types.js';
+import { resolveBitrixWebhook } from './utils/bitrix.js';
 import confetti from 'canvas-confetti';
 
 export default function App() {
@@ -197,7 +197,7 @@ export default function App() {
         const data = await res.json();
         setDbStats(data);
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Erro ao obter estatísticas do banco:', err);
     }
   };
@@ -240,7 +240,7 @@ export default function App() {
           }
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.warn('Erro ao carregar campanha inicial:', err);
     }
   };
@@ -371,7 +371,7 @@ export default function App() {
         body: JSON.stringify({ content, status })
       });
       fetchDbStats();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao atualizar mensagem:', err);
     }
   };
@@ -387,7 +387,7 @@ export default function App() {
         body: JSON.stringify({ stage, userId: user?.id })
       });
       fetchDbStats();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao atualizar estágio do lead:', err);
     }
   };
@@ -403,7 +403,7 @@ export default function App() {
         body: JSON.stringify({ tags, userId: user?.id })
       });
       fetchDbStats();
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao atualizar tags do lead:', err);
     }
   };

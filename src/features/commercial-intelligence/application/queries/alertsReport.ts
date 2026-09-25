@@ -10,14 +10,14 @@ import type {
   CommercialIntelligenceFilter,
   CommercialIntelligenceRepository,
   ExecutiveAlert,
-} from '../../domain/CommercialIntelligence';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals } from '../scoring/dealScoring';
-import { roundMoney } from '../shared/mathUtils';
-import { buildAging } from './agingReport';
-import { buildExecutiveOverview } from './executiveOverviewReport';
-import { buildPerformance } from './performanceReport';
-import { buildPipelineCreation } from './pipelineCreationReport';
+} from '../../domain/CommercialIntelligence.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals } from '../scoring/dealScoring.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import { buildAging } from './agingReport.js';
+import { buildExecutiveOverview } from './executiveOverviewReport.js';
+import { buildPerformance } from './performanceReport.js';
+import { buildPipelineCreation } from './pipelineCreationReport.js';
 
 export async function buildAlerts(
   repository: CommercialIntelligenceRepository,

@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import { LEAD_STATUS } from '../../lib/zod';
+import { api } from '../../lib/api.js';
+import { LEAD_STATUS } from '../../lib/zod.js';
 
 export type AutomationTrigger =
   | 'Lead criado'

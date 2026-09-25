@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState } from 'react';
-import { LiveSupervisor } from '../../components/LiveSupervisor/LiveSupervisor';
+import { LiveSupervisor } from '../../components/LiveSupervisor/LiveSupervisor.js';
 import { PhoneCall, Info } from 'lucide-react';
 
 export default function SupervisionPage() {

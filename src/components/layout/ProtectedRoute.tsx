@@ -1,17 +1,17 @@
 import { Loader2 } from 'lucide-react';
 import { lazy, type ReactNode, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
-import { useAuth } from '../../contexts/AuthContext';
-import { useDailyClosingGate } from '../../contexts/DailyClosingContext';
+import { useAuth } from '../../contexts/AuthContext.js';
+import { useDailyClosingGate } from '../../contexts/DailyClosingContext.js';
 
 const ChangePasswordGate = lazy(() =>
-  import('../../features/auth/components/ChangePasswordGate').then((m) => ({
+  import('../../features/auth/components/ChangePasswordGate.js').then((m) => ({
     default: m.ChangePasswordGate,
   })),
 );
 
 const DailyClosingGate = lazy(() =>
-  import('../../features/commercial-intelligence/components/DailyClosingGate').then((m) => ({
+  import('../../features/commercial-intelligence/components/DailyClosingGate.js').then((m) => ({
     default: m.DailyClosingGate,
   })),
 );

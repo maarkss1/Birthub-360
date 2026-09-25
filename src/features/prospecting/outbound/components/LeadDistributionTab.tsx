@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Users, Building2 } from 'lucide-react';
-import type { User } from '../types';
+import type { User } from '../types.js';
 
 interface DistributionLead {
   id: string;
@@ -77,7 +77,7 @@ export function LeadDistributionTab({ isDark }: LeadDistributionTabProps) {
         atlas: data?.atlas || { sellers: [], totalLeads: 0 },
         totaltrac: data?.totaltrac || { sellers: [], totalLeads: 0 }
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       setLoading(false);

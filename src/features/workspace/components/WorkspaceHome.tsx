@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Compass, Loader2, UserX } from 'lucide-react';
-import { BlockedState } from '../../../components/ui/BlockedState';
-import { WorkspaceReadySection } from '../../../components/workspace/WorkspaceReadySection';
-import { useWorkspace } from '../../../hooks/useWorkspace';
+import { BlockedState } from '../../../components/ui/BlockedState.js';
+import { WorkspaceReadySection } from '../../../components/workspace/WorkspaceReadySection.js';
+import { useWorkspace } from '../../../hooks/useWorkspace.js';
 
 /** Home do workspace por cargo (PROMPT 6), destino dedicado ("Meu Workspace" na Sidebar,
  *  `/app/workspace`). Renderizado dentro de `MainLayout` (que já provê o landmark `<main>`), por

@@ -62,7 +62,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<GeneratedProposalContent>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao gerar seções da proposta');
       return {
         executiveSummary: `Apresentamos a proposta comercial customizada para a ${input.clientName}, com foco na otimização da segurança e eficiência de frota.`,

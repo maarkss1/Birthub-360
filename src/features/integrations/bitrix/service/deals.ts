@@ -93,7 +93,7 @@ export async function getBitrixUsers(
         email: u.EMAIL?.trim().toLowerCase() || null,
       }))
       .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId },
       '[bitrix] Sem escopo "user" no webhook — filtro de vendedor cairá para ID bruto',
@@ -373,7 +373,7 @@ export async function importSelectedBitrixDeals(
           phone = contact.PHONE?.[0]?.VALUE || null;
           email = contact.EMAIL?.[0]?.VALUE || null;
           contactRoleFromApi = contact.POST || null;
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, bitrixDealId, contactId: deal.CONTACT_ID },
             '[bitrix] Falha ao buscar contato do negócio — segue sem esses dados',
@@ -390,7 +390,7 @@ export async function importSelectedBitrixDeals(
             { id: deal.COMPANY_ID },
           );
           tradeName = company.TITLE || tradeName;
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, bitrixDealId, companyId: deal.COMPANY_ID },
             '[bitrix] Falha ao buscar empresa do negócio — usando título do negócio',
@@ -500,7 +500,7 @@ export async function importSelectedBitrixDeals(
           tenantId: organizationId,
           afterState: { bitrixDealId: deal.ID, source: 'crm.deal.get' },
         });
-      } catch (err) {
+      } catch (err: any) {
         if ((err as { code?: string })?.code === 'P2002') {
           skipped++;
           logger.info(
@@ -511,7 +511,7 @@ export async function importSelectedBitrixDeals(
           throw err;
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       failed++;
       logger.error(
         { err, organizationId, bitrixDealId },

@@ -11,10 +11,10 @@ import type {
   CommercialIntelligenceRepository,
   HistoricalTrendPoint,
   HistoricalTrendsReport,
-} from '../../domain/CommercialIntelligence';
-import { monthLabelPt, shiftMonth } from '../executiveCalendar';
-import { buildPerformance } from './performanceReport';
-import { buildPipelineCreation } from './pipelineCreationReport';
+} from '../../domain/CommercialIntelligence.js';
+import { monthLabelPt, shiftMonth } from '../executiveCalendar.js';
+import { buildPerformance } from './performanceReport.js';
+import { buildPipelineCreation } from './pipelineCreationReport.js';
 
 export async function buildHistoricalTrends(
   repository: CommercialIntelligenceRepository,

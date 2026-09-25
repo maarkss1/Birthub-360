@@ -84,7 +84,7 @@ export const createFollowUpTaskTool = tool(
         observations: observations ?? null,
       });
       return `Tarefa "${activity.type}" agendada com sucesso para o lead ${leadId} em ${activity.date.toISOString()}, atribuída a ${resolvedOwner}.`;
-    } catch (error) {
+    } catch (error: any) {
       return `Erro ao agendar tarefa: ${error instanceof Error ? error.message : String(error)}`;
     }
   },

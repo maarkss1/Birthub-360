@@ -61,7 +61,7 @@ export function createEnrichmentCascadeWorker() {
             },
             'Job de enriquecimento em cascata concluído',
           );
-        } catch (error) {
+        } catch (error: any) {
           logger.error(
             { err: error, jobId: job.id, companyId },
             'Falha no job de enriquecimento em cascata',

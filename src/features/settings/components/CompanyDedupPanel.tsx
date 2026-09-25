@@ -1,17 +1,17 @@
 import { Building2, GitMerge, Loader2, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
+} from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
 
 // Item 13 (Inteligência de Dados & Enriquecimento) — mesmo padrão de LeadDedupPanel.tsx: vive em
 // settings/components/ porque é o único consumidor de /api/companies/dedup/** via HTTP, nunca
@@ -46,7 +46,7 @@ export function CompanyDedupPanel() {
     try {
       const result = await api.get<{ groups: DedupGroup[] }>('/api/companies/dedup/preview');
       setGroups(result.groups);
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Erro ao carregar preview de deduplicação de empresas');
       setError(err instanceof Error ? err.message : 'Erro ao carregar duplicados.');
     } finally {
@@ -68,7 +68,7 @@ export function CompanyDedupPanel() {
       );
       toast.success(`${result.merged} empresa(s) duplicada(s) mesclada(s) com sucesso.`);
       await loadPreview();
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Erro ao mesclar empresas duplicadas');
       toast.error(err instanceof Error ? err.message : 'Erro ao mesclar empresas duplicadas.');
     } finally {

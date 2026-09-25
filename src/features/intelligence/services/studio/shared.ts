@@ -114,7 +114,7 @@ export async function streamText(
     });
 
     return full.trim();
-  } catch (error) {
+  } catch (error: any) {
     if (sawFirstChunk) throw error;
     const fallback = await invokeText(prompt, context, temperature, modelAlias);
     onChunk(fallback);

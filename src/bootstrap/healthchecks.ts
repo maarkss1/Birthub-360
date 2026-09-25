@@ -20,7 +20,7 @@ export async function handleReadiness(_req: Request, res: Response): Promise<voi
   try {
     await prisma.$queryRaw`SELECT 1`;
     dependencies.database = 'connected';
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Readiness: Database probe failed');
     dependencies.database = 'unavailable';
     isReady = false;
@@ -30,7 +30,7 @@ export async function handleReadiness(_req: Request, res: Response): Promise<voi
     try {
       await connection.ping();
       dependencies.redis = 'connected';
-    } catch (err) {
+    } catch (err: any) {
       logger.error({ err }, 'Readiness: Redis probe failed');
       dependencies.redis = 'unavailable';
       isReady = false;

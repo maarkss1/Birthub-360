@@ -134,7 +134,7 @@ function emitOtelLogRecord(level: 'debug' | 'info' | 'warn' | 'error', message: 
       body: message,
       attributes,
     });
-  } catch (bridgeError) {
+  } catch (bridgeError: any) {
     // Telemetry export must never break the actual application log call.
     base.warn({ err: bridgeError }, 'Failed to emit log record to OTel Logs bridge');
   }

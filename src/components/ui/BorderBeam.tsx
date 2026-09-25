@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 export interface BorderBeamProps extends React.HTMLAttributes<HTMLDivElement> {
   /** Comprimento do feixe de luz em pixels (padrão: 220) */

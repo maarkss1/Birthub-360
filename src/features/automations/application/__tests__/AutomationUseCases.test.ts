@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Automation, AutomationRepository } from '../../domain/Automation';
+import type { Automation, AutomationRepository } from '../../domain/Automation.js';
 
 /**
  * `AutomationUseCases` nunca tinha teste unitário próprio (as rotas de automação são cobertas

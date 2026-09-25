@@ -8,7 +8,7 @@
 // server's response and refreshes the list, and a rejected rollback (422) surfaces `issues[]`
 // without silently mutating the canvas.
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { useStudioStore } from './useStudioStore';
+import { useStudioStore } from './useStudioStore.js';
 
 function jsonResponse(body: unknown, ok = true, status = 200) {
   return Promise.resolve({

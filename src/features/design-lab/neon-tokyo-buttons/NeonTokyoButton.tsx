@@ -13,8 +13,8 @@ import { Slot } from '@radix-ui/react-slot';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Loader2 } from 'lucide-react';
 import * as React from 'react';
-import { cn } from '../../../lib/utils';
-import './neon-tokyo-buttons.css';
+import { cn } from '../../../lib/utils.js';
+import './neon-tokyo-buttons.css.js';
 
 const neonTokyoButtonVariants = cva(
   'ntb-btn inline-flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 cursor-pointer disabled:pointer-events-none disabled:bg-gray-200 disabled:text-gray-600 disabled:opacity-100',

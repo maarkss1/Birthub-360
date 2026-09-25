@@ -6,7 +6,7 @@ import {
   toPrismaAutomationTrigger,
 } from '../../../lib/enumMap.js';
 import { prisma } from '../../../lib/prisma.js';
-import type { Automation, AutomationRepository } from '../domain/Automation';
+import type { Automation, AutomationRepository } from '../domain/Automation.js';
 
 /**
  * schema.prisma usa identificadores de enum (ex: Lead_Criado) com @map para o texto exibido na UI

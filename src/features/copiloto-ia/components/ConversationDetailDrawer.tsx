@@ -8,13 +8,13 @@ import {
   XCircle,
 } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Drawer } from '../../../components/ui/Drawer';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { Timeline, type TimelineItem } from '../../../components/ui/Timeline';
-import { useAuth } from '../../../contexts/AuthContext';
-import { toast } from '../../../lib/toast';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Drawer } from '../../../components/ui/Drawer.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { Timeline, type TimelineItem } from '../../../components/ui/Timeline.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type BlockerSignal,
   type BuyingSignalItem,
@@ -28,7 +28,7 @@ import {
   type ObjectionSignal,
   type PromiseSignal,
   SUGGESTION_STATUS_LABEL,
-} from '../copilotoIa.api';
+} from '../copilotoIa.api.js';
 
 interface ConversationDetailDrawerProps {
   conversationId: string;

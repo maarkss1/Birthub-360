@@ -3,8 +3,8 @@ import { describe, it, expect, vi, afterEach, beforeEach } from 'vitest';
 import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as socketIoClient from 'socket.io-client';
-import { LiveSupervisor } from './LiveSupervisor';
-import { useSessionStore } from '../../store/useSessionStore';
+import { LiveSupervisor } from './LiveSupervisor.js';
+import { useSessionStore } from '../../store/useSessionStore.js';
 
 type Handler = (data?: unknown) => void;
 type MockSocket = {

@@ -15,7 +15,7 @@ vi.mock('../../../lib/logger.js', () => ({
   },
 }));
 
-import { hasVectorSupport, resetVectorSupportCache } from '../vector-support';
+import { hasVectorSupport, resetVectorSupportCache } from '../vector-support.js';
 
 beforeEach(() => {
   vi.clearAllMocks();

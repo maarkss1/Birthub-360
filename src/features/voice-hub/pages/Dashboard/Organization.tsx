@@ -1,9 +1,9 @@
 import type React from 'react';
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Save, Upload, Shield, Video, Loader2, AlertTriangle, Lock } from 'lucide-react';
-import { useSessionStore } from '../../store/useSessionStore';
-import { logger } from '../../../../lib/logger';
-import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system';
+import { useSessionStore } from '../../store/useSessionStore.js';
+import { logger } from '../../../../lib/logger.js';
+import { Badge, Button, EmptyState, Skeleton, Table, TableHead, TableRow, TableCell } from '../../components/design-system.js';
 
 interface TenantUser {
   id: string;

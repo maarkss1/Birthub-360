@@ -38,7 +38,7 @@ vi.mock('../../../../lib/queue/externalCrmOutbound.queue.js', () => ({
 const logger = { info: vi.fn(), warn: vi.fn(), error: vi.fn() };
 vi.mock('../../../../lib/logger.js', () => ({ logger }));
 
-const { LeadUseCases } = await import('../LeadUseCases');
+const { LeadUseCases } = await import('../LeadUseCases.js');
 
 function makeUseCases(overrides: Record<string, unknown> = {}) {
   const repository = {

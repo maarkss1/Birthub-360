@@ -1,4 +1,4 @@
-import type { User, IntegrationsConfig } from '../types';
+import type { User, IntegrationsConfig } from '../types.js';
 
 // Decide qual webhook do Bitrix24 usar. Por padrão ('auto') segue a marca do
 // usuário logado, para acabar com o risco de mandar um lead da Atlas para o

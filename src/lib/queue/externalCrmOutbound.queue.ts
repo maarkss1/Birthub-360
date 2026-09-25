@@ -75,7 +75,7 @@ export function createExternalCrmOutboundWorker() {
             { organizationId, leadId },
             'External CRM outbound job completed successfully',
           );
-        } catch (error) {
+        } catch (error: any) {
           logger.error({ err: error, jobId: job.id, leadId }, 'External CRM outbound job failed');
           throw error;
         }

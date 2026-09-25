@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Calendar, CheckCircle2, Circle, Building2 } from 'lucide-react';
-import type { LeadTask, User } from '../types';
+import type { LeadTask, User } from '../types.js';
 
 interface MyTasksTabProps {
   user: User;
@@ -35,7 +35,7 @@ export function MyTasksTab({ user, isDark }: MyTasksTabProps) {
       const res = await fetch(`/api/users/${user.id}/tasks`);
       const data = await res.json();
       setTasks(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       setLoading(false);

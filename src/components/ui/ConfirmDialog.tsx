@@ -1,6 +1,6 @@
 import { type ReactNode, useCallback, useRef, useState } from 'react';
-import { Button } from './Button';
-import { Dialog } from './Dialog';
+import { Button } from './Button.js';
+import { Dialog } from './Dialog.js';
 
 export interface ConfirmOptions {
   title: string;

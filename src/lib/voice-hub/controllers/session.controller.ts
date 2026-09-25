@@ -28,7 +28,7 @@ export async function updateSessionHandler(req: Request, res: Response) {
   try {
     const session = await updateSession(String(req.params.id), req.organizationId!, req.user!.id, parsed.data);
     res.json({ success: true, session });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
   }
@@ -38,7 +38,7 @@ export async function deleteSessionHandler(req: Request, res: Response) {
   try {
     await deleteSession(String(req.params.id), req.organizationId!, req.user!.id);
     res.json({ success: true, message: 'Sessão encerrada e removida com sucesso.' });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
   }

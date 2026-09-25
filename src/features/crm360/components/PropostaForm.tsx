@@ -3,18 +3,18 @@ import { Loader2, Plus, Search, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
-import { Button } from '../../../components/ui/Button';
-import { Dialog } from '../../../components/ui/Dialog';
-import { Input } from '../../../components/ui/Input';
-import { Label } from '../../../components/ui/Label';
-import { Select } from '../../../components/ui/Select';
-import { Textarea } from '../../../components/ui/Textarea';
-import { clientLogger } from '../../../lib/clientLogger';
-import { companiesDB } from '../../../lib/db';
-import { toast } from '../../../lib/toast';
-import type { Company } from '../../../types';
-import { crm360Api } from '../crm360.api';
-import type { CrmCommercialDocument, CrmProduct } from '../crm360.types';
+import { Button } from '../../../components/ui/Button.js';
+import { Dialog } from '../../../components/ui/Dialog.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Label } from '../../../components/ui/Label.js';
+import { Select } from '../../../components/ui/Select.js';
+import { Textarea } from '../../../components/ui/Textarea.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { companiesDB } from '../../../lib/db.js';
+import { toast } from '../../../lib/toast.js';
+import type { Company } from '../../../types.js';
+import { crm360Api } from '../crm360.api.js';
+import type { CrmCommercialDocument, CrmProduct } from '../crm360.types.js';
 
 const DOCUMENT_TYPES = ['Orcamento', 'Proposta', 'Fatura', 'Contrato'] as const;
 
@@ -271,7 +271,7 @@ export function PropostaForm({ document, onClose, onSave }: PropostaFormProps) {
         toast.success('Documento criado.');
       }
       onSave();
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error saving commercial document');
       toast.error(error instanceof Error ? error.message : 'Falha ao salvar o documento.');
     }

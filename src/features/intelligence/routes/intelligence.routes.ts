@@ -80,7 +80,7 @@ router.post(
     try {
       const result = await studioService.generate(req.body as StudioGenerationRequest);
       res.json({ result });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error generating AI studio artifact');
       next(error);
     }
@@ -101,7 +101,7 @@ router.get(
       }
       const messages = await listAssistantHistory(organizationId, userId, brand);
       res.json({ success: true, data: messages });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -141,7 +141,7 @@ router.post(
 
       res.write(`event: end\ndata: ${JSON.stringify({ capability: result.capability })}\n\n`);
       res.end();
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error streaming AI studio assistant');
       if (!res.headersSent) {
         next(error);
@@ -201,7 +201,7 @@ router.post(
       const body = req.body as z.infer<typeof roleplayFinishSchema>;
       const result = await finishRoleplaySession({ organizationId, userId, ...body });
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error generating roleplay session evaluation');
       next(error);
     }
@@ -222,7 +222,7 @@ router.get(
       }
       const sessions = await listRoleplaySessions(organizationId, userId, brand);
       res.json({ success: true, data: sessions });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error fetching roleplay session history');
       next(error);
     }
@@ -316,7 +316,7 @@ router.post('/qualify', async (req: Request, res: Response, next: NextFunction):
       message: 'Lead qualification started in background',
       jobId: job.id,
     });
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Error queuing lead qualification');
     next(error);
   }
@@ -347,7 +347,7 @@ router.post(
         message: 'SDR Agent qualification started in background',
         leadId,
       });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error starting SDR Agent');
       next(error);
     }
@@ -385,7 +385,7 @@ router.get(
       }
 
       res.json({ status: 'completed', sessionId, messages: memory.messages });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error fetching SDR agent status');
       next(error);
     }
@@ -412,7 +412,7 @@ router.get('/search', async (req: Request, res: Response, next: NextFunction): P
     const organizationId = (req as AuthRequest).user.organizationId;
     const results = await VectorSearchService.searchChunks(query, organizationId, limit);
     res.json({ results });
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Error performing vector search');
     next(error);
   }
@@ -425,7 +425,7 @@ router.get('/pending', async (req: Request, res: Response, next: NextFunction): 
     const db = authRequest.db || prisma;
     const pendingActions = await listPendingActions(db, authRequest.user.organizationId);
     res.json(pendingActions);
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Error fetching pending actions');
     next(error);
   }
@@ -463,7 +463,7 @@ router.post(
       );
 
       res.json({ success: true, data: { action: result.action, execution: result.execution } });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error approving action');
       next(error);
     }
@@ -488,7 +488,7 @@ router.delete(
         return;
       }
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error discarding pending AI action');
       next(error);
     }
@@ -506,7 +506,7 @@ router.get(
       const db = authRequest.db || prisma;
       const actions = await listActionsAwaitingOutcome(db, authRequest.user.organizationId);
       res.json({ success: true, data: { actions } });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error fetching actions awaiting outcome');
       next(error);
     }
@@ -547,7 +547,7 @@ router.post(
         return;
       }
       res.json({ success: true, data: { action: result.action } });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error recording AI pending action outcome');
       next(error);
     }
@@ -562,7 +562,7 @@ router.get(
     try {
       const settings = await listAiSettings();
       res.json({ success: true, data: settings });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error fetching AI engine settings');
       next(error);
     }
@@ -601,7 +601,7 @@ router.put(
       const saved = await saveAiSettings(settings);
 
       res.json({ success: true, data: saved });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error saving AI engine settings');
       next(error);
     }
@@ -647,7 +647,7 @@ router.get(
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: latest });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -667,7 +667,7 @@ router.get(
         select: { id: true, content: true, metrics: true, createdAt: true },
       });
       res.json({ success: true, data: summaries });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -712,7 +712,7 @@ ${reportPrompt(reportBrandContext(brandId))}`;
       });
 
       res.json({ result: saved.content, reportId: saved.id, createdAt: saved.createdAt });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error generating report interpretation');
       next(error);
     }
@@ -756,7 +756,7 @@ ${JSON.stringify(metrics, null, 2)}`;
         `event: end\ndata: ${JSON.stringify({ reportId: saved.id, createdAt: saved.createdAt })}\n\n`,
       );
       res.end();
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error streaming report interpretation');
       if (!res.headersSent) {
         next(error);
@@ -861,7 +861,7 @@ router.post(
       const organizationId = (req as AuthRequest).user?.organizationId ?? null;
       try {
         assertPiiExternalConsent(organizationId);
-      } catch (error) {
+      } catch (error: any) {
         if (error instanceof PiiConsentRequiredError) {
           res.status(403).json({ success: false, error: error.message });
           return;
@@ -894,7 +894,7 @@ router.post(
         normalizePiiValues(piiValues),
       );
       res.json({ success: true, result });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Error executing AI Toolkit function');
       next(error);
     }
@@ -936,7 +936,7 @@ router.post(
       );
 
       res.json({ analysis: result.analysis, leadsAnalyzed: result.leadsAnalyzed });
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Falha no Win/Loss Analysis manual');
       next(error);
     }
@@ -959,7 +959,7 @@ router.get(
         orderBy: { createdAt: 'desc' },
       });
       res.json({ success: true, data: latest });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

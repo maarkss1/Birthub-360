@@ -1,4 +1,4 @@
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Generalizado a partir de `DealsGrid` (JoaoReisDiagnosticHub.tsx) — o mapa de estágio Bitrix
    (DEAL_STAGE_LABEL, IDs tipo UC_A0VPC5) é regra de negócio e fica com quem chama: o componente

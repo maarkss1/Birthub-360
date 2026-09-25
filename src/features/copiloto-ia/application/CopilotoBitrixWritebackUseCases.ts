@@ -16,14 +16,14 @@
  * adivinhar ou criar um registro novo do lado do Bitrix.
  */
 
-import type { BitrixLeadWritebackPort } from '../../../shared/contracts/bitrixWriteback.contract';
-import { AppError } from '../../../shared/middlewares/errorHandler';
+import type { BitrixLeadWritebackPort } from '../../../shared/contracts/bitrixWriteback.contract.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
 import type {
   CopilotoBitrixFieldMappingDTO,
   CopilotoCrmFieldSuggestionDTO,
   CopilotoIaRepository,
   UpsertBitrixFieldMappingInput,
-} from '../domain/CopilotoIa';
+} from '../domain/CopilotoIa.js';
 
 export class CopilotoBitrixWritebackUseCases {
   constructor(
@@ -102,7 +102,7 @@ export class CopilotoBitrixWritebackUseCases {
         writebackAt: new Date(),
         writebackError: null,
       });
-    } catch (err) {
+    } catch (err: any) {
       const message = err instanceof Error ? err.message : String(err);
       return this.repository.updateCrmFieldSuggestionStatus(organizationId, suggestionId, {
         status: 'FAILED',

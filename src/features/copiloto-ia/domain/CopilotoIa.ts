@@ -15,7 +15,7 @@ import type {
   CopilotoCrmEntityType,
   CopilotoSuggestionStatus,
 } from '@prisma/client';
-import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
+import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime.js';
 
 export type {
   CopilotoConsentStatus,

@@ -12,7 +12,7 @@ import {
   matchesConditions,
   renderTemplate,
 } from './automation.engine.js';
-import type { Automation } from './domain/Automation';
+import type { Automation } from './domain/Automation.js';
 
 /**
  * Simulação ("dry-run") de uma automação: dado o estado ATUAL dos dados da organização, mostra o

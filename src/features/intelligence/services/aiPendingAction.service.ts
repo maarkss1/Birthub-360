@@ -183,7 +183,7 @@ export async function executeAction(action: ExecutableAction): Promise<Execution
     }
 
     return { sent: false, reason: 'unsupported_action' };
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof MailerNotConfiguredError) {
       return { sent: false, reason: 'not_configured' };
     }

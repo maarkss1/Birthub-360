@@ -237,7 +237,7 @@ export async function upsertAgentVersion(input: {
         select: { id: true, version: true },
       });
     });
-  } catch (err) {
+  } catch (err: any) {
     // Corrida genuína remanescente (duas ativações concorrentes da mesma versão entre o
     // updateMany e o upsert acima) — mesmo padrão de cadence.routes.ts para
     // CadenceRun_leadId_active_unique: 409 de negócio, nunca o P2002 cru subindo pro handler.

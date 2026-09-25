@@ -9,7 +9,7 @@ import type {
   CommercialIntelligenceRepository,
   GoalMetric,
   PeriodMonth,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 export function getGoal(
   repository: CommercialIntelligenceRepository,

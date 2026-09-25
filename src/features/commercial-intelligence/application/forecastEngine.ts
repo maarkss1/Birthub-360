@@ -9,7 +9,7 @@
  * Puro e testável em isolamento (`__tests__/forecastEngine.unit.test.ts`) — sem I/O, sem Date.now()
  * implícito (recebe `now` explicitamente).
  */
-import type { ForecastTier } from '../domain/CommercialIntelligence';
+import type { ForecastTier } from '../domain/CommercialIntelligence.js';
 
 export interface ForecastSignals {
   amount: number;

@@ -9,13 +9,13 @@ import type {
   DealRow,
   PipelineCarryover,
   PipelineCreation,
-} from '../../domain/CommercialIntelligence';
-import { countBusinessDays } from '../executiveCalendar';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { roundMoney } from '../shared/mathUtils';
-import { monthRange } from '../shared/period';
+} from '../../domain/CommercialIntelligence.js';
+import { countBusinessDays } from '../executiveCalendar.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import { monthRange } from '../shared/period.js';
 
 export async function buildPipelineCreation(
   repository: CommercialIntelligenceRepository,

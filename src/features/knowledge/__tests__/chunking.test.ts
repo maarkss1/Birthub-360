@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { chunkText, DEFAULT_CHUNK_SIZE, normalizeText } from '../chunking';
+import { chunkText, DEFAULT_CHUNK_SIZE, normalizeText } from '../chunking.js';
 
 describe('normalizeText', () => {
   it('normaliza CRLF e colapsa quebras excessivas em separação de parágrafo', () => {

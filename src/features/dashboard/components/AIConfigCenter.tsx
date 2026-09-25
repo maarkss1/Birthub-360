@@ -1,16 +1,16 @@
 import { AlertTriangle, Check, Cpu, Loader2, Save } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
+} from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
 
 /** Perfis realmente disponíveis no runtime atual. Os values são aliases lógicos do gateway. */
 const MODEL_OPTIONS = [
@@ -112,7 +112,7 @@ export const AIConfigCenter: React.FC = () => {
           }
           return next;
         });
-      } catch (err) {
+      } catch (err: any) {
         if (!cancelled)
           setError(err instanceof Error ? err.message : 'Falha ao carregar configurações.');
       } finally {
@@ -144,7 +144,7 @@ export const AIConfigCenter: React.FC = () => {
       await api.put('/api/intelligence/ai-settings', { settings: Object.values(settings) });
       setSaved(true);
       setTimeout(() => setSaved(false), 2500);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Falha ao salvar configurações.');
     } finally {
       setSaving(false);

@@ -1,15 +1,15 @@
-import type { MetricDefinition } from '../domain/CommercialIntelligence';
+import type { MetricDefinition } from '../domain/CommercialIntelligence.js';
 import {
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
   COVERAGE_PROTECTION_FALLBACK_WARNING,
-} from './coverageProtection';
+} from './coverageProtection.js';
 import {
   DATA_READINESS_LOSS_FIELD_WEIGHT,
   DATA_READINESS_OPEN_FIELD_WEIGHTS,
-} from './dataReadiness';
-import { FORECAST_RULES, FORECAST_RULES_VERSION } from './forecastEngine';
-import { HEALTH_SCORE_RULES } from './healthScore';
-import { STAGE_AGING_CRITICAL_DAYS } from './pipelineEligibility';
+} from './dataReadiness.js';
+import { FORECAST_RULES, FORECAST_RULES_VERSION } from './forecastEngine.js';
+import { HEALTH_SCORE_RULES } from './healthScore.js';
+import { STAGE_AGING_CRITICAL_DAYS } from './pipelineEligibility.js';
 
 /**
  * Dicionário de métricas (seção 39 do prompt de produto) — fonte única de nome/fórmula/fonte/

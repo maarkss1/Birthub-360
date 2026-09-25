@@ -1,4 +1,4 @@
-import { api } from '../../lib/api';
+import { api } from '../../lib/api.js';
 
 /**
  * Tipos espelhados de `src/features/intelligence/agents/commercialAgentRegistry.ts` (backend) —

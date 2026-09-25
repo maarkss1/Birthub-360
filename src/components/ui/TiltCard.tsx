@@ -1,7 +1,7 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type React from 'react';
-import { useTilt } from '../../lib/motion';
-import { cn } from '../../lib/utils';
+import { useTilt } from '../../lib/motion.js';
+import { cn } from '../../lib/utils.js';
 
 export interface TiltCardProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;

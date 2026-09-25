@@ -1,6 +1,6 @@
 import { createHmac } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { isValidChatwootSignature } from '../chatwoot.helpers';
+import { isValidChatwootSignature } from '../chatwoot.helpers.js';
 
 const SECRET = 'segredo-compartilhado';
 const NOW_MS = 1_700_000_000_000;

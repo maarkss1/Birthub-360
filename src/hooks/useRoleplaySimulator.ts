@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import type { PlaybookInfo, PlaybookKey } from '../config/playbooks';
-import type { ObjectionMatrixItem } from '../features/playbook/playbook.api';
-import { api } from '../lib/api';
+import type { PlaybookInfo, PlaybookKey } from '../config/playbooks.js';
+import type { ObjectionMatrixItem } from '../features/playbook/playbook.api.js';
+import { api } from '../lib/api.js';
 
 export interface RoleplayMessage {
   sender: 'sdr' | 'buyer';
@@ -132,7 +132,7 @@ export function useRoleplaySimulator(
         objectionHandling: response.result.objectionHandling,
         total: response.result.total,
       });
-    } catch (error) {
+    } catch (error: any) {
       setRoleplayError(error instanceof Error ? error.message : 'Falha ao consultar o motor de IA');
     } finally {
       setIsRoleplayThinking(false);

@@ -16,7 +16,7 @@
 import type {
   ForecastSnapshotRecord,
   ForecastSnapshotStore,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 export class InMemoryForecastSnapshotStore implements ForecastSnapshotStore {
   private records: ForecastSnapshotRecord[] = [];

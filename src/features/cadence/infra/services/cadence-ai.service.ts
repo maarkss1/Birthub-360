@@ -65,7 +65,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<GeneratedCadenceStep>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao gerar passo de cadência');
       return {
         subject:

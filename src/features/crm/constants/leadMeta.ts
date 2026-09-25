@@ -1,4 +1,4 @@
-import { IconFlame, IconSnowflake, IconSparkle } from '../../../components/icons';
+import { IconFlame, IconSnowflake, IconSparkle } from '../../../components/icons.js';
 
 export const TEMPERATURE_META = {
   Quente: { icon: IconFlame, className: 'text-red-600 bg-red-50' },

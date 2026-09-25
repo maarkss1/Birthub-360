@@ -16,21 +16,21 @@ import {
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Button } from '../../../components/ui/Button';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon';
-import { Input } from '../../../components/ui/Input';
-import { Pagination } from '../../../components/ui/Pagination';
-import { useContacts } from '../../../hooks/useDatabase';
-import { clientLogger } from '../../../lib/clientLogger';
-import { contactsDB } from '../../../lib/db';
-import type { PaletteIntent } from '../../../lib/paletteIntent';
-import { toast } from '../../../lib/toast';
-import { getWhatsAppLink } from '../../../shared/utils/contact-links';
-import type { Contact } from '../../../types';
-import { ContactDetail } from './ContactDetail';
-import { ContactForm } from './ContactForm';
+import { Button } from '../../../components/ui/Button.js';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { LinkedinIcon as Linkedin } from '../../../components/ui/icons/LinkedinIcon.js';
+import { Input } from '../../../components/ui/Input.js';
+import { Pagination } from '../../../components/ui/Pagination.js';
+import { useContacts } from '../../../hooks/useDatabase.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { contactsDB } from '../../../lib/db.js';
+import type { PaletteIntent } from '../../../lib/paletteIntent.js';
+import { toast } from '../../../lib/toast.js';
+import { getWhatsAppLink } from '../../../shared/utils/contact-links.js';
+import type { Contact } from '../../../types.js';
+import { ContactDetail } from './ContactDetail.js';
+import { ContactForm } from './ContactForm.js';
 
 // Cor categórica por senioridade (sem significado semântico de estado — não é ok/warn/danger, por
 // isso não usa os tokens de marca/semânticos do projeto). Achado real: só tinha a variante clara
@@ -140,7 +140,7 @@ export function ContactList() {
     try {
       await deleteContact(id);
       toast.success('Contato excluído.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error deleting contact');
       toast.error(
         error instanceof Error
@@ -156,7 +156,7 @@ export function ContactList() {
       await contactsDB.enrich(id);
       await refetch();
       toast.success('Contato enriquecido com sucesso.');
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error enriching contact');
       toast.error(error instanceof Error ? error.message : 'Falha ao enriquecer o contato.');
     } finally {

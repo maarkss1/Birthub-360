@@ -8,7 +8,7 @@
 // 08_AGENTE_PROVIDER_ADAPTERS). Este follow-up do CPI formaliza o adapter que
 // a Wave 4 original deixou pendente para Hunter.
 
-import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types';
+import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types.js';
 
 export interface HunterEmailMatch {
   email: string;

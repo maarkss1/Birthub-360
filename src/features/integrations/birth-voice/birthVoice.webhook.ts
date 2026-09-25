@@ -166,7 +166,7 @@ async function recordCallResult(
             whatsappNumber,
             'Olá! Tentamos contato agora pouco por telefone mas não conseguimos falar. Quando seria o melhor horário para conversarmos rapidamente?\n\n*Responda SAIR para não receber mais mensagens.*',
           );
-        } catch (err) {
+        } catch (err: any) {
           logger.warn(
             { err, leadId },
             'Falha ao disparar fallback de WhatsApp pós-ligação (Hub de voz)',
@@ -195,7 +195,7 @@ async function recordCallResult(
           durationSeconds: typeof data.durationSeconds === 'number' ? data.durationSeconds : 0,
           consent: detectRecordingConsent(data),
         });
-      } catch (err) {
+      } catch (err: any) {
         logger.warn(
           { err, leadId, callSid: data.callSid },
           'Falha ao ingerir resultado da ligação no Copiloto Comercial IA (efeito secundário, não afeta o registro da ligação).',
@@ -385,7 +385,7 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
       );
     }
     res.status(200).json({ success: true, outcome });
-  } catch (error) {
+  } catch (error: any) {
     // 5xx aqui é proposital: o Hub reentrega com backoff, e o marcador de idempotência garante
     // que a reentrega não duplique a atividade caso a falha tenha sido depois da escrita.
     logger.error({ err: error, leadId }, 'Falha ao registrar resultado da ligação do SDR de voz.');

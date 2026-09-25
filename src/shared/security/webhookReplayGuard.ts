@@ -116,7 +116,7 @@ export async function claimWebhookDelivery(
       'NX',
     );
     return result === 'OK' ? 'fresh' : 'replay';
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, namespace },
       'Redis indisponível para dedupe de entrega de webhook; processando sem proteção de replay.',

@@ -1,5 +1,5 @@
 import React from 'react';
-import { AtlasLogo } from './AtlasLogo';
+import { AtlasLogo } from './AtlasLogo.js';
 import { 
   X, 
   ShieldCheck, 

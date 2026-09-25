@@ -87,7 +87,7 @@ export class IntelligenceGateway {
     let result: Awaited<ReturnType<typeof model.invoke>>;
     try {
       result = await model.invoke(langChainMessages);
-    } catch (error) {
+    } catch (error: any) {
       // Registra falha estruturada na memória do agente para auditoria de falhas e fallback
       if (sessionId) {
         await recordAgentFailure({

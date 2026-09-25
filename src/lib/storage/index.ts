@@ -48,7 +48,7 @@ export const getUploadUrl = async (key: string, contentType: string) => {
     });
     const signedUrl = await getSignedUrl(getS3Client(), command, { expiresIn: 3600 });
     return { signedUrl, key };
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err, key }, 'Error generating upload URL');
     throw new Error('Failed to generate upload URL', { cause: err });
   }
@@ -62,7 +62,7 @@ export const getDownloadUrl = async (key: string) => {
     });
     const signedUrl = await getSignedUrl(getS3Client(), command, { expiresIn: 3600 });
     return { signedUrl, key };
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err, key }, 'Error generating download URL');
     throw new Error('Failed to generate download URL', { cause: err });
   }
@@ -76,7 +76,7 @@ export const deleteObject = async (key: string): Promise<boolean> => {
     });
     await getS3Client().send(command);
     return true;
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, key },
       'Falha ao excluir objeto do storage (pode não existir ou storage não configurado)',

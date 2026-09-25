@@ -1,12 +1,12 @@
 import { Copy } from 'lucide-react';
-import { Button } from '../../../../components/ui/Button';
-import { Card } from '../../../../components/ui/Card';
-import { Input } from '../../../../components/ui/Input';
-import { Label } from '../../../../components/ui/Label';
-import { useAuth } from '../../../../contexts/AuthContext';
-import { useVoiceHubIntegration } from '../../../../hooks/useVoiceHubIntegration';
-import { hasRequiredRole } from '../../../../lib/auth/authorization';
-import { VoiceCallActivity } from './VoiceCallActivity';
+import { Button } from '../../../../components/ui/Button.js';
+import { Card } from '../../../../components/ui/Card.js';
+import { Input } from '../../../../components/ui/Input.js';
+import { Label } from '../../../../components/ui/Label.js';
+import { useAuth } from '../../../../contexts/AuthContext.js';
+import { useVoiceHubIntegration } from '../../../../hooks/useVoiceHubIntegration.js';
+import { hasRequiredRole } from '../../../../lib/auth/authorization.js';
+import { VoiceCallActivity } from './VoiceCallActivity.js';
 
 type CapabilityStatus = 'connected' | 'pending';
 

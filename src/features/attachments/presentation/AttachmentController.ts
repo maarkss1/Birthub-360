@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import type { AttachmentUseCases } from '../application/AttachmentUseCases';
-import type { AttachmentEntityType } from '../domain/Attachment';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import type { AttachmentUseCases } from '../application/AttachmentUseCases.js';
+import type { AttachmentEntityType } from '../domain/Attachment.js';
 
 /**
  * Mesmo padrão de NoteController: este router é montado em três prefixos
@@ -34,7 +34,7 @@ export class AttachmentController {
         req.body,
       );
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -51,7 +51,7 @@ export class AttachmentController {
         req.body,
       );
       res.status(201).json({ success: true, data: attachment });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -62,7 +62,7 @@ export class AttachmentController {
       const { entityType, entityId } = resolveEntity(req);
       const attachments = await this.attachmentUseCases.listByEntity(orgId, entityType, entityId);
       res.json({ success: true, data: attachments });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -73,7 +73,7 @@ export class AttachmentController {
       const attachmentId = routeParam(req.params.attachmentId, 'attachmentId');
       const result = await this.attachmentUseCases.getDownloadUrl(orgId, attachmentId);
       res.json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -84,7 +84,7 @@ export class AttachmentController {
       const attachmentId = routeParam(req.params.attachmentId, 'attachmentId');
       await this.attachmentUseCases.delete(orgId, attachmentId);
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

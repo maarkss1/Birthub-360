@@ -30,7 +30,7 @@ router.get('/hub-tasks', async (req: Request, res: Response, next: NextFunction)
       listHubTaskAssignees(organizationId),
     ]);
     res.json({ success: true, data: { tasks, assignees } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -51,7 +51,7 @@ router.post(
         { text: String(text), assigneeId: String(assigneeId) },
       );
       res.json({ success: true, data: { tasks } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -66,7 +66,7 @@ router.post(
       const { done } = req.body;
       const tasks = await toggleHubTask(organizationId, { id: userId, email }, taskId, !!done);
       res.json({ success: true, data: { tasks } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

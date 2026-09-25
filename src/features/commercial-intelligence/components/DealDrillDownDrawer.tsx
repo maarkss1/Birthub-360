@@ -1,18 +1,18 @@
 import { AlertTriangle, CheckCircle2, Loader2, Send, Sparkles, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Drawer } from '../../../components/ui/Drawer';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { useActiveRecord } from '../../../hooks/useActiveRecord';
-import { toast } from '../../../lib/toast';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Drawer } from '../../../components/ui/Drawer.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { useActiveRecord } from '../../../hooks/useActiveRecord.js';
+import { toast } from '../../../lib/toast.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   type DealDrillDownRow,
   type ForecastTier,
   formatCurrency,
-} from '../commercialIntelligence.api';
+} from '../commercialIntelligence.api.js';
 
 export interface DrillDownQuery {
   title: string;
@@ -72,7 +72,7 @@ export function DealDrillDownDrawer({ filter, query, onClose }: DealDrillDownDra
     try {
       const result = await commercialIntelligenceApi.aiBitrixNote(row.id);
       setDraftText(result.draft);
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e instanceof Error ? e.message : 'Falha ao gerar sugestão com IA.');
     } finally {
       setDrafting(false);
@@ -87,7 +87,7 @@ export function DealDrillDownDrawer({ filter, query, onClose }: DealDrillDownDra
       setNotified((prev) => new Set(prev).add(row.id));
       toast.success('Risco registrado na timeline do Bitrix24.');
       closeComposer();
-    } catch (e) {
+    } catch (e: any) {
       toast.error(e instanceof Error ? e.message : 'Falha ao notificar o Bitrix24.');
     } finally {
       setSending(false);

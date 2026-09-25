@@ -2,10 +2,10 @@ import type React from 'react';
 import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { auth } from '../lib/auth';
-import { AtlasLogo } from '../components/design-system';
-import { getAccessibleTextOnBrand } from '../components/design-system/tokens';
-import { useSessionStore } from '../store/useSessionStore';
+import { auth } from '../lib/auth.js';
+import { AtlasLogo } from '../components/design-system.js';
+import { getAccessibleTextOnBrand } from '../components/design-system/tokens.js';
+import { useSessionStore } from '../store/useSessionStore.js';
 
 export default function RegisterPage() {
   const [companyName, setCompanyName] = useState('');

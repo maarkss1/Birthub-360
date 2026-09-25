@@ -24,20 +24,20 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { SoundFX } from '../../../lib/soundEffects';
+import { Button } from '../../../components/ui/Button.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
 import type {
   DailyPlanItem,
   DailyPlanItemChannel,
   DailyPlanPriorityLevel,
   UserDailyPlanSummary,
-} from '../../../shared/contracts/dailyPlan.contract';
-import { commercialIntelligenceApi, type DailyPlanTeamMember } from '../commercialIntelligence.api';
-import { DailyPlanTeamOverview } from './DailyPlanTeamOverview';
-import { type DailyTask, DEFAULT_DAILY_PLAN, PITCHES_BY_SEGMENT } from './dailyPlanHub.content';
-import { NewActivityModal } from './NewActivityModal';
+} from '../../../shared/contracts/dailyPlan.contract.js';
+import { commercialIntelligenceApi, type DailyPlanTeamMember } from '../commercialIntelligence.api.js';
+import { DailyPlanTeamOverview } from './DailyPlanTeamOverview.js';
+import { type DailyTask, DEFAULT_DAILY_PLAN, PITCHES_BY_SEGMENT } from './dailyPlanHub.content.js';
+import { NewActivityModal } from './NewActivityModal.js';
 
 /** "YYYY-MM-DD" → "DD/MM" sem passar por `Date` (evita deslocar o dia pelo fuso do navegador). */
 function formatPlanDate(isoDate: string): string {
@@ -86,7 +86,7 @@ export function DailyPlanHub() {
         if (res) {
           setPlanData(res);
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Erro ao carregar plano diário:', err);
       } finally {
         if (!options?.silent) setIsLoading(false);
@@ -163,7 +163,7 @@ export function DailyPlanHub() {
       });
 
       await commercialIntelligenceApi.completeDailyPlanItem(item.origin, item.id);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao concluir item:', err);
       loadDailyPlan();
     }
@@ -196,7 +196,7 @@ export function DailyPlanHub() {
 
       setNoteText('');
       setActiveNoteItemId(null);
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao salvar observação:', err);
     } finally {
       setIsSubmittingNote(false);
@@ -230,7 +230,7 @@ export function DailyPlanHub() {
           items: prev.items.map((i) => (i.id === item.id ? { ...i, notes: bitrixNotes || [] } : i)),
         };
       });
-    } catch (err) {
+    } catch (err: any) {
       console.error('Erro ao buscar histórico de observações do Bitrix24:', err);
     } finally {
       setLoadingNotesItemId(null);

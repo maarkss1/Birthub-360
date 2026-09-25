@@ -13,9 +13,9 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
 
 const TRIGGERS = [
   {
@@ -309,7 +309,7 @@ if __name__ == "__main__":
       setResult(response.result);
       setResultSource('ai');
       setCopied(false);
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

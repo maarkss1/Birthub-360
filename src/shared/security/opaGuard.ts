@@ -52,7 +52,7 @@ export const opaGuard = async (req: Request, res: Response, next: NextFunction):
     }
 
     res.status(403).json({ success: false, error: 'Forbidden by OPA policy' });
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'OPA inacessível; negando (fail-closed).');
     res.status(500).json({ success: false, error: 'Authorization service unreachable' });
   }

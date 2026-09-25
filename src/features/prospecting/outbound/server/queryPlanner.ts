@@ -14,9 +14,9 @@
 // próprio pacote: "Nenhuma regra de negócio deve depender diretamente de
 // 'Apollo'. A aplicação depende de capacidades."
 
-import type { Requirement } from './requirementEngine';
-import type { ProviderCapability } from './search/providers/types';
-import { getProvidersByCapability } from './providerRegistry';
+import type { Requirement } from './requirementEngine.js';
+import type { ProviderCapability } from './search/providers/types.js';
+import { getProvidersByCapability } from './providerRegistry.js';
 
 export type ProviderId = 'google_places' | 'cnpj_receita_federal' | 'apollo' | 'hunter';
 

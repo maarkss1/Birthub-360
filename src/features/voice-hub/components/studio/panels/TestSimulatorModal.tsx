@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { X, Mic, MicOff, PhoneOff, User, Bot, Loader2, AlertTriangle } from 'lucide-react';
-import { logger } from '../../../../../lib/logger';
-import { useStudioStore } from '../../../store/useStudioStore';
-import { validationEngine } from '../../../../../lib/studio/ValidationEngine';
+import { logger } from '../../../../../lib/logger.js';
+import { useStudioStore } from '../../../store/useStudioStore.js';
+import { validationEngine } from '../../../../../lib/studio/ValidationEngine.js';
 
 interface TestSimulatorModalProps {
   onClose: () => void;
@@ -110,7 +110,7 @@ export function TestSimulatorModal({ onClose }: TestSimulatorModalProps) {
       dataArrayRef.current = dataArray;
       
       requestAnimationFrame(drawWaveform);
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error fetching stream', { err });
     }
   };
@@ -153,7 +153,7 @@ export function TestSimulatorModal({ onClose }: TestSimulatorModalProps) {
         utterance.lang = 'pt-BR';
         window.speechSynthesis.speak(utterance);
       }
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Error sending message in test simulator', { err });
       setMessages(prev => [...prev, { role: 'agent', text: 'Erro de comunicação.' }]);
     } finally {

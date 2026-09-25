@@ -1,17 +1,17 @@
 import { PhoneCall, Target } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
-import { useAuth } from '../../../contexts/AuthContext';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { toast } from '../../../lib/toast';
-import { voiceCommandBus } from '../../../lib/voiceCommandBus';
-import { type MesaQueueResponse, mesaTratamentoApi } from '../mesaTratamento.api';
-import { CurrentLeadCard } from './CurrentLeadCard';
-import { ManagementPanel } from './ManagementPanel';
-import { PomodoroWidget } from './PomodoroWidget';
-import { QueueList } from './QueueList';
-import { SdrDashboard } from './SdrDashboard';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { toast } from '../../../lib/toast.js';
+import { voiceCommandBus } from '../../../lib/voiceCommandBus.js';
+import { type MesaQueueResponse, mesaTratamentoApi } from '../mesaTratamento.api.js';
+import { CurrentLeadCard } from './CurrentLeadCard.js';
+import { ManagementPanel } from './ManagementPanel.js';
+import { PomodoroWidget } from './PomodoroWidget.js';
+import { QueueList } from './QueueList.js';
+import { SdrDashboard } from './SdrDashboard.js';
 
 type MesaTab = 'fila' | 'dashboard';
 
@@ -31,7 +31,7 @@ export function MesaTratamento() {
     try {
       const result = await mesaTratamentoApi.queue();
       setData(result);
-    } catch (err) {
+    } catch (err: any) {
       setError(err instanceof Error ? err.message : 'Não foi possível carregar a fila.');
       toast.error('Falha ao carregar a Mesa de Tratamento.');
     } finally {

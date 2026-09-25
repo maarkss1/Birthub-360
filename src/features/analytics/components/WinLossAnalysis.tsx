@@ -1,9 +1,9 @@
 import { AlertCircle, Brain, ChevronRight, Loader2, TrendingDown, TrendingUp } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
-import { api } from '../../../lib/api';
-import { type AnalyticsDashboard, analyticsApi } from '../analytics.api';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
+import { api } from '../../../lib/api.js';
+import { type AnalyticsDashboard, analyticsApi } from '../analytics.api.js';
 
 interface WinLossResult {
   analysis: string;
@@ -97,7 +97,7 @@ export function WinLossAnalysis() {
       const data = await api.post<WinLossResult>('/api/intelligence/win-loss-analysis', {});
       setResult({ ...data, generatedAt: new Date().toISOString() });
       setResultSource('WIN_LOSS_ON_DEMAND');
-    } catch (err) {
+    } catch (err: any) {
       setError((err as Error).message || 'Falha ao gerar análise Win/Loss');
     } finally {
       setLoading(false);

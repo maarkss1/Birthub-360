@@ -1,7 +1,7 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 const RevenueSignalOrb = lazy(() =>
-  import('./RevenueSignalOrb').then((module) => ({ default: module.RevenueSignalOrb })),
+  import('./RevenueSignalOrb.js').then((module) => ({ default: module.RevenueSignalOrb })),
 );
 
 interface DeferredRevenueSignalOrbProps {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Lead, ThemeMode } from '../types';
-import { calculateLeadQuality } from '../utils/leadQuality';
+import { Lead, ThemeMode } from '../types.js';
+import { calculateLeadQuality } from '../utils/leadQuality.js';
 import { 
   ShieldCheck, 
   AlertTriangle, 
@@ -16,7 +16,7 @@ import {
   Globe, 
   Briefcase 
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon.js';
 
 interface LeadQualityBadgeProps {
   lead: Lead;

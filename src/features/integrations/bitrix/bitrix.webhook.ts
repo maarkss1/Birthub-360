@@ -160,7 +160,7 @@ async function processEvent(
         { organizationId, connectionId, leadId: lead.id, bitrixRecordId, eventType },
         '[bitrix] Lead atualizado via webhook de entrada',
       );
-    } catch (err) {
+    } catch (err: any) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       // Sinal agregado/acionável por alerta (bloqueador #11 de /AGENTS.md) — antes desta
       // correção, uma falha do webhook de ENTRADA só existia em BitrixSyncLog (visível na
@@ -267,7 +267,7 @@ async function handleWebhook(req: Request, res: Response): Promise<void> {
       bitrixRecordId,
     );
     res.status(200).json({ success: true });
-  } catch (error) {
+  } catch (error: any) {
     logger.error(
       { err: error, connectionId, eventType, bitrixRecordId },
       '[bitrix] Falha ao processar evento do webhook de entrada',

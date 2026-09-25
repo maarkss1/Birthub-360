@@ -24,9 +24,9 @@ import type {
   DataQualityScore,
   ScoringWeights,
   LeadScores
-} from '../src/types';
-import type { EvidenceRecord, VerificationStatus } from './evidence';
-import { isSignalActive } from './signals';
+} from '../src/types.js';
+import type { EvidenceRecord, VerificationStatus } from './evidence.js';
+import { isSignalActive } from './signals.js';
 
 export type {
   FitScore,
@@ -35,7 +35,7 @@ export type {
   DataQualityScore,
   ScoringWeights,
   LeadScores
-} from '../src/types';
+} from '../src/types.js';
 
 /** Versão do modelo de score. Muda só quando a fórmula abaixo muda de forma
  * que um score antigo deixaria de ser comparável a um novo — permite versionar

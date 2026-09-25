@@ -1,17 +1,17 @@
 import { Router, type Request, type Response } from 'express';
 import crypto from 'crypto';
-import { getDatabase, executeQuery, getStats, saveDatabase, logActivity, checkExplorerSqlSafety } from './db';
-import { checkOllamaConnection, generateCopiesWithEngine, chatWithLLaMA3, enrichLeadWithPublicNewsAndScripts } from './ai';
-import { resolveAndEnrichCnpjForLead, fetchCnpjPublicData, formatCnpj, type CnpjData } from './cnpj';
-import { parseSearchIntent, validateSearchIntent } from './searchIntent';
-import { buildRequirementsFromSearchIntent, evaluateRequirements } from './requirementEngine';
-import { planSearch } from './queryPlanner';
-import { buildFunnelSummary } from './progressiveSearch';
-import { providerRegistry } from './providerRegistry';
-import { buildCompanyKey, canonicalizeDomain, normalizeCompanyName, findDuplicate, type CompanyKey } from './entityResolution';
-import { buildCnpjEvidence, buildDecisionMakerEvidence, saveFieldEvidence, getFieldEvidence } from './evidence';
-import { computeLeadScores } from './scoring';
-import { detectSignalsForLead } from './signals';
+import { getDatabase, executeQuery, getStats, saveDatabase, logActivity, checkExplorerSqlSafety } from './db.js';
+import { checkOllamaConnection, generateCopiesWithEngine, chatWithLLaMA3, enrichLeadWithPublicNewsAndScripts } from './ai.js';
+import { resolveAndEnrichCnpjForLead, fetchCnpjPublicData, formatCnpj, type CnpjData } from './cnpj.js';
+import { parseSearchIntent, validateSearchIntent } from './searchIntent.js';
+import { buildRequirementsFromSearchIntent, evaluateRequirements } from './requirementEngine.js';
+import { planSearch } from './queryPlanner.js';
+import { buildFunnelSummary } from './progressiveSearch.js';
+import { providerRegistry } from './providerRegistry.js';
+import { buildCompanyKey, canonicalizeDomain, normalizeCompanyName, findDuplicate, type CompanyKey } from './entityResolution.js';
+import { buildCnpjEvidence, buildDecisionMakerEvidence, saveFieldEvidence, getFieldEvidence } from './evidence.js';
+import { computeLeadScores } from './scoring.js';
+import { detectSignalsForLead } from './signals.js';
 import {
   startSearchRun,
   attachSearchPlan,
@@ -21,26 +21,26 @@ import {
   finishSearchRun,
   getSearchRun,
   getObservabilitySummary
-} from './observability';
-import { buildFeedbackSummary, type FeedbackMessageRecord, type FeedbackLeadRecord } from './feedbackLoop';
-import { searchPlaces } from './search/providers/googlePlaces.provider';
-import { enrichOrganization, searchAndMatchPeople } from './search/providers/apollo.provider';
-import { domainSearch as hunterDomainSearch, verifyEmail as hunterVerifyEmail, complementDecisionMakerEmail as complementDecisionMakerEmailWithHunter } from './search/providers/hunter.provider';
-import { exportLead } from './search/providers/bitrix.provider';
-import { checkBitrixDuplicate, resolveBitrixWebhookForCompany, generateExportIdempotencyKey } from './services/bitrix';
-import { checkExportEligibility, type ExportPolicy } from './exportEligibility';
-import { rateLimit } from './middleware/rateLimit';
+} from './observability.js';
+import { buildFeedbackSummary, type FeedbackMessageRecord, type FeedbackLeadRecord } from './feedbackLoop.js';
+import { searchPlaces } from './search/providers/googlePlaces.provider.js';
+import { enrichOrganization, searchAndMatchPeople } from './search/providers/apollo.provider.js';
+import { domainSearch as hunterDomainSearch, verifyEmail as hunterVerifyEmail, complementDecisionMakerEmail as complementDecisionMakerEmailWithHunter } from './search/providers/hunter.provider.js';
+import { exportLead } from './search/providers/bitrix.provider.js';
+import { checkBitrixDuplicate, resolveBitrixWebhookForCompany, generateExportIdempotencyKey } from './services/bitrix.js';
+import { checkExportEligibility, type ExportPolicy } from './exportEligibility.js';
+import { rateLimit } from './middleware/rateLimit.js';
 import {
   withCache, withRetry, withCircuitBreaker, withProviderRetry, withProviderCircuitBreaker,
   hasFreshCacheEntry, CACHE_TTL_MS, createBudgetTracker, hasEnrichmentBudget, isBudgetExhausted,
   recordApiCall, recordEnrichment, parseSearchBudget, getCircuitState
-} from './resilience';
-import { isValidCnpjFormat, isValidEmailFormat, isValidPhoneFormat, isUrlSafeForOutboundWebhook, isWithinMaxLength, maskWebhookUrl } from './validators';
+} from './resilience.js';
+import { isValidCnpjFormat, isValidEmailFormat, isValidPhoneFormat, isUrlSafeForOutboundWebhook, isWithinMaxLength, maskWebhookUrl } from './validators.js';
 import {
   attachUser, requireAuth, requireAdmin, requireManager,
   createSessionToken, buildSessionCookie, buildLogoutCookie
-} from './auth';
-import { type Lead, AIConfig, type DecisionMaker } from '../src/types';
+} from './auth.js';
+import { type Lead, AIConfig, type DecisionMaker } from '../src/types.js';
 
 // Só valida um campo quando ele está sendo de fato alterado para um valor novo —
 // nunca quando é reenviado sem mudança (o botão "Salvar" manda o lead inteiro de
@@ -135,7 +135,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (Array.isArray(leadObj.tags)) {
       tags = leadObj.tags;
     }
-  } catch (e) {
+  } catch (e: any) {
     tags = [];
   }
 
@@ -146,7 +146,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (leadObj.news_dossier) {
       newsDossier = leadObj.news_dossier;
     }
-  } catch (e) {
+  } catch (e: any) {
     newsDossier = null;
   }
 
@@ -155,7 +155,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     if (leadObj.decision_maker_emails) {
       dmEmails = typeof leadObj.decision_maker_emails === 'string' ? JSON.parse(leadObj.decision_maker_emails) : leadObj.decision_maker_emails;
     }
-  } catch (e) {
+  } catch (e: any) {
     dmEmails = leadObj.decision_maker_email ? [leadObj.decision_maker_email] : [];
   }
   if (dmEmails.length === 0 && leadObj.decision_maker_email) {
@@ -167,7 +167,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     if (leadObj.decision_maker_phones) {
       dmPhones = typeof leadObj.decision_maker_phones === 'string' ? JSON.parse(leadObj.decision_maker_phones) : leadObj.decision_maker_phones;
     }
-  } catch (e) {
+  } catch (e: any) {
     dmPhones = leadObj.decision_maker_phone ? [leadObj.decision_maker_phone] : [];
   }
   if (dmPhones.length === 0 && leadObj.decision_maker_phone) {
@@ -181,7 +181,7 @@ export function formatLeadRow(leadObj: any, messages: any[] = []): any {
     } else if (Array.isArray(leadObj.qsa)) {
       qsa = leadObj.qsa;
     }
-  } catch (e) {
+  } catch (e: any) {
     qsa = [];
   }
 
@@ -226,7 +226,7 @@ async function upsertMessageWithVersioning(
     if (existingRes.length > 0 && existingRes[0].values.length > 0) {
       existing = { content: existingRes[0].values[0][0], status: existingRes[0].values[0][1] };
     }
-  } catch (err) {
+  } catch (err: any) {
     existing = null;
   }
 
@@ -240,7 +240,7 @@ async function upsertMessageWithVersioning(
         `INSERT INTO message_versions (message_id, lead_id, channel, content, engine_used) VALUES (?, ?, ?, ?, ?)`,
         [msgId, leadId, channel, existing.content, null]
       );
-    } catch (err) {
+    } catch (err: any) {
       console.error('Falha ao versionar mensagem anterior:', err);
     }
   }
@@ -251,7 +251,7 @@ async function upsertMessageWithVersioning(
       VALUES (?, ?, ?, ?, 'assistant', ?, 'reviewed', ?, ?)
       ON CONFLICT(id) DO UPDATE SET content = excluded.content, status = 'reviewed', engine_used = excluded.engine_used
     `, [msgId, campaignId, leadId, channel, content, engineUsed || null, new Date().toISOString()]);
-  } catch (err) {
+  } catch (err: any) {
     await db.run(`UPDATE messages SET content = ?, status = 'reviewed', engine_used = ? WHERE id = ?`, [content, engineUsed || null, msgId]);
   }
 
@@ -335,7 +335,7 @@ apiRouter.post('/error-reports', errorReportLimiter, async (req: Request, res: R
       [userId || null, userEmail || null, page || null, message.trim(), userAgent || null]
     );
     saveDatabase();
-  } catch (err) {
+  } catch (err: any) {
     console.error('Falha ao persistir error_report (log acima já registrou o relato):', err);
   }
   res.json({ success: true });
@@ -428,7 +428,7 @@ apiRouter.post('/auth/login', async (req: Request, res: Response) => {
     if (!isHashed) {
       try {
         await db.run(`UPDATE users SET password = ? WHERE id = ?`, [hashPassword(password), user.id]);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Falha ao migrar senha para hash:', err);
       }
     }
@@ -912,7 +912,7 @@ apiRouter.post('/leads/:id/save', requireAuth, async (req: Request, res: Respons
           const msgId = `msg-${id}-${ch}`;
           try {
             await db.run(`UPDATE messages SET content = ? WHERE id = ?`, [leadData.copies[ch], msgId]);
-          } catch(e) {}
+          } catch(e: any) {}
         }
       }
     }
@@ -947,7 +947,7 @@ apiRouter.post('/leads/:id/enrich-news', heavyAiLimiter, requireAuth, async (req
       if (rawLead.decision_maker_emails) {
         dmEmails = JSON.parse(rawLead.decision_maker_emails);
       }
-    } catch(e) {
+    } catch(e: any) {
       dmEmails = [rawLead.decision_maker_email];
     }
     if (dmEmails.length === 0 && rawLead.decision_maker_email) {
@@ -959,7 +959,7 @@ apiRouter.post('/leads/:id/enrich-news', heavyAiLimiter, requireAuth, async (req
       if (rawLead.decision_maker_phones) {
         dmPhones = JSON.parse(rawLead.decision_maker_phones);
       }
-    } catch(e) {
+    } catch(e: any) {
       dmPhones = [rawLead.decision_maker_phone || rawLead.phone].filter(Boolean);
     }
     if (dmPhones.length === 0 && (rawLead.decision_maker_phone || rawLead.phone)) {
@@ -1057,7 +1057,7 @@ apiRouter.post('/leads/:id/generate-copies', heavyAiLimiter, requireAuth, async 
       if (rawLead.decision_maker_emails) {
         dmEmails = JSON.parse(rawLead.decision_maker_emails);
       }
-    } catch(e) {
+    } catch(e: any) {
       dmEmails = [rawLead.decision_maker_email];
     }
 
@@ -1066,7 +1066,7 @@ apiRouter.post('/leads/:id/generate-copies', heavyAiLimiter, requireAuth, async 
       if (rawLead.decision_maker_phones) {
         dmPhones = JSON.parse(rawLead.decision_maker_phones);
       }
-    } catch(e) {
+    } catch(e: any) {
       dmPhones = [rawLead.decision_maker_phone || rawLead.phone].filter(Boolean);
     }
 
@@ -2051,7 +2051,7 @@ apiRouter.post('/prospect', heavyAiLimiter, requireAuth, async (req: Request, re
       if (evidences.length > 0) {
         try {
           await saveFieldEvidence(db, 'lead', leadId, evidences);
-        } catch (err) {
+        } catch (err: any) {
           console.warn(`[field_evidence] Falha ao salvar evidências do lead ${leadId}:`, err);
         }
       }
@@ -2403,7 +2403,7 @@ apiRouter.post('/integrations/bitrix24/send-lead', integrationLimiter, requireAu
             warnings: eligibility.warnings
           });
         }
-      } catch (err) {
+      } catch (err: any) {
         console.error('Falha ao checar idempotência de exportação Bitrix24 (seguindo com o envio):', err);
       }
     }

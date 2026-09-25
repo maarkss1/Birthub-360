@@ -21,7 +21,7 @@ export const requireTenant = (req: Request, res: Response, next: NextFunction): 
   try {
     authReq.db = getTenantPrisma(authReq.user.organizationId);
     next();
-  } catch (err) {
+  } catch (err: any) {
     logger.error({ err }, 'Failed to set db instance');
     res.status(500).json({ success: false, error: 'Internal Server Error.' });
   }

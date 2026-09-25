@@ -1,6 +1,6 @@
 import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import type { Lead, ThemeMode, FitScore, IntentScore, DataQualityScore } from '../types';
+import type { Lead, ThemeMode, FitScore, IntentScore, DataQualityScore } from '../types.js';
 import { Target, TrendingUp, Database, Award, Info, HelpCircle } from 'lucide-react';
 
 interface LeadScoresBadgeProps {

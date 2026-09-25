@@ -65,7 +65,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<SanitizedLeadData>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao higienizar dados do Bitrix');
       return {
         cleanCompanyName: lead.companyName.trim(),

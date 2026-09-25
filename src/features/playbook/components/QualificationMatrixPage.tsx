@@ -12,17 +12,17 @@ import {
   WifiOff,
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
-import { useConfirmDialog } from '../../../components/ui/ConfirmDialog';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Pagination } from '../../../components/ui/Pagination';
-import { PLAYBOOKS } from '../../../config/playbooks';
-import { useAuth } from '../../../contexts/AuthContext';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { hasRequiredRole } from '../../../lib/auth/authorization';
-import { clientLogger } from '../../../lib/clientLogger';
-import { toast } from '../../../lib/toast';
-import { type PlaybookListMeta, playbookApi, type QualificationMatrixItem } from '../playbook.api';
-import { QualificationItemForm } from './QualificationItemForm';
+import { useConfirmDialog } from '../../../components/ui/ConfirmDialog.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Pagination } from '../../../components/ui/Pagination.js';
+import { PLAYBOOKS } from '../../../config/playbooks.js';
+import { useAuth } from '../../../contexts/AuthContext.js';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { hasRequiredRole } from '../../../lib/auth/authorization.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
+import { toast } from '../../../lib/toast.js';
+import { type PlaybookListMeta, playbookApi, type QualificationMatrixItem } from '../playbook.api.js';
+import { QualificationItemForm } from './QualificationItemForm.js';
 
 // Mesmo tamanho de página usado em CompanyList/ContactList (via Pagination compartilhado).
 const PAGE_SIZE = 20;
@@ -123,7 +123,7 @@ export function QualificationMatrixPage() {
       await playbookApi.deleteQualification(item.id);
       toast.success('Pergunta excluída.');
       load();
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao excluir pergunta da matriz');
       toast.error(err instanceof Error ? err.message : 'Falha ao excluir a pergunta.');
     }

@@ -1,9 +1,9 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '../../../../lib/prisma';
+import { prisma } from '../../../../lib/prisma.js';
 import type {
   ObjectionMatrixItem,
   ObjectionMatrixItemRepository,
-} from '../domain/ObjectionMatrixItem';
+} from '../domain/ObjectionMatrixItem.js';
 
 export class PrismaObjectionMatrixRepository implements ObjectionMatrixItemRepository {
   async findAllWithFilters(

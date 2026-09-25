@@ -1,7 +1,7 @@
 import { contactSearchIndexClauses } from '../../../lib/crypto/piiIndex.js';
 import { prisma } from '../../../lib/prisma.js';
 import { parseLeadLookupQuery } from '../application/leadLookup.js';
-import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime';
+import type { WhatsAppMessageTiming } from '../application/whatsappResponseTime.js';
 import type {
   AddTranscriptSegmentInput,
   CompleteAudioUploadInput,
@@ -29,7 +29,7 @@ import type {
   LeadLookupResultDTO,
   RecordConsentInput,
   UpsertBitrixFieldMappingInput,
-} from '../domain/CopilotoIa';
+} from '../domain/CopilotoIa.js';
 
 const CONVERSATION_DETAIL_INCLUDE = {
   transcriptSegments: { orderBy: { startMs: 'asc' as const } },

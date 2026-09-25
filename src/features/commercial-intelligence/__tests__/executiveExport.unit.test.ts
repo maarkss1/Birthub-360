@@ -5,13 +5,13 @@ import {
   buildExecutiveExportJson,
   buildExecutiveExportRows,
   rowsToCsv,
-} from '../application/executiveExport';
+} from '../application/executiveExport.js';
 import type {
   ExecutiveAlert,
   ExecutiveOverview,
   PerformanceMetrics,
   PipelineCreation,
-} from '../domain/CommercialIntelligence';
+} from '../domain/CommercialIntelligence.js';
 
 const NOW = new Date('2026-08-15T12:00:00Z');
 

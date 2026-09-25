@@ -2,12 +2,12 @@
 // Extraído de server/routes.ts (findLeads) para isolar a integração externa
 // e normalizar timeout/erro/latência/proveniência num formato comum.
 
-import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types';
+import type { ProviderCapability, ProviderHealth, ProviderResult, SearchProvider } from './types.js';
 // Wave 7 (CPI) — Progressive Search: o overfetch (quantos candidatos pedir para
 // um targetCount de leads finais) deixa de ser um número mágico embutido aqui e
 // passa a ser uma função nomeada/testável, com o teto real do provider (Places
 // Text Search (New): 20 por chamada, sem pageToken neste adapter).
-import { computeOverfetchTarget } from '../../progressiveSearch';
+import { computeOverfetchTarget } from '../../progressiveSearch.js';
 
 export interface RawPlace {
   name: string;

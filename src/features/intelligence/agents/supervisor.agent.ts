@@ -350,7 +350,7 @@ ${SWARM_UNTRUSTED_CONTENT_GUARD}`;
     // opcionais (a volta por JSON Schema perde essa informação), então isto garante em runtime
     // que instruction/reasoning nunca ficam undefined mesmo se o modelo omitir a chave.
     decision = supervisorDecisionSchema.parse(result.parsed);
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Swarm supervisor routing failed, using fallback heuristic');
     decision = fallbackDecision(state.completed, Boolean(state.leadId), state.mission);
   }
@@ -439,7 +439,7 @@ async function sdrNode(state: SwarmStateType) {
       results: { sdr: content },
       messages: [toAiMessage(buildEvent('agent_result', 'sdr', content, state.step))],
     };
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : 'Falha desconhecida no Agente SDR.';
     logger.error({ err: error }, 'Swarm SDR node failed');
     return {
@@ -473,7 +473,7 @@ async function bdrNode(state: SwarmStateType) {
       results: { bdr: content },
       messages: [toAiMessage(buildEvent('agent_result', 'bdr', content, state.step))],
     };
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : 'Falha desconhecida no Agente BDR.';
     logger.error({ err: error }, 'Swarm BDR node failed');
     return {
@@ -507,7 +507,7 @@ async function closerNode(state: SwarmStateType) {
       results: { closer: content },
       messages: [toAiMessage(buildEvent('agent_result', 'closer', content, state.step))],
     };
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : 'Falha desconhecida no Closer.';
     logger.error({ err: error }, 'Swarm Closer node failed');
     return {
@@ -541,7 +541,7 @@ async function crmNode(state: SwarmStateType) {
       results: { crm: content },
       messages: [toAiMessage(buildEvent('agent_result', 'crm', content, state.step))],
     };
-  } catch (error) {
+  } catch (error: any) {
     const message = error instanceof Error ? error.message : 'Falha desconhecida no Agente de CRM.';
     logger.error({ err: error }, 'Swarm CRM node failed');
     return {
@@ -579,7 +579,7 @@ async function opsNode(state: SwarmStateType) {
       results: { ops: content },
       messages: [toAiMessage(buildEvent('agent_result', 'ops', content, state.step))],
     };
-  } catch (error) {
+  } catch (error: any) {
     const message =
       error instanceof Error ? error.message : 'Falha desconhecida no Agente de Operações.';
     logger.error({ err: error }, 'Swarm Ops node failed');
@@ -657,7 +657,7 @@ ${SWARM_UNTRUSTED_CONTENT_GUARD}`,
       ),
     ]);
     synthesis = response.content.trim() || resultsSummary;
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Swarm synthesis failed, falling back to raw results');
     synthesis = resultsSummary;
   }
@@ -729,7 +729,7 @@ export class SwarmOrchestrator {
         config,
       );
       return finalState.messages as BaseMessage[];
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, sessionId: sid }, 'Swarm execution failed');
       throw error;
     }
@@ -772,7 +772,7 @@ export class SwarmOrchestrator {
           onChunk(event);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error, sessionId: sid }, 'Swarm stream execution failed');
       throw error;
     }

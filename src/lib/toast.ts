@@ -1,4 +1,4 @@
-import { SoundFX } from './soundEffects';
+import { SoundFX } from './soundEffects.js';
 
 // Barramento de eventos minimalista para toasts globais — evita prop-drilling e
 // dependências novas. Qualquer módulo chama toast.success/error/info; o componente

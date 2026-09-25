@@ -64,7 +64,7 @@ export async function scanBufferForViruses(buffer: Buffer, filename: string): Pr
 
   try {
     clam = await createAntivirusScanner();
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Antivirus scan rejected upload: ClamAV scanner could not be initialized', {
       filename,
       error: error instanceof Error ? error.message : String(error),
@@ -75,7 +75,7 @@ export async function scanBufferForViruses(buffer: Buffer, filename: string): Pr
   let result: { isInfected: boolean | null; viruses: string[] };
   try {
     result = await clam.scanStream(Readable.from(buffer));
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Antivirus scan rejected upload: ClamAV scan failed', {
       filename,
       error: error instanceof Error ? error.message : String(error),

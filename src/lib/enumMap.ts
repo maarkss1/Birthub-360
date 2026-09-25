@@ -1,4 +1,4 @@
-import type { ActivityStatus, ActivityType, CompanyStatus, LeadStatus } from './zod';
+import type { ActivityStatus, ActivityType, CompanyStatus, LeadStatus } from './zod.js';
 
 // O schema.prisma usa identificadores de enum (ex: Lead_Recebido) com @map para o texto
 // exibido na UI (ex: "Lead Recebido"). Este módulo faz a ponte entre os dois mundos:

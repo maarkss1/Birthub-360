@@ -3,8 +3,8 @@ import {
   Settings, Globe, Bell, Keyboard, LayoutGrid,
   SlidersHorizontal, ArrowRight, AlertTriangle
 } from 'lucide-react';
-import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system';
-import { logger } from '../../../lib/logger';
+import { Card, Button, Badge, Switch, Select, useToast, ToastContainer, Skeleton } from '../../components/design-system.js';
+import { logger } from '../../../lib/logger.js';
 
 const PREFERENCES_DEFAULTS = {
   lang: 'pt',
@@ -94,7 +94,7 @@ export default function PreferencesPage() {
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       showToast('Preferências salvas com sucesso no seu perfil!', 'success');
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to save user preferences', { err });
       showToast('Não foi possível salvar suas preferências. Tente novamente.', 'error');
     } finally {

@@ -82,7 +82,7 @@ export async function checkApolloConnection(): Promise<ApolloConnectionStatus> {
       providerMode: 'hunter',
       message: `Apollo respondeu ${res.status} ao validar a API key: ${text.slice(0, 150)}`,
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
       connected: false,
       configured: true,

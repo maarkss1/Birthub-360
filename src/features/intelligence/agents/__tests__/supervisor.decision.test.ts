@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { enforceLeadGuard, fallbackDecision, supervisorDecisionSchema } from '../supervisor.agent';
+import { enforceLeadGuard, fallbackDecision, supervisorDecisionSchema } from '../supervisor.agent.js';
 
 describe('supervisorDecisionSchema', () => {
   it('aceita uma decisão bem formada', () => {

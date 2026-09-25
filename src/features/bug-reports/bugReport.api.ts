@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import { getRecentLogs } from '../../lib/clientLogger';
+import { api } from '../../lib/api.js';
+import { getRecentLogs } from '../../lib/clientLogger.js';
 
 export type BugReportSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
 

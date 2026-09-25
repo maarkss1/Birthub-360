@@ -4,7 +4,7 @@ import {
   type DialPolicy,
   evaluateLead,
   isWithinCallWindow,
-} from '../coldCall.policy';
+} from '../coldCall.policy.js';
 
 // Todas as datas são UTC de propósito: é assim que o servidor enxerga o tempo, e o ponto destes
 // testes é justamente provar que a conversão para o fuso de quem atende acontece.

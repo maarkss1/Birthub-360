@@ -1,12 +1,12 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check, Command, Mic, Sparkles, Volume2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { playbookInfo } from '../../config/playbooks';
-import { useActivePlaybook } from '../../hooks/useActivePlaybook';
-import { clientLogger } from '../../lib/clientLogger';
-import { navigationBus } from '../../lib/navigationBus';
-import { toast } from '../../lib/toast';
-import { voiceCommandBus } from '../../lib/voiceCommandBus';
+import { playbookInfo } from '../../config/playbooks.js';
+import { useActivePlaybook } from '../../hooks/useActivePlaybook.js';
+import { clientLogger } from '../../lib/clientLogger.js';
+import { navigationBus } from '../../lib/navigationBus.js';
+import { toast } from '../../lib/toast.js';
+import { voiceCommandBus } from '../../lib/voiceCommandBus.js';
 
 // SpeechRecognitionLike / Window.SpeechRecognition são tipos ambient globais definidos em
 // src/types/speech-recognition.d.ts (Web Speech API não faz parte da lib "DOM" do TypeScript).
@@ -125,7 +125,7 @@ export function VoiceCommandWidget() {
       setIsListening(true);
       try {
         recognition.start();
-      } catch (err) {
+      } catch (err: any) {
         clientLogger.error({ err }, 'Falha ao iniciar reconhecimento de voz');
       }
     }
@@ -136,7 +136,7 @@ export function VoiceCommandWidget() {
     if (recognition) {
       try {
         recognition.stop();
-      } catch (err) {
+      } catch (err: any) {
         clientLogger.error({ err }, 'Falha ao parar reconhecimento de voz');
       }
     }

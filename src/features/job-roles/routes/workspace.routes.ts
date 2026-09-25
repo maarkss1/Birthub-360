@@ -17,7 +17,7 @@ router.get('/me', async (req: Request, res: Response, next: NextFunction): Promi
       authReq.user.role,
     );
     res.json({ success: true, data: { workspace } });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

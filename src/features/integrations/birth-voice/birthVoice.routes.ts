@@ -49,7 +49,7 @@ router.get(
           recentRuns,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -69,7 +69,7 @@ router.post(
         agentType,
       );
       res.status(202).json({ success: true, data: result });
-    } catch (error) {
+    } catch (error: any) {
       // Mesmo status/formato usado em intelligence.routes.ts para o mesmo erro — ver
       // guardrails.service.ts:assertPiiExternalConsent.
       if (error instanceof PiiConsentRequiredError) {
@@ -103,7 +103,7 @@ router.get(
       const { organizationId } = (req as AuthRequest).user;
       const data = await listSuppressions(organizationId);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -150,7 +150,7 @@ router.post(
         leadId: parsed.data.leadId ?? null,
       });
       res.status(201).json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -165,7 +165,7 @@ router.get('/connections', async (req: Request, res: Response, next: NextFunctio
     const { organizationId } = (req as AuthRequest).user;
     const data = await listVoiceHubConnections(organizationId);
     res.json({ success: true, data });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -178,7 +178,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const data = await connectVoiceHub(organizationId, req.body);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -195,7 +195,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -209,7 +209,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnectVoiceHub(organizationId, routeParam(req.params.connectionId, 'connectionId'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -274,7 +274,7 @@ router.get('/calls', async (req: Request, res: Response, next: NextFunction) => 
         nextCursor: hasMore ? page[page.length - 1]?.id : null,
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -289,7 +289,7 @@ router.get('/calls/:id', async (req: Request, res: Response, next: NextFunction)
       return;
     }
     res.json({ success: true, data: call });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });

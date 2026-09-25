@@ -12,13 +12,13 @@ import {
   X,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { toast } from '../../../lib/toast';
+import { toast } from '../../../lib/toast.js';
 import {
   type BitrixConnectionItem,
   type BitrixDealItem,
   type BitrixLeadItem,
   bitrixApi,
-} from '../../integrations/bitrix/bitrix.api';
+} from '../../integrations/bitrix/bitrix.api.js';
 
 interface BitrixImportModalProps {
   isOpen: boolean;
@@ -72,7 +72,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
         );
         setDeals(data.deals || []);
       }
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao buscar registros no Bitrix24');
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
       );
       onImportSuccess();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao importar do Bitrix24');
     } finally {
       setImporting(false);
@@ -132,7 +132,7 @@ export function BitrixImportModal({ isOpen, onClose, onImportSuccess }: BitrixIm
       );
       onImportSuccess();
       onClose();
-    } catch (err) {
+    } catch (err: any) {
       toast.error(err instanceof Error ? err.message : 'Falha ao sincronizar recentes');
     } finally {
       setImporting(false);

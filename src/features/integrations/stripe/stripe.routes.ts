@@ -20,7 +20,7 @@ router.get('/connections', async (req: Request, res: Response, next: NextFunctio
     const { organizationId } = (req as AuthRequest).user;
     const data = await listStripeConnections(organizationId);
     res.json({ success: true, data });
-  } catch (error) {
+  } catch (error: any) {
     next(error);
   }
 });
@@ -33,7 +33,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       const data = await connectStripe(organizationId, req.body);
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -47,7 +47,7 @@ router.post(
       const { organizationId } = (req as AuthRequest).user;
       await disconnectStripe(organizationId, routeParam(req.params.connectionId, 'connectionId'));
       res.json({ success: true });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -64,7 +64,7 @@ router.post(
         routeParam(req.params.connectionId, 'connectionId'),
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -82,7 +82,7 @@ router.post(
         req.body?.webhookSecret,
       );
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -100,7 +100,7 @@ router.post(
         req.body,
       );
       res.status(201).json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },
@@ -122,7 +122,7 @@ router.get(
         return;
       }
       res.json({ success: true, data });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   },

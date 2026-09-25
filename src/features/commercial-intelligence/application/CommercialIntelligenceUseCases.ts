@@ -47,37 +47,37 @@ import type {
   PerformanceMetrics,
   PipelineCreation,
   SellerBenchmarkReport,
-} from '../domain/CommercialIntelligence';
-import type { CloseDateIntelligenceReport, JourneyReport } from '../domain/JourneyIntelligence';
-import { computeForecastCalibration } from './forecastCalibration';
-import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport';
-import { simulateHiringScenario } from './hiringScenarioSimulator';
-import { getGoal as getGoalCommand, setGoal as setGoalCommand } from './goalCommands';
-import { computeHealthScore } from './healthScore';
-import { buildAging } from './queries/agingReport';
-import { buildAlerts } from './queries/alertsReport';
-import { buildFunnelBottlenecks } from './queries/bottleneckReport';
-import { buildChannelAttribution } from './queries/channelAttributionReport';
-import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport';
-import { buildCrmQuality } from './queries/crmQualityReport';
-import { buildDealsDrillDown, buildForecastExplain } from './queries/drillDownReport';
-import { buildExecutiveOverview } from './queries/executiveOverviewReport';
-import { buildForecastAccuracy } from './queries/forecastAccuracyReport';
-import { buildHistoricalTrends } from './queries/historicalTrendsReport';
-import { buildJourney } from './queries/journeyReport';
-import { buildLeadingIndicators } from './queries/leadingIndicatorsReport';
-import { buildLosses } from './queries/lossesReport';
-import { buildPerformance } from './queries/performanceReport';
-import { buildPipelineCreation } from './queries/pipelineCreationReport';
-import { buildSellerBenchmark } from './queries/sellerBenchmarkReport';
+} from '../domain/CommercialIntelligence.js';
+import type { CloseDateIntelligenceReport, JourneyReport } from '../domain/JourneyIntelligence.js';
+import { computeForecastCalibration } from './forecastCalibration.js';
+import { buildExecutiveExport, type ExecutiveExportPayload } from './executiveExport.js';
+import { simulateHiringScenario } from './hiringScenarioSimulator.js';
+import { getGoal as getGoalCommand, setGoal as setGoalCommand } from './goalCommands.js';
+import { computeHealthScore } from './healthScore.js';
+import { buildAging } from './queries/agingReport.js';
+import { buildAlerts } from './queries/alertsReport.js';
+import { buildFunnelBottlenecks } from './queries/bottleneckReport.js';
+import { buildChannelAttribution } from './queries/channelAttributionReport.js';
+import { buildCloseDateIntelligence } from './queries/closeDateIntelligenceReport.js';
+import { buildCrmQuality } from './queries/crmQualityReport.js';
+import { buildDealsDrillDown, buildForecastExplain } from './queries/drillDownReport.js';
+import { buildExecutiveOverview } from './queries/executiveOverviewReport.js';
+import { buildForecastAccuracy } from './queries/forecastAccuracyReport.js';
+import { buildHistoricalTrends } from './queries/historicalTrendsReport.js';
+import { buildJourney } from './queries/journeyReport.js';
+import { buildLeadingIndicators } from './queries/leadingIndicatorsReport.js';
+import { buildLosses } from './queries/lossesReport.js';
+import { buildPerformance } from './queries/performanceReport.js';
+import { buildPipelineCreation } from './queries/pipelineCreationReport.js';
+import { buildSellerBenchmark } from './queries/sellerBenchmarkReport.js';
 
 export {
   COVERAGE_PROTECTION_FALLBACK_HEALTHY,
   COVERAGE_PROTECTION_FALLBACK_WARNING,
   classifyCoverageProtection,
-} from './coverageProtection';
+} from './coverageProtection.js';
 // ─── Re-exports de compatibilidade — consumidos fora deste arquivo (ver cabeçalho) ───────────────
-export { currentPeriod } from './shared/period';
+export { currentPeriod } from './shared/period.js';
 
 export class CommercialIntelligenceUseCases {
   /**

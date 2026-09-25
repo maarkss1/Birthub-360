@@ -5,14 +5,14 @@ import {
   type CadenceRateLimitPort,
   type CadenceRunLockPort,
   type LeadSubjectResolver,
-} from '../application/cadenceService';
+} from '../application/cadenceService.js';
 import {
   type CadenceSequenceDefinition,
   type CadenceTouch,
   startCadenceRun,
-} from '../domain/cadence';
-import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository';
-import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository';
+} from '../domain/cadence.js';
+import { InMemoryCadenceRunRepository } from '../infra/InMemoryCadenceRunRepository.js';
+import { InMemoryOptOutRepository } from '../infra/InMemoryOptOutRepository.js';
 
 /** Rate limit sempre liberado — o comportamento real do rate limit é coberto à parte, em `rateLimitService.test.ts`. */
 function noopRateLimit(): CadenceRateLimitPort {

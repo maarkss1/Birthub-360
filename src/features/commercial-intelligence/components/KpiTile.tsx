@@ -1,6 +1,6 @@
-import { Card } from '../../../components/ui/Card';
-import { SoundFX } from '../../../lib/soundEffects';
-import { MetricInfo } from './MetricInfo';
+import { Card } from '../../../components/ui/Card.js';
+import { SoundFX } from '../../../lib/soundEffects.js';
+import { MetricInfo } from './MetricInfo.js';
 
 interface KpiTileProps {
   label: string;

@@ -1,14 +1,14 @@
 import type React from 'react';
 import { useState, useRef, useEffect } from 'react';
-import type { Lead, LeadStage, ThemeMode, IntegrationsConfig, AIConfig, User, LeadTask } from '../types';
-import { LeadQualityBadge } from './LeadQualityBadge';
-import { LeadStageAndTags } from './LeadStageAndTags';
-import { LeadScoresBadge } from './LeadScoresBadge';
-import { RequirementEvaluationsBadge } from './RequirementEvaluationsBadge';
-import { LeadEvidenceModal } from './LeadEvidenceModal';
-import { BitrixExportStatusBadge, type BitrixExportStatus } from './BitrixExportStatusBadge';
-import { resolveBitrixWebhook } from '../utils/bitrix';
-import { computeNextAction } from '../utils/nextAction';
+import type { Lead, LeadStage, ThemeMode, IntegrationsConfig, AIConfig, User, LeadTask } from '../types.js';
+import { LeadQualityBadge } from './LeadQualityBadge.js';
+import { LeadStageAndTags } from './LeadStageAndTags.js';
+import { LeadScoresBadge } from './LeadScoresBadge.js';
+import { RequirementEvaluationsBadge } from './RequirementEvaluationsBadge.js';
+import { LeadEvidenceModal } from './LeadEvidenceModal.js';
+import { BitrixExportStatusBadge, type BitrixExportStatus } from './BitrixExportStatusBadge.js';
+import { resolveBitrixWebhook } from '../utils/bitrix.js';
+import { computeNextAction } from '../utils/nextAction.js';
 import { 
   Phone, 
   Globe, 
@@ -44,7 +44,7 @@ import {
   Shield, ShieldAlert, ListChecks, Flame,
   Mic, MessageCircle, Calendar, Plus, Circle
 } from 'lucide-react';
-import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon.js';
 import confetti from 'canvas-confetti';
 
 // canvas-confetti draws on a <canvas>, which doesn't resolve CSS var() — so we read the
@@ -246,14 +246,14 @@ export const LeadCard: React.FC<LeadCardProps> = ({
           } else {
             setActivityNotes(prev => prev.replace('[Transcrevendo áudio com LLaMA3...]', '[Erro na transcrição]'));
           }
-        } catch (err) {
+        } catch (err: any) {
           setActivityNotes(prev => prev.replace('[Transcrevendo áudio com LLaMA3...]', '[Erro na conexão]'));
         }
       };
 
       mediaRecorder.start();
       setIsRecording(true);
-    } catch (err) {
+    } catch (err: any) {
       alert('Permissão de microfone negada ou indisponível.');
     }
   };
@@ -282,7 +282,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
       } else {
         alert('Erro ao gerar script');
       }
-    } catch(err) {
+    } catch(err: any) {
       alert('Erro de conexão ao gerar script rápido');
     } finally {
       setIsFastGenerating(false);
@@ -648,7 +648,7 @@ export const LeadCard: React.FC<LeadCardProps> = ({
           result: 'unknown'
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       setHunterResult({
         status: 'unknown',
         score: 0,

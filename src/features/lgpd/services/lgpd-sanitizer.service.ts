@@ -136,7 +136,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       }
 
       return { ...parsed, requiresManualReview: false };
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao higienizar dados com IA (LGPD)');
       return this.degradedResult(preCleaned, 'falha ao invocar o modelo de IA', {
         err: error instanceof Error ? error.message : String(error),

@@ -153,7 +153,7 @@ async function handleSignatureStatus(req: Request, res: Response): Promise<void>
     }
 
     res.status(200).json({ success: true, outcome: 'applied' });
-  } catch (error) {
+  } catch (error: any) {
     // 5xx de propósito: um provedor real reentrega com backoff, e a checagem de transição
     // garante que a reentrega não corrompe um estado já aplicado.
     logger.error(

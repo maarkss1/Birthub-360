@@ -1,6 +1,6 @@
 import { Loader2, MessageCircle, PhoneCall, Send, Sparkles, Trash } from 'lucide-react';
-import { Button } from '../../../components/ui/Button';
-import type { Lead } from '../../../types';
+import { Button } from '../../../components/ui/Button.js';
+import type { Lead } from '../../../types.js';
 
 interface LeadActionBarProps {
   lead: Lead;

@@ -1,16 +1,16 @@
 import { AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Card } from '../../../components/ui/Card';
-import { EmptyState } from '../../../components/ui/EmptyState';
-import { Skeleton } from '../../../components/ui/Skeleton';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Card } from '../../../components/ui/Card.js';
+import { EmptyState } from '../../../components/ui/EmptyState.js';
+import { Skeleton } from '../../../components/ui/Skeleton.js';
 import {
   type AgingReport,
   type CommercialFilter,
   commercialIntelligenceApi,
   formatCurrency,
-} from '../commercialIntelligence.api';
-import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer';
+} from '../commercialIntelligence.api.js';
+import { DealDrillDownDrawer, type DrillDownQuery } from './DealDrillDownDrawer.js';
 
 const DATA_QUALITY_LABEL = {
   measured: 'Medido',

@@ -99,7 +99,7 @@ router.post('/webhook/atlasgr/outbound', validateAtlasGRSecret, async (req, res)
   try {
     const result = await voiceProspectingService.triggerOutboundCall(parsed.data);
     res.status(200).json(result);
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof ExternalAiConsentRequiredError) {
       logger.warn('AtlasGR webhook rejected: external AI consent is not granted for the configured tenant');
       res.status(403).json({
@@ -159,7 +159,7 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
   let processingState: Awaited<ReturnType<typeof beginBlandCallbackProcessing>>;
   try {
     processingState = await beginBlandCallbackProcessing(callId);
-  } catch (error) {
+  } catch (error: any) {
     logger.error('Bland AI callback rejected because idempotency storage is unavailable', {
       callId,
       error: error instanceof Error ? error.message : String(error),
@@ -234,10 +234,10 @@ router.post('/webhooks/bland/:token', validateBlandCallbackToken, async (req, re
     await completeBlandCallbackProcessing(callId);
     logger.info('Successfully forwarded voice call result to AtlasGR', { callId });
     res.status(200).json({ received: true, duplicate: false });
-  } catch (error) {
+  } catch (error: any) {
     try {
       await releaseBlandCallbackProcessing(callId);
-    } catch (releaseError) {
+    } catch (releaseError: any) {
       logger.error('Failed to release Bland callback processing lock after forwarding failure', {
         callId,
         error: releaseError instanceof Error ? releaseError.message : String(releaseError),

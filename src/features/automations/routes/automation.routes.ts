@@ -53,7 +53,7 @@ router.post('/stagnation-scan', requireRole(['ADMIN']), async (_req, res, next) 
   try {
     const result = await runStagnationScan();
     res.json({ success: true, data: result });
-  } catch (error) {
+  } catch (error: any) {
     logger.error({ err: error }, 'Falha ao disparar a varredura de estagnação manualmente');
     next(error);
   }

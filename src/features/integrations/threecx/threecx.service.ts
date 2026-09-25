@@ -195,7 +195,7 @@ export async function test3CXConnection(
         : `Servidor 3CX respondeu com erro (HTTP ${res.status}).`,
       pbxUrl: conn.pbxUrl,
     };
-  } catch (err) {
+  } catch (err: any) {
     // Erro do guard de SSRF (URL/host reprovado por `safeFetch`) propaga com sua mensagem
     // específica, em vez de virar o `success:false` genérico abaixo — mesmo comportamento de
     // antes desta função usar `safeFetch` (a validação rodava fora deste try/catch).
@@ -318,7 +318,7 @@ export async function make3CXCall(
     });
     dialSucceeded = res.ok;
     if (!res.ok) failureReason = `PABX respondeu HTTP ${res.status}`;
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof AppError) throw err;
     dialSucceeded = false;
     failureReason = controller.signal.aborted
@@ -350,7 +350,7 @@ export async function make3CXCall(
             : `Tentativa de chamada via 3CX PABX (${conn.pbxUrl}) para ${destinationNumber} FALHOU: ${failureReason}.`,
         },
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.warn(
         { err, leadId },
         '[3cx] Não foi possível registrar a atividade de ligação no CRM',
@@ -682,7 +682,7 @@ export async function process3CXWebhook(
             rawPayload: payload as unknown as Prisma.InputJsonValue,
           },
         });
-      } catch (err) {
+      } catch (err: any) {
         if (isUniqueConstraintViolation(err)) {
           alreadyRecorded = true;
         } else {

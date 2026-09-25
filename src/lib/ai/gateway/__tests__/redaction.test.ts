@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { readProviderError, sanitizeProviderMessage } from '../redaction';
+import { readProviderError, sanitizeProviderMessage } from '../redaction.js';
 
 describe('redaction — nenhum segredo de provedor pode vazar em erro/log', () => {
   describe('sanitizeProviderMessage', () => {

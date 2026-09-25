@@ -1,25 +1,25 @@
-import { env } from '../../../../config/env';
+import { env } from '../../../../config/env.js';
 import { GoogleGenAI } from '@google/genai';
-import type { AIConfig, Lead, DecisionMaker, OutreachCopies } from '../src/types';
-import type { EvidenceRecord } from './evidence';
+import type { AIConfig, Lead, DecisionMaker, OutreachCopies } from '../src/types.js';
+import type { EvidenceRecord } from './evidence.js';
 import {
   buildLeadEvidenceContext,
   computePersonalizationLevel,
   formatEvidenceContextForPrompt,
   type PersonalizationLevel
-} from './leadEvidenceContext';
+} from './leadEvidenceContext.js';
 import {
   safeParseJson,
   validateCopiesShape,
   validateEnrichmentShape,
   type CopiesStringField
-} from './aiSchemas';
+} from './aiSchemas.js';
 import {
   recordAiGenerationLog,
   extractOllamaTokenUsage,
   extractGroqTokenUsage,
   extractGeminiTokenUsage
-} from './aiGenerationLog';
+} from './aiGenerationLog.js';
 
 // IA & Guardrails (CPI follow-up, pós Wave 0) — versão do prompt-base de
 // outreach. Bump manual sempre que o TEXTO do prompt (system ou user) mudar
@@ -192,7 +192,7 @@ Gere as abordagens comerciais:
           error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.info('Ollama offline, acionando próximo motor...');
     }
   }
@@ -247,7 +247,7 @@ Gere as abordagens comerciais:
           error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
         });
       }
-    } catch (err) {
+    } catch (err: any) {
       console.info('Groq offline, acionando próximo motor...');
     }
   }
@@ -450,7 +450,7 @@ Gere o dossiê e os roteiros com base apenas nos dados acima. Retorne o JSON com
         error: `JSON inválido: ${parseResult.error}`, leadId: lead.id
       });
     }
-  } catch (err) {
+  } catch (err: any) {
     console.info("Gemini enrichment com alta demanda, usando fallback.");
   }
 
@@ -505,7 +505,7 @@ Gere o dossiê e os roteiros com base apenas nos dados acima. Retorne o JSON com
         });
       }
     }
-  } catch (err) {
+  } catch (err: any) {
     console.info("Groq enrichment offline, usando fallback.");
   }
 
@@ -595,7 +595,7 @@ Este chat é um assistente de apoio de uso geral (não gera copy final vinculado
           tokensEstimated: Math.round(reply.length / 4)
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       console.info("Ollama chat indisponível, usando fallback.");
     }
   }
@@ -635,7 +635,7 @@ Este chat é um assistente de apoio de uso geral (não gera copy final vinculado
           tokensEstimated: tokenUsage.totalTokens ?? Math.round(reply.length / 4)
         };
       }
-    } catch (err) {
+    } catch (err: any) {
       console.info("Groq chat indisponível, usando fallback.");
     }
   }

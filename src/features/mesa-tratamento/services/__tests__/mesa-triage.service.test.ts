@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { IncidentAlertInput } from '../mesa-triage.service';
+import type { IncidentAlertInput } from '../mesa-triage.service.js';
 
 /**
  * Regressão de um bug P0 real: um sinistro real (violação de trava de baú em zona de alto risco)

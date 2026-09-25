@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Calendar, Circle, Building2, ListChecks } from 'lucide-react';
-import type { LeadTask } from '../types';
+import type { LeadTask } from '../types.js';
 
 interface TasksOverviewTabProps {
   isDark: boolean;
@@ -25,7 +25,7 @@ export function TasksOverviewTab({ isDark }: TasksOverviewTabProps) {
       const res = await fetch('/api/tasks');
       const data = await res.json();
       setTasks(Array.isArray(data) ? data : []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       setLoading(false);

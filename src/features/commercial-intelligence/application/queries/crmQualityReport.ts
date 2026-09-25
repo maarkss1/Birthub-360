@@ -9,13 +9,13 @@ import type {
   CommercialIntelligenceRepository,
   CrmQualityIndex,
   DealRow,
-} from '../../domain/CommercialIntelligence';
-import { computeDataReadiness } from '../dataReadiness';
-import { isDealOpen } from '../pipelineEligibility';
-import { loadScoredDeals } from '../scoring/dealScoring';
-import { applyScope } from '../scoring/scopeFilter';
-import { roundMoney } from '../shared/mathUtils';
-import { computeBitrixSyncHealth } from './bitrixSyncHealthReport';
+} from '../../domain/CommercialIntelligence.js';
+import { computeDataReadiness } from '../dataReadiness.js';
+import { isDealOpen } from '../pipelineEligibility.js';
+import { loadScoredDeals } from '../scoring/dealScoring.js';
+import { applyScope } from '../scoring/scopeFilter.js';
+import { roundMoney } from '../shared/mathUtils.js';
+import { computeBitrixSyncHealth } from './bitrixSyncHealthReport.js';
 
 const FIELD_CHECKS: Array<{ field: string; label: string; test: (d: DealRow) => boolean }> = [
   { field: 'owner', label: 'Responsável', test: (d) => !!d.owner },

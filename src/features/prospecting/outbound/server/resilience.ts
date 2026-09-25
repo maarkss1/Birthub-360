@@ -14,7 +14,7 @@
 // lógica de negócio (chaves de cache por CNPJ/domínio, orçamento por
 // execução de /prospect, fallback Apollo → Hunter).
 
-import type { ProviderResult, ProviderResultStatus } from './search/providers/types';
+import type { ProviderResult, ProviderResultStatus } from './search/providers/types.js';
 
 // ---------------------------------------------------------------------------
 // 1. Cache TTL em memória

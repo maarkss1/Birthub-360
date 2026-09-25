@@ -1,7 +1,7 @@
 import dns from 'node:dns/promises';
 import disposableDomains from 'disposable-email-domains';
 import { withTimeout } from '../../../lib/http.js';
-import { logger } from '../../../lib/logger';
+import { logger } from '../../../lib/logger.js';
 
 // `dns.resolveMx`/`resolveTxt` (API de Promise do Node) não aceitam AbortSignal nem têm timeout
 // próprio exposto — em DNS lento/sem resposta, a chamada podia ficar pendurada por bem mais tempo
@@ -94,7 +94,7 @@ export async function checkEmailDeliverability(email: string): Promise<EmailDeli
       email: trimmed,
       status: 'verified',
     };
-  } catch (error) {
+  } catch (error: any) {
     const code = (error as NodeJS.ErrnoException).code;
     if (code === 'ENOTFOUND' || code === 'ENODATA') {
       return { email: trimmed, status: 'invalid', reason: 'no_mail_server' };

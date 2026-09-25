@@ -1,5 +1,5 @@
 import type { ContactStatus } from '@prisma/client';
-import type { Repository } from '../../../shared/domain/Repository';
+import type { Repository } from '../../../shared/domain/Repository.js';
 
 export interface Contact {
   id: string;

@@ -1,7 +1,7 @@
 import { fetchWithProviderRetry } from '../../../../lib/enrichment/providerFetch.js';
 import { HttpTimeoutError } from '../../../../lib/http.js';
 import type { RntrcUfRisk } from '../../../../shared/services/rntrcTerritorialRisk.service.js';
-import { formatCnpj, isValidCnpj, sanitizeCnpj } from '../cnpj.util';
+import { formatCnpj, isValidCnpj, sanitizeCnpj } from '../cnpj.util.js';
 
 const BRASIL_API_BASE = 'https://brasilapi.com.br/api';
 
@@ -143,7 +143,7 @@ export async function fetchCnpjData(cnpjRaw: string): Promise<CnpjLookupResult> 
     res = await fetchWithRetry(`${BRASIL_API_BASE}/cnpj/v1/${cnpj}`, {
       headers: BRASIL_API_HEADERS,
     });
-  } catch (error) {
+  } catch (error: any) {
     const reason =
       error instanceof HttpTimeoutError || (error instanceof Error && error.name === 'AbortError')
         ? 'timeout'

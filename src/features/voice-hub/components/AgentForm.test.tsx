@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { AgentForm } from './AgentForm';
+import { AgentForm } from './AgentForm.js';
 
 const mockNavigate = vi.fn();
 

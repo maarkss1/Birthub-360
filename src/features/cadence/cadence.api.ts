@@ -1,5 +1,5 @@
-import { api } from '../../lib/api';
-import type { CadenceJourneyTemplate } from './domain/cadenceTemplates';
+import { api } from '../../lib/api.js';
+import type { CadenceJourneyTemplate } from './domain/cadenceTemplates.js';
 
 /**
  * Cliente HTTP de `/api/cadence/*` (Agente 17, Onda 10) — mesmo padrão de

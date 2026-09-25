@@ -10,7 +10,7 @@ import {
   type CrmProvider,
   type NormalizedLead,
   registerCrmProvider,
-} from '../shared/CrmProvider';
+} from '../shared/CrmProvider.js';
 
 const RDSTATION_API_BASE = 'https://crm.rdstation.com/api/v1';
 

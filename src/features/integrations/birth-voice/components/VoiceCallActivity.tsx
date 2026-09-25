@@ -1,9 +1,9 @@
 import { Loader2, PhoneCall, RefreshCw } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
-import { Badge } from '../../../../components/ui/Badge';
-import { Card, CardHeader, CardTitle } from '../../../../components/ui/Card';
-import { EmptyState } from '../../../../components/ui/EmptyState';
-import { clientLogger } from '../../../../lib/clientLogger';
+import { Badge } from '../../../../components/ui/Badge.js';
+import { Card, CardHeader, CardTitle } from '../../../../components/ui/Card.js';
+import { EmptyState } from '../../../../components/ui/EmptyState.js';
+import { clientLogger } from '../../../../lib/clientLogger.js';
 
 type CallOutcome =
   | 'completed'
@@ -83,7 +83,7 @@ export function VoiceCallActivity() {
       }
       setCalls((prev) => (cursor ? [...prev, ...data.data.calls] : data.data.calls));
       setNextCursor(data.data.nextCursor);
-    } catch (err) {
+    } catch (err: any) {
       clientLogger.error({ err }, 'Falha ao carregar atividade de voz IA');
       setError(err instanceof Error ? err.message : 'Não foi possível carregar a atividade.');
     } finally {

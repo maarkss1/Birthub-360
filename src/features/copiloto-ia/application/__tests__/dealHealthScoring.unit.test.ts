@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { computeChurnRiskScore, computeDealHealthScore } from '../dealHealthScoring';
+import { computeChurnRiskScore, computeDealHealthScore } from '../dealHealthScoring.js';
 
 describe('computeDealHealthScore', () => {
   it('usa 50 como base neutra quando sentimento é desconhecido, sem sinal nenhum', () => {

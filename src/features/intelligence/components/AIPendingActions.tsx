@@ -12,8 +12,8 @@ import {
   X,
 } from 'lucide-react';
 import { type ReactNode, useCallback, useEffect, useState } from 'react';
-import { api } from '../../../lib/api';
-import { clientLogger } from '../../../lib/clientLogger';
+import { api } from '../../../lib/api.js';
+import { clientLogger } from '../../../lib/clientLogger.js';
 
 interface PendingActionPayload {
   to?: string;
@@ -102,7 +102,7 @@ export function AIPendingActions() {
     try {
       const response = await api.get<PendingAction[]>('/api/intelligence/pending');
       setActions(Array.isArray(response) ? response : []);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error fetching AI actions');
     } finally {
       setLoading(false);
@@ -115,7 +115,7 @@ export function AIPendingActions() {
         '/api/intelligence/pending/awaiting-outcome',
       );
       setAwaitingOutcome(response.actions || []);
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error fetching actions awaiting outcome');
     }
   }, []);
@@ -133,7 +133,7 @@ export function AIPendingActions() {
         notes: outcomeNotes[id]?.trim() || undefined,
       });
       setAwaitingOutcome((previous) => previous.filter((item) => item.id !== id));
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error recording action outcome');
     } finally {
       setRecordingOutcomeId(null);
@@ -157,7 +157,7 @@ export function AIPendingActions() {
       }
 
       setActions((previous) => previous.filter((item) => item.id !== action.id));
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error approving AI action');
     } finally {
       setProcessingId(null);
@@ -169,7 +169,7 @@ export function AIPendingActions() {
     try {
       await api.delete(`/api/intelligence/pending/${id}`);
       setActions((previous) => previous.filter((action) => action.id !== id));
-    } catch (error) {
+    } catch (error: any) {
       clientLogger.error({ err: error }, 'Error discarding AI action');
     } finally {
       setProcessingId(null);

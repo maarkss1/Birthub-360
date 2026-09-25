@@ -80,7 +80,7 @@ export async function analyzeConversation(leadId: string, organizationId: string
   // mensagem nem monta modelo nenhum.
   try {
     assertPiiExternalConsent(organizationId);
-  } catch (error) {
+  } catch (error: any) {
     logger.warn(
       { err: error, leadId, organizationId },
       'Análise de conversa do WhatsApp bloqueada: sem base legal LGPD registrada para enviar dado pessoal a provedor de IA externo.',
@@ -127,7 +127,7 @@ export async function analyzeConversation(leadId: string, organizationId: string
     try {
       result = parseModelOutput(response.content);
       rawModelOutput = cleanAndParseJson<Prisma.InputJsonValue>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.warn({ err: error, leadId }, 'Falha ao interpretar sinal de conversa gerado pela IA');
       result = {
         intent: null,

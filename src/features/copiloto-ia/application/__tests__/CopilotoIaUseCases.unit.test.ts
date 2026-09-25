@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { AppError } from '../../../../shared/middlewares/errorHandler';
+import { AppError } from '../../../../shared/middlewares/errorHandler.js';
 import type {
   ConversationStateDTO,
   CopilotoBitrixFieldMappingDTO,
@@ -15,9 +15,9 @@ import type {
   CopilotoSuggestionStatus,
   LeadLookupResultDTO,
   UpsertBitrixFieldMappingInput,
-} from '../../domain/CopilotoIa';
-import { CopilotoIaUseCases } from '../CopilotoIaUseCases';
-import type { WhatsAppMessageTiming } from '../whatsappResponseTime';
+} from '../../domain/CopilotoIa.js';
+import { CopilotoIaUseCases } from '../CopilotoIaUseCases.js';
+import type { WhatsAppMessageTiming } from '../whatsappResponseTime.js';
 
 const ORG_ID = 'org-1';
 
@@ -683,7 +683,7 @@ describe('CopilotoIaUseCases', () => {
           sizeBytes: 2048,
         });
         expect.unreachable('deveria ter lançado AppError 403');
-      } catch (error) {
+      } catch (error: any) {
         expect(error).toBeInstanceOf(AppError);
         expect((error as AppError).statusCode).toBe(403);
       }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Button, Badge } from '../../components/design-system';
+import { Card, Button, Badge } from '../../components/design-system.js';
 import {
   Settings, Brain, Mic, Database, Wrench, Shield, Activity,
   GitBranch, PlaySquare, ArrowLeft, Save, Rocket, Zap, MessageSquare, FlaskConical

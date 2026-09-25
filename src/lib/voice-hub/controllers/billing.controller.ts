@@ -79,7 +79,7 @@ export async function changePlanHandler(req: Request, res: Response) {
       logger.error('Failed to create plan-change notification', { err, userId: req.user!.id });
     });
     res.json({ wallet });
-  } catch (err) {
+  } catch (err: any) {
     if (err instanceof PlanNotFoundError) return res.status(404).json({ error: err.message });
     if (err instanceof ProrationNotSupportedError) return res.status(400).json({ error: err.message });
     throw err;

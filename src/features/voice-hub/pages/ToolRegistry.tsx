@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Button, Badge } from '../../components/design-system';
+import { Card, Button, Badge } from '../../components/design-system.js';
 import { Plug, Plus, Settings, FlaskConical } from 'lucide-react';
 
 // ToolEngine (lib/voice-runtime/ToolEngine.ts) has no live tool registered yet in production

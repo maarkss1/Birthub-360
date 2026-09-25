@@ -1,6 +1,6 @@
 import type { z } from 'zod';
-import { noteSchema } from '../../../lib/zod';
-import type { NoteEntityType, NoteRepository } from '../domain/Note';
+import { noteSchema } from '../../../lib/zod.js';
+import type { NoteEntityType, NoteRepository } from '../domain/Note.js';
 
 export class NoteUseCases {
   constructor(private noteRepository: NoteRepository) {}

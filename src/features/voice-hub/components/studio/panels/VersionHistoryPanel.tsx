@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X, History, RotateCcw, Loader2, ShieldAlert, Clock, CheckCircle2 } from 'lucide-react';
-import { useStudioStore } from '../../../store/useStudioStore';
-import { ValidationIssuesList } from './ValidationIssuesList';
+import { useStudioStore } from '../../../store/useStudioStore.js';
+import { ValidationIssuesList } from './ValidationIssuesList.js';
 
 function formatPublishedAt(iso: string): string {
   const date = new Date(iso);

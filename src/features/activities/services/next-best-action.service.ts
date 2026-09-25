@@ -60,7 +60,7 @@ Retorne SEMPRE e APENAS um JSON válido no formato:
       });
 
       return cleanAndParseJson<NextBestActionResult>(response.content);
-    } catch (error) {
+    } catch (error: any) {
       logger.error({ err: error }, 'Erro ao calcular Next Best Action');
       return {
         recommendedAction: 'Fazer follow-up com o cliente sobre os pontos conversados.',

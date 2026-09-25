@@ -1,6 +1,6 @@
 import { motion, useReducedMotion } from 'framer-motion';
 import type { ComponentType, ReactNode } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '../../lib/utils.js';
 
 /* Novo primitivo — "achados" (findings) de um relatório: cada item marca um ganho (win) ou uma
    lacuna (gap) encontrada na análise, com destaque opcional de 2 pulsos (nunca em loop — regra

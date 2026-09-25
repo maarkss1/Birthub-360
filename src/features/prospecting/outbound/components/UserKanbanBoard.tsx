@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import type { Lead, User } from '../types';
-import { LeadCard } from './LeadCard';
+import type { Lead, User } from '../types.js';
+import { LeadCard } from './LeadCard.js';
 import { Loader2 } from 'lucide-react';
-import { computeNextAction, urgencyWeight } from '../utils/nextAction';
+import { computeNextAction, urgencyWeight } from '../utils/nextAction.js';
 
 interface UserKanbanBoardProps {
   user: User;
@@ -23,7 +23,7 @@ export function UserKanbanBoard({ user, isDark }: UserKanbanBoardProps) {
       const res = await fetch(`/api/users/${user.id}/leads`);
       const data = await res.json();
       setLeads(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
     } finally {
       setLoading(false);
@@ -118,7 +118,7 @@ export function UserKanbanBoard({ user, isDark }: UserKanbanBoardProps) {
                         if (res.ok) {
                           setLeads(prev => prev.map(l => l.id === id ? { ...l, stage } : l));
                         }
-                      } catch (err) {
+                      } catch (err: any) {
                         console.error(err);
                       }
                     }}

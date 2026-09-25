@@ -106,7 +106,7 @@ export const createFollowUpTaskTool = tool(
           },
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       if (!isUniqueConstraintViolation(error)) {
         return `Erro ao registrar a proposta de tarefa: ${error instanceof Error ? error.message : String(error)}`;
       }
@@ -175,7 +175,7 @@ export const notifyTeamTool = tool(
           payload: { title, body: body ?? null, kind: kind ?? 'Info', leadId: leadId ?? null },
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       if (!isUniqueConstraintViolation(error)) {
         return `Erro ao registrar a proposta de notificação: ${error instanceof Error ? error.message : String(error)}`;
       }

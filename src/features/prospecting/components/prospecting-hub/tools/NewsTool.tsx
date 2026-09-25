@@ -1,7 +1,7 @@
 import { ExternalLink, Loader2, Newspaper, Search } from 'lucide-react';
 import { useState } from 'react';
-import { api } from '../../../../../lib/api';
-import { getErrorMessage } from './shared';
+import { api } from '../../../../../lib/api.js';
+import { getErrorMessage } from './shared.js';
 
 interface NewsMention {
   title: string;
@@ -38,7 +38,7 @@ export function NewsTool(_props: { configured: boolean }) {
         { timeoutMs: 15_000 },
       );
       setMentions(result.mentions);
-    } catch (err) {
+    } catch (err: any) {
       setError(getErrorMessage(err, 'Falha ao buscar notícias'));
     } finally {
       setIsSearching(false);

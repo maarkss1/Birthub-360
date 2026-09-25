@@ -1,17 +1,17 @@
 import { randomUUID } from 'node:crypto';
 import type { NextFunction, Request, Response } from 'express';
-import { AuditService } from '../../../lib/audit/audit.service';
+import { AuditService } from '../../../lib/audit/audit.service.js';
 import { getUploadUrl } from '../../../lib/storage/index.js';
-import { routeParam } from '../../../shared/http/routeParams';
-import type { AuthRequest } from '../../../shared/middlewares/authenticateToken';
-import { AppError } from '../../../shared/middlewares/errorHandler';
-import type { CopilotoBitrixWritebackUseCases } from '../application/CopilotoBitrixWritebackUseCases';
-import type { CopilotoIaUseCases } from '../application/CopilotoIaUseCases';
+import { routeParam } from '../../../shared/http/routeParams.js';
+import type { AuthRequest } from '../../../shared/middlewares/authenticateToken.js';
+import { AppError } from '../../../shared/middlewares/errorHandler.js';
+import type { CopilotoBitrixWritebackUseCases } from '../application/CopilotoBitrixWritebackUseCases.js';
+import type { CopilotoIaUseCases } from '../application/CopilotoIaUseCases.js';
 import type {
   CopilotoConversationSource,
   CopilotoConversationStatus,
   CopilotoCrmEntityType,
-} from '../domain/CopilotoIa';
+} from '../domain/CopilotoIa.js';
 import { enqueueTranscribeConversationJob } from '../jobs/transcribeConversation.worker.js';
 
 const VALID_SOURCES: CopilotoConversationSource[] = ['MEET', 'CALL', 'WHATSAPP', 'MANUAL', 'OTHER'];
@@ -58,7 +58,7 @@ export class CopilotoIaController {
       const query = typeof req.query.q === 'string' ? req.query.q : '';
       const lead = await this.useCases.lookupLead(organizationId, query);
       res.json({ success: true, data: lead });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -69,7 +69,7 @@ export class CopilotoIaController {
       const query = typeof req.query.q === 'string' ? req.query.q : '';
       const leads = await this.useCases.searchLeads(organizationId, query);
       res.json({ success: true, data: leads });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -95,7 +95,7 @@ export class CopilotoIaController {
         userId,
       );
       res.status(201).json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -115,7 +115,7 @@ export class CopilotoIaController {
         contactId: query.contactId || undefined,
       });
       res.json({ success: true, data: conversations });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -128,7 +128,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -141,7 +141,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -154,7 +154,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -167,7 +167,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -180,7 +180,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -193,7 +193,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -227,7 +227,7 @@ export class CopilotoIaController {
         afterState: { granted, method, textVersion },
       });
       res.status(201).json({ success: true, data: record });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -248,7 +248,7 @@ export class CopilotoIaController {
 
       const { signedUrl } = await getUploadUrl(objectKey, mimeType);
       res.json({ success: true, data: { signedUrl, objectKey, mimeType } });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -271,7 +271,7 @@ export class CopilotoIaController {
       await enqueueTranscribeConversationJob({ conversationId, organizationId });
 
       res.json({ success: true, data: conversation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -298,7 +298,7 @@ export class CopilotoIaController {
         segments,
       );
       res.status(201).json({ success: true, data: created });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -320,7 +320,7 @@ export class CopilotoIaController {
         },
       );
       res.status(201).json({ success: true, data: insight });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -333,7 +333,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: insights });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -362,7 +362,7 @@ export class CopilotoIaController {
         },
       );
       res.status(201).json({ success: true, data: suggestion });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -389,7 +389,7 @@ export class CopilotoIaController {
         afterState: { status: 'APPROVED', fieldCode: suggestion.fieldCode },
       });
       res.json({ success: true, data: suggestion });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -414,7 +414,7 @@ export class CopilotoIaController {
         afterState: { status: 'REJECTED', fieldCode: suggestion.fieldCode },
       });
       res.json({ success: true, data: suggestion });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -429,7 +429,7 @@ export class CopilotoIaController {
         factorsJson: body.factorsJson ?? {},
       });
       res.status(201).json({ success: true, data: snapshot });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -442,7 +442,7 @@ export class CopilotoIaController {
         routeParam(req.params.leadId, 'leadId'),
       );
       res.json({ success: true, data: snapshots });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -454,7 +454,7 @@ export class CopilotoIaController {
       const { organizationId } = (req as AuthRequest).user;
       const mappings = await this.writebackUseCases.listFieldMappings(organizationId);
       res.json({ success: true, data: mappings });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -487,7 +487,7 @@ export class CopilotoIaController {
         afterState: { ...mapping },
       });
       res.status(201).json({ success: true, data: mapping });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -506,7 +506,7 @@ export class CopilotoIaController {
         ipAddress: req.ip,
       });
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -530,7 +530,7 @@ export class CopilotoIaController {
         afterState: { status: suggestion.status, writebackError: suggestion.writebackError },
       });
       res.json({ success: true, data: suggestion });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -545,7 +545,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: evaluation });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -558,7 +558,7 @@ export class CopilotoIaController {
         routeParam(req.params.id, 'id'),
       );
       res.json({ success: true, data: handoff });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };
@@ -573,7 +573,7 @@ export class CopilotoIaController {
         routeParam(req.params.leadId, 'leadId'),
       );
       res.json({ success: true, data: stats });
-    } catch (error) {
+    } catch (error: any) {
       next(error);
     }
   };

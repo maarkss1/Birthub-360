@@ -18,10 +18,10 @@ import {
   Zap,
 } from 'lucide-react';
 import { useState } from 'react';
-import { useActivePlaybook } from '../../../hooks/useActivePlaybook';
-import { useBrandAccent } from '../../../hooks/useBrandAccent';
-import { api } from '../../../lib/api';
-import { BorderBeam } from '../../../components/ui/BorderBeam';
+import { useActivePlaybook } from '../../../hooks/useActivePlaybook.js';
+import { useBrandAccent } from '../../../hooks/useBrandAccent.js';
+import { api } from '../../../lib/api.js';
+import { BorderBeam } from '../../../components/ui/BorderBeam.js';
 
 const PROVIDERS = [
   { id: 'groq', name: 'Groq Cloud (Fast)', models: ['openai/gpt-oss-120b', 'openai/gpt-oss-20b'] },
@@ -330,7 +330,7 @@ $status | ConvertTo-Json -Depth 3
       setResult(response.result);
       setResultSource('ai');
       setCopied(false);
-    } catch (generationError) {
+    } catch (generationError: any) {
       setError(
         generationError instanceof Error
           ? generationError.message

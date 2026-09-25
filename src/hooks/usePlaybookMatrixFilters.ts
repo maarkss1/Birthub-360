@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import type { PlaybookKey } from '../config/playbooks';
+import type { PlaybookKey } from '../config/playbooks.js';
 import type {
   ObjectionMatrixItem,
   QualificationMatrixItem,
-} from '../features/playbook/playbook.api';
+} from '../features/playbook/playbook.api.js';
 
 /**
  * Estado/ações do filtro de matrizes de objeções/qualificação (aba "Matrizes & Objeções") do

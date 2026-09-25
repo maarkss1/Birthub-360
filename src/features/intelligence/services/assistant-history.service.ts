@@ -49,7 +49,7 @@ export async function appendAssistantTurn(
         { organizationId, userId, brand, role: 'assistant', content: assistantText },
       ],
     });
-  } catch (err) {
+  } catch (err: any) {
     logger.warn(
       { err, organizationId, userId, brand },
       'Falha ao persistir turno do Chatbook (a resposta já foi entregue ao usuário).',

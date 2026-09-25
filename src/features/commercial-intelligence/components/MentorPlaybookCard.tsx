@@ -1,14 +1,14 @@
 import { AlertTriangle, ArrowRight, Loader2, Sparkles } from 'lucide-react';
 import { useState } from 'react';
-import { Badge } from '../../../components/ui/Badge';
-import { Button } from '../../../components/ui/Button';
-import { Card } from '../../../components/ui/Card';
+import { Badge } from '../../../components/ui/Badge.js';
+import { Button } from '../../../components/ui/Button.js';
+import { Card } from '../../../components/ui/Card.js';
 import {
   type CommercialFilter,
   commercialIntelligenceApi,
   type MentorRecommendation,
   type MentorRecommendationPriority,
-} from '../commercialIntelligence.api';
+} from '../commercialIntelligence.api.js';
 
 const PRIORITY_BADGE: Record<
   MentorRecommendationPriority,
@@ -41,7 +41,7 @@ export function MentorPlaybookCard({ filter }: { filter: CommercialFilter }) {
       setRecommendations(result.recommendations);
       setSource(result.source);
       setGeneratedAt(result.generatedAt);
-    } catch (e) {
+    } catch (e: any) {
       setError(e instanceof Error ? e.message : 'Falha ao gerar o playbook com IA.');
     } finally {
       setLoading(false);

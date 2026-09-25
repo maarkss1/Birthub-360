@@ -54,7 +54,7 @@ router.get(
       const query = parseCompanyCatalogQuery(req.query as Record<string, unknown>);
       const result = await listMarketIntelligenceCompanies(query);
       res.json({ success: true, ...result });
-    } catch (err) {
+    } catch (err: any) {
       toAppError(err);
     }
   }),
@@ -72,7 +72,7 @@ router.get(
         );
       }
       res.json({ success: true, data: result.account, dataset: result.dataset });
-    } catch (err) {
+    } catch (err: any) {
       toAppError(err);
     }
   }),
@@ -95,7 +95,7 @@ router.post(
         companyId: result.company.id,
         leadId: result.lead.id,
       });
-    } catch (err) {
+    } catch (err: any) {
       toAppError(err);
     }
   }),

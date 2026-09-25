@@ -5,8 +5,8 @@
  * a partir de `PipelineCreation.byOwner` e `PerformanceMetrics`), nenhum I/O aqui, nenhum benchmark
  * de mercado genérico — só a extrapolação do throughput/conversão que este time já demonstrou.
  */
-import type { HiringScenarioResult } from '../domain/CommercialIntelligence';
-import { roundMoney } from './shared/mathUtils';
+import type { HiringScenarioResult } from '../domain/CommercialIntelligence.js';
+import { roundMoney } from './shared/mathUtils.js';
 
 /** Janela fixa pedida pelo produto — "impacto em receita em 90 dias". */
 export const HIRING_SIMULATION_WINDOW_DAYS = 90;

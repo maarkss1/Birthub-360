@@ -122,7 +122,7 @@ export async function runWeeklySalesReportJob(): Promise<WeeklySalesReportResult
           try {
             await sendEmail({ to: recipient.email, subject: 'Relatório Semanal de Vendas', text });
             sent++;
-          } catch (err) {
+          } catch (err: any) {
             logger.error(
               { err, organizationId, to: recipient.email },
               'Falha ao enviar relatório semanal para um destinatário',
@@ -131,7 +131,7 @@ export async function runWeeklySalesReportJob(): Promise<WeeklySalesReportResult
         }
         results.push({ organizationId, status: sent > 0 ? 'sent' : 'failed', recipients: sent });
       });
-    } catch (err) {
+    } catch (err: any) {
       logger.error(
         { err, organizationId },
         'Falha ao gerar/enviar relatorio semanal desta organização',

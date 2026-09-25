@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Bell, Check, CheckCheck, RefreshCw } from 'lucide-react';
-import { logger } from '../../../../lib/logger';
-import { formatRelativeTime } from './formatRelativeTime';
+import { logger } from '../../../../lib/logger.js';
+import { formatRelativeTime } from './formatRelativeTime.js';
 
 export interface NotificationItem {
   id: string;
@@ -77,7 +77,7 @@ export function NotificationCenter({ className = '' }: { className?: string }) {
             }
           : prev
       );
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to mark notification as read', { err, id });
     } finally {
       setPendingIds((prev) => {
@@ -98,7 +98,7 @@ export function NotificationCenter({ className = '' }: { className?: string }) {
           ? { status: 'ready', items: prev.items.map((n) => ({ ...n, isRead: true })), unreadCount: 0 }
           : prev
       );
-    } catch (err) {
+    } catch (err: any) {
       logger.error('Failed to mark all notifications as read', { err });
     } finally {
       setMarkingAll(false);
