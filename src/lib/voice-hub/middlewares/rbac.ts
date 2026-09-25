@@ -56,6 +56,6 @@ export const requirePermission = (permission: string) => {
         }
         return next();
       })
-      .catch (next: any);
+      .catch(next);
   };
 };
