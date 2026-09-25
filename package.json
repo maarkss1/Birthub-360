@@ -87,7 +87,8 @@
     "backup:drill": "tsx scripts/backup/run-backup-restore-drill.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "release:check": "node scripts/release-gate.js"
+    "release:check": "node scripts/release-gate.js",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ai-sdk/react": "^4.0.114",
