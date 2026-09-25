@@ -71,18 +71,6 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-      meilisearch:
-        image: getmeili/meilisearch:v1.12
-        env:
-          MEILI_MASTER_KEY: ci-test-meili-key
-        ports:
-          - 7700:7700
-        options: >-
-          --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:7700/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
-
     env:
       NODE_ENV: test
       DATABASE_URL: postgresql://prospector_app:ci_app_test_pass@localhost:5434/prospectordb_test?schema=public
@@ -308,18 +296,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-      meilisearch:
-        image: getmeili/meilisearch:v1.12
-        env:
-          MEILI_MASTER_KEY: ci-test-meili-key
-        ports:
-          - 7700:7700
-        options: >-
-          --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:7700/health || exit 1"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
 
     env:
       NODE_ENV: test

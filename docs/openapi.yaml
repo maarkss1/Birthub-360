@@ -9964,17 +9964,20 @@ components:
 
   /dialer-3cx/health:
     get:
+    get:
       summary: Health check 3cx
       responses:
         '200':
           description: OK
   /outbound/health:
     get:
+    get:
       summary: Health check outbound
       responses:
         '200':
           description: OK
   /voice-hub/health:
+    get:
     get:
       summary: Health check voice hub
       responses:
