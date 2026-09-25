@@ -44,7 +44,7 @@ export default function OrganizationPage() {
   const [orgNameStatus, setOrgNameStatus] = useState<'loading' | 'ready' | 'error'>('loading');
 
   // Video Generation States
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [videoPrompt, setVideoPrompt] = useState('Um agente amigável sorrindo em um escritório moderno, com iluminação suave.');
   const [selectedImage, setSelectedImage] = useState<{base64: string, type: string, previewUrl: string} | null>(null);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);

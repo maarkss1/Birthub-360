@@ -27,7 +27,7 @@ export function TestSimulatorModal({ onClose }: TestSimulatorModalProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [, setTranscript] = useState('');
   
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<any | null>(null);
   
   // Audio waveform refs
   const audioContextRef = useRef<AudioContext | null>(null);
