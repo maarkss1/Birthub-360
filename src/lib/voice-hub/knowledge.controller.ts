@@ -16,9 +16,9 @@ export async function addKnowledgeDocumentHandler(req: Request, res: Response) {
      knowledge.push({ id: crypto.randomUUID(), name, keyword, content, addedAt: Date.now() });
 
      await updateAgentConfig(agentId, req.organizationId!, { knowledge });
-     res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
+     return res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
   } catch (err: unknown) {
-     res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+     return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -155,9 +155,9 @@ export async function uploadKnowledgeDocumentHandler(req: Request, res: Response
     });
 
     await updateAgentConfig(agentId, req.organizationId!, { knowledge });
-    res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
+    return res.json({ success: true, message: 'Documento adicionado à base de conhecimento do agente.' });
   } catch (err: unknown) {
-    res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+    return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 }
 
@@ -171,8 +171,8 @@ export async function testRagQueryHandler(req: Request, res: Response) {
      const knowledge = config.knowledge || [];
 
      const result = knowledgeConfidenceEngine.evaluateKnowledge(query, knowledge);
-     res.json({ success: true, result });
+     return res.json({ success: true, result });
   } catch (err: unknown) {
-     res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
+     return res.status(500).json({ error: err instanceof Error ? err.message : String(err) });
   }
 }

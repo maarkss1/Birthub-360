@@ -29,7 +29,7 @@ export const csrfProtection = (req: express.Request, res: express.Response, next
       // Origin in some browsers, but in production we require it for mutation requests since
       // this is our only CSRF signal — outside production, tooling (tests, curl, etc.) may not send it.
       if (isProduction) {
-        res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
+        return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
         return;
       }
       return next();
@@ -39,16 +39,16 @@ export const csrfProtection = (req: express.Request, res: express.Response, next
       try {
         const parsedOrigin = new URL(origin).host;
         if (parsedOrigin !== host) {
-          res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
+          return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
           return;
         }
       } catch {
-        res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
+        return res.status(403).json({ error: 'Validação de origem de segurança (CSRF) falhou.' });
         return;
       }
     }
   }
-  next();
+  return next();
 };
 
 function setAccessTokenCookie(res: express.Response, token: string) {
@@ -163,10 +163,10 @@ export const attachAuthIfPresent = async (req: express.Request, res: express.Res
   if (req.apiKeyId) {
     const limited = await isApiKeyRateLimited(req.apiKeyId);
     if (limited) {
-      res.status(429).json({ error: 'Limite de requisições excedido para esta chave de API. Tente novamente em breve.' });
+      return res.status(429).json({ error: 'Limite de requisições excedido para esta chave de API. Tente novamente em breve.' });
       return;
     }
   }
 
-  next();
+  return next();
 };

@@ -5,7 +5,7 @@ import { writeAuditLog } from '../services/audit.js';
 
 export async function getWorkflowHandler(req: Request, res: Response) {
   const workflow = await getWorkflow(req.organizationId!);
-  res.json({ workflow: workflow || null });
+  return res.json({ workflow: workflow || null });
 }
 
 export async function saveWorkflowHandler(req: Request, res: Response) {
@@ -15,7 +15,7 @@ export async function saveWorkflowHandler(req: Request, res: Response) {
   const data = { ...parsed.data, commitMessage: req.body.commitMessage };
   const workflow = await saveWorkflow(req.organizationId!, req.user!.id, data);
   writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_SAVE', { workflowId: workflow.id, name: workflow.name, version: workflow.version });
-  res.json({ success: true, workflow });
+  return res.json({ success: true, workflow });
 }
 
 export async function updateWorkflowHandler(req: Request, res: Response) {
@@ -25,7 +25,7 @@ export async function updateWorkflowHandler(req: Request, res: Response) {
   try {
     const workflow = await updateWorkflow(req.organizationId!, req.user!.id, parsed.data);
     writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_UPDATE', { workflowId: workflow.id, name: workflow.name });
-    res.json({ success: true, workflow });
+    return res.json({ success: true, workflow });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
@@ -36,7 +36,7 @@ export async function deleteWorkflowHandler(req: Request, res: Response) {
   try {
     const deleted = await removeWorkflow(req.organizationId!);
     writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_DELETE', { workflowId: deleted.id });
-    res.json({ success: true, message: 'Fluxo removido com sucesso.' });
+    return res.json({ success: true, message: 'Fluxo removido com sucesso.' });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
@@ -45,7 +45,7 @@ export async function deleteWorkflowHandler(req: Request, res: Response) {
 
 export async function getWorkflowHistoryHandler(req: Request, res: Response) {
   const history = await getWorkflowHistory(req.organizationId!);
-  res.json({ history });
+  return res.json({ history });
 }
 
 export async function restoreWorkflowVersionHandler(req: Request, res: Response) {
@@ -55,7 +55,7 @@ export async function restoreWorkflowVersionHandler(req: Request, res: Response)
   try {
     const workflow = await restoreWorkflowVersion(req.organizationId!, req.user!.id, Number(version));
     writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_RESTORE', { workflowId: workflow.id, restoredVersion: version });
-    res.json({ success: true, workflow });
+    return res.json({ success: true, workflow });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
@@ -66,7 +66,7 @@ export async function publishWorkflowHandler(req: Request, res: Response) {
   try {
     const workflow = await publishWorkflow(req.organizationId!, req.user!.id);
     writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_PUBLISH', { workflowId: workflow.id, version: workflow.version });
-    res.json({ success: true, workflow });
+    return res.json({ success: true, workflow });
   } catch (err: any) {
     if (err instanceof ValidationFailedError) {
       // 422: request was well-formed, but the workflow content fails ValidationEngine. The
@@ -87,7 +87,7 @@ export async function publishWorkflowHandler(req: Request, res: Response) {
 export async function listWorkflowVersionsHandler(req: Request, res: Response) {
   try {
     const versions = await listWorkflowVersions(req.organizationId!, String(req.params.id));
-    res.json({ versions });
+    return res.json({ versions });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;
@@ -110,7 +110,7 @@ export async function rollbackWorkflowVersionHandler(req: Request, res: Response
       rolledBackToVersion: versionParam,
       newVersion: workflow.version,
     });
-    res.json({ success: true, workflow });
+    return res.json({ success: true, workflow });
   } catch (err: any) {
     if (err instanceof ValidationFailedError) {
       return res.status(422).json({ error: err.message, issues: err.issues });
@@ -124,7 +124,7 @@ export async function duplicateWorkflowHandler(req: Request, res: Response) {
   try {
     const workflow = await duplicateWorkflow(req.organizationId!, req.user!.id, req.body.sourceId); // mock param
     writeAuditLog(req.organizationId, req.user!.id, 'WORKFLOW_DUPLICATE', { originalId: req.body.sourceId, newId: workflow.id });
-    res.json({ success: true, workflow });
+    return res.json({ success: true, workflow });
   } catch (err: any) {
     if (err instanceof NotFoundError) return res.status(404).json({ error: err.message });
     throw err;

@@ -29,7 +29,7 @@ function parsePagination(rawPage: unknown, rawPageSize: unknown): { page: number
 // not an error — the frontend renders it as an empty state (AGENTS.md §14).
 export async function getWalletSummaryHandler(req: Request, res: Response) {
   const wallet = await getWalletSummary(req.organizationId!);
-  res.json({ wallet });
+  return res.json({ wallet });
 }
 
 // GET /api/billing/transactions — paginated "Histórico de Uso" table, tenant-scoped
@@ -37,7 +37,7 @@ export async function getWalletSummaryHandler(req: Request, res: Response) {
 export async function listTransactionsHandler(req: Request, res: Response) {
   const { page, pageSize } = parsePagination(req.query.page, req.query.pageSize);
   const { items, total } = await listTransactions(req.organizationId!, { page, pageSize });
-  res.json({
+  return res.json({
     items,
     page,
     pageSize,
@@ -49,7 +49,7 @@ export async function listTransactionsHandler(req: Request, res: Response) {
 // GET /api/billing/plans — global plan catalog for the "Gerenciar Assinatura" flow.
 export async function listPlansHandler(_req: Request, res: Response) {
   const plans = await listAvailablePlans();
-  res.json({ plans });
+  return res.json({ plans });
 }
 
 // POST /api/billing/change-plan — upgrade/downgrade. Only `effectiveAt: 'immediate'` is
@@ -78,7 +78,7 @@ export async function changePlanHandler(req: Request, res: Response) {
     }).catch((err) => {
       logger.error('Failed to create plan-change notification', { err, userId: req.user!.id });
     });
-    res.json({ wallet });
+    return res.json({ wallet });
   } catch (err: any) {
     if (err instanceof PlanNotFoundError) return res.status(404).json({ error: err.message });
     if (err instanceof ProrationNotSupportedError) return res.status(400).json({ error: err.message });

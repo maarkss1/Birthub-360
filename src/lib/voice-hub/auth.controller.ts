@@ -26,13 +26,13 @@ export async function registerHandler(req: Request, res: Response) {
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
     setCookie(res, 'refresh_token', result.refreshToken, REFRESH_TOKEN_MAX_AGE_MS);
-    res.json(result);
+    return res.json(result);
   } catch (err: unknown) {
     logger.error('Register Error', err);
     if (err instanceof AuthError) {
       return res.status(err.status).json({ error: err.message });
     }
-    res.status(500).json({ error: 'Erro interno no servidor' });
+    return res.status(500).json({ error: 'Erro interno no servidor' });
   }
 }
 
@@ -51,13 +51,13 @@ export async function loginHandler(req: Request, res: Response) {
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
     setCookie(res, 'refresh_token', result.refreshToken, REFRESH_TOKEN_MAX_AGE_MS);
-    res.json(result);
+    return res.json(result);
   } catch (err: unknown) {
     logger.error('Login Error', err);
     if (err instanceof AuthError) {
       return res.status(err.status).json({ error: err.message });
     }
-    res.status(500).json({ error: 'Erro interno no servidor' });
+    return res.status(500).json({ error: 'Erro interno no servidor' });
   }
 }
 
@@ -78,10 +78,10 @@ export async function refreshHandler(req: Request, res: Response) {
     }
     setCookie(res, 'access_token', result.token, ACCESS_TOKEN_MAX_AGE_MS);
     setLoggedInCookie(res);
-    res.json(result);
+    return res.json(result);
   } catch (err: any) {
     logger.error('Refresh Token Error', err);
-    res.status(500).json({ error: 'Erro interno no servidor.' });
+    return res.status(500).json({ error: 'Erro interno no servidor.' });
   }
 }
 
@@ -89,7 +89,7 @@ export async function logoutHandler(req: Request, res: Response) {
   res.clearCookie('access_token');
   res.clearCookie('refresh_token');
   res.clearCookie('logged_in');
-  res.json({ success: true, message: 'Logout realizado com sucesso' });
+  return res.json({ success: true, message: 'Logout realizado com sucesso' });
 }
 
 // Also resolves the caller's effective Permission set live (never trusted from the JWT claim) so
@@ -100,5 +100,5 @@ export async function logoutHandler(req: Request, res: Response) {
 export async function meHandler(req: Request, res: Response) {
   if (!req.user) return res.json({ user: null });
   const permissions = await getPermissionsForRoleName(req.user.role, req.user.organizationId);
-  res.json({ user: { ...req.user, permissions } });
+  return res.json({ user: { ...req.user, permissions } });
 }

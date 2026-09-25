@@ -3,11 +3,11 @@ import type { Redis } from 'ioredis';
 import { prisma } from '@/lib/prisma';
 
 export function healthHandler(_req: Request, res: Response) {
-  res.status(200).json({ status: 'ok' });
+  return res.status(200).json({ status: 'ok' });
 }
 
 export function liveHandler(_req: Request, res: Response) {
-  res.status(200).json({ status: 'ok' });
+  return res.status(200).json({ status: 'ok' });
 }
 
 export interface PlatformHealthResult {
@@ -43,6 +43,6 @@ export async function checkPlatformHealth(redisClient: Redis): Promise<PlatformH
 export function makeReadyHandler(redisClient: Redis) {
   return async (_req: Request, res: Response) => {
     const { ready, checks } = await checkPlatformHealth(redisClient);
-    res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'not_ready', checks });
+    return res.status(ready ? 200 : 503).json({ status: ready ? 'ready' : 'not_ready', checks });
   };
 }

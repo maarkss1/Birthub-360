@@ -7,7 +7,7 @@ import { otelCollector } from '../../lib/voice-runtime/otel.js';
 // read methods instead of ever calling getSpans()/getMetrics() unfiltered. req.organizationId! is safe:
 // requireTenant already rejects the request with 401 before this handler runs if it is missing.
 export function observabilityMetricsHandler(req: Request, res: Response) {
-  res.json({
+  return res.json({
     spans: otelCollector.getSpans(req.organizationId!),
     metrics: otelCollector.getMetrics(req.organizationId!)
   });

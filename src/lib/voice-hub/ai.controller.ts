@@ -41,16 +41,16 @@ export async function chatHandler(req: Request, res: Response) {
       req.organizationId!
     );
 
-    res.json(gatewayResponse);
+    return res.json(gatewayResponse);
   } catch (error: unknown) {
     logger.error('Chat handler error:', error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }
 
 export async function getAiConsentHandler(req: Request, res: Response) {
   const consent = await getAiConsent(req.organizationId!);
-  res.json({ consent });
+  return res.json({ consent });
 }
 
 export async function setAiConsentHandler(req: Request, res: Response) {
@@ -63,12 +63,12 @@ export async function setAiConsentHandler(req: Request, res: Response) {
     ? await grantAiConsent(req.organizationId!, req.user!.id)
     : await revokeAiConsent(req.organizationId!, req.user!.id);
 
-  res.json({ success: true, consent });
+  return res.json({ success: true, consent });
 }
 
 export async function ttsHandler(req: Request, res: Response) {
   // Retorna um áudio vazio para evitar erros de decodificação no frontend do MVP
-  res.json({ audioBase64: "" });
+  return res.json({ audioBase64: "" });
 }
 
 export async function generateMusicHandler(req: Request, res: Response) {
@@ -95,10 +95,10 @@ export async function generateMusicHandler(req: Request, res: Response) {
       }
     }
 
-    res.json({ audioBase64, mimeType });
+    return res.json({ audioBase64, mimeType });
   } catch (error: unknown) {
     logger.error('Lyria API error:', error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }
 
@@ -115,10 +115,10 @@ export async function generateVideoHandler(req: Request, res: Response) {
       config: { numberOfVideos: 1, resolution: '720p', aspectRatio: '16:9' },
     });
 
-    res.json({ operationName: operation.name });
+    return res.json({ operationName: operation.name });
   } catch (error: unknown) {
     logger.error('Veo start error:', error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }
 
@@ -132,9 +132,9 @@ export async function videoStatusHandler(req: Request, res: Response) {
     op.name = operationName;
     const updated = await ai.operations.getVideosOperation({ operation: op });
 
-    res.json({ done: updated.done, error: updated.error });
+    return res.json({ done: updated.done, error: updated.error });
   } catch (error: unknown) {
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }
 
@@ -168,7 +168,7 @@ export async function videoDownloadHandler(req: Request, res: Response) {
     );
   } catch (error: unknown) {
     logger.error('Video download error:', error);
-    res.status(500).send(getErrorMessage(error));
+    return res.status(500).send(getErrorMessage(error));
   }
 }
 
@@ -230,10 +230,10 @@ Retorne os mesmos nós, mantendo seus IDs e posições intactos, mas modificando
     });
 
     const result = JSON.parse(response.text || '{}');
-    res.json(result);
+    return res.json(result);
   } catch (error: unknown) {
     logger.error('Refactor API error:', error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }
 
@@ -320,9 +320,9 @@ Regras de posicionamento do layout:
     });
 
     const result = JSON.parse(response.text || '{}');
-    res.json(result);
+    return res.json(result);
   } catch (error: unknown) {
     logger.error('Generate Workflow API error:', error);
-    res.status(500).json({ error: getErrorMessage(error) });
+    return res.status(500).json({ error: getErrorMessage(error) });
   }
 }

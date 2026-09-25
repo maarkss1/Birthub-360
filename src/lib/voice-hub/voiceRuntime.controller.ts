@@ -10,7 +10,7 @@ function requireOrganizationId(req: Request, res: Response): string | undefined 
   const organizationId = req.organizationId;
 
   if (!organizationId) {
-    res.status(401).json({ error: 'Organization context is required.' });
+    return res.status(401).json({ error: 'Organization context is required.' });
     return undefined;
   }
 
@@ -22,7 +22,7 @@ export async function getVoiceRuntimeHandler(req: Request, res: Response) {
   if (!organizationId) return;
 
   const config = await getVoiceRuntimeConfig(organizationId, req.user?.id);
-  res.json({ config });
+  return res.json({ config });
 }
 
 export async function createVoiceRuntimeHandler(req: Request, res: Response) {
@@ -41,7 +41,7 @@ export async function createVoiceRuntimeHandler(req: Request, res: Response) {
     false,
   );
 
-  res.json({ success: true, config });
+  return res.json({ success: true, config });
 }
 
 export async function updateVoiceRuntimeHandler(req: Request, res: Response) {
@@ -60,7 +60,7 @@ export async function updateVoiceRuntimeHandler(req: Request, res: Response) {
     true,
   );
 
-  res.json({ success: true, config });
+  return res.json({ success: true, config });
 }
 
 export async function resetVoiceRuntimeHandler(req: Request, res: Response) {
@@ -68,7 +68,7 @@ export async function resetVoiceRuntimeHandler(req: Request, res: Response) {
   if (!organizationId) return;
 
   await resetVoiceRuntimeConfig(organizationId, req.user?.id);
-  res.json({
+  return res.json({
     success: true,
     message: 'Configurações de voz restauradas ao padrão.',
   });

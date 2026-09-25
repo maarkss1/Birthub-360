@@ -23,7 +23,7 @@ router.post('/chat', requireTenant, chatHandler);
 // real tenant-scoped TTS implementation is wired here; phone-call synthesis uses the voice runtime
 // instead of this endpoint.
 router.post('/tts', requireTenant, (_req, res) => {
-  res.status(501).json({
+  return res.status(501).json({
     error: 'TTS HTTP ainda não está disponível neste endpoint. Use o runtime de voz configurado para chamadas.',
     code: 'TTS_HTTP_NOT_IMPLEMENTED',
   });

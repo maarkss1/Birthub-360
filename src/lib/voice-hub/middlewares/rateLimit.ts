@@ -25,11 +25,11 @@ export const createRateLimiter = (keyPrefix: string, limit: number, windowSecond
         await redisClient.expire(key, windowSeconds);
       }
       if (current > limit) {
-        res.status(429).json({ error: 'Limite de requisições excedido. Tente novamente em um minuto.' });
+        return res.status(429).json({ error: 'Limite de requisições excedido. Tente novamente em um minuto.' });
         return;
       }
-      next();
+      return next();
     } catch {
-      next();
+      return next();
     }
   };
