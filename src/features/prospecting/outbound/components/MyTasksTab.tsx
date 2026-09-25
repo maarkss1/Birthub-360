@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Calendar, CheckCircle2, Circle, Building2 } from 'lucide-react';
-import { LeadTask, User } from '../types';
+import type { LeadTask, User } from '../types';
 
 interface MyTasksTabProps {
   user: User;

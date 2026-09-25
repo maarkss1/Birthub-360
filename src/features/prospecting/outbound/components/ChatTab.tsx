@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { AIConfig, ChatMessage, ChatSession, ThemeMode } from '../types';
+import type React from 'react';
+import { useState, useEffect, useRef } from 'react';
+import type { AIConfig, ChatMessage, ChatSession, ThemeMode } from '../types';
 import { AtlasLogo } from './AtlasLogo';
 import { 
   Send, 

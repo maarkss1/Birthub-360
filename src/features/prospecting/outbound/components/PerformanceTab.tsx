@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   LineChart, Line, Legend, AreaChart, Area, PieChart, Pie, Cell
 } from 'recharts';
-import { Lead } from '../types';
+import type { Lead } from '../types';
 import { TrendingUp, Target, Activity, CheckCircle2, User } from 'lucide-react';
 
 interface PerformanceTabProps {

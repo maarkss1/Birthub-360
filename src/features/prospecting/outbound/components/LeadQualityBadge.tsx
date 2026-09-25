@@ -11,11 +11,12 @@ import {
   Sparkles, 
   UserCheck, 
   Mail, 
-  Linkedin, 
+  // Linkedin removed
   Phone, 
   Globe, 
   Briefcase 
 } from 'lucide-react';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
 
 interface LeadQualityBadgeProps {
   lead: Lead;

@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import type React from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Save, Upload, Shield, Video, Loader2, AlertTriangle, Lock } from 'lucide-react';
 import { useSessionStore } from '../../store/useSessionStore';
 import { logger } from '../../../lib/logger';

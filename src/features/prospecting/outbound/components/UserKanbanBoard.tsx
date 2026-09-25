@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Lead, User } from '../types';
+import type { Lead, User } from '../types';
 import { LeadCard } from './LeadCard';
 import { Loader2 } from 'lucide-react';
 import { computeNextAction, urgencyWeight } from '../utils/nextAction';

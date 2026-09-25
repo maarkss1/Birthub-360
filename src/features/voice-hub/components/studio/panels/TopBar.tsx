@@ -1,6 +1,6 @@
 import React from 'react';
 import { Play, Settings, Share, Download, MessageSquare, LayoutGrid, Search, Maximize, Minus, Plus, Loader2, CheckCircle2, History } from 'lucide-react';
-import { FlowHealthScore, ValidationIssue } from '../../../lib/studio/types';
+import type { FlowHealthScore, ValidationIssue } from '../../../lib/studio/types';
 import { ShieldAlert } from 'lucide-react';
 
 interface TopBarProps {

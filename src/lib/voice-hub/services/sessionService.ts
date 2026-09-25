@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import * as sessionRepository from '../repositories/sessionRepository.js';
 
 export class NotFoundError extends Error {}

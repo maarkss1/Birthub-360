@@ -1,4 +1,5 @@
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Layers, UserX, Compass, Loader2 } from 'lucide-react';
 import { BlockedState } from '../../../components/ui/BlockedState';

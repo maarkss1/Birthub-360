@@ -3,7 +3,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend, LineChart, Line
 } from 'recharts';
-import { Lead } from '../types';
+import type { Lead } from '../types';
 
 interface MetricsChartProps {
   leads: Lead[];

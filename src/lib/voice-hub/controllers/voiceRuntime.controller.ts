@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { voiceRuntimeSchema } from '../validators/index.js';
 import { getVoiceRuntimeConfig, saveVoiceRuntimeConfig, resetVoiceRuntimeConfig } from '../services/settingService.js';
 

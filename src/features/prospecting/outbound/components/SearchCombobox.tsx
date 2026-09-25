@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ThemeMode } from '../types';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import type { ThemeMode } from '../types';
 import { ChevronDown, Search, Check, X } from 'lucide-react';
 
 export interface ComboboxOption {

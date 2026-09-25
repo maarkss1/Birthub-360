@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { addComment, resolveComment, lockNode, unlockNode, ConflictError } from '../services/workflowCollabService.js';
 import { NotFoundError } from '../services/workflowService.js';
 

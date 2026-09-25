@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { saveWorkflowSchema } from '../validators/index.js';
 import { getWorkflow, saveWorkflow, updateWorkflow, removeWorkflow, getWorkflowHistory, restoreWorkflowVersion, duplicateWorkflow, publishWorkflow, listWorkflowVersions, rollbackToVersion, NotFoundError, ValidationFailedError } from '../services/workflowService.js';
 import { writeAuditLog } from '../services/audit.js';

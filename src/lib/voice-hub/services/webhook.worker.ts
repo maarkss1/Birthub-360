@@ -1,9 +1,9 @@
 import { createHmac } from 'crypto';
-import { Worker, Job, UnrecoverableError } from 'bullmq';
+import { Worker, type Job, UnrecoverableError } from 'bullmq';
 import { getRedisConnectionOptions } from '../lib/env.js';
 import { logger } from '@/lib/logger';
 import { isPrivateOrReservedHost } from '../validators/index.js';
-import { WebhookPayload } from './webhook.service.js';
+import type { WebhookPayload } from './webhook.service.js';
 import { findActiveSigningSecretHash } from './webhookEndpointService.js';
 import { recordDeliveryResult } from '../repositories/webhookEndpointRepository.js';
 

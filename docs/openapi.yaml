@@ -9961,3 +9961,26 @@ components:
           type: string
           maxLength: 200
           description: Quando presente, permite ao agente SDR do enxame buscar o contexto real do lead no CRM.
+
+  /dialer-3cx/health:
+    get:
+    get:
+      summary: Health check 3cx
+      responses:
+        '200':
+          description: OK
+  /outbound/health:
+    get:
+    get:
+      summary: Health check outbound
+      responses:
+        '200':
+          description: OK
+  /voice-hub/health:
+    get:
+    get:
+      summary: Health check voice hub
+      responses:
+        '200':
+          description: OK
+

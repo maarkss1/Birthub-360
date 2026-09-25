@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { findTenantById } from '../repositories/organizationRepository.js';
 
 export async function listOrganizationsHandler(req: Request, res: Response) {

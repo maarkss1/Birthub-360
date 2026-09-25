@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { callLogSchema } from '../validators/index.js';
 import { listCallLogs, createCallLog, updateCallLog, deleteCallLog, NotFoundError } from '../services/callLogService.js';
 import { writeAuditLog } from '../services/audit.js';

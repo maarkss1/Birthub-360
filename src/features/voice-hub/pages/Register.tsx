@@ -1,4 +1,5 @@
-import React, { useId, useState } from 'react';
+import type React from 'react';
+import { useId, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
 import { auth } from '../lib/auth';

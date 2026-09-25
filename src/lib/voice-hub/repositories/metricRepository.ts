@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 // Metrics with userId === null are tenant-wide events (no single user to attribute them to —

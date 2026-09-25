@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { Lock, Mail, Loader2, ArrowRight, Sun, Moon, Building2, Sparkles, ListChecks } from 'lucide-react';
-import { User, ThemeMode } from '../types';
+import type { User, ThemeMode } from '../types';
 import { AtlasLogo } from './AtlasLogo';
 import { TotalTracLogo } from './TotalTracLogo';
 

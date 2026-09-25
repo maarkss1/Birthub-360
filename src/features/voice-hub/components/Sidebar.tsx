@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Users, BarChart3, Mic, Settings, BookOpen, CreditCard, Code,

@@ -6,7 +6,7 @@
 // route is reached. Same sliding-window pattern (INCR + EXPIRE on first hit), same fail-open
 // behavior on a Redis error (a rate-limiter outage must never turn into a full outage of the
 // route it guards).
-import express from 'express';
+import type express from 'express';
 import { Redis } from 'ioredis';
 import { getRedisUrl, getRedisRetryStrategy } from '../lib/env.js';
 import { logger } from '@/lib/logger';

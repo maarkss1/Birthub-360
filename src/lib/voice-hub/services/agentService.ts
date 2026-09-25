@@ -1,5 +1,5 @@
 import * as agentRepository from '../repositories/agentRepository.js';
-import { AgentConfiguration } from '../types/agent.js';
+import type { AgentConfiguration } from '../types/agent.js';
 
 export function listAgents(organizationId: string) {
   return agentRepository.listAgentsForTenant(organizationId);

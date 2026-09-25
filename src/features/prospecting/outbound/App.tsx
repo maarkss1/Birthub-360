@@ -13,7 +13,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { ReportErrorButton } from './components/ReportErrorButton';
 import { UserKanbanBoard } from './components/UserKanbanBoard';
 import { MyTasksTab } from './components/MyTasksTab';
-import { AIConfig, Lead, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from './types';
+import type { AIConfig, Lead, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from './types';
 import { resolveBitrixWebhook } from './utils/bitrix';
 import confetti from 'canvas-confetti';
 

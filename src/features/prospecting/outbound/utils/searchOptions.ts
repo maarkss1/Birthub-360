@@ -1,4 +1,4 @@
-import { SearchSchemaConfig } from '../types';
+import type { SearchSchemaConfig } from '../types';
 
 export const SEARCH_SCHEMA_CONFIG: SearchSchemaConfig = {
   // 1. SEGMENTO

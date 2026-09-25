@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { brandColorSchema } from '../validators/index.js';
 import { getBrandColor, saveBrandColor, resetBrandColor } from '../services/settingService.js';
 

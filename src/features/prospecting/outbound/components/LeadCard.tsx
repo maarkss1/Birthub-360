@@ -1,11 +1,12 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Lead, LeadStage, ThemeMode, IntegrationsConfig, AIConfig, User, LeadTask } from '../types';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import type { Lead, LeadStage, ThemeMode, IntegrationsConfig, AIConfig, User, LeadTask } from '../types';
 import { LeadQualityBadge } from './LeadQualityBadge';
 import { LeadStageAndTags } from './LeadStageAndTags';
 import { LeadScoresBadge } from './LeadScoresBadge';
 import { RequirementEvaluationsBadge } from './RequirementEvaluationsBadge';
 import { LeadEvidenceModal } from './LeadEvidenceModal';
-import { BitrixExportStatusBadge, BitrixExportStatus } from './BitrixExportStatusBadge';
+import { BitrixExportStatusBadge, type BitrixExportStatus } from './BitrixExportStatusBadge';
 import { resolveBitrixWebhook } from '../utils/bitrix';
 import { computeNextAction } from '../utils/nextAction';
 import { 
@@ -14,7 +15,7 @@ import {
   MapPin, 
   UserCheck, 
   Mail, 
-  Linkedin, 
+  // Linkedin removed
   Copy, 
   Check, 
   Edit3, 
@@ -43,6 +44,7 @@ import {
   Shield, ShieldAlert, ListChecks, Flame,
   Mic, MessageCircle, Calendar, Plus, Circle
 } from 'lucide-react';
+import { LinkedinIcon as Linkedin } from '../../../../components/ui/icons/LinkedinIcon';
 import confetti from 'canvas-confetti';
 
 // canvas-confetti draws on a <canvas>, which doesn't resolve CSS var() — so we read the

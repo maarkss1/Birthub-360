@@ -1,7 +1,7 @@
-import { Handle, Position, NodeProps } from '@xyflow/react';
-import { LucideIcon } from 'lucide-react';
+import { Handle, Position, type NodeProps } from '@xyflow/react';
+import type { LucideIcon } from 'lucide-react';
 import * as Icons from 'lucide-react';
-import { StudioNode } from '../../../lib/studio/types';
+import type { StudioNode } from '../../../lib/studio/types';
 
 export type UnifiedNodeProps = NodeProps<StudioNode> & {
   iconName: string;

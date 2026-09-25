@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import { Request, Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 
 // Auth & RBAC (CPI follow-up) — recomendação registrada na Wave 11 (Security
 // Hardening, ver CPI_BACKLOG.md): antes desta wave, POST /auth/login conferia

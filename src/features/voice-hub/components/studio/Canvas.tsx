@@ -4,9 +4,9 @@ import {
   MiniMap,
   Controls,
   Background,
-  Connection,
-  NodeChange,
-  EdgeChange,
+  type Connection,
+  type NodeChange,
+  type EdgeChange,
   applyNodeChanges,
   applyEdgeChanges,
   BackgroundVariant,
@@ -17,9 +17,9 @@ import {
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 
-import { validationEngine } from '../../lib/studio/ValidationEngine';
+import { validationEngine } from '../../../../lib/studio/ValidationEngine';
 import { useStudioStore } from '../../store/useStudioStore';
-import { StudioNode, StudioEdge } from '../../lib/studio/types';
+import type { StudioNode, StudioEdge } from '../../lib/studio/types';
 import { 
   StartNode, EndNode, PromptNode, ConditionNode, ToolNode, LlmNode, VoiceNode, 
   QuestionNode, SwitchNode, MemoryNode, KnowledgeNode, HumanHandoffNode 

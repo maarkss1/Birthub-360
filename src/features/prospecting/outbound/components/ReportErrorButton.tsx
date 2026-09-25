@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { Bug, X, Send, CheckCircle2 } from 'lucide-react';
-import { User } from '../types';
+import type { User } from '../types';
 
 interface ReportErrorButtonProps {
   user?: User | null;

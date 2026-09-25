@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { AIConfig } from '../types';
+import type React from 'react';
+import { useState } from 'react';
+import type { AIConfig } from '../types';
 import { 
   Terminal, 
   Play, 

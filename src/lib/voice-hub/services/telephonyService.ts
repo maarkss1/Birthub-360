@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import * as agentRepository from '../repositories/agentRepository.js';
 import * as sessionRepository from '../repositories/sessionRepository.js';
 import * as callLogService from './callLogService.js';

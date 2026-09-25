@@ -1,6 +1,6 @@
 import React from 'react';
 import { AlertCircle, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { ValidationIssue } from '../../../lib/studio/types';
+import type { ValidationIssue } from '../../../lib/studio/types';
 
 interface ValidationIssuesListProps {
   issues: ValidationIssue[];

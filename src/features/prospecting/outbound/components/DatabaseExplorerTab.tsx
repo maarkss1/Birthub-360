@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { DatabaseStats, QueryResult, ThemeMode } from '../types';
+import type React from 'react';
+import { useState, useEffect } from 'react';
+import type { DatabaseStats, QueryResult, ThemeMode } from '../types';
 import { 
   Database, 
   Play, 

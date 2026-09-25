@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Lead, AIConfig, ThemeMode, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from '../types';
+import type React from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import type { Lead, AIConfig, ThemeMode, IntegrationsConfig, LeadStage, User, ProspectFilters, ProspectRunMeta } from '../types';
 import { LeadCard } from './LeadCard';
 import { resolveBitrixWebhook } from '../utils/bitrix';
 import { SearchCombobox } from './SearchCombobox';

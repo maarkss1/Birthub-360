@@ -178,7 +178,7 @@ export function hexToRgb(hex: string): { r: number; g: number; b: number } | nul
 /** WCAG relative luminance (0 = black, 1 = white) for an sRGB channel in the 0-255 range. */
 function channelLuminance(channel255: number): number {
   const c = channel255 / 255;
-  return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
 }
 
 /** WCAG 2.x relative luminance of a `#rrggbb` color. Falls back to mid-gray luminance if malformed. */

@@ -2,8 +2,8 @@ import type { CampaignRepository } from "../ports/CampaignRepository.js";
 import type { CallAttemptRepository } from "../ports/CallAttemptRepository.js";
 import type { DialerProvider } from "../ports/DialerProvider.js";
 import type { CallingHoursPolicy } from "../../domain/policies/CallingHoursPolicy.js";
-import { SyncCallStatuses } from "./SyncCallStatuses.js";
-import { DialNextBatch } from "./DialNextBatch.js";
+import type { SyncCallStatuses } from "./SyncCallStatuses.js";
+import type { DialNextBatch } from "./DialNextBatch.js";
 
 export interface RunDialerCycleConfig {
   agentDns: readonly string[];

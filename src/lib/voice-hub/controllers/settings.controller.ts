@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { userSettingsSchema } from '../validators/index.js';
 import { getUserSettings, saveUserSettings, resetUserSettings } from '../services/settingService.js';
 

@@ -6,7 +6,7 @@
 // `../repositories/billingRepository.ts` (Clean Architecture, AGENTS.md §2); this file owns
 // mapping to the API-facing DTOs below and the business rules (idempotency guard, plan
 // validation, session gating).
-import { Plan, Transaction } from '@prisma/client';
+import type { Plan, Transaction } from '@prisma/client';
 import {
   createTransactionAtomic,
   findActivePlans,
@@ -16,7 +16,7 @@ import {
   findWalletByTenant,
   isUniqueConstraintViolation,
   upsertWalletPlan,
-  WalletWithPlan,
+  type WalletWithPlan,
 } from '../repositories/billingRepository.js';
 
 export type PlanStatus = 'inactive' | 'active' | 'past_due' | 'canceled' | 'trialing';

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { changePlanSchema } from '../validators/index.js';
 import { logger } from '@/lib/logger';
 import { writeAuditLog } from '../services/audit.js';

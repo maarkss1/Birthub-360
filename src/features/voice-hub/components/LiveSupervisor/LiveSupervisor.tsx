@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AlertCircle, ShieldAlert, HeartPulse, Activity, Zap, Shield, Clock, Wifi, WifiOff, Loader2, Lock } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import { io, Socket } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 import { useSessionStore } from '../../store/useSessionStore';
 import { logger } from '../../../../lib/logger';
 

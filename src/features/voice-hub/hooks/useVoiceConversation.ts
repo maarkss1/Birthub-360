@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Question } from '../types';
+import type { Question } from '../types';
 import { logger } from '../../../lib/logger';
 
 const POSITIVE_WORDS = ['sim', 'claro', 'ótimo', 'bom', 'gostei', 'certeza', 'ok', 'beleza', 'excelente', 'rápido'];

@@ -1,5 +1,5 @@
 import React from 'react';
-import { RecentSearch, ThemeMode } from '../types';
+import type { RecentSearch, ThemeMode } from '../types';
 import { 
   X, 
   Search, 

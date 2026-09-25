@@ -1,5 +1,5 @@
 import * as workflowRepository from '../repositories/workflowRepository.js';
-import { validationEngine } from '../../lib/studio/ValidationEngine.js';
+import { validationEngine } from '../../studio/ValidationEngine.js';
 import { validateRuntimeCompatibility } from './workflowRuntimeService.js';
 import { logger } from '@/lib/logger';
 import type { StudioNode, StudioEdge, ValidationIssue } from '../../lib/studio/types.js';

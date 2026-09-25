@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import {
   Play, Pause, Square, AlertCircle, List,
   Terminal, BarChart2, Sparkles, Variable, Plus, Trash2, FastForward
 } from 'lucide-react';
 import { useStudioStore } from '../../../store/useStudioStore';
-import { validationEngine } from '../../../lib/studio/ValidationEngine';
+import { validationEngine } from '../../../../../lib/studio/ValidationEngine';
 import { motion, AnimatePresence } from 'motion/react';
 import { ValidationIssuesList } from './ValidationIssuesList';
 

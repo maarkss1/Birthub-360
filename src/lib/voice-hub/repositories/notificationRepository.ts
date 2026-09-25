@@ -11,7 +11,7 @@
 // `req.user.id` (never from a client-supplied payload) — the same invariant already documented
 // there and enforced by notificationService/notification.controller, never repeated or relaxed
 // here.
-import { Notification, Prisma } from '@prisma/client';
+import type { Notification, Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export function createNotification(input: {

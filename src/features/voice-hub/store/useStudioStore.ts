@@ -1,7 +1,7 @@
 import { create } from 'zustand';
-import { StudioNode, StudioEdge, NodeType, ValidationIssue, WorkflowVersionSummary } from '../lib/studio/types';
-import { validationEngine } from '../lib/studio/ValidationEngine';
-import { addEdge, Connection } from '@xyflow/react';
+import type { StudioNode, StudioEdge, NodeType, ValidationIssue, WorkflowVersionSummary } from '../lib/studio/types';
+import { validationEngine } from '../../../lib/studio/ValidationEngine';
+import { addEdge, type Connection } from '@xyflow/react';
 import { logger } from '../../../lib/logger';
 
 export type NodeLifecycleState = 

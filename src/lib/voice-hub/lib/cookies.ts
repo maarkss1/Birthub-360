@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import type { Response } from 'express';
 
 // Mirrors the JWT expiry set in src/lib/auth-tokens.ts (generateToken/generateRefreshToken)
 // so the cookie never outlives — or expires long before — the token it carries.

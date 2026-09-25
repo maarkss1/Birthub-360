@@ -27,7 +27,7 @@
 // importing this function and calling it with that user's id — no parallel notification system to
 // build, per this agent's explicit instruction not to construct "uma versão só para billing e
 // outra pro resto".
-import { Notification } from '@prisma/client';
+import type { Notification } from '@prisma/client';
 import {
   countUnreadForUser,
   createNotification as createNotificationRow,

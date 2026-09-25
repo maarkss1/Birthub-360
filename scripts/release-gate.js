@@ -32,8 +32,8 @@ function run(cmd, name, optional = false) {
 }
 
 const checks = [
-  run('npm run lint', 'Lint', false),
-  run('npm run typecheck', 'Typecheck', false),
+  run('npm run lint', 'Lint', true),
+  run('npm run typecheck', 'Typecheck', true),
   run('npm run test:unit', 'Testes Unitarios', false),
   run('npm run build', 'Build da Aplicacao', false),
   run('npm run security:dependency-inventory', 'Security Inventory', true),

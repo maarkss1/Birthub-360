@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import twilio from 'twilio';
 import * as telephonyService from '../services/telephonyService.js';
 import type { TransferDetails, VoiceOverride } from '../services/workflowRuntimeService.js';

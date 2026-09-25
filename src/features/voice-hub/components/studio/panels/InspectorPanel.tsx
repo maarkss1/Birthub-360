@@ -1,9 +1,10 @@
-import React, { useId, useState } from 'react';
+import type React from 'react';
+import { useId, useState } from 'react';
 import {
   Settings2, Code, Activity, Variable, Plus,
   BookOpen, Link, Trash2, ShieldAlert
 } from 'lucide-react';
-import { StudioNode } from '../../../lib/studio/types';
+import type { StudioNode } from '../../../lib/studio/types';
 import { useStudioStore, nodeRegistry } from '../../../store/useStudioStore';
 import { motion, AnimatePresence } from 'motion/react';
 

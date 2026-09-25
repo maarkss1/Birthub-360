@@ -1,5 +1,5 @@
-import { NodeProps } from '@xyflow/react';
-import { StudioNode } from '../../../lib/studio/types';
+import type { NodeProps } from '@xyflow/react';
+import type { StudioNode } from '../../../lib/studio/types';
 import { UnifiedNode } from './UnifiedNode';
 
 export function StartNode(props: NodeProps<StudioNode>) {

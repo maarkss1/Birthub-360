@@ -1,6 +1,6 @@
-import express from 'express';
+import type express from 'express';
 import { Redis } from 'ioredis';
-import { verifyToken, TokenPayload } from '../lib/auth-tokens.js';
+import { verifyToken, type TokenPayload } from '../lib/auth-tokens.js';
 import { refreshSession } from '../services/authService.js';
 import { setCookie, ACCESS_TOKEN_MAX_AGE_MS } from '../lib/cookies.js';
 import { authenticateApiKey, isApiKeyFormat } from '../services/apiKeyService.js';

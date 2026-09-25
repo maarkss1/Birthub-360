@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bot, Wand2, X, ChevronRight, Mic, Layout, Sparkles } from 'lucide-react';
-import { AgentConfig, AgentTemplate } from '../types';
+import type { AgentConfig, AgentTemplate } from '../types';
 
 const INITIAL_CONFIG: AgentConfig = {
   name: 'Novo Agente Virtual',

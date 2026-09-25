@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { AtlasLogo } from './AtlasLogo';
-import { AIConfig, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig } from '../types';
+import type { AIConfig, DatabaseStats, ThemeMode, RecentSearch, IntegrationsConfig } from '../types';
 import { RecentSearchModal } from './RecentSearchModal';
 import { 
   Settings, 

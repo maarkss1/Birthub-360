@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Lead, ThemeMode, RequirementStatus, RequirementType } from '../types';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import type { Lead, ThemeMode, RequirementStatus, RequirementType } from '../types';
 import { ListChecks, Check, X, HelpCircle, Ban, Info } from 'lucide-react';
 
 interface RequirementEvaluationsBadgeProps {

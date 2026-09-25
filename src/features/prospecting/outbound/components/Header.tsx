@@ -1,7 +1,7 @@
-import React from 'react';
+import type React from 'react';
 import { AtlasLogo } from './AtlasLogo';
 import { TotalTracLogo } from './TotalTracLogo';
-import { ThemeMode, User } from '../types';
+import type { ThemeMode, User } from '../types';
 import {  
   Sparkles, 
   Database, 

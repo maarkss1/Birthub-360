@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { agentSchema } from '../validators/index.js';
 import { listAgents, createAgent, deleteAgent, getAgent, updateAgentConfig } from '../services/agentService.js';
 

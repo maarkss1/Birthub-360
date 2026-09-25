@@ -1,5 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Lead, LeadStage, ThemeMode } from '../types';
+import type React from 'react';
+import { useState, useRef, useEffect } from 'react';
+import type { Lead, LeadStage, ThemeMode } from '../types';
 import { PREDEFINED_TAGS_SUGGESTIONS } from '../utils/searchOptions';
 import { 
   Tag, 

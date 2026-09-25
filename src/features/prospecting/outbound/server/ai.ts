@@ -1,18 +1,18 @@
 import { env } from '../../../../config/env';
 import { GoogleGenAI } from '@google/genai';
-import { AIConfig, Lead, DecisionMaker, OutreachCopies } from '../src/types';
+import type { AIConfig, Lead, DecisionMaker, OutreachCopies } from '../src/types';
 import type { EvidenceRecord } from './evidence';
 import {
   buildLeadEvidenceContext,
   computePersonalizationLevel,
   formatEvidenceContextForPrompt,
-  PersonalizationLevel
+  type PersonalizationLevel
 } from './leadEvidenceContext';
 import {
   safeParseJson,
   validateCopiesShape,
   validateEnrichmentShape,
-  CopiesStringField
+  type CopiesStringField
 } from './aiSchemas';
 import {
   recordAiGenerationLog,

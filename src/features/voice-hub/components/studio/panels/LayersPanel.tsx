@@ -5,7 +5,7 @@ import {
   Wrench, BrainCircuit, HelpCircle, Split, BookOpen, Search,
   FolderOpen
 } from 'lucide-react';
-import { StudioNode } from '../../../lib/studio/types';
+import type { StudioNode } from '../../../lib/studio/types';
 import { useStudioStore, nodeRegistry } from '../../../store/useStudioStore';
 
 interface LayersPanelProps {

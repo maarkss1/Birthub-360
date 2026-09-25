@@ -1,5 +1,6 @@
 import { useSessionStore } from '../../store/useSessionStore';
-import React, { useState, useEffect, useRef, useId } from 'react';
+import type React from 'react';
+import { useState, useEffect, useRef, useId } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Users, BookOpen, BarChart3, Mic, CreditCard, Code, Building2, Settings, Sun, Moon, Laptop, Command, X } from 'lucide-react';
 import { useTheme } from './ThemeContext';

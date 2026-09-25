@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { listAuditLog, parsePagination } from '../services/auditLogService.js';
 
 export async function listAuditLogHandler(req: Request, res: Response) {

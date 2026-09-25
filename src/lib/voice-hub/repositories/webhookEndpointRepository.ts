@@ -16,7 +16,7 @@
 // (`regenerateSecret`/`createEndpoint`, which only ever WRITE it, never read a prior value back
 // out for display) touch it. This makes an accidental hash leak through the listing endpoint
 // structurally impossible rather than something the service layer has to remember to strip.
-import { Prisma } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import { prisma } from '@/lib/prisma';
 
 export interface TenantWebhookEndpointRecord {

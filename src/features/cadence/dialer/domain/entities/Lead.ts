@@ -1,4 +1,4 @@
-import { PhoneNumber } from "../value-objects/PhoneNumber.js";
+import type { PhoneNumber } from "../value-objects/PhoneNumber.js";
 
 export type LeadStatus =
   | "pending" // aguardando a primeira tentativa ou uma nova tentativa

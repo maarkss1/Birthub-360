@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Calendar, Circle, Building2, ListChecks } from 'lucide-react';
-import { LeadTask } from '../types';
+import type { LeadTask } from '../types';
 
 interface TasksOverviewTabProps {
   isDark: boolean;

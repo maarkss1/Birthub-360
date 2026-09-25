@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { metricSchema } from '../validators/index.js';
 import { listMetrics, createMetric, clearMetrics } from '../services/metricService.js';
 

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { outboundCallSchema } from '../validators/index.js';
 import { initiateOutboundCall, AgentNotFoundError, DuplicateCallError } from '../services/outboundCallService.js';
 import { TwilioNotConfiguredError } from '../services/twilioClient.js';

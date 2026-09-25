@@ -5,7 +5,7 @@ import type {
   CallStatusSnapshot,
 } from "../../application/ports/DialerProvider.js";
 import type { CallAttemptStatus } from "../../domain/entities/CallAttempt.js";
-import { ThreeCxCallControlClient } from "./ThreeCxCallControlClient.js";
+import type { ThreeCxCallControlClient } from "./ThreeCxCallControlClient.js";
 
 export interface MinimalLogger {
   warn(obj: Record<string, unknown>, msg: string): void;

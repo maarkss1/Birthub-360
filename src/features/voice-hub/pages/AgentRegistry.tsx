@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import type React from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Filter, Plus, Trash2, User, Bot, Clock, ChevronRight } from 'lucide-react';
-import { AgentConfig } from '../../types';
+import type { AgentConfig } from '../../types';
 
 interface AgentRecord {
   id: string;

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { checklistSchema } from '../validators/index.js';
 import { getChecklist, saveChecklist, resetChecklist } from '../services/settingService.js';
 

@@ -1,5 +1,5 @@
-import { Request, Response } from 'express';
-import { Redis } from 'ioredis';
+import type { Request, Response } from 'express';
+import type { Redis } from 'ioredis';
 import { prisma } from '@/lib/prisma';
 
 export function healthHandler(_req: Request, res: Response) {

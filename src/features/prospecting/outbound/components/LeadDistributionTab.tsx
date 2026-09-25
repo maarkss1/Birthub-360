@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Loader2, Users, Building2 } from 'lucide-react';
-import { User } from '../types';
+import type { User } from '../types';
 
 interface DistributionLead {
   id: string;

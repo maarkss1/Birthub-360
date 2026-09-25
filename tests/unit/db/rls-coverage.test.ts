@@ -28,6 +28,8 @@ const GLOBAL_CATALOG_MODELS = new Set([
   'JobRole',
   'AgentDefinition',
   'AgentVersion',
+  'Integration',
+  'Plan',
   'RoleAgentGrant',
   'CapabilityDefinition',
   'AgentCapabilityGrant',
@@ -74,7 +76,7 @@ function parseModels(): ModelMetadata[] {
         'CrmPipelineStage',
         'DocumentChunk',
         'Session',
-        'Account',
+        'Account', 'WorkflowVersion', 'CallAttempt',
       ].includes(modelName)
     ) {
       category = 'TENANT_SCOPED';

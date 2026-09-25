@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import type { Request, Response } from 'express';
 import { createWebhookEndpointSchema } from '../validators/index.js';
 import { writeAuditLog } from '../services/audit.js';
 import {

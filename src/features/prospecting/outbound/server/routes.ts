@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express';
+import { Router, type Request, type Response } from 'express';
 import crypto from 'crypto';
 import { getDatabase, executeQuery, getStats, saveDatabase, logActivity, checkExplorerSqlSafety } from './db';
 import { checkOllamaConnection, generateCopiesWithEngine, chatWithLLaMA3, enrichLeadWithPublicNewsAndScripts } from './ai';
@@ -28,7 +28,7 @@ import { enrichOrganization, searchAndMatchPeople } from './search/providers/apo
 import { domainSearch as hunterDomainSearch, verifyEmail as hunterVerifyEmail, complementDecisionMakerEmail as complementDecisionMakerEmailWithHunter } from './search/providers/hunter.provider';
 import { exportLead } from './search/providers/bitrix.provider';
 import { checkBitrixDuplicate, resolveBitrixWebhookForCompany, generateExportIdempotencyKey } from './services/bitrix';
-import { checkExportEligibility, ExportPolicy } from './exportEligibility';
+import { checkExportEligibility, type ExportPolicy } from './exportEligibility';
 import { rateLimit } from './middleware/rateLimit';
 import {
   withCache, withRetry, withCircuitBreaker, withProviderRetry, withProviderCircuitBreaker,
@@ -40,7 +40,7 @@ import {
   attachUser, requireAuth, requireAdmin, requireManager,
   createSessionToken, buildSessionCookie, buildLogoutCookie
 } from './auth';
-import { Lead, AIConfig, DecisionMaker } from '../src/types';
+import { type Lead, AIConfig, type DecisionMaker } from '../src/types';
 
 // Só valida um campo quando ele está sendo de fato alterado para um valor novo —
 // nunca quando é reenviado sem mudança (o botão "Salvar" manda o lead inteiro de
@@ -2949,8 +2949,8 @@ function slugify(text: string): string {
   return text.toString().toLowerCase()
     .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
     .replace(/\s+/g, '-')
-    .replace(/[^\w\-]+/g, '')
-    .replace(/\-\-+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
     .replace(/^-+/, '')
     .replace(/-+$/, '');
 }

@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import { FieldEvidence, ThemeMode, VerificationStatus } from '../types';
+import type React from 'react';
+import { useEffect, useState } from 'react';
+import type { FieldEvidence, ThemeMode, VerificationStatus } from '../types';
 import { X, ShieldCheck, ShieldQuestion, ShieldAlert, HelpCircle, Loader2, FileSearch, AlertTriangle } from 'lucide-react';
 
 interface LeadEvidenceModalProps {

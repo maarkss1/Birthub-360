@@ -1,5 +1,5 @@
-import { getBezierPath, BaseEdge, EdgeProps } from '@xyflow/react';
-import { StudioEdge as StudioEdgeType } from '../../../lib/studio/types';
+import { getBezierPath, BaseEdge, type EdgeProps } from '@xyflow/react';
+import type { StudioEdge as StudioEdgeType } from '../../../lib/studio/types';
 
 export function StudioEdge({
   sourceX,

@@ -1,4 +1,4 @@
-import React from 'react';
+import type React from 'react';
 import { BarChart3, PieChart, Activity, Users, FlaskConical } from 'lucide-react';
 import LineChart from '../../components/D3Chart';
 

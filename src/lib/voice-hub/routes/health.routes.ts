@@ -1,5 +1,5 @@
 import express from 'express';
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 import { healthHandler, liveHandler, makeReadyHandler } from '../controllers/health.controller.js';
 
 export function createHealthRouter(redisClient: Redis) {
