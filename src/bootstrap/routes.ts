@@ -1,4 +1,5 @@
 import type { Express } from 'express';
+import { unavailableLegacyModule } from './legacyModuleGate.js';
 import { activityRoutes } from '../features/activities/routes/activity.routes.js';
 import { analyticsRoutes } from '../features/analytics/routes/analytics.routes.js';
 import { eventsRoutes } from '../features/analytics/routes/events.routes.js';
@@ -187,21 +188,11 @@ export function mountFeatureRoutes(app: Express): void {
   app.use('/api/integrations/birth-voice', authenticateToken, requireTenant, birthVoiceRoutes);
   app.use('/api/integrations/3cx', authenticateToken, requireTenant, threecxRoutes);
 
-  // EXTERNAL TOOLS: Integrados do BIRTH-VOICES-HUB e Leads-Outbound
-  app.use('/api/voice-hub', authenticateToken, requireTenant, (req, res, next) => {
-    import('../features/voice-hub/routes/index.js').then((m) => m.default(req, res, next)).catch(next);
-  });
-  app.use('/api/outbound', authenticateToken, requireTenant, (req, res, next) => {
-    import('../features/prospecting/outbound/server/routes.js').then((m) => m.apiRouter(req, res, next)).catch(next);
-  });
-  app.use('/api/dialer-3cx', authenticateToken, requireTenant, (_req, _res, next) => {
-    // Dialer exposes campaigns, dnc, leads
-    import('../features/cadence/dialer/interface/http/server.js').then((_m) => {
-      // It's a full express app, but we can mount its router if exported, or just mock it here.
-      // This is a placeholder for the actual dialer routes.
-      next();
-    }).catch(next);
-  });
+  // Imported legacy modules do not yet share the canonical identity and tenant data model.
+  // Never execute their routers against the shared database before those adapters are verified.
+  app.use('/api/voice-hub', authenticateToken, requireTenant, unavailableLegacyModule('voice-hub'));
+  app.use('/api/outbound', authenticateToken, requireTenant, unavailableLegacyModule('outbound'));
+  app.use('/api/dialer-3cx', authenticateToken, requireTenant, unavailableLegacyModule('dialer-3cx'));
 
   app.use('/api/integrations/email', authenticateToken, requireTenant, emailRoutes);
   app.use('/api/integrations/slack', authenticateToken, requireTenant, slackRoutes);
