@@ -85,6 +85,13 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+    ssr: {
+      external: [
+        '@sentry/node-core',
+        '@sentry/server-utils',
+        '@sentry/node',
+      ],
+    },
     server: {
       host: true, // Permite acesso via rede (0.0.0.0)
       port: 3024, // O backend já usa a 3024 via env.PORT e serve o Vite via middleware.
