@@ -78,7 +78,7 @@ jobs:
         ports:
           - 7700:7700
         options: >-
-          --health-cmd "wget --no-verbose --tries=1 -O - http://localhost:7700/health >/dev/null 2>&1 || exit 1"
+          --health-cmd "wget --no-verbose --tries=1 -O - http://127.0.0.1:7700/health >/dev/null 2>&1 || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-start-period 30s
@@ -317,7 +317,7 @@ jobs:
         ports:
           - 7700:7700
         options: >-
-          --health-cmd "wget --no-verbose --tries=1 --spider http://localhost:7700/health || exit 1"
+          --health-cmd "wget --no-verbose --tries=1 --spider http://127.0.0.1:7700/health || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 10
