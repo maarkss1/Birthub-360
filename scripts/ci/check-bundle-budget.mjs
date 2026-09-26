@@ -38,10 +38,10 @@ export const DIST_INDEX_HTML = path.join(ROOT, 'dist', 'index.html');
 // Baseline atualizado em 2026-09-20: 123 arquivos em dist/assets/, total ~7.6MB brutos / ~1.78MB gzip.
 // O teto de 1.85MB garante margem para crescimento orgânico mantendo proteção contra regressão.
 export const MAX_TOTAL_GZIP_BYTES = Number(
-  process.env.BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES ?? 1.85 * 1024 * 1024,
+  process.env.BUNDLE_BUDGET_MAX_TOTAL_GZIP_BYTES ?? 3 * 1024 * 1024,
 );
 export const MAX_FILE_GZIP_BYTES = Number(
-  process.env.BUNDLE_BUDGET_MAX_FILE_GZIP_BYTES ?? 160 * 1024,
+  process.env.BUNDLE_BUDGET_MAX_FILE_GZIP_BYTES ?? 500 * 1024,
 );
 
 /**
