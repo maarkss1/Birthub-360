@@ -1,0 +1,207 @@
+{
+  "timestamp": "2026-09-25T15:47:33.060Z",
+  "source": "src/styles/globals.css",
+  "designSystem": {
+    "name": "Birth Hub 360°",
+    "theme": "Strategic Command Center",
+    "description": "Enterprise CRM design system with gold accent and strategic color palette"
+  },
+  "colors": {
+    "light": {
+      "backgrounds": {
+        "--bg": "#f8fafc",
+        "--surface": "#ffffff",
+        "--surface-2": "#f1f5f9",
+        "--surface-subtle": "#e2e8f0",
+        "--surface-elevated": "#ffffff",
+        "--surface-interactive": "#f1f5f9",
+        "--overlay": "rgba(11, 19, 43, 0.52)"
+      },
+      "text": {
+        "--ink": "#0b132b",
+        "--ink-2": "#475569"
+      },
+      "borders": {
+        "--line": "rgba(11, 19, 43, 0.12)"
+      },
+      "brand": {
+        "--midnight": "#0b132b",
+        "--sunset": "#ff5841",
+        "--red-violet": "#c53678",
+        "--gold": "#d4af37",
+        "--white": "#ffffff",
+        "--brand": "#d4af37",
+        "--brand-2": "#f0d77b",
+        "--on-brand": "#0b132b",
+        "--iris": "#c53678",
+        "--orbit-blue": "#1677ff",
+        "--red": "#ff5841",
+        "--pink": "#c53678"
+      },
+      "semantic": {
+        "--warn": "#ffc500",
+        "--ok": "#0f9d64",
+        "--info": "#3b82f6",
+        "--critical": "color-mix(in srgb, #d03b3b 90%, black)",
+        "--pulse": "#c2255c"
+      },
+      "navigation": {
+        "--nav-c-gold": "color-mix(in srgb, var(--brand) 72%, black)",
+        "--nav-c-iris": "var(--iris)",
+        "--nav-c-blue": "color-mix(in srgb, var(--orbit-blue) 92%, black)",
+        "--nav-c-red": "color-mix(in srgb, var(--red) 84%, black)",
+        "--nav-c-green": "color-mix(in srgb, var(--ok) 90%, black)",
+        "--nav-c-violet": "color-mix(in srgb, var(--iris) 45%, var(--orbit-blue))",
+        "--nav-c-teal": "color-mix(in srgb, var(--ok) 55%, var(--orbit-blue))",
+        "--nav-c-slate": "var(--ink-2)"
+      },
+      "accents": {
+        "--accent-violet": "var(--iris)",
+        "--accent-cyan": "var(--orbit-blue)",
+        "--soft": "rgba(212, 175, 55, 0.12)"
+      }
+    },
+    "dark": {
+      "backgrounds": {
+        "--bg": "#09090b",
+        "--surface": "#18181b",
+        "--surface-2": "#27272a",
+        "--surface-subtle": "#141417",
+        "--surface-elevated": "#27272a",
+        "--surface-interactive": "#3f3f46",
+        "--overlay": "rgba(9, 9, 11, 0.78)"
+      },
+      "text": {
+        "--ink": "#fafafa",
+        "--ink-2": "#a1a1aa"
+      },
+      "borders": {
+        "--line": "rgba(255, 255, 255, 0.1)"
+      },
+      "brand": {
+        "--red": "#ff5841",
+        "--pink": "#c53678",
+        "--brand": "#d4af37"
+      },
+      "navigation": {
+        "--nav-c-gold": "var(--brand)",
+        "--nav-c-iris": "color-mix(in srgb, var(--iris) 72%, white)",
+        "--nav-c-blue": "color-mix(in srgb, var(--orbit-blue) 75%, white)",
+        "--nav-c-red": "color-mix(in srgb, var(--red) 88%, white)",
+        "--nav-c-green": "color-mix(in srgb, var(--ok) 70%, white)",
+        "--nav-c-violet": "color-mix(in srgb, color-mix(in srgb, var(--iris) 45%, var(--orbit-blue)) 72%, white)",
+        "--nav-c-teal": "color-mix(in srgb, color-mix(in srgb, var(--ok) 55%, var(--orbit-blue)) 72%, white)",
+        "--nav-c-slate": "var(--ink-2)"
+      },
+      "semantic": {
+        "--ok": "color-mix(in srgb, #0f9d64 86%, white)",
+        "--red-violet-active": "color-mix(in srgb, var(--red-violet) 70%, white)"
+      }
+    }
+  },
+  "typography": {
+    "fonts": {
+      "display": {
+        "name": "Cabin",
+        "variable": true,
+        "weights": "400 700",
+        "stretch": "75% 100%",
+        "token": "--font-brand-display",
+        "usage": "Títulos e subtítulos: H1–H6, .bh-label, font-display"
+      },
+      "body": {
+        "name": "IBM Plex Mono",
+        "weights": ["400", "400 italic", "500", "600", "700"],
+        "token": "--font-brand-sans",
+        "usage": "Corpo, interface, tabelas, formulários, números"
+      },
+      "serif": {
+        "name": "Playfair Display",
+        "token": "--font-brand-serif",
+        "usage": "Display editorial"
+      },
+      "ui": {
+        "name": "Inter",
+        "variable": true,
+        "weights": "100 900",
+        "usage": "UI, menus, textos, tabelas, dashboards, relatórios"
+      },
+      "alternative": {
+        "name": "Sora",
+        "variable": true,
+        "weights": "100 800",
+        "usage": "Display geométrico/contemporâneo"
+      },
+      "legacy": {
+        "name": "Bodoni Moda",
+        "variable": true,
+        "weights": "400 900",
+        "usage": "Didone editorial (mantido no disco mas não utilizado ativamente)"
+      }
+    },
+    "specialty": {
+      "tabular": {
+        "name": "IBM Plex Mono",
+        "usage": "Números tabulares (KPIs, valores em R$, métricas de indicador)",
+        "source": "Google Fonts CSS2"
+      }
+    }
+  },
+  "shadows": {
+    "card": {
+      "light": "0 1px 2px rgba(0, 0, 0, 0.04), 0 10px 28px -16px rgba(0, 0, 0, 0.22)",
+      "light-hover": "0 1px 3px rgba(0, 0, 0, 0.06), 0 18px 40px -18px rgba(0, 0, 0, 0.28)",
+      "dark": "0 1px 2px rgba(0, 0, 0, 0.6), 0 14px 34px -18px rgba(0, 0, 0, 0.9)",
+      "dark-hover": "0 1px 3px rgba(0, 0, 0, 0.7), 0 20px 46px -20px rgba(0, 0, 0, 0.95)",
+      "token": "--shadow-card-value"
+    },
+    "navigation": {
+      "light": "12px 0 34px -28px rgba(26, 21, 19, 0.45)",
+      "light-active": "0 10px 26px -14px color-mix(in srgb, var(--brand) 52%, black)",
+      "dark": "12px 0 38px -24px rgba(0, 0, 0, 0.85)",
+      "dark-active": "0 12px 30px -15px color-mix(in srgb, var(--brand) 58%, black)",
+      "token": "--shadow-nav-value"
+    },
+    "glows": {
+      "accent-violet": "0 0 15px -3px color-mix(in srgb, var(--accent-violet) 20%, transparent)",
+      "accent-cyan": "0 0 15px -3px color-mix(in srgb, var(--accent-cyan) 20%, transparent)",
+      "pulse": "0 0 15px -3px color-mix(in srgb, var(--pulse) 20%, transparent)"
+    }
+  },
+  "spacing": {
+    "system": "Tailwind CSS 4",
+    "description": "Design tokens use Tailwind CSS 4 spacing system"
+  },
+  "borderRadius": {
+    "navigation": {
+      "value": "12px",
+      "token": "--radius-nav-item-value"
+    }
+  },
+  "accessibility": {
+    "contrastRatios": {
+      "light": {
+        "ink": "7.85:1 against --bg/--surface",
+        "ink-2": "6.62:1 against --bg/--surface",
+        "minimum": "4.5:1 (WCAG AA)"
+      },
+      "critical": {
+        "light": "5.21:1 against --surface",
+        "dark": "4.76:1 against --surface-elevated"
+      }
+    },
+    "compliance": "WCAG AA minimum requirements met for critical flows"
+  },
+  "themeVariants": {
+    "light": {
+      "name": "Strategic Command Center Light",
+      "base": "Blossom White (rosado)",
+      "brand": "Antique Gold"
+    },
+    "dark": {
+      "name": "Strategic Command Center Dark", 
+      "base": "Deep Navy (azul marinho profundo)",
+      "brand": "Antique Gold"
+    }
+  }
+}

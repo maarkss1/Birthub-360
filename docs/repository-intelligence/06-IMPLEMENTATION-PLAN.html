@@ -1,447 +1,755 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>06 - IMPLEMENTATION PLAN | Actionable Roadmap | AtlasGR</title>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>06-IMPLEMENTATION-PLAN - Birth Hub 360</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --primary: #3b82f6;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --success: #22c55e;
-      --warning: #eab308;
-      --danger: #ef4444;
-      --partial: #f59e0b;
-      --unverified: #64748b;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    .layout {
-      display: flex;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Cabin, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #101D2F 0%, #101D2F 100%);
+      color: #F5F2EA;
+      line-height: 1.6;
       min-height: 100vh;
     }
-    .sidebar {
-      width: 250px;
-      background-color: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 2rem 1rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
-    .sidebar h2 {
-      font-size: 1rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .sidebar li {
-      margin-bottom: 0.5rem;
-    }
-    .sidebar a {
-      color: var(--text);
-      text-decoration: none;
-      display: block;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-    }
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--primary);
-    }
-    .main-content {
-      flex: 1;
-      padding: 2rem 4rem;
-      max-width: 1200px;
-    }
+
     .header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: rgba(21, 29, 47, 0.3;
+      border-radius: 20px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
     }
-    .nav {
-      margin-bottom: 2rem;
+
+    .header h1 {
+      font-size: 3em;
+      background: linear-gradient(135deg, #C69B52 0%, #E4BC76 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
-    .nav a {
-      color: var(--primary);
+
+    .header .subtitle {
+      color: #58616C;
+      font-size: 1.2em;
+    }
+
+    .metadata {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .metadata-item {
+      background: rgba(198, 155, 82, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 20px;
+      background: rgba(16, 29, 47, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
+      margin-bottom: 40px;
+      z-index: 100;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .nav-bar a {
+      color: #F5F2EA;
       text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .nav a:hover {
-      text-decoration: underline;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
+      padding: 8px 16px;
       border-radius: 8px;
-      padding: 1.5rem;
-      transition: transform 0.2s, border-color 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s;
+      white-space: nowrap;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
+
+    .nav-bar a:hover {
+      background: rgba(198, 155, 82, 0.2);
     }
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.25rem;
+
+    .section {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
     }
-    .card a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      height: 100%;
+
+    .section h2 {
+      color: #C69B52;
+      margin-bottom: 30px;
+      font-size: 2em;
+      border-bottom: 2px solid rgba(198, 155, 82, 0.3);
+      padding-bottom: 15px;
     }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-      line-height: 1;
+
+    .section h3 {
+      color: #E4BC76;
+      margin: 25px 0 15px 0;
+      font-size: 1.5em;
     }
-    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
-    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 2rem 0;
-      font-size: 0.875rem;
+      margin: 20px 0;
+      font-size: 0.85em;
     }
-    th, td {
-      padding: 1rem;
+
+    th,
+    td {
+      padding: 12px 15px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(216, 214, 207, 0.3;
+      vertical-align: top;
     }
+
     th {
-      background-color: rgba(255,255,255,0.02);
+      background: rgba(198, 155, 82, 0.1);
+      color: #C69B52;
       font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
+
     tr:hover {
-      background-color: rgba(255,255,255,0.01);
-    }
-    pre {
-      background-color: rgba(0,0,0,0.3);
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-    }
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-    }
-    p code, li code, td code {
-      background-color: rgba(255,255,255,0.1);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.8em;
-    }
-    .meta-info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      background: var(--surface);
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-    .meta-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .meta-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.7;
-      margin-bottom: 0.25rem;
-    }
-    .meta-value {
-      font-weight: 600;
-      color: var(--text);
-      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .evidence {
+      background: rgba(16, 29, 47, 0.5);
+      padding: 15px;
       border-radius: 8px;
-      padding: 1rem;
+      margin: 10px 0;
+      font-family: 'IBM Plex Mono, Courier New', monospace;
+      font-size: 0.85em;
+      border-left: 3px solid #C69B52;
+    }
+
+    .evidence-code {
+      color: #C69B52;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: 600;
+      margin: 0 5px 5px 0;
+    }
+
+    .badge-critical {
+      background: rgba(190, 59, 54, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(190, 59, 54, 0.3);
+    }
+
+    .badge-high {
+      background: rgba(234, 179, 8, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .badge-medium {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-low {
+      background: rgba(49, 95, 214, 0.2);
+      color: #4ade80;
+      border: 1px solid rgba(49, 95, 214, 0.3);
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: 600;
+    }
+
+    .status-implemented {
+      background: rgba(49, 95, 214, 0.2);
+      color: #4ade80;
+      border: 1px solid rgba(49, 95, 214, 0.3);
+    }
+
+    .status-partial {
+      background: rgba(198, 155, 82, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+    }
+
+    .status-missing {
+      background: rgba(190, 59, 54, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(190, 59, 54, 0.3);
+    }
+
+    .status-pending {
+      background: rgba(88, 97, 108, 0.2);
+      color: #94a3b8;
+      border: 1px solid rgba(88, 97, 108, 0.3);
+    }
+
+    .priority-column {
+      min-width: 100px;
+    }
+
+    .task-column {
+      min-width: 300px;
+    }
+
+    .footer {
       text-align: center;
-    }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin-top: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
     }
 
-    .accordion {
-      margin-top: 2rem;
-    }
-    .accordion-item {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-    .accordion-header {
-      background: var(--surface);
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .accordion-header:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .accordion-content {
-      padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      display: none;
+    .footer a {
+      color: #C69B52;
+      text-decoration: none;
+      margin: 0 15px;
     }
 
-    /* Utility classes */
-    .mt-8 { margin-top: 2rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .text-muted { color: var(--text-muted); }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .nav-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section {
+        padding: 25px;
+      }
+
+      table {
+        font-size: 0.75em;
+      }
+
+      th,
+      td {
+        padding: 8px 10px;
+      }
+    }
   </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Simple accordion logic
-      document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-          const content = header.nextElementSibling;
-          const isVisible = content.style.display === 'block';
-          content.style.display = isVisible ? 'none' : 'block';
-          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
-        });
-      });
-    });
-  </script>
+</head>
 
-    </head>
-    <body>
-      <div class="layout">
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>IMPLEMENTATION PLAN</h1>
+      <div class="subtitle">Birth Hub 360 — Plano de Implementação</div>
+      <div class="metadata">
+        <div class="metadata-item">📅 Analysis: 2026-09-25</div>
+        <div class="metadata-item">🌿 Branch: main</div>
+        <div class="metadata-item">📝 Commit: 1dec130b</div>
+        <div class="metadata-item">🎯 Status: V3 Reconciliation</div>
+      </div>
+    </div>
 
-    <div class="sidebar">
-      <h2>Documentation</h2>
-      <ul>
+    <nav class="nav-bar">
+      <a href="#summary">Resumo</a>
+      <a href="#phase-0">Phase 0: Audit</a>
+      <a href="#phase-1">Phase 1: Foundation</a>
+      <a href="#phase-2">Phase 2: Backend</a>
+      <a href="#phase-3">Phase 3: Frontend</a>
+      <a href="#phase-4">Phase 4: Integrations</a>
+      <a href="#phase-5">Phase 5: Security</a>
+      <a href="#phase-6">Phase 6: Testing</a>
+      <a href="#gaps">Gaps & Debt</a>
+    </nav>
 
-          <li>
-            <a href="00-INDEX.html" style="">
-              Hub
-            </a>
-          </li>
+    <div class="section" id="summary">
+      <h2>📊 Resumo Executivo</h2>
 
-          <li>
-            <a href="01-PRD.html" style="">
-              01 - PRD
-            </a>
-          </li>
+      <h3>Estado Atual</h3>
+      <p>Birth Hub 360 é um CRM com IA para equipes comerciais de alta performance, com arquitetura monolítica Express +
+        Vite, banco PostgreSQL/Prisma, filas BullMQ/Redis e integrações extensivas (Bitrix24, WhatsApp, IA). A aplicação
+        está funcional mas possui dívida técnica distribuída e inconsistências de documentação.</p>
 
-          <li>
-            <a href="02-TRD.html" style="">
-              02 - TRD
-            </a>
-          </li>
+      <h3>Estratégia de Execução</h3>
+      <p>Toda nova implementação deve seguir a sequência: 1. Audit 2. Verify 3. Refactor 4. Integrate 5. Code 6. Test 7.
+        Document. Não assumir funcionalidade sem evidência.</p>
 
-          <li>
-            <a href="03-APP-FLOW.html" style="">
-              03 - App Flow
-            </a>
-          </li>
-
-          <li>
-            <a href="04-UI-UX-DESIGN.html" style="">
-              04 - UI/UX Design
-            </a>
-          </li>
-
-          <li>
-            <a href="05-BACKEND-SCHEMA.html" style="">
-              05 - Backend Schema
-            </a>
-          </li>
-
-          <li>
-            <a href="06-IMPLEMENTATION-PLAN.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
-              06 - Implementation Plan
-            </a>
-          </li>
-
+      <h3>Fases Prioritárias</h3>
+      <ul class="component-list">
+        <li><strong>Phase 0:</strong> Audit e validação de estado atual</li>
+        <li><strong>Phase 1:</strong> Fundação (schema, migrations, security)</li>
+        <li><strong>Phase 2:</strong> Backend (services, workers, queues)</li>
+        <li><strong>Phase 3:</strong> Frontend (UI consistency, accessibility)</li>
+        <li><strong>Phase 4:</strong> Integrações (Bitrix24, WhatsApp, IA)</li>
+        <li><strong>Phase 5:</strong> Security (RBAC, PII, secrets)</li>
+        <li><strong>Phase 6:</strong> Testing (unit, integration, E2E)</li>
       </ul>
     </div>
 
-        <div class="main-content">
+    <div class="section" id="phase-0">
+      <h2>🔍 Phase 0: Audit & Validations</h2>
 
-    <div class="nav">
-      <a href="00-INDEX.html">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Documentation Hub
-      </a>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>AUD-01</td>
+            <td>Validar consistência de identidade do projeto (Birth Hub 360 vs AtlasGR)</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>repository-snapshot.json criado</td>
+            <td>docs/repository-intelligence/data/</td>
+            <td>grep por "Atlas" na pasta docs</td>
+          </tr>
+          <tr>
+            <td>AUD-02</td>
+            <td>Validar consistência de commit entre documentos</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>06-IMPLEMENTATION-PLAN tem commit 7a71a56 (errado)</td>
+            <td>Todos os HTMLs</td>
+            <td>Verificar metadata em cada documento</td>
+          </tr>
+          <tr>
+            <td>AUD-03</td>
+            <td>Validar links internos entre documentos</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-pending">PENDENTE</span></td>
+            <td>Links podem apontar para arquivos renomeados</td>
+            <td>Todos os HTMLs</td>
+            <td>Validar todos os href locais</td>
+          </tr>
+          <tr>
+            <td>AUD-04</td>
+            <td>Validar paridade entre rotas documentadas e App.tsx</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-pending">PENDENTE</span></td>
+            <td>App Flow lista rotas, mas não há validação cruzada</td>
+            <td>src/App.tsx, 03-APP-FLOW.html</td>
+            <td>Cross-check de rotas</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <div class="header">
-      <h1>IMPLEMENTATION PLAN</h1>
-      <div class="meta-info">
-        <div class="meta-item">
-          <span class="meta-label">Branch</span>
-          <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Commit</span>
-          <span class="meta-value">7a71a56</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Generated Date</span>
-          <span class="meta-value">2026-09-25</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Repository</span>
-          <span class="meta-value">AtlasGR</span>
-        </div>
-      </div>
+
+    <div class="section" id="phase-1">
+      <h2>🏗️ Phase 1: Foundation</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>FND-01</td>
+            <td>Validar integridade do schema Prisma e migrations</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>135+ migrations presentes, schema completo</td>
+            <td>prisma/schema.prisma, prisma/migrations/</td>
+            <td>prisma validate && prisma generate</td>
+          </tr>
+          <tr>
+            <td>FND-02</td>
+            <td>Validar RLS e multi-tenancy em tabelas core</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Organization field existe, mas RLS parcial</td>
+            <td>prisma/schema.prisma, migrations/**/rls*.sql</td>
+            <td>Testes de isolamento de tenant</td>
+          </tr>
+          <tr>
+            <td>FND-03</td>
+            <td>Validar PII encryption em Contact</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>Campos cifrados + blind indexes</td>
+            <td>prisma/schema.prisma, src/lib/crypto/</td>
+            <td>Testes de encryption/decryption</td>
+          </tr>
+          <tr>
+            <td>FND-04</td>
+            <td>Validar environment variables críticas</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>.env.example com 364 linhas</td>
+            <td>.env.example, src/config/env.ts</td>
+            <td>Validar cada var no config</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
 
+    <div class="section" id="phase-2">
+      <h2>⚙️ Phase 2: Backend</h2>
 
-          <h2>Execution Strategy</h2>
-          <p>This plan addresses the technical debt, feature gaps, and architectural evolution required for AtlasGR. All new development must follow the sequence: 1. Audit 2. Verify 3. Refactor 4. Integrate Open Source 5. Code 6. Test 7. Document.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>BK-01</td>
+            <td>Validar endpoints CRM vs OpenAPI</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-pending">PENDENTE</span></td>
+            <td>docs/openapi.yaml existe, mas paridade não validada</td>
+            <td>docs/openapi.yaml, src/bootstrap/routes.ts</td>
+            <td>Testes de API contract</td>
+          </tr>
+          <tr>
+            <td>BK-02</td>
+            <td>Validar BullMQ workers vs scheduled jobs</td>
+            <td><span class="badge badge-medium">MEDIUM</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>23 workers configurados, jobs agendados</td>
+            <td>worker.ts, src/lib/queue/</td>
+            <td>Testes de worker execution</td>
+          </tr>
+          <tr>
+            <td>BK-03</td>
+            <td>Validar Bitrix sync worker</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Worker existe, mas falhas podem ser silenciosas</td>
+            <td>src/lib/queue/bitrixSync.worker.ts</td>
+            <td>Testes de sync e retry</td>
+          </tr>
+          <tr>
+            <td>BK-04</td>
+            <td>Validar enrichment cascade</td>
+            <td><span class="badge badge-medium">MEDIUM</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Services existem, mas fluxo completo não validado</td>
+            <td>src/features/prospecting/services/</td>
+            <td>Testes E2E de enriquecimento</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <h2>Phase 1: TECHNICAL DEBT & CLEANUP</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Task</th>
-                <th>Priority</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>TD-01</td>
-                <td>Refactor legacy enrichment services. Migrate older implementations to the unified <code>MergeEngineService</code> cascade.</td>
-                <td><span class="badge" style="background: rgba(234,179,8,0.2); color: #eab308; border: 1px solid rgba(234,179,8,0.5)">HIGH</span></td>
-                <td>PENDING</td>
-              </tr>
-              <tr>
-                <td>TD-02</td>
-                <td>Eliminate simulated/mocked functionality (Onda 1 directive). Replace <code>setTimeout</code> mocks with real async DB calls.</td>
-                <td><span class="badge" style="background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.5)">CRITICAL</span></td>
-                <td>IN PROGRESS</td>
-              </tr>
-            </tbody>
-          </table>
+    <div class="section" id="phase-3">
+      <h2>🎨 Phase 3: Frontend</h2>
 
-          <h2>Phase 2: FEATURE COMPLETION</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Task</th>
-                <th>Priority</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>FEAT-01</td>
-                <td>Implement actual email parsing for inbound webhooks (<code>/api/webhooks/email/inbound</code>) currently marked as stubs.</td>
-                <td><span class="badge" style="background: rgba(234,179,8,0.2); color: #eab308; border: 1px solid rgba(234,179,8,0.5)">HIGH</span></td>
-                <td>PENDING</td>
-              </tr>
-              <tr>
-                <td>FEAT-02</td>
-                <td>Complete Autonomous Swarm Scheduler logic to utilize BullMQ for 24/7 engagement routing.</td>
-                <td><span class="badge" style="background: rgba(59,130,246,0.2); color: #3b82f6; border: 1px solid rgba(59,130,246,0.5)">MEDIUM</span></td>
-                <td><span class="badge partial">PARCIAL</span></td>
-              </tr>
-            </tbody>
-          </table>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>FE-01</td>
+            <td>Capturar screenshots reais de cada rota</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-missing">AUSENTE</span></td>
+            <td>UI/UX não tem screenshots</td>
+            <td>docs/repository-intelligence/assets/screenshots/</td>
+            <td>Executar app e capturar</td>
+          </tr>
+          <tr>
+            <td>FE-02</td>
+            <td>Validar accessibility (WCAG AA)</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>@axe-core/playwright configurado, mas testes parciais</td>
+            <td>tests/e2e/accessibility.spec.ts</td>
+            <td>Playwright a11y suite</td>
+          </tr>
+          <tr>
+            <td>FE-03</td>
+            <td>Validar contrast tokens em ambos os temas</td>
+            <td><span class="badge badge-medium">MEDIUM</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>Tokens calculados com fórmula WCAG</td>
+            <td>src/styles/globals.css</td>
+            <td>Automated contrast checker</td>
+          </tr>
+          <tr>
+            <td>FE-04</td>
+            <td>Validar responsive behavior</td>
+            <td><span class="badge badge-medium">MEDIUM</span></td>
+            <td><span class="status-badge status-pending">PENDENTE</span></td>
+            <td>Tailwind breakpoints configurados, mas não validados</td>
+            <td>src/components/**</td>
+            <td>Playwright viewport tests</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <h2>Phase 3: INFRASTRUCTURE & OBSERVABILITY</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Task</th>
-                <th>Priority</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>INF-01</td>
-                <td>Validate OpenTelemetry traces integration with Grafana dashboard configuration.</td>
-                <td><span class="badge" style="background: rgba(59,130,246,0.2); color: #3b82f6; border: 1px solid rgba(59,130,246,0.5)">MEDIUM</span></td>
-                <td>PENDING</td>
-              </tr>
-              <tr>
-                <td>INF-02</td>
-                <td>Verify OCI deployment scripts strictly block on failed <code>/health/live</code> responses.</td>
-                <td><span class="badge" style="background: rgba(239,68,68,0.2); color: #ef4444; border: 1px solid rgba(239,68,68,0.5)">CRITICAL</span></td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </body>
-    </html>
+    <div class="section" id="phase-4">
+      <h2>🔗 Phase 4: Integrations</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>INT-01</td>
+            <td>Validar Bitrix24 sync bidirecional</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Fluxo existe, mas não há garantia de idempotência</td>
+            <td>src/features/integrations/bitrix/</td>
+            <td>Testes de sync completo</td>
+          </tr>
+          <tr>
+            <td>INT-02</td>
+            <td>Validar WhatsApp automation</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Baileys configurado, mas fluxo completo não validado</td>
+            <td>src/features/integrations/whatsapp/</td>
+            <td>Testes de envio/recebimento</td>
+          </tr>
+          <tr>
+            <td>INT-03</td>
+            <td>Validar AI gateway and rate limiting</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>Rate limiting por organização configurado</td>
+            <td>src/bootstrap/rateLimiters.ts</td>
+            <td>Testes de rate limit</td>
+          </tr>
+          <tr>
+            <td>INT-04</td>
+            <td>Validar secrets encryption em integrações</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>Credenciais cifradas em IntegrationCredential</td>
+            <td>prisma/schema.prisma, src/lib/crypto/</td>
+            <td>Testes de encryption</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="phase-5">
+      <h2>🔒 Phase 5: Security</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SEC-01</td>
+            <td>Validar RBAC consistency</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Hierarquia definida, mas alguns endpoints não verificados</td>
+            <td>src/lib/auth/authorization.ts</td>
+            <td>Testes de permissão por rota</td>
+          </tr>
+          <tr>
+            <td>SEC-02</td>
+            <td>Validar CSRF protection</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>csrfGuard configurado</td>
+            <td>src/bootstrap/security.ts</td>
+            <td>Testes de CSRF</td>
+          </tr>
+          <tr>
+            <td>SEC-03</td>
+            <td>Validar rate limiting crítico</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-implemented">IMPLEMENTADO</span></td>
+            <td>Limites por IP, organização e rota</td>
+            <td>src/bootstrap/rateLimiters.ts</td>
+            <td>Testes de rate limit</td>
+          </tr>
+          <tr>
+            <td>SEC-04</td>
+            <td>Validar LGPD retention e exclusão</td>
+            <td><span class="badge badge-critical">CRITICAL</span></td>
+            <td><span class="status-badge status-missing">AUSENTE</span></td>
+            <td>Não há política de retenção/exclusão implementada</td>
+            <td>src/features/lgpd/</td>
+            <td>Implementar políticas LGPD</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="phase-6">
+      <h2>🧪 Phase 6: Testing</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th class="task-column">TASK</th>
+            <th class="priority-column">PRIORITY</th>
+            <th>STATUS</th>
+            <th>EVIDENCE</th>
+            <th>FILES</th>
+            <th>VALIDATION</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>TST-01</td>
+            <td>Validar testes unitários core</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Testes existem, mas coverage não medido</td>
+            <td>tests/unit/</td>
+            <td>npm run test:unit -- --coverage</td>
+          </tr>
+          <tr>
+            <td>TST-02</td>
+            <td>Validar testes de integração</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Testes existem, mas não completos</td>
+            <td>tests/integration/</td>
+            <td>npm run test:integration</td>
+          </tr>
+          <tr>
+            <td>TST-03</td>
+            <td>Validar testes E2E Playwright</td>
+            <td><span class="badge badge-high">HIGH</span></td>
+            <td><span class="status-badge status-partial">PARCIAL</span></td>
+            <td>Config existente, mas suite parcial</td>
+            <td>tests/e2e/</td>
+            <td>npm run test:e2e</td>
+          </tr>
+          <tr>
+            <td>TST-04</td>
+            <td>Validar testes de container</td>
+            <td><span class="badge badge-medium">MEDIUM</span></td>
+            <td><span class="status-badge status-pending">PENDENTE</span></td>
+            <td>Script existe, mas não validado</td>
+            <td>tests/container/</td>
+            <td>npm run test:containers</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="gaps">
+      <h2>📋 Gaps & Debt Summary</h2>
+
+      <h3>Technical Debt</h3>
+      <ul class="component-list">
+        <li><strong>BK-03:</strong> Bitrix sync pode falhar silenciosamente</li>
+        <li><strong>SEC-04:</strong> LGPD retention/exclusão não implementado</li>
+        <li><strong>FE-01:</strong> UI/UX sem screenshots reais</li>
+        <li><strong>SEC-01:</strong> RBAC parcial em alguns endpoints</li>
+      </ul>
+
+      <h3>Product Debt</h3>
+      <ul class="component-list">
+        <li><strong>INT-01:</strong> Bitrix sync não idempotente</li>
+        <li><strong>BK-04:</strong> Enrichment cascade não validado ponta a ponta</li>
+        <li><strong>INT-02:</strong> WhatsApp automation não validado</li>
+      </ul>
+
+      <h3>Documentation Debt</h3>
+      <ul class="component-list">
+        <li><strong>AUD-02:</strong> Commit inconsistente em 06-IMPLEMENTATION-PLAN</li>
+        <li><strong>AUD-03:</strong> Links internos não validados</li>
+        <li><strong>AUD-04:</strong> Paridade de rotas não validada</li>
+        <li><strong>FE-01:</strong> UI/UX sem evidência visual</li>
+      </ul>
+
+      <h3>Risk Assessment</h3>
+      <p>Os itens marcados como CRITICAL (SEC-04, SEC-01, INT-01, BK-03) representam riscos de segurança, compliance e
+        integridade de dados que devem ser tratados antes de features novas. Os itens de documentation debt não
+        bloqueiam release, mas devem ser resolvidos para manter a governança da documentação.</p>
+    </div>
+
+    <div class="footer">
+      <p>📖 <a href="00-INDEX.html">← Documentation Hub</a></p>
+      <p style="margin-top: 20px; color: #58616C;">Generated by Repository Documentation Architect V5 • 2026-09-25</p>
+    </div>
+  </div>
+</body>
+
+</html>

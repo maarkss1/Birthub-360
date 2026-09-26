@@ -1,4 +1,4 @@
-const SentryNode = typeof process !== 'undefined' && process.versions && process.versions.node ? require('@sentry/node') : null;
+import * as SentryNode from '@sentry/node';
 import * as SentryReact from '@sentry/react';
 
 export function initSentry(isServer: boolean) {

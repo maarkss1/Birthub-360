@@ -1,0 +1,351 @@
+src/bootstrap/routes.ts(192,12): error TS2307: Cannot find module '../features/voice-hub/routes/index.js' or its corresponding type declarations.
+src/features/automations/__tests__/automation-versioning.service.test.ts(23,54): error TS2307: Cannot find module '../automation-versioning.service' or its corresponding type declarations.
+src/features/cadence/dialer/index.ts(29,17): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(30,19): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(31,17): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(32,27): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(33,41): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(34,35): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(36,62): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(37,27): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(38,41): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(39,35): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(44,16): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(45,14): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(46,26): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(47,19): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(54,22): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(55,30): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(58,29): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(59,22): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(60,30): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(70,21): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(71,31): error TS2339: Property 'threeCx' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(72,24): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(73,32): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/index.ts(86,33): error TS2551: Property 'port' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'. Did you mean 'PORT'?
+src/features/cadence/dialer/index.ts(87,29): error TS2551: Property 'port' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'. Did you mean 'PORT'?
+src/features/cadence/dialer/index.ts(90,58): error TS2339: Property 'dialer' does not exist on type '{ NODE_ENV: "production" | "development" | "test"; COMMIT_SHA: string; BUILD_VERSION: string; DEPLOY_TIMESTAMP: string; PORT: string; HOST: string; DATABASE_URL: string; SECURE_COOKIES: boolean; ... 81 more ...; AI_PII_EXTERNAL_CONSENT_ORGANIZATIONS?: string | undefined; }'.
+src/features/cadence/dialer/interface/http/server.ts(2,26): error TS2307: Cannot find module 'pino-http' or its corresponding type declarations.
+src/features/commercial-intelligence/application/__tests__/dealRiskDetection.service.test.ts(41,42): error TS2307: Cannot find module '../dealRiskDetection.service' or its corresponding type declarations.
+src/features/crm/services/__tests__/assignment.service.test.ts(23,47): error TS2307: Cannot find module '../assignment.service' or its corresponding type declarations.
+src/features/crm/services/__tests__/savedView.service.test.ts(13,75): error TS2307: Cannot find module '../savedView.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/birthVoice.service.test.ts(69,8): error TS2307: Cannot find module '@/features/integrations/birth-voice/birthVoice.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/birthVoice.service.test.ts(70,30): error TS2307: Cannot find module '@/features/integrations/birth-voice/callSuppression.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/birthVoice.service.test.ts(71,41): error TS2307: Cannot find module '@/features/intelligence/services/guardrails.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/birthVoice.service.test.ts(72,24): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/birthVoice.service.test.ts(73,26): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/callSuppression.service.test.ts(34,8): error TS2307: Cannot find module '@/features/integrations/birth-voice/callSuppression.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/callSuppression.service.test.ts(35,24): error TS2307: Cannot find module '@/lib/logger' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/callSuppression.service.test.ts(36,24): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/voiceHubConnection.service.test.ts(40,8): error TS2307: Cannot find module '@/features/integrations/birth-voice/voiceHubConnection.service' or its corresponding type declarations.
+src/features/integrations/birth-voice/__tests__/voiceHubConnection.service.test.ts(41,26): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(115,39): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(205,37): error TS2307: Cannot find module '@/lib/logger' or its corresponding type declarations.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(222,11): error TS7031: Binding element 'meta' implicitly has an 'any' type.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(229,39): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(250,39): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/bitrix/service/__tests__/client.test.ts(301,39): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.routes.test.ts(29,30): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(124,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(148,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(160,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(175,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(192,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(202,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(249,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(286,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(325,39): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(357,39): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/google/__tests__/google.service.test.ts(382,37): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/shared/externalCrm.routes.ts(34,43): error TS7006: Parameter 'c' implicitly has an 'any' type.
+src/features/integrations/shared/ExternalCrmService.ts(6,24): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/integrations/shared/ExternalCrmService.ts(136,30): error TS7006: Parameter 'conn' implicitly has an 'any' type.
+src/features/intelligence/agents/__tests__/base.agent.consent.test.ts(26,35): error TS2307: Cannot find module '../bdr.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/base.agent.consent.test.ts(27,35): error TS2307: Cannot find module '../crm.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/base.agent.consent.test.ts(28,50): error TS2307: Cannot find module '../../services/guardrails.service' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/churnRetention.agent.consent.test.ts(11,46): error TS2307: Cannot find module '../churnRetention.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/churnRetention.agent.consent.test.ts(12,50): error TS2307: Cannot find module '../../services/guardrails.service' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/closer.no-win-path.test.ts(17,42): error TS2307: Cannot find module '../closer.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/learning.agent.consent.test.ts(24,40): error TS2307: Cannot find module '../learning.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/learning.agent.versioning.test.ts(110,18): error TS2307: Cannot find module '../learning.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/ops.agent.consent.test.ts(52,35): error TS2307: Cannot find module '../ops.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/sdrOutboundDraft.agent.test.ts(58,48): error TS2307: Cannot find module '../sdrOutboundDraft.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/sdrQualification.agent.consent.test.ts(16,48): error TS2307: Cannot find module '../sdrQualification.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/sdrQualification.agent.consent.test.ts(17,50): error TS2307: Cannot find module '../../services/guardrails.service' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/supervisor.agent.consent.test.ts(23,44): error TS2307: Cannot find module '../supervisor.agent' or its corresponding type declarations.
+src/features/intelligence/agents/__tests__/supervisor.agent.consent.test.ts(24,50): error TS2307: Cannot find module '../../services/guardrails.service' or its corresponding type declarations.
+src/features/intelligence/evaluation/goldenDataset.service.ts(2,30): error TS1543: Importing a JSON file into an ECMAScript module requires a 'type: "json"' import attribute when 'module' is set to 'NodeNext'.
+src/features/intelligence/services/__tests__/ai.service.qualifyLead.test.ts(25,36): error TS2307: Cannot find module '../ai.service' or its corresponding type declarations.
+src/features/intelligence/services/__tests__/aiPendingAction.service.test.ts(51,24): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/intelligence/services/__tests__/guardrails.service.test.ts(30,18): error TS2307: Cannot find module '../guardrails.service' or its corresponding type declarations.
+src/features/job-roles/services/agentBuilder.service.ts(15,39): error TS1543: Importing a JSON file into an ECMAScript module requires a 'type: "json"' import attribute when 'module' is set to 'NodeNext'.
+src/features/lgpd/services/__tests__/lgpd-sanitizer.service.test.ts(14,47): error TS2307: Cannot find module '../lgpd-sanitizer.service' or its corresponding type declarations.
+src/features/mesa-tratamento/services/__tests__/mesa-triage.service.test.ts(14,44): error TS2307: Cannot find module '../mesa-triage.service' or its corresponding type declarations.
+src/features/notifications/sse.service.ts(28,27): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/features/notifications/sse.service.ts(39,29): error TS7006: Parameter 'channel' implicitly has an 'any' type.
+src/features/notifications/sse.service.ts(39,38): error TS7006: Parameter 'message' implicitly has an 'any' type.
+src/features/playbook/living-playbook/application/__tests__/livingPlaybook.service.test.ts(47,3): error TS2307: Cannot find module '../livingPlaybook.service' or its corresponding type declarations.
+src/features/playbook/objection-matrix/application/__tests__/objectionGenerator.service.test.ts(28,55): error TS2307: Cannot find module '../objectionGenerator.service' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(5,8): error TS2307: Cannot find module '@/features/prospecting/services/apollo.service' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(6,38): error TS2307: Cannot find module '@/features/prospecting/services/enrichmentCascade.service' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(10,8): error TS2307: Cannot find module '@/features/prospecting/services/hunter.service' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(11,43): error TS2307: Cannot find module '@/features/prospecting/services/places.service' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(12,24): error TS2307: Cannot find module '@/lib/prisma' or its corresponding type declarations.
+src/features/prospecting/__tests__/enrichmentCascade.test.ts(13,26): error TS2307: Cannot find module '@/shared/middlewares/errorHandler' or its corresponding type declarations.
+src/features/prospecting/outbound/components/ChatTab.tsx(43,7): error TS2448: Block-scoped variable 'loadSessions' used before its declaration.
+src/features/prospecting/outbound/components/ChatTab.tsx(43,7): error TS2454: Variable 'loadSessions' is used before being assigned.
+src/features/prospecting/outbound/components/LeadCard.tsx(412,9): error TS2353: Object literal may only specify known properties, and 'userId' does not exist in type 'Lead'.
+src/features/prospecting/outbound/components/LeadDistributionTab.tsx(69,7): error TS2448: Block-scoped variable 'fetchDistribution' used before its declaration.
+src/features/prospecting/outbound/components/LeadDistributionTab.tsx(69,7): error TS2454: Variable 'fetchDistribution' is used before being assigned.
+src/features/prospecting/outbound/components/MyTasksTab.tsx(30,7): error TS2448: Block-scoped variable 'fetchTasks' used before its declaration.
+src/features/prospecting/outbound/components/MyTasksTab.tsx(30,7): error TS2454: Variable 'fetchTasks' is used before being assigned.
+src/features/prospecting/outbound/components/RecentSearchModal.tsx(189,35): error TS2339: Property 'fleetSize' does not exist on type 'RecentSearchParams'.
+src/features/prospecting/outbound/components/RecentSearchModal.tsx(201,35): error TS2339: Property 'cargoType' does not exist on type 'RecentSearchParams'.
+src/features/prospecting/outbound/components/TasksOverviewTab.tsx(20,7): error TS2448: Block-scoped variable 'fetchTasks' used before its declaration.
+src/features/prospecting/outbound/components/TasksOverviewTab.tsx(20,7): error TS2454: Variable 'fetchTasks' is used before being assigned.
+src/features/prospecting/outbound/components/TotalTracLogo.tsx(27,9): error TS6133: '_secondaryBlue' is declared but its value is never read.
+src/features/prospecting/outbound/components/UserKanbanBoard.tsx(18,7): error TS2448: Block-scoped variable 'fetchLeads' used before its declaration.
+src/features/prospecting/outbound/components/UserKanbanBoard.tsx(18,7): error TS2454: Variable 'fetchLeads' is used before being assigned.
+src/features/prospecting/outbound/main.tsx(3,17): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+src/features/prospecting/outbound/server/ai.ts(3,68): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/auth.ts(189,17): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/auth.ts(200,17): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/auth.ts(213,17): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/leadEvidenceContext.ts(16,52): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/middleware/rateLimit.ts(15,10): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/requirementEngine.ts(14,105): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/requirementEngine.ts(16,105): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/routes.ts(43,42): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/routes.ts(289,41): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(291,28): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(325,54): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(346,33): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(373,43): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(391,31): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(477,38): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(497,29): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(621,33): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(674,48): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(701,9): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(716,47): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(730,31): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(740,42): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(775,33): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(816,48): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(851,11): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(897,33): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(928,71): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(985,63): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1007,9): error TS2322: Type 'string | string[]' is not assignable to type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1038,75): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1041,30): error TS6133: 'tone' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(1093,63): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1112,9): error TS2322: Type 'string | string[]' is not assignable to type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1145,68): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1178,49): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1198,29): error TS2322: Type 'string | string[]' is not assignable to type 'string | null | undefined'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1224,42): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1320,30): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1323,44): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1334,56): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1393,57): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/features/prospecting/outbound/server/routes.ts(1483,58): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(1547,22): error TS6133: 'companyType' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(1547,35): error TS6133: 'employeeCount' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(1547,50): error TS6133: 'annualRevenue' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(1548,11): error TS6133: '_region' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(1549,11): error TS6133: '_city' is declared but its value is never read.
+src/features/prospecting/outbound/server/routes.ts(2175,54): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2238,33): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2262,46): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2343,85): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2543,76): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2589,80): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2632,87): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2673,57): error TS7030: Not all code paths return a value.
+src/features/prospecting/outbound/server/routes.ts(2816,17): error TS18048: 'mapped' is possibly 'undefined'.
+src/features/prospecting/outbound/server/routes.ts(2916,11): error TS2322: Type '{ name: string; title: string; email: string; emails: string[]; phone: string; phones: string[]; linkedin: string; }[] | undefined' is not assignable to type 'DecisionMaker[]'.
+  Type 'undefined' is not assignable to type 'DecisionMaker[]'.
+src/features/prospecting/outbound/server/scoring.ts(27,8): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/scoring.ts(38,8): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/outbound/server/scoring.ts(338,35): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/features/prospecting/outbound/server/scoring.ts(339,38): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/features/prospecting/outbound/server/scoring.ts(340,43): error TS7006: Parameter 'r' implicitly has an 'any' type.
+src/features/prospecting/outbound/server/search/providers/apollo.provider.ts(44,9): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+  Overload 2 of 2, '(input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+src/features/prospecting/outbound/server/search/providers/apollo.provider.ts(89,9): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+  Overload 2 of 2, '(input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+src/features/prospecting/outbound/server/search/providers/apollo.provider.ts(110,13): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+  Overload 2 of 2, '(input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Api-Key': string | undefined; }' is not assignable to type 'undefined'.
+src/features/prospecting/outbound/server/search/providers/googlePlaces.provider.ts(46,7): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(input: string | URL | Request, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Goog-Api-Key': string | undefined; 'X-Goog-FieldMask': string; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Goog-Api-Key': string | undefined; 'X-Goog-FieldMask': string; }' is not assignable to type 'undefined'.
+  Overload 2 of 2, '(input: URL | RequestInfo, init?: RequestInit | undefined): Promise<Response>', gave the following error.
+    Type '{ 'Content-Type': string; 'X-Goog-Api-Key': string | undefined; 'X-Goog-FieldMask': string; }' is not assignable to type 'HeadersInit | undefined'.
+      Type '{ 'Content-Type': string; 'X-Goog-Api-Key': string | undefined; 'X-Goog-FieldMask': string; }' is not assignable to type 'undefined'.
+src/features/prospecting/outbound/server/search/providers/hunter.provider.ts(65,119): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string | number | boolean'.
+  Type 'undefined' is not assignable to type 'string | number | boolean'.
+src/features/prospecting/outbound/server/search/providers/hunter.provider.ts(110,118): error TS2345: Argument of type 'string | undefined' is not assignable to parameter of type 'string | number | boolean'.
+  Type 'undefined' is not assignable to type 'string | number | boolean'.
+src/features/prospecting/outbound/server/signals.ts(38,41): error TS2307: Cannot find module '../src/types.js' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/cold-email.service.test.ts(35,40): error TS2307: Cannot find module '../cold-email.service' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/companyIdentity.service.test.ts(19,49): error TS2307: Cannot find module '../companyIdentity.service' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/enrichment.service.test.ts(6,8): error TS2307: Cannot find module '@/features/prospecting/services/enrichment.service' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/hunter.service.test.ts(28,8): error TS2307: Cannot find module '@/features/prospecting/services/hunter.service' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/hunter.service.test.ts(29,44): error TS2307: Cannot find module '@/features/prospecting/services/providerCache' or its corresponding type declarations.
+src/features/prospecting/services/__tests__/hunter.service.test.ts(30,51): error TS2307: Cannot find module '@/features/prospecting/services/providerRateLimit' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/client.test.ts(20,8): error TS2307: Cannot find module '@/features/prospecting/services/apollo/client' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/organizationEnrich.test.ts(19,44): error TS2307: Cannot find module '@/features/prospecting/services/apollo/organizationEnrich' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/organizationEnrich.test.ts(20,51): error TS2307: Cannot find module '@/features/prospecting/services/providerRateLimit' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/organizationSearch.test.ts(2,39): error TS2307: Cannot find module '@/features/prospecting/domain/prospectTypes' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/organizationSearch.test.ts(30,39): error TS2307: Cannot find module '@/features/prospecting/services/apollo/organizationSearch' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/organizationSearch.test.ts(31,51): error TS2307: Cannot find module '@/features/prospecting/services/providerRateLimit' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/people.test.ts(30,40): error TS2307: Cannot find module '@/features/prospecting/domain/prospectTypes' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/people.test.ts(35,8): error TS2307: Cannot find module '@/features/prospecting/services/apollo/people' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/people.test.ts(36,41): error TS2307: Cannot find module '@/features/prospecting/services/apollo/types' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/people.test.ts(37,44): error TS2307: Cannot find module '@/features/prospecting/services/providerCache' or its corresponding type declarations.
+src/features/prospecting/services/apollo/__tests__/people.test.ts(38,51): error TS2307: Cannot find module '@/features/prospecting/services/providerRateLimit' or its corresponding type declarations.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(2,33): error TS2307: Cannot find module '@/features/prospecting/services/enrichment/fitScore' or its corresponding type declarations.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(162,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(163,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(164,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(165,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(166,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(167,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(168,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/prospecting/services/enrichment/__tests__/fitScore.test.ts(169,37): error TS7006: Parameter 'i' implicitly has an 'any' type.
+src/features/voice-hub/components/studio/Canvas.tsx(22,45): error TS2307: Cannot find module '../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/Canvas.tsx(67,5): error TS6133: 'loadWorkflowFromServer' is declared but its value is never read.
+src/features/voice-hub/components/studio/Canvas.tsx(79,13): error TS7030: Not all code paths return a value.
+src/features/voice-hub/components/studio/Canvas.tsx(89,13): error TS7030: Not all code paths return a value.
+src/features/voice-hub/components/studio/Canvas.tsx(110,25): error TS2339: Property 'healthScore' does not exist on type 'ValidationResult'.
+src/features/voice-hub/components/studio/Canvas.tsx(114,45): error TS2339: Property 'nodeId' does not exist on type 'ValidationIssue'.
+src/features/voice-hub/components/studio/Canvas.tsx(185,13): error TS2322: Type '{ start: (props: NodeProps<StudioNode>) => JSX.Element; end: (props: NodeProps<StudioNode>) => JSX.Element; prompt: (props: NodeProps<StudioNode>) => JSX.Element; ... 8 more ...; human_handoff: (props: NodeProps<StudioNode>) => JSX.Element; }' is not assignable to type 'NodeTypes'.
+  Property 'start' is incompatible with index signature.
+    Type '(props: NodeProps<StudioNode>) => Element' is not assignable to type 'ComponentType<Pick<Node<Record<string, unknown>, string | undefined>, "height" | "id" | "width" | "data" | "sourcePosition" | "targetPosition" | "dragHandle" | "parentId"> & Required<...> & { ...; } & { ...; }>'.
+      Type '(props: NodeProps<StudioNode>) => Element' is not assignable to type 'FunctionComponent<Pick<Node<Record<string, unknown>, string | undefined>, "height" | "id" | "width" | "data" | "sourcePosition" | "targetPosition" | "dragHandle" | "parentId"> & Required<...> & { ...; } & { ...; }>'.
+        Types of parameters 'props' and 'props' are incompatible.
+          Type 'Pick<Node<Record<string, unknown>, string | undefined>, "height" | "id" | "width" | "data" | "sourcePosition" | "targetPosition" | "dragHandle" | "parentId"> & Required<...> & { ...; } & { ...; }' is not assignable to type 'NodeProps<StudioNode>'.
+            Property 'height' is optional in type 'Pick<Node<Record<string, unknown>, string | undefined>, "height" | "id" | "width" | "data" | "sourcePosition" | "targetPosition" | "dragHandle" | "parentId"> & Required<...> & { ...; } & { ...; }' but required in type 'NodeProps<StudioNode>'.
+src/features/voice-hub/components/studio/Canvas.tsx(186,13): error TS2322: Type '{ studioEdge: ({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, selected, data, markerEnd, }: EdgeProps<StudioNode>) => JSX.Element; }' is not assignable to type 'EdgeTypes'.
+  Property 'studioEdge' is incompatible with index signature.
+    Type '({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, selected, data, markerEnd, }: EdgeProps<StudioEdgeType>) => Element' is not assignable to type 'ComponentType<Pick<Edge<Record<string, unknown>, string | undefined>, "source" | "id" | "style" | "target" | "type" | "data" | "selected" | "selectable" | "deletable" | "animated"> & EdgePosition & EdgeLabelOptions & { ...; } & { ...; }>'.
+      Type '({ sourceX, sourceY, targetX, targetY, sourcePosition, targetPosition, style, selected, data, markerEnd, }: EdgeProps<StudioEdgeType>) => Element' is not assignable to type 'FunctionComponent<Pick<Edge<Record<string, unknown>, string | undefined>, "source" | "id" | "style" | "target" | "type" | "data" | "selected" | "selectable" | "deletable" | "animated"> & EdgePosition & EdgeLabelOptions & { ...; } & { ...; }>'.
+        Types of parameters '__0' and 'props' are incompatible.
+          Type 'Pick<Edge<Record<string, unknown>, string | undefined>, "source" | "id" | "style" | "target" | "type" | "data" | "selected" | "selectable" | "deletable" | "animated"> & EdgePosition & EdgeLabelOptions & { ...; } & { ...; }' is not assignable to type 'EdgeProps<StudioEdgeType>'.
+            Property 'style' is optional in type 'Pick<Edge<Record<string, unknown>, string | undefined>, "source" | "id" | "style" | "target" | "type" | "data" | "selected" | "selectable" | "deletable" | "animated"> & EdgePosition & EdgeLabelOptions & { ...; } & { ...; }' but required in type 'EdgeProps<StudioEdgeType>'.
+src/features/voice-hub/components/studio/edges/StudioEdge.tsx(2,51): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/nodes/index.tsx(2,33): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/nodes/UnifiedNode.tsx(4,33): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/panels/BottomDrawer.tsx(40,19): error TS2339: Property 'healthScore' does not exist on type 'ValidationResult'.
+src/features/voice-hub/components/studio/panels/InspectorPanel.tsx(7,33): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/panels/InspectorPanel.tsx(434,50): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/features/voice-hub/components/studio/panels/InspectorPanel.tsx(434,55): error TS7006: Parameter 'idx' implicitly has an 'any' type.
+src/features/voice-hub/components/studio/panels/LayersPanel.tsx(8,33): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/panels/TestSimulatorModal.tsx(49,7): error TS2448: Block-scoped variable 'stopAudioWave' used before its declaration.
+src/features/voice-hub/components/studio/panels/TestSimulatorModal.tsx(49,7): error TS2454: Variable 'stopAudioWave' is used before being assigned.
+src/features/voice-hub/components/studio/panels/TestSimulatorModal.tsx(63,38): error TS2345: Argument of type 'Uint8Array<ArrayBufferLike>' is not assignable to parameter of type 'Uint8Array<ArrayBuffer>'.
+  Type 'ArrayBufferLike' is not assignable to type 'ArrayBuffer'.
+    Type 'SharedArrayBuffer' is not assignable to type 'ArrayBuffer'.
+      Types of property '[Symbol.toStringTag]' are incompatible.
+        Type '"SharedArrayBuffer"' is not assignable to type '"ArrayBuffer"'.
+src/features/voice-hub/components/studio/panels/TestSimulatorModal.tsx(114,45): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error fetching stream", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error fetching stream", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/components/studio/panels/TestSimulatorModal.tsx(157,63): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error sending message in test simulator", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error sending message in test simulator", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/components/studio/panels/TopBar.tsx(3,55): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/components/studio/panels/ValidationIssuesList.tsx(3,38): error TS2307: Cannot find module '../../../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/store/useStudioStore.ts(2,96): error TS2307: Cannot find module '../lib/studio/types.js' or its corresponding type declarations.
+src/features/voice-hub/store/useStudioStore.ts(887,55): error TS2339: Property 'nodeId' does not exist on type 'ValidationIssue'.
+src/features/voice-hub/store/useStudioStore.ts(1074,53): error TS2339: Property 'nodeId' does not exist on type 'ValidationIssue'.
+src/features/voice-hub/store/useStudioStore.ts(1162,62): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error applying AI refactor to workflow", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: unknown; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error applying AI refactor to workflow", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: unknown; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1245,61): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error generating workflow from prompt", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: unknown; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error generating workflow from prompt", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: unknown; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1276,58): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error loading workflow from server", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error loading workflow from server", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1298,55): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error saving workflow to server", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error saving workflow to server", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1350,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error publishing workflow to server", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error publishing workflow to server", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1398,63): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error fetching workflow version history", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error fetching workflow version history", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/features/voice-hub/store/useStudioStore.ts(1461,59): error TS2769: No overload matches this call.
+  Overload 1 of 3, '(obj: "Error rolling back workflow version", msg?: undefined): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+  Overload 2 of 3, '(obj: "Error rolling back workflow version", msg?: undefined, ...args: unknown[]): void', gave the following error.
+    Argument of type '{ err: any; }' is not assignable to parameter of type 'undefined'.
+src/lib/analytics/posthog-client.ts(5,13): error TS2339: Property 'init' does not exist on type 'typeof import("C:/Github/Birthub-360/node_modules/posthog-js/dist/module")'.
+src/lib/analytics/posthog-client.ts(7,16): error TS7006: Parameter 'ph' implicitly has an 'any' type.
+src/lib/crypto/__tests__/piiFields.unit.test.ts(15,8): error TS2307: Cannot find module '@/lib/crypto/piiFields' or its corresponding type declarations.
+src/lib/crypto/__tests__/piiFields.unit.test.ts(16,40): error TS2307: Cannot find module '@/lib/crypto/secretFields' or its corresponding type declarations.
+src/lib/crypto/__tests__/piiIndex.unit.test.ts(25,8): error TS2307: Cannot find module '@/lib/crypto/piiIndex' or its corresponding type declarations.
+src/lib/crypto/__tests__/secretFields.unit.test.ts(16,8): error TS2307: Cannot find module '@/lib/crypto/secretFields' or its corresponding type declarations.
+src/lib/navigationBus.ts(27,7): error TS2739: Type '{ dashboard: true; workspace: true; companies: true; contacts: true; crm: true; activities: true; cadence: true; prospect: true; intelligence: true; 'market-intelligence': true; chatbook: true; roleplay: true; ... 23 more ...; 'module-access': true; }' is missing the following properties from type 'Record<TabType, true>': "voice-hub", outbound, dialer
+src/lib/queue/__tests__/newsMonitor.worker.test.ts(45,42): error TS2307: Cannot find module '../newsMonitor.worker' or its corresponding type declarations.
+src/lib/queue/metrics.ts(2,1): error TS6133: 'Redis' is declared but its value is never read.
+src/lib/queue/metrics.ts(114,10): error TS2709: Cannot use namespace 'Redis' as a type.
+src/lib/queue/metrics.ts(128,10): error TS2709: Cannot use namespace 'Redis' as a type.
+src/lib/queue/redis.ts(57,10): error TS2709: Cannot use namespace 'Redis' as a type.
+src/lib/queue/redis.ts(70,22): error TS7006: Parameter 'err' implicitly has an 'any' type.
+src/lib/queue/redis.ts(90,31): error TS2351: This expression is not constructable.
+  Type 'typeof import("C:/Github/Birthub-360/node_modules/ioredis/built/index")' has no construct signatures.
+src/lib/queue/redis.ts(101,42): error TS2351: This expression is not constructable.
+  Type 'typeof import("C:/Github/Birthub-360/node_modules/ioredis/built/index")' has no construct signatures.
+src/lib/queue/redis.ts(123,36): error TS2351: This expression is not constructable.
+  Type 'typeof import("C:/Github/Birthub-360/node_modules/ioredis/built/index")' has no construct signatures.
+src/lib/queue/redis.ts(134,51): error TS2709: Cannot use namespace 'Redis' as a type.

@@ -1,0 +1,1852 @@
+{
+  "other": [
+    {
+      "name": "Ldr",
+      "file": "C:\\Github\\Birthub-360\\src\\pages\\Ldr.tsx"
+    },
+    {
+      "name": "WorkspaceRenderer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\workspace\\components\\WorkspaceRenderer.tsx"
+    },
+    {
+      "name": "WorkspaceHome",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\workspace\\components\\WorkspaceRenderer.tsx"
+    },
+    {
+      "name": "WorkspaceHome",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\workspace\\components\\WorkspaceHome.tsx"
+    },
+    {
+      "name": "ThemeProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\ThemeContext.tsx"
+    },
+    {
+      "name": "AtlasLogo",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Switch",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Skeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "EmptyState",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Alert",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Spinner",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Progress",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Avatar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Tabs",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Breadcrumb",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Timeline",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Tooltip",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "GlobalHelpCenter",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\GlobalHelpCenter.tsx"
+    },
+    {
+      "name": "ErrorBoundary",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\ErrorBoundary.tsx"
+    },
+    {
+      "name": "CommandPalette",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\CommandPalette.tsx"
+    },
+    {
+      "name": "VisualCanvas",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\Canvas.tsx"
+    },
+    {
+      "name": "VersionHistoryPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\VersionHistoryPanel.tsx"
+    },
+    {
+      "name": "ValidationIssuesList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\ValidationIssuesList.tsx"
+    },
+    {
+      "name": "TopBar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\TopBar.tsx"
+    },
+    {
+      "name": "LayersPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\LayersPanel.tsx"
+    },
+    {
+      "name": "InspectorPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\InspectorPanel.tsx"
+    },
+    {
+      "name": "BottomDrawer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\BottomDrawer.tsx"
+    },
+    {
+      "name": "UnifiedNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\UnifiedNode.tsx"
+    },
+    {
+      "name": "StartNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "EndNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "PromptNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "ConditionNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "ToolNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "LlmNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "VoiceNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "QuestionNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "SwitchNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "MemoryNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "KnowledgeNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "HumanHandoffNode",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\nodes\\index.tsx"
+    },
+    {
+      "name": "StudioEdge",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\edges\\StudioEdge.tsx"
+    },
+    {
+      "name": "NotificationCenter",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\NotificationCenter\\NotificationCenter.tsx"
+    },
+    {
+      "name": "LiveSupervisor",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\LiveSupervisor\\LiveSupervisor.tsx"
+    },
+    {
+      "name": "ThemeProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\ThemeContext.tsx"
+    },
+    {
+      "name": "AtlasLogo",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Switch",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Skeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "EmptyState",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Alert",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Spinner",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Progress",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Avatar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Tabs",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Breadcrumb",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Timeline",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Tooltip",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "ErrorBoundary",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\ErrorBoundary.tsx"
+    },
+    {
+      "name": "CommandPalette",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\CommandPalette.tsx"
+    },
+    {
+      "name": "Team",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\team\\components\\Team.tsx"
+    },
+    {
+      "name": "SocialSellingHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\social-selling\\components\\SocialSellingHub.tsx"
+    },
+    {
+      "name": "Settings",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\settings\\components\\Settings.tsx"
+    },
+    {
+      "name": "MemoryGovernancePanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\settings\\components\\MemoryGovernancePanel.tsx"
+    },
+    {
+      "name": "LearningProfilePanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\settings\\components\\LearningProfilePanel.tsx"
+    },
+    {
+      "name": "LeadDedupPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\settings\\components\\LeadDedupPanel.tsx"
+    },
+    {
+      "name": "CompanyDedupPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\settings\\components\\CompanyDedupPanel.tsx"
+    },
+    {
+      "name": "RoleplayHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\roleplay\\components\\RoleplayHub.tsx"
+    },
+    {
+      "name": "RoleplayHistoryPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\roleplay\\components\\roleplay-hub\\RoleplayHistoryPanel.tsx"
+    },
+    {
+      "name": "CallSetup",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\roleplay\\components\\roleplay-hub\\CallSetup.tsx"
+    },
+    {
+      "name": "CallAnalysisReport",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\roleplay\\components\\roleplay-hub\\CallAnalysisReport.tsx"
+    },
+    {
+      "name": "ActiveCallView",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\roleplay\\components\\roleplay-hub\\ActiveCallView.tsx"
+    },
+    {
+      "name": "UserKanbanBoard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\UserKanbanBoard.tsx"
+    },
+    {
+      "name": "TasksOverviewTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\TasksOverviewTab.tsx"
+    },
+    {
+      "name": "MyTasksTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\MyTasksTab.tsx"
+    },
+    {
+      "name": "LoginScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\LoginScreen.tsx"
+    },
+    {
+      "name": "LOSS_REASONS",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\LeadStageAndTags.tsx"
+    },
+    {
+      "name": "WIN_REASONS",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\LeadStageAndTags.tsx"
+    },
+    {
+      "name": "LeadDistributionTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\LeadDistributionTab.tsx"
+    },
+    {
+      "name": "ProspectingHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\ProspectingHub.tsx"
+    },
+    {
+      "name": "ProspectingToolsHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\ProspectingToolsHub.tsx"
+    },
+    {
+      "name": "OcrCapturePanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\OcrCapturePanel.tsx"
+    },
+    {
+      "name": "InfoTile",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\InfoTile.tsx"
+    },
+    {
+      "name": "DiscoveryResultsPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\DiscoveryResultsPanel.tsx"
+    },
+    {
+      "name": "DiscoveryFilterPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\DiscoveryFilterPanel.tsx"
+    },
+    {
+      "name": "DecisionMakerSearch",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\DecisionMakerSearch.tsx"
+    },
+    {
+      "name": "CnpjSearchPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\CnpjSearchPanel.tsx"
+    },
+    {
+      "name": "YoutubeTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\YoutubeTool.tsx"
+    },
+    {
+      "name": "NotConfiguredBanner",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\NotConfiguredBanner.tsx"
+    },
+    {
+      "name": "NewsTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\NewsTool.tsx"
+    },
+    {
+      "name": "LinkedInTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\LinkedInTool.tsx"
+    },
+    {
+      "name": "HunterTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\HunterTool.tsx"
+    },
+    {
+      "name": "GooglePlacesTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\GooglePlacesTool.tsx"
+    },
+    {
+      "name": "GitHubTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\GitHubTool.tsx"
+    },
+    {
+      "name": "ApolloTool",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\tools\\ApolloTool.tsx"
+    },
+    {
+      "name": "QualificationMatrixPage",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\QualificationMatrixPage.tsx"
+    },
+    {
+      "name": "ObjectionSuggestionsReview",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\ObjectionSuggestionsReview.tsx"
+    },
+    {
+      "name": "ObjectionsMatrixPage",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\ObjectionsMatrixPage.tsx"
+    },
+    {
+      "name": "LivingPlaybookReview",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\LivingPlaybookReview.tsx"
+    },
+    {
+      "name": "OnboardingTour",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\onboarding\\components\\OnboardingTour.tsx"
+    },
+    {
+      "name": "Notifications",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\notifications\\components\\Notifications.tsx"
+    },
+    {
+      "name": "ModuleAccessAdmin",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\module-access\\components\\ModuleAccessAdmin.tsx"
+    },
+    {
+      "name": "SdrDashboard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\SdrDashboard.tsx"
+    },
+    {
+      "name": "QueueList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\QueueList.tsx"
+    },
+    {
+      "name": "PomodoroWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\PomodoroWidget.tsx"
+    },
+    {
+      "name": "MesaTratamento",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\MesaTratamento.tsx"
+    },
+    {
+      "name": "ManagementPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\ManagementPanel.tsx"
+    },
+    {
+      "name": "VisualOrgChart",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\market-intelligence\\components\\VisualOrgChart.tsx"
+    },
+    {
+      "name": "LeadApprovalDeck",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\market-intelligence\\components\\LeadApprovalDeck.tsx"
+    },
+    {
+      "name": "LdrAccountIntelligence",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\market-intelligence\\components\\LdrAccountIntelligence.tsx"
+    },
+    {
+      "name": "CompanyBranchesView",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\market-intelligence\\components\\CompanyBranchesView.tsx"
+    },
+    {
+      "name": "Account360",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\market-intelligence\\components\\Account360.tsx"
+    },
+    {
+      "name": "DataSubjectRights",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\lgpd\\components\\DataSubjectRights.tsx"
+    },
+    {
+      "name": "AuditLogs",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\lgpd\\components\\AuditLogs.tsx"
+    },
+    {
+      "name": "EditorIA",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\knowledge\\components\\EditorIA.tsx"
+    },
+    {
+      "name": "Base",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\knowledge\\components\\Base.tsx"
+    },
+    {
+      "name": "TopicTrainingAcademy",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\TopicTrainingAcademy.tsx"
+    },
+    {
+      "name": "SwarmObservability",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\SwarmObservability.tsx"
+    },
+    {
+      "name": "SwarmDashboard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\SwarmDashboard.tsx"
+    },
+    {
+      "name": "SuperagentCreator",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\SuperagentCreator.tsx"
+    },
+    {
+      "name": "SalesMethodologyStudio",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\SalesMethodologyStudio.tsx"
+    },
+    {
+      "name": "RobustScriptGenerator",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\RobustScriptGenerator.tsx"
+    },
+    {
+      "name": "ReportsHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\ReportsHub.tsx"
+    },
+    {
+      "name": "IntelligenceHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\IntelligenceHub.tsx"
+    },
+    {
+      "name": "ContextualCopilot",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\ContextualCopilot.tsx"
+    },
+    {
+      "name": "BitrixGuideHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\BitrixGuideHub.tsx"
+    },
+    {
+      "name": "B2BGenerator",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\B2BGenerator.tsx"
+    },
+    {
+      "name": "AutomationGuide",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\AutomationGuide.tsx"
+    },
+    {
+      "name": "AISuiteHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\AISuiteHub.tsx"
+    },
+    {
+      "name": "AIPendingActions",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\AIPendingActions.tsx"
+    },
+    {
+      "name": "AgentQualityPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\intelligence\\components\\AgentQualityPanel.tsx"
+    },
+    {
+      "name": "WhatsAppWebPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\whatsapp\\components\\WhatsAppWebPanel.tsx"
+    },
+    {
+      "name": "WhatsAppChatPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\whatsapp\\components\\WhatsAppChatPanel.tsx"
+    },
+    {
+      "name": "StripeConnectionPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\stripe\\components\\StripeConnectionPanel.tsx"
+    },
+    {
+      "name": "SlackConnectionPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\slack\\components\\SlackConnectionPanel.tsx"
+    },
+    {
+      "name": "OmieConnectionPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\omie\\components\\OmieConnectionPanel.tsx"
+    },
+    {
+      "name": "WebhookMonitor",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\WebhookMonitor.tsx"
+    },
+    {
+      "name": "Integrations",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\Integrations.tsx"
+    },
+    {
+      "name": "ExternalCrmPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\ExternalCrmPanel.tsx"
+    },
+    {
+      "name": "BitrixSyncRulesPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\BitrixSyncRulesPanel.tsx"
+    },
+    {
+      "name": "BitrixImportPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\BitrixImportPanel.tsx"
+    },
+    {
+      "name": "BitrixExtractionPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\BitrixExtractionPanel.tsx"
+    },
+    {
+      "name": "VoiceHubConnectionPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\birth-voice\\components\\VoiceHubConnectionPanel.tsx"
+    },
+    {
+      "name": "VoiceCallActivity",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\birth-voice\\components\\VoiceCallActivity.tsx"
+    },
+    {
+      "name": "HubTaskWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\hub\\components\\HubTaskWidget.tsx"
+    },
+    {
+      "name": "HubScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\hub\\components\\HubScreen.tsx"
+    },
+    {
+      "name": "HubBurstCanvas",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\hub\\components\\HubBurstCanvas.tsx"
+    },
+    {
+      "name": "CommercialAgentCellPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\hub\\components\\CommercialAgentCellPanel.tsx"
+    },
+    {
+      "name": "FeatureFlagsPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\feature-flags\\components\\FeatureFlagsPanel.tsx"
+    },
+    {
+      "name": "Editor",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\document-editor\\components\\Editor.tsx"
+    },
+    {
+      "name": "DesignLabPage",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\design-lab\\DesignLabPage.tsx"
+    },
+    {
+      "name": "TeamRankingWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\TeamRankingWidget.tsx"
+    },
+    {
+      "name": "SinglePageDashboard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\SinglePageDashboard.tsx"
+    },
+    {
+      "name": "RevenueSignalOrb",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\RevenueSignalOrb.tsx"
+    },
+    {
+      "name": "RealtimeFeed",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\RealtimeFeed.tsx"
+    },
+    {
+      "name": "DeferredRevenueSignalOrb",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\DeferredRevenueSignalOrb.tsx"
+    },
+    {
+      "name": "AiGatewayShowcase",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\AiGatewayShowcase.tsx"
+    },
+    {
+      "name": "AdaptiveDashboard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\AdaptiveDashboard.tsx"
+    },
+    {
+      "name": "PropostasList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm360\\components\\PropostasList.tsx"
+    },
+    {
+      "name": "PropostaDetail",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm360\\components\\PropostaDetail.tsx"
+    },
+    {
+      "name": "CrmOverview",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm360\\components\\CrmOverview.tsx"
+    },
+    {
+      "name": "SavedViewsPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\SavedViewsPanel.tsx"
+    },
+    {
+      "name": "LeadDetailDrawer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\LeadDetailDrawer.tsx"
+    },
+    {
+      "name": "LeadActionBar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\LeadActionBar.tsx"
+    },
+    {
+      "name": "KanbanColumn",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\KanbanColumn.tsx"
+    },
+    {
+      "name": "LeadCopilotoPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\copiloto-ia\\components\\LeadCopilotoPanel.tsx"
+    },
+    {
+      "name": "CopilotoIaHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\copiloto-ia\\components\\CopilotoIaHub.tsx"
+    },
+    {
+      "name": "ConversationsTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\copiloto-ia\\components\\ConversationsTab.tsx"
+    },
+    {
+      "name": "ConversationDetailDrawer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\copiloto-ia\\components\\ConversationDetailDrawer.tsx"
+    },
+    {
+      "name": "BitrixMappingSettingsTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\copiloto-ia\\components\\BitrixMappingSettingsTab.tsx"
+    },
+    {
+      "name": "ContactList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\contacts\\components\\ContactList.tsx"
+    },
+    {
+      "name": "ContactDetail",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\contacts\\components\\ContactDetail.tsx"
+    },
+    {
+      "name": "CompanyList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\companies\\components\\CompanyList.tsx"
+    },
+    {
+      "name": "CompanyDetail",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\companies\\components\\CompanyDetail.tsx"
+    },
+    {
+      "name": "PipelineForecastTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\PipelineForecastTab.tsx"
+    },
+    {
+      "name": "LossReasonAiCheck",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\LossReasonAiCheck.tsx"
+    },
+    {
+      "name": "LossesTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\LossesTab.tsx"
+    },
+    {
+      "name": "LeadingIndicatorsTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\LeadingIndicatorsTab.tsx"
+    },
+    {
+      "name": "JourneyTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\JourneyTab.tsx"
+    },
+    {
+      "name": "JoaoReisDiagnosticHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\JoaoReisDiagnosticHub.tsx"
+    },
+    {
+      "name": "GoalCountdownOverlay",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\GoalCountdownOverlay.tsx"
+    },
+    {
+      "name": "ExecutiveOverviewTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\ExecutiveOverviewTab.tsx"
+    },
+    {
+      "name": "DecisionCenterPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\DecisionCenterPanel.tsx"
+    },
+    {
+      "name": "DealDrillDownDrawer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\DealDrillDownDrawer.tsx"
+    },
+    {
+      "name": "DailyPlanTeamOverview",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\DailyPlanTeamOverview.tsx"
+    },
+    {
+      "name": "DailyPlanHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\DailyPlanHub.tsx"
+    },
+    {
+      "name": "DailyClosingGate",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\DailyClosingGate.tsx"
+    },
+    {
+      "name": "CrmQualityTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\CrmQualityTab.tsx"
+    },
+    {
+      "name": "CommercialIntelligenceHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\CommercialIntelligenceHub.tsx"
+    },
+    {
+      "name": "AlertsPanel",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\AlertsPanel.tsx"
+    },
+    {
+      "name": "AgingTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\AgingTab.tsx"
+    },
+    {
+      "name": "FloatingChatbook",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\chatbook\\components\\FloatingChatbook.tsx"
+    },
+    {
+      "name": "ChatbookHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\chatbook\\components\\ChatbookHub.tsx"
+    },
+    {
+      "name": "PublicBookingPage",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\calendar\\components\\PublicBookingPage.tsx"
+    },
+    {
+      "name": "Calendar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\calendar\\components\\Calendar.tsx"
+    },
+    {
+      "name": "CadenceHub",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\cadence\\components\\CadenceHub.tsx"
+    },
+    {
+      "name": "Billing",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\billing\\components\\Billing.tsx"
+    },
+    {
+      "name": "Automations",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\automations\\components\\Automations.tsx"
+    },
+    {
+      "name": "WelcomeScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\WelcomeScreen.tsx"
+    },
+    {
+      "name": "ResetPasswordScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\ResetPasswordScreen.tsx"
+    },
+    {
+      "name": "LoginScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\LoginScreen.tsx"
+    },
+    {
+      "name": "LandingLoginSplitScreen",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\LandingLoginSplitScreen.tsx"
+    },
+    {
+      "name": "ChangePasswordGate",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\ChangePasswordGate.tsx"
+    },
+    {
+      "name": "WinLossAnalysis",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\WinLossAnalysis.tsx"
+    },
+    {
+      "name": "GlowChart",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\GlowChart.tsx"
+    },
+    {
+      "name": "HeatmapWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\DashboardExtensions.tsx"
+    },
+    {
+      "name": "LostReasonsWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\DashboardExtensions.tsx"
+    },
+    {
+      "name": "TmqTile",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\DashboardExtensions.tsx"
+    },
+    {
+      "name": "CohortAnalysis",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\CohortAnalysis.tsx"
+    },
+    {
+      "name": "Analytics",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\Analytics.tsx"
+    },
+    {
+      "name": "Timeline",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\activities\\components\\Timeline.tsx"
+    },
+    {
+      "name": "ActivityList",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\activities\\components\\ActivityList.tsx"
+    },
+    {
+      "name": "ThemeProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\ThemeContext.tsx"
+    },
+    {
+      "name": "ExperienceModeProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\ExperienceModeContext.tsx"
+    },
+    {
+      "name": "DailyClosingProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\DailyClosingContext.tsx"
+    },
+    {
+      "name": "BrandProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\BrandContext.tsx"
+    },
+    {
+      "name": "AuthProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\AuthContext.tsx"
+    },
+    {
+      "name": "ActiveRecordProvider",
+      "file": "C:\\Github\\Birthub-360\\src\\contexts\\ActiveRecordContext.tsx"
+    },
+    {
+      "name": "Intelligence",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\Intelligence.tsx"
+    },
+    {
+      "name": "ErrorBoundary",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ErrorBoundary.tsx"
+    },
+    {
+      "name": "CrmBoard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\CrmBoard.tsx"
+    },
+    {
+      "name": "WorkspaceReadySection",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\workspace\\WorkspaceReadySection.tsx"
+    },
+    {
+      "name": "VoiceCommandWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\VoiceCommandWidget.tsx"
+    },
+    {
+      "name": "Toggle",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Toggle.tsx"
+    },
+    {
+      "name": "Toaster",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Toaster.tsx"
+    },
+    {
+      "name": "Timeline",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Timeline.tsx"
+    },
+    {
+      "name": "ThemeSwitcher",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ThemeSwitcher.tsx"
+    },
+    {
+      "name": "QuickThemeToggle",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ThemeSwitcher.tsx"
+    },
+    {
+      "name": "StyleShowcase",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\StyleShowcase.tsx"
+    },
+    {
+      "name": "Skeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "ListSkeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "ChartSkeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "LoginPage",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\sign-in-page.tsx"
+    },
+    {
+      "name": "ParticleSystem",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ParticleSystem.tsx"
+    },
+    {
+      "name": "DigitalRain",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ParticleSystem.tsx"
+    },
+    {
+      "name": "GlitchEffect",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ParticleSystem.tsx"
+    },
+    {
+      "name": "Pagination",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Pagination.tsx"
+    },
+    {
+      "name": "Magnetic",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Magnetic.tsx"
+    },
+    {
+      "name": "LiveStatsWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\LiveStatsWidget.tsx"
+    },
+    {
+      "name": "GamificationWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\GamificationWidget.tsx"
+    },
+    {
+      "name": "FunnelBars",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\FunnelBars.tsx"
+    },
+    {
+      "name": "FindingsList",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\FindingsList.tsx"
+    },
+    {
+      "name": "EmptyState",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\EmptyState.tsx"
+    },
+    {
+      "name": "Drawer",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Drawer.tsx"
+    },
+    {
+      "name": "CopilotTrigger",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CopilotTrigger.tsx"
+    },
+    {
+      "name": "CompareBar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CompareBar.tsx"
+    },
+    {
+      "name": "DeltaPill",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CompareBar.tsx"
+    },
+    {
+      "name": "CommandPalette",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CommandPalette.tsx"
+    },
+    {
+      "name": "ClockCalendarWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ClockCalendarWidget.tsx"
+    },
+    {
+      "name": "Checklist",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Checklist.tsx"
+    },
+    {
+      "name": "ChannelDonut",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ChannelDonut.tsx"
+    },
+    {
+      "name": "Carousel",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Carousel.tsx"
+    },
+    {
+      "name": "CarouselSlide",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Carousel.tsx"
+    },
+    {
+      "name": "CalendarHeatmap",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CalendarHeatmap.tsx"
+    },
+    {
+      "name": "BrandOrb",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BrandOrb.tsx"
+    },
+    {
+      "name": "BottomSheet",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BottomSheet.tsx"
+    },
+    {
+      "name": "BorderBeam",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BorderBeam.tsx"
+    },
+    {
+      "name": "BlockedState",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BlockedState.tsx"
+    },
+    {
+      "name": "AIEmailGenerator",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\AIEmailGenerator.tsx"
+    },
+    {
+      "name": "ActionPlanSteps",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\ActionPlanSteps.tsx"
+    },
+    {
+      "name": "BentoInsight",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\bento\\BentoInsight.tsx"
+    },
+    {
+      "name": "BentoHero",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\bento\\BentoHero.tsx"
+    },
+    {
+      "name": "ScriptDocument",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\pdf\\PDFExport.tsx"
+    },
+    {
+      "name": "RequireRole",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\RequireRole.tsx"
+    },
+    {
+      "name": "RequireModuleAccess",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\RequireModuleAccess.tsx"
+    },
+    {
+      "name": "ProtectedRoute",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\ProtectedRoute.tsx"
+    },
+    {
+      "name": "PageTransition",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\PageTransition.tsx"
+    },
+    {
+      "name": "OfflineBanner",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\OfflineBanner.tsx"
+    },
+    {
+      "name": "FloatingDock",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\FloatingDock.tsx"
+    },
+    {
+      "name": "AppTopbar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\AppTopbar.tsx"
+    },
+    {
+      "name": "IntelligenceSignal",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\intelligence\\IntelligenceSignal.tsx"
+    },
+    {
+      "name": "RichTextEditor",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\editor\\RichTextEditor.tsx"
+    },
+    {
+      "name": "EntityNotes",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\crm\\EntityNotes.tsx"
+    },
+    {
+      "name": "EntityAttachments",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\crm\\EntityAttachments.tsx"
+    },
+    {
+      "name": "FunnelChart",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\charts\\index.tsx"
+    },
+    {
+      "name": "SankeyChart",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\charts\\index.tsx"
+    },
+    {
+      "name": "HeatmapChart",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\charts\\index.tsx"
+    },
+    {
+      "name": "BarChart",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\charts\\index.tsx"
+    },
+    {
+      "name": "LineChart",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\charts\\index.tsx"
+    },
+    {
+      "name": "BirthHubLogo",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\brand\\BirthHubLogo.tsx"
+    },
+    {
+      "name": "BirthHubSignature",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\brand\\BirthHubLogo.tsx"
+    },
+    {
+      "name": "BirthHubWordmark",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\brand\\BirthHubLogo.tsx"
+    }
+  ],
+  "navigation": [
+    {
+      "name": "Sidebar",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\Sidebar.tsx"
+    },
+    {
+      "name": "PageHeader",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\PageHeader.tsx"
+    },
+    {
+      "name": "Sidebar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\Sidebar.tsx"
+    },
+    {
+      "name": "NavLaunchTransition",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\NavLaunchTransition.tsx"
+    },
+    {
+      "name": "FuturisticSidebar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\FuturisticSidebar.tsx"
+    },
+    {
+      "name": "ExecutiveHeader",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\ExecutiveHeader.tsx"
+    }
+  ],
+  "button": [
+    {
+      "name": "Button",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Button",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "ReportErrorButton",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\ReportErrorButton.tsx"
+    },
+    {
+      "name": "NeonTokyoButton",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\design-lab\\neon-tokyo-buttons\\NeonTokyoButton.tsx"
+    },
+    {
+      "name": "ButtonGallery",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\design-lab\\neon-tokyo-buttons\\ButtonGallery.tsx"
+    },
+    {
+      "name": "NeonButton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\NeonButton.tsx"
+    },
+    {
+      "name": "CopyButton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CopyButton.tsx"
+    },
+    {
+      "name": "BugReportButton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BugReportButton.tsx"
+    },
+    {
+      "name": "PDFDownloadButton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\pdf\\PDFExport.tsx"
+    }
+  ],
+  "input": [
+    {
+      "name": "Input",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Input",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "CyberInput",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CyberInput.tsx"
+    }
+  ],
+  "form": [
+    {
+      "name": "Textarea",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Checkbox",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Select",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "AgentForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\AgentForm.tsx"
+    },
+    {
+      "name": "Textarea",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Checkbox",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "Select",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "PerformanceTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\PerformanceTab.tsx"
+    },
+    {
+      "name": "QualificationItemForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\QualificationItemForm.tsx"
+    },
+    {
+      "name": "ObjectionItemForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\playbook\\components\\ObjectionItemForm.tsx"
+    },
+    {
+      "name": "PropostaForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm360\\components\\PropostaForm.tsx"
+    },
+    {
+      "name": "ContactForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\contacts\\components\\ContactForm.tsx"
+    },
+    {
+      "name": "CompanyForm",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\companies\\components\\CompanyForm.tsx"
+    },
+    {
+      "name": "PerformanceTab",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\PerformanceTab.tsx"
+    },
+    {
+      "name": "AgentPerformanceWidget",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\analytics\\components\\DashboardExtensions.tsx"
+    }
+  ],
+  "badge": [
+    {
+      "name": "Badge",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Badge",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "IntegrationStatusBadge",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\integrations\\components\\IntegrationStatusBadge.tsx"
+    },
+    {
+      "name": "BrandEmblemBadge",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\brand\\BrandEmblemBadge.tsx"
+    }
+  ],
+  "card": [
+    {
+      "name": "Card",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Card",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "MetricsChart",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\outbound\\components\\MetricsChart.tsx"
+    },
+    {
+      "name": "CnpjResultCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\CnpjResultCard.tsx"
+    },
+    {
+      "name": "CandidateCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\prospecting-hub\\CandidateCard.tsx"
+    },
+    {
+      "name": "CurrentLeadCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\mesa-tratamento\\components\\CurrentLeadCard.tsx"
+    },
+    {
+      "name": "SellerCoachingCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\dashboard\\components\\SellerCoachingCard.tsx"
+    },
+    {
+      "name": "KanbanCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\KanbanCard.tsx"
+    },
+    {
+      "name": "TrendChartCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\TrendChartCard.tsx"
+    },
+    {
+      "name": "SellerBenchmarkCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\SellerBenchmarkCard.tsx"
+    },
+    {
+      "name": "PipelineByStageCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\PipelineByStageCard.tsx"
+    },
+    {
+      "name": "MetricInfo",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\MetricInfo.tsx"
+    },
+    {
+      "name": "MentorPlaybookCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\MentorPlaybookCard.tsx"
+    },
+    {
+      "name": "KpiTile",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\KpiTile.tsx"
+    },
+    {
+      "name": "HiringScenarioCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\HiringScenarioCard.tsx"
+    },
+    {
+      "name": "HealthScoreCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\HealthScoreCard.tsx"
+    },
+    {
+      "name": "FunnelConversionCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\FunnelConversionCard.tsx"
+    },
+    {
+      "name": "FunnelBottleneckCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\FunnelBottleneckCard.tsx"
+    },
+    {
+      "name": "ForecastRangeCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\ForecastRangeCard.tsx"
+    },
+    {
+      "name": "ForecastCalibrationCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\ForecastCalibrationCard.tsx"
+    },
+    {
+      "name": "ForecastAccuracyCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\ForecastAccuracyCard.tsx"
+    },
+    {
+      "name": "CloseDateIntelligenceCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\CloseDateIntelligenceCard.tsx"
+    },
+    {
+      "name": "ChannelAttributionCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\ChannelAttributionCard.tsx"
+    },
+    {
+      "name": "ColdCallStatusCard",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\automations\\components\\ColdCallStatusCard.tsx"
+    },
+    {
+      "name": "TiltCard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\TiltCard.tsx"
+    },
+    {
+      "name": "TabNavCards",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\TabNavCards.tsx"
+    },
+    {
+      "name": "MetricSkeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "CardSkeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "KpiCard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\KpiCard.tsx"
+    },
+    {
+      "name": "HolographicCard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\HolographicCard.tsx"
+    },
+    {
+      "name": "DealCard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\DealsGrid.tsx"
+    },
+    {
+      "name": "BentoMetric",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\bento\\BentoMetric.tsx"
+    },
+    {
+      "name": "BentoCard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\bento\\BentoCard.tsx"
+    }
+  ],
+  "table": [
+    {
+      "name": "Table",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "TableHead",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "TableRow",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "TableCell",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "Table",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "TableHead",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "TableRow",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "TableCell",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "VirtualTable",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\VirtualTable.tsx"
+    },
+    {
+      "name": "TableSkeleton",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Skeleton.tsx"
+    },
+    {
+      "name": "DealsGrid",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\DealsGrid.tsx"
+    },
+    {
+      "name": "CompareTable",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\CompareTable.tsx"
+    },
+    {
+      "name": "BentoGrid",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\bento\\BentoGrid.tsx"
+    }
+  ],
+  "modal": [
+    {
+      "name": "Modal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "TestSimulatorModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\studio\\panels\\TestSimulatorModal.tsx"
+    },
+    {
+      "name": "Modal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "SavedSearchesModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\prospecting\\components\\SavedSearchesModal.tsx"
+    },
+    {
+      "name": "BitrixImportModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\crm\\components\\BitrixImportModal.tsx"
+    },
+    {
+      "name": "NewActivityModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\NewActivityModal.tsx"
+    },
+    {
+      "name": "GoalEditorDialog",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\commercial-intelligence\\components\\GoalEditorDialog.tsx"
+    },
+    {
+      "name": "BookingLinksModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\calendar\\components\\BookingLinksModal.tsx"
+    },
+    {
+      "name": "AutomationVersionsDialog",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\automations\\components\\AutomationVersionsDialog.tsx"
+    },
+    {
+      "name": "AutomationDryRunDialog",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\automations\\components\\AutomationDryRunDialog.tsx"
+    },
+    {
+      "name": "GoogleLoginModal",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\auth\\components\\GoogleLoginModal.tsx"
+    },
+    {
+      "name": "Dialog",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\Dialog.tsx"
+    }
+  ],
+  "layout": [
+    {
+      "name": "ToastContainer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\index.tsx"
+    },
+    {
+      "name": "ToastContainer",
+      "file": "C:\\Github\\Birthub-360\\src\\features\\voice-hub\\components\\design-system\\index.tsx"
+    },
+    {
+      "name": "MainLayout",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\MainLayout.tsx"
+    },
+    {
+      "name": "FuturisticLayout",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\layout\\FuturisticLayout.tsx"
+    }
+  ],
+  "icon": [
+    {
+      "name": "SourceRequiredIcon",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BlockedState.tsx"
+    },
+    {
+      "name": "FutureToolIcon",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\BlockedState.tsx"
+    },
+    {
+      "name": "AIContextPopover",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\AIContextPopover.tsx"
+    },
+    {
+      "name": "YoutubeIcon",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\icons\\YoutubeIcon.tsx"
+    },
+    {
+      "name": "LinkedinIcon",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\icons\\LinkedinIcon.tsx"
+    },
+    {
+      "name": "GithubIcon",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\ui\\icons\\GithubIcon.tsx"
+    },
+    {
+      "name": "IconHome",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBuilding",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconContacts",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconPipeline",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconActivity",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconRadar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSparkle",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBrain",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSearch",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBell",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconChevronsLeft",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconArrowRight",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconCheck",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTarget",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBolt",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconLogout",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconUser",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconClock",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconMenu",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconGrid",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTrendUp",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconPhone",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconDocument",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconHandshake",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTrophy",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconClose",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconFlame",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSnowflake",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconDownload",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconPlus",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconEdit",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTrash",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconMail",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconMapPin",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSpinner",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconArrowLeft",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconGlobe",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconLinkedin",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconInstagram",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTwitterX",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconFacebook",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconStar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconTag",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconWrench",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconClipboard",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconChevronDown",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconChevronUp",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSend",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSave",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconInfo",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconMessage",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconCalendar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconChat",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconDatabase",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconCpu",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBot",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconServer",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconShieldCheck",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconWarning",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconLandmark",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconUserPlus",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconSliders",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconDollar",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconBook",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconX",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconAlertTriangle",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconHelp",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconFilter",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconZap",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconCode",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconLayers",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    },
+    {
+      "name": "IconRefresh",
+      "file": "C:\\Github\\Birthub-360\\src\\components\\icons\\BrandIcons.tsx"
+    }
+  ]
+}

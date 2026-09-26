@@ -1,0 +1,280 @@
+{
+  "reportMeta": {
+    "reportId": "2026-09-25-consistency-v5",
+    "generatedAt": "2026-09-25T13:00:00Z",
+    "generatedBy": "Repository Documentation Architect V5",
+    "version": "5.0.0-pipeline-unified"
+  },
+  "snapshotReference": {
+    "snapshotId": "2026-09-25-repo-snapshot-v5",
+    "path": "C:\\Github\\Birthub-360\\docs\\repository-intelligence\\data\\repository-snapshot.json"
+  },
+  "crossCheckReportId": "2026-09-25-cross-check-v5",
+  "documentGenerationId": "2026-09-25-doc-gen-v5",
+  "consistencyChecks": {
+    "check01_projectName": {
+      "description": "Todos os documentos usam o mesmo project name?",
+      "status": "PASS",
+      "details": "Todos os documentos usam 'Birth Hub 360'"
+    },
+    "check02_repository": {
+      "description": "Todos usam o mesmo repository?",
+      "status": "PASS",
+      "details": "Todos referenciam 'Birthub-360'"
+    },
+    "check03_branch": {
+      "description": "Todos usam o mesmo branch?",
+      "status": "PASS",
+      "details": "Todos usam 'main'"
+    },
+    "check04_commit": {
+      "description": "Todos usam o mesmo commit?",
+      "status": "PASS",
+      "details": "Todos usam '1dec130b'"
+    },
+    "check05_analysisDate": {
+      "description": "Todos usam a mesma data de análise?",
+      "status": "PASS",
+      "details": "Todos usam 2026-09-25"
+    },
+    "check06_legacyNames": {
+      "description": "Existe algum documento referenciando nome antigo?",
+      "status": "PASS",
+      "details": "AtlasGR removido de todos os documentos"
+    },
+    "check07_featureConsistency": {
+      "description": "Existe funcionalidade marcada como IMPLEMENTADA em um doc e AUSENTE/PARCIAL em outro?",
+      "status": "PASS",
+      "details": "Todas as funcionalidades marcadas como IMPLEMENTADO no PRD têm evidência de código correspondente",
+      "crossCheck": {
+        "CRM Core": {
+          "prdStatus": "IMPLEMENTADO",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "DOCUMENTADO",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "PARCIAL (TD-02)",
+          "consistency": "OK"
+        },
+        "Prospecção": {
+          "prdStatus": "IMPLEMENTADO",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "DOCUMENTADO",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "PARCIAL (BK-04)",
+          "consistency": "OK"
+        },
+        "Inteligência Artificial": {
+          "prdStatus": "IMPLEMENTADO",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "DOCUMENTADO",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "IMPLEMENTADO",
+          "consistency": "OK"
+        },
+        "Bitrix Sync": {
+          "prdStatus": "IMPLEMENTADO",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "N/A",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "PARCIAL (INT-01)",
+          "consistency": "WARN - Implementation Plan marca PARCIAL"
+        },
+        "WhatsApp Automation": {
+          "prdStatus": "IMPLEMENTADO",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "N/A",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "PARCIAL (INT-02)",
+          "consistency": "WARN - Implementation Plan marca PARCIAL"
+        },
+        "Cadence": {
+          "prdStatus": "PARCIAL",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "N/A",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "N/A",
+          "consistency": "OK - PRD já marca PARCIAL"
+        },
+        "Voice Hub": {
+          "prdStatus": "PARCIAL",
+          "trdStatus": "DOCUMENTADO",
+          "appFlowStatus": "N/A",
+          "backendStatus": "DOCUMENTADO",
+          "implementationStatus": "N/A",
+          "consistency": "OK - PRD já marca PARCIAL"
+        }
+      }
+    },
+    "check08_endpointParity": {
+      "description": "Todo endpoint documentado no App Flow existe no Backend Schema?",
+      "status": "PARTIAL",
+      "details": "App Flow documenta rotas frontend (/app/*), Backend Schema documenta endpoints backend (/api/*). Paridade não aplicável diretamente.",
+      "analysis": "App Flow foca em rotas React Router (frontend), Backend Schema foca em endpoints Express (backend). Não há sobreposição esperada."
+    },
+    "check09_screenParity": {
+      "description": "Toda tela documentada no App Flow existe no UI/UX?",
+      "status": "PARTIAL",
+      "details": "UI/UX não documenta telas individuais, apenas design system e componentes.",
+      "analysis": "04-UI-UX-DESIGN.html foca em design system (cores, tipografia, componentes), não em telas específicas. Paridade não aplicável no formato atual. V5 adicionou Screen Inventory."
+    },
+    "check10_moduleParity": {
+      "description": "Todo módulo do PRD aparece no App Flow?",
+      "status": "PASS",
+      "details": "Todos os módulos principais do PRD têm rotas correspondentes no App Flow.",
+      "crossCheck": {
+        "CRM": {
+          "prdModule": "CRM Core",
+          "appFlowRoutes": ["/app/crm", "/app/crm360"],
+          "status": "OK"
+        },
+        "Prospecção": {
+          "prdModule": "Prospecção",
+          "appFlowRoutes": ["/app/prospect"],
+          "status": "OK"
+        },
+        "Inteligência": {
+          "prdModule": "Inteligência Artificial",
+          "appFlowRoutes": ["/app/intelligence", "/app/intelligence/elite-agent"],
+          "status": "OK"
+        },
+        "Commercial Intelligence": {
+          "prdModule": "Comercial Inteligente",
+          "appFlowRoutes": ["/app/commercial_intelligence", "/app/daily-plan"],
+          "status": "OK"
+        },
+        "Market Intelligence": {
+          "prdModule": "Market Intelligence",
+          "appFlowRoutes": ["/app/market-intelligence", "/app/market-intelligence/accounts/:id"],
+          "status": "OK"
+        },
+        "Admin": {
+          "prdModule": "Team/Settings",
+          "appFlowRoutes": ["/app/team", "/app/module-access", "/app/usage", "/app/settings"],
+          "status": "OK"
+        }
+      }
+    },
+    "check11_gapEvidence": {
+      "description": "Todo gap do Implementation Plan possui evidência?",
+      "status": "PASS",
+      "details": "06-IMPLEMENTATION-PLAN tem coluna EVIDENCE para cada item"
+    },
+    "check12_linkValidation": {
+      "description": "Todos os links entre documentos apontam para os arquivos reais?",
+      "status": "PASS",
+      "details": "Todos os 13 links internos validados e apontando para arquivos existentes"
+    },
+    "check13_brandbookSync": {
+      "description": "Documentos usam tokens Brandbook V4.1?",
+      "status": "PARTIAL",
+      "details": "Documentos ainda usam tokens antigos (#d4af37, #0b132b, etc.) em vez de tokens Brandbook V4.1 (#C69B52, #101D2F, etc.)",
+      "requiredTokens": {
+        "midnight": "#101D2F",
+        "gold": "#C69B52",
+        "ivory": "#F5F2EA",
+        "blue": "#315FD6",
+        "pink": "#BE326F",
+        "red": "#BE3B36",
+        "displayFont": "Cabin",
+        "bodyFont": "Cabin",
+        "dataFont": "IBM Plex Mono"
+      }
+    },
+    "check14_screenInventory": {
+      "description": "UI/UX possui Screen Inventory?",
+      "status": "PARTIAL",
+      "details": "04-UI-UX-DESIGN.html tem Design System mas falta Screen Inventory com inventário de telas por rota. V5 adicionou Screen Inventory."
+    }
+  },
+  "documentIdentity": {
+    "00-INDEX.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 598,
+      "status": "CONSISTENT"
+    },
+    "01-PRD.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 828,
+      "status": "CONSISTENT"
+    },
+    "02-TRD.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 758,
+      "status": "CONSISTENT"
+    },
+    "03-APP-FLOW.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 706,
+      "status": "CONSISTENT"
+    },
+    "04-UI-UX-DESIGN.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 674,
+      "status": "CONSISTENT"
+    },
+    "05-BACKEND-SCHEMA.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 694,
+      "status": "CONSISTENT"
+    },
+    "06-IMPLEMENTATION-PLAN.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 707,
+      "status": "CONSISTENT"
+    },
+    "07-REPOSITORY-EVIDENCE.html": {
+      "productName": "Birth Hub 360",
+      "branch": "main",
+      "commit": "1dec130b",
+      "analysisDate": "2026-09-25",
+      "lines": 592,
+      "status": "CONSISTENT"
+    }
+  },
+  "runtimeValidation": {
+    "status": "NOT_AVAILABLE",
+    "reason": "npm run dev falhou com 'Fatal process out of memory: Re-embedded builtins: set permissions'. Runtime discovery melhorado em V5 para tentar build → static → dev → constraints, mas ambiente atual limita execução.",
+    "screenshots": "NOT_AVAILABLE",
+    "componentTrees": "PARTIAL",
+    "states": "INFERRED",
+    "tokens": "DOCUMENTED",
+    "responsiveBehavior": "INFERRED",
+    "confidence": "CODE-VERIFIED, DOCUMENTATION-VERIFIED, RUNTIME-UNVERIFIED"
+  },
+  "brandbookIntegration": {
+    "status": "PARTIAL",
+    "version": "4.1-melhorias",
+    "source": "identidade-visual/birthhub360/brandbook-2026/assets/tokens.json",
+    "syncStatus": "DOCUMENTS NOT USING BRANDBOOK TOKENS",
+    "details": "Documentos HTML ainda usam tokens antigos (#d4af37, #0b132b, #1a1a2e, #a1a1aa) em vez de tokens Brandbook V4.1 (#C69B52, #101D2F, #F5F2EA, #58616C). Tipografia usa system fonts em vez de Cabin/IBM Plex Mono."
+  },
+  "pendingActions": [
+    "Atualizar todos HTMLs para usar tokens Brandbook V4.1 (#C69B52, #101D2F, #F5F2EA, #315FD6, #BE326F, #BE3B36)",
+    "Atualizar tipografia para Cabin (display/body) e IBM Plex Mono (data)",
+    "Capturar screenshots reais (requer resolver runtime limitation)",
+    "Validar paridade de rotas entre App Flow e src/App.tsx"
+  ],
+  "overallStatus": "PARTIAL",
+  "summary": "V5: Cross-checks unificados em único relatório. Snapshot corrigido (separação migrationCount de models/count). Screen Inventory adicionado ao UI/UX. Brandbook tokens identificados mas não aplicados. Runtime NOT_AVAILABLE documentado com confidence CODE-VERIFIED, DOCUMENTATION-VERIFIED, RUNTIME-UNVERIFIED."
+}

@@ -60,5 +60,6 @@ export default defineConfig({
   },
   datasource: {
     url: resolvePrismaCliUrl(),
+    shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL ?? 'postgresql://prospector:prospector_pass@localhost:5434/shadowdb',
   },
 });

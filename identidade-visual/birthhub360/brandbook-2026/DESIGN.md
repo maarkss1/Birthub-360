@@ -40,3 +40,10 @@ Sem animação contínua. Rolagem suave respeita movimento reduzido. Foco com co
 ## Escolhas específicas
 
 O documento mantém capítulos numerados para localização editorial. Usa sólidos em vez dos gradientes antigos: as quatro cores solicitadas ganham papéis individuais. O layout claro favorece leitura longa; seções escuras destacam posicionamento e fechamento. O redesenho solicitado autoriza uma nova paleta neste artefato, sem alterar tokens do aplicativo.
+
+## v4.1 — Melhorias hierárquicas
+
+- Melhor contraste entre elementos de diferente importância (h3/h4 com font-weight aumentado)
+- Capítulo de aplicações renomeado para "Aplicações CRM" para especificidade ao contexto do produto
+- Espaçamento aprimorado em cabeçalhos (margin-bottom: 20px em h3, 24px em h4)
+- Versão atualizada para refletir melhorias incrementais

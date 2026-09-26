@@ -10,6 +10,7 @@ __pycache__/
 !.env.example
 !.env.test.example
 !.env.codespace
+skills-lock.json
 
 /src/generated/prisma
 # DEVOPS-003 (Onda 2): config real do Prometheus da OCI, gerada por scripts/deploy-oci.sh a partir
@@ -97,3 +98,5 @@ mantis-summary.md
 urls.txt
 
 tsc_output.txt
+.tmp/
+nul

@@ -1,432 +1,704 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>03 - APP FLOW | Application Flow & User Journey | AtlasGR</title>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03-APP-FLOW - Birth Hub 360</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --primary: #3b82f6;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --success: #22c55e;
-      --warning: #eab308;
-      --danger: #ef4444;
-      --partial: #f59e0b;
-      --unverified: #64748b;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    .layout {
-      display: flex;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Cabin, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #101D2F 0%, #101D2F 100%);
+      color: #F5F2EA;
+      line-height: 1.6;
       min-height: 100vh;
     }
-    .sidebar {
-      width: 250px;
-      background-color: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 2rem 1rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
-    .sidebar h2 {
-      font-size: 1rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .sidebar li {
-      margin-bottom: 0.5rem;
-    }
-    .sidebar a {
-      color: var(--text);
-      text-decoration: none;
-      display: block;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-    }
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--primary);
-    }
-    .main-content {
-      flex: 1;
-      padding: 2rem 4rem;
-      max-width: 1200px;
-    }
+
     .header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: rgba(21, 29, 47, 0.3;
+      border-radius: 20px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
     }
-    .nav {
-      margin-bottom: 2rem;
+
+    .header h1 {
+      font-size: 3em;
+      background: linear-gradient(135deg, #C69B52 0%, #E4BC76 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
-    .nav a {
-      color: var(--primary);
+
+    .header .subtitle {
+      color: #58616C;
+      font-size: 1.2em;
+    }
+
+    .metadata {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .metadata-item {
+      background: rgba(198, 155, 82, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 20px;
+      background: rgba(16, 29, 47, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
+      margin-bottom: 40px;
+      z-index: 100;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .nav-bar a {
+      color: #F5F2EA;
       text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .nav a:hover {
-      text-decoration: underline;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
+      padding: 8px 16px;
       border-radius: 8px;
-      padding: 1.5rem;
-      transition: transform 0.2s, border-color 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      transition: all 0.3s;
+      white-space: nowrap;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
+
+    .nav-bar a:hover {
+      background: rgba(198, 155, 82, 0.2);
     }
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.25rem;
+
+    .section {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
     }
-    .card a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      height: 100%;
+
+    .section h2 {
+      color: #C69B52;
+      margin-bottom: 30px;
+      font-size: 2em;
+      border-bottom: 2px solid rgba(198, 155, 82, 0.3);
+      padding-bottom: 15px;
     }
+
+    .section h3 {
+      color: #E4BC76;
+      margin: 25px 0 15px 0;
+      font-size: 1.5em;
+    }
+
+    .flow-diagram {
+      background: rgba(16, 29, 47, 0.5);
+      padding: 30px;
+      border-radius: 15px;
+      margin: 20px 0;
+      font-family: 'IBM Plex Mono, Courier New', monospace;
+      font-size: 0.9em;
+      overflow-x: auto;
+      border: 1px solid rgba(198, 155, 82, 0.2);
+    }
+
+    .route-card {
+      background: rgba(21, 29, 47, 0.3;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
+      margin: 15px 0;
+    }
+
+    .route-card h4 {
+      color: #C69B52;
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .route-card .path {
+      font-family: 'IBM Plex Mono, Courier New', monospace;
+      color: #58616C;
+      font-size: 0.9em;
+      margin: 5px 0;
+    }
+
+    .route-card .description {
+      color: #94a3b8;
+      font-size: 0.9em;
+      margin: 8px 0;
+    }
+
+    .route-card .guards {
+      margin-top: 10px;
+    }
+
     .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.8em;
       font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-      line-height: 1;
+      margin: 0 5px 5px 0;
     }
-    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
-    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
+
+    .badge-auth {
+      background: rgba(59, 130, 246, 0.2);
+      color: #60a5fa;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+
+    .badge-role {
+      background: rgba(168, 85, 247, 0.2);
+      color: #a78bfa;
+      border: 1px solid rgba(168, 85, 247, 0.3);
+    }
+
+    .badge-module {
+      background: rgba(234, 179, 8, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+
+    .flow-step {
+      background: rgba(16, 29, 47, 0.3);
+      padding: 15px;
+      border-radius: 10px;
+      margin: 10px 0;
+      border-left: 3px solid #C69B52;
+    }
+
+    .flow-step h4 {
+      color: #E4BC76;
+      margin-bottom: 8px;
+    }
+
+    .flow-step p {
+      color: #58616C;
+      font-size: 0.9em;
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 2rem 0;
-      font-size: 0.875rem;
+      margin: 20px 0;
     }
-    th, td {
-      padding: 1rem;
+
+    th,
+    td {
+      padding: 12px 15px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(216, 214, 207, 0.3;
     }
+
     th {
-      background-color: rgba(255,255,255,0.02);
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      background: rgba(198, 155, 82, 0.1);
+      color: #C69B52;
     }
+
     tr:hover {
-      background-color: rgba(255,255,255,0.01);
-    }
-    pre {
-      background-color: rgba(0,0,0,0.3);
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-    }
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-    }
-    p code, li code, td code {
-      background-color: rgba(255,255,255,0.1);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.8em;
-    }
-    .meta-info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      background: var(--surface);
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-    .meta-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .meta-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.7;
-      margin-bottom: 0.25rem;
-    }
-    .meta-value {
-      font-weight: 600;
-      color: var(--text);
-      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
+    .evidence {
+      background: rgba(16, 29, 47, 0.5);
+      padding: 15px;
       border-radius: 8px;
-      padding: 1rem;
+      margin: 10px 0;
+      font-family: 'IBM Plex Mono, Courier New', monospace;
+      font-size: 0.85em;
+      border-left: 3px solid #C69B52;
+    }
+
+    .evidence-code {
+      color: #C69B52;
+    }
+
+    .footer {
       text-align: center;
-    }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin-top: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
     }
 
-    .accordion {
-      margin-top: 2rem;
-    }
-    .accordion-item {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-    .accordion-header {
-      background: var(--surface);
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .accordion-header:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .accordion-content {
-      padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      display: none;
+    .footer a {
+      color: #C69B52;
+      text-decoration: none;
+      margin: 0 15px;
     }
 
-    /* Utility classes */
-    .mt-8 { margin-top: 2rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .text-muted { color: var(--text-muted); }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .nav-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section {
+        padding: 25px;
+      }
+    }
   </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Simple accordion logic
-      document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-          const content = header.nextElementSibling;
-          const isVisible = content.style.display === 'block';
-          content.style.display = isVisible ? 'none' : 'block';
-          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
-        });
-      });
-    });
-  </script>
+</head>
 
-    </head>
-    <body>
-      <div class="layout">
-
-    <div class="sidebar">
-      <h2>Documentation</h2>
-      <ul>
-
-          <li>
-            <a href="00-INDEX.html" style="">
-              Hub
-            </a>
-          </li>
-
-          <li>
-            <a href="01-PRD.html" style="">
-              01 - PRD
-            </a>
-          </li>
-
-          <li>
-            <a href="02-TRD.html" style="">
-              02 - TRD
-            </a>
-          </li>
-
-          <li>
-            <a href="03-APP-FLOW.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
-              03 - App Flow
-            </a>
-          </li>
-
-          <li>
-            <a href="04-UI-UX-DESIGN.html" style="">
-              04 - UI/UX Design
-            </a>
-          </li>
-
-          <li>
-            <a href="05-BACKEND-SCHEMA.html" style="">
-              05 - Backend Schema
-            </a>
-          </li>
-
-          <li>
-            <a href="06-IMPLEMENTATION-PLAN.html" style="">
-              06 - Implementation Plan
-            </a>
-          </li>
-
-      </ul>
-    </div>
-
-        <div class="main-content">
-
-    <div class="nav">
-      <a href="00-INDEX.html">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Documentation Hub
-      </a>
-    </div>
+<body>
+  <div class="container">
     <div class="header">
       <h1>APPLICATION FLOW & USER JOURNEY</h1>
-      <div class="meta-info">
-        <div class="meta-item">
-          <span class="meta-label">Branch</span>
-          <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Commit</span>
-          <span class="meta-value">7a71a56</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Generated Date</span>
-          <span class="meta-value">2026-09-25</span>
-        </div>
-        <div class="meta-item">
-          <span class="meta-label">Repository</span>
-          <span class="meta-value">AtlasGR</span>
-        </div>
+      <div class="subtitle">Birth Hub 360 — Fluxos de Aplicação e Jornada do Usuário</div>
+      <div class="metadata">
+        <div class="metadata-item">📅 Analysis: 2026-09-25</div>
+        <div class="metadata-item">🌿 Branch: main</div>
+        <div class="metadata-item">📝 Commit: 1dec130b</div>
+        <div class="metadata-item">🔀 Router: React Router DOM 7.18.1</div>
       </div>
     </div>
 
+    <nav class="nav-bar">
+      <a href="#overview">Visão Geral</a>
+      <a href="#authentication">Autenticação</a>
+      <a href="#authenticated-flows">Fluxos Autenticados</a>
+      <a href="#unauthenticated-flows">Fluxos Não Autenticados</a>
+      <a href="#admin-flows">Fluxos Administrativos</a>
+      <a href="#guards">Guards e Proteção</a>
+      <a href="07-REPOSITORY-EVIDENCE.html">📋 Evidências</a>
+    </nav>
 
-          <h2>1. Core Navigation Map</h2>
-          <pre>
-[PUBLIC ROUTES]
-  ├─ / (Landing Page)
-  ├─ /login (Authentication)
-  ├─ /register (Sign Up)
-  └─ /forgot-password
+    <div class="section" id="overview">
+      <h2>🗺️ Visão Geral da Aplicação</h2>
 
-[AUTHENTICATED ROUTES (/app)]
-  ├─ Dashboard
-  │
-  ├─ CRM Module
-  │   ├─ Pipeline
-  │   ├─ Leads
-  │   └─ Deals
-  │
-  ├─ Prospecting Module
-  │   ├─ Contact Lists
-  │   └─ Campaigns
-  │
-  ├─ Intelligence Module
-  │   ├─ Market Analysis
-  │   └─ AI Insights
-  │
-  └─ Settings
-      ├─ Profile
-      ├─ Organization Settings
-      └─ Integrations
-          </pre>
+      <h3>Arquitetura de Navegação</h3>
+      <p>Aplicação React SPA com React Router DOM 7.18.1, organizada em rotas aninhadas sob <code>/app/*</code> para
+        oauthenticated content e rotas públicas para login/landing.</p>
 
-          <h2>2. State Management & Guards</h2>
-          <ul>
-            <li><strong>Router:</strong> HashRouter is used instead of BrowserRouter to natively prevent 404 errors on GitHub Pages static deployments.</li>
-            <li><strong>Auth Guard:</strong> Protected routes redirect to <code>/login</code> if the Better Auth session is missing.</li>
-            <li><strong>Loading States:</strong> React Suspense and skeletons are used for lazy-loaded modules.</li>
-            <li><strong>Toast Notifications:</strong> Global toast system (<code>src/lib/toast.ts</code>) handles success/error feedback. Native <code>alert()</code> is strictly prohibited.</li>
-          </ul>
+      <div class="flow-diagram">
+        <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                        PUBLIC ROUTES                             │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │     /       │  │  /welcome    │  │  /login      │          │
+│  │ WelcomeScreen│  │ WelcomeScreen│  │ LoginScreen  │          │
+│  └──────────────┘  └──────────────┘  └──────┬───────┘          │
+│                                                 │                 │
+└─────────────────────────────────────────────────┼─────────────────┘
+                                                  │ Authenticated
+┌─────────────────────────────────────────────────┼─────────────────┐
+│                      PROTECTED /app/*           │                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │                    MainLayout                             │   │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐              │   │
+│  │  │ Sidebar  │  │ Topbar   │  │ Content  │              │   │
+│  │  └──────────┘  └──────────┘  └────┬─────┘              │   │
+│  └───────────────────────────────────────┼──────────────────┘   │
+└───────────────────────────────────────────┼──────────────────────┘
+                                               │
+┌───────────────────────────────────────────┼──────────────────────┐
+│                   AUTHENTICATED MODULES     │                      │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │/app      │  │/app/crm  │  │/app/     │  │/app/     │       │
+│  │Dashboard │  │  Board   │  │prospect  │  │intelligence│      │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘       │
+│                                                                 │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐       │
+│  │/app/     │  │/app/     │  │/app/     │  │/app/     │       │
+│  │companies │  │contacts │  │commercial│  │market-   │       │
+│  │          │  │          │  │_intelligence│intelligence│     │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘       │
+└───────────────────────────────────────────────────────────────────┘
+</pre>
+      </div>
 
-          <h2>3. Key Workflows</h2>
-          <div class="accordion">
-            <div class="accordion-item">
-              <div class="accordion-header">
-                Authentication Flow <span class="badge implemented">IMPLEMENTADO</span> <span class="icon">+</span>
-              </div>
-              <div class="accordion-content">
-                User navigates to <code>/login</code> &rarr; Enters credentials or uses OAuth (Better Auth) &rarr; Backend validates session &rarr; Redirects to <code>/app</code> (Dashboard). Local dev can bypass this via <code>ALLOW_DEV_AUTH_BYPASS=true</code>.
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                Lead Enrichment Flow <span class="badge implemented">IMPLEMENTADO</span> <span class="icon">+</span>
-              </div>
-              <div class="accordion-content">
-                User adds Lead CNPJ/Domain &rarr; Backend triggers <code>MergeEngineService</code> &rarr; Cascades through Providers (BrasilAPI, CnpjWs) &rarr; Updates Prisma Model (<code>enrichedAt</code> cached 24h) &rarr; Real-time UI update.
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                Image Upload & OCR <span class="badge implemented">IMPLEMENTADO</span> <span class="icon">+</span>
-              </div>
-              <div class="accordion-content">
-                User selects image &rarr; <code>OcrCapturePanel.tsx</code> compresses/normalizes via Canvas API (max 1200x1200) &rarr; Uploads to Backend &rarr; Processed via <code>tesseract.js</code>.
-              </div>
-            </div>
-          </div>
+      <h3>Componentes de Layout</h3>
+      <ul class="component-list">
+        <li><strong>MainLayout:</strong> Layout principal com Sidebar, Topbar e Content Area</li>
+        <li><strong>Sidebar:</strong> Navegação lateral com itens condicionais por papel</li>
+        <li><strong>AppTopbar:</strong> Barra superior com notificações e user menu</li>
+        <li><strong>ProtectedRoute:</strong> Guard de autenticação</li>
+        <li><strong>RequireRole:</strong> Guard de autorização por papel</li>
+        <li><strong>RequireModuleAccess:</strong> Guard de acesso a módulos executivos</li>
+      </ul>
+
+      <div class="evidence"><span class="evidence-code">src/App.tsx, src/components/layout/MainLayout.tsx</span></div>
+    </div>
+
+    <div class="section" id="authentication">
+      <h2>🔐 Fluxo de Autenticação</h2>
+
+      <h3>Login Flow</h3>
+      <div class="flow-step">
+        <h4>1. Acesso à Tela de Login</h4>
+        <p>Usuário acessa <code>/login</code> → <code>LoginScreen</code> component</p>
+        <div class="evidence"><span class="evidence-code">src/features/auth/components/LoginScreen.tsx</span></div>
+      </div>
+
+      <div class="flow-step">
+        <h4>2. Escolha do Método de Login</h4>
+        <p>Opções: E-mail/senha ou Google OAuth (se configurado)</p>
+      </div>
+
+      <div class="flow-step">
+        <h4>3. Submissão de Credenciais</h4>
+        <p>POST para <code>/api/auth/sign-in/email</code> ou OAuth callback</p>
+        <div class="evidence"><span class="evidence-code">src/lib/auth.ts (Better Auth)</span></div>
+      </div>
+
+      <div class="flow-step">
+        <h4>4. Sucesso de Autenticação</h4>
+        <p>Cookie de sessão definido → Redirecionamento para <code>/app</code></p>
+      </div>
+
+      <div class="flow-step">
+        <h4>5. Primeiro Acesso</h4>
+        <p>Se senha temporária → <code>ChangePasswordGate</code> → <code>WelcomeScreen</code></p>
+      </div>
+
+      <h3>Cadastro Flow</h3>
+      <div class="flow-step">
+        <h4>1. Acesso à Tela de Cadastro</h4>
+        <p>Usuário acessa <code>/welcome</code> → <code>WelcomeScreen</code> com formulário de cadastro</p>
+      </div>
+
+      <div class="flow-step">
+        <h4>2. Preenchimento de Dados</h4>
+        <p>Nome, e-mail, senha (validação Zod)</p>
+      </div>
+
+      <div class="flow-step">
+        <h4>3. Criação de Conta</h4>
+        <p>POST para <code>/api/auth/sign-up/email</code> → Criação de User + Organization</p>
+      </div>
+
+      <div class="flow-step">
+        <h4>4. Verificação de E-mail</h4>
+        <p>Envio de e-mail de verificação (se SMTP configurado)</p>
+      </div>
+
+      <div class="flow-step">
+        <h4>5. Login Automático</h4>
+        <p>Após verificação → Redirecionamento para <code>/app</code></p>
+      </div>
+    </div>
+
+    <div class="section" id="authenticated-flows">
+      <h2>📱 Fluxos Autenticados</h2>
+
+      <h3>Dashboard Flow</h3>
+      <div class="route-card">
+        <h4>Dashboard Principal</h4>
+        <div class="path">/app (ou /app/dashboard)</div>
+        <div class="description">Dashboard adaptativo com visão geral de atividades, métricas e atalhos</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/dashboard/components/AdaptiveDashboard.tsx</span>
         </div>
       </div>
-    </body>
-    </html>
+
+      <h3>CRM Flow</h3>
+      <div class="route-card">
+        <h4>CRM Board (Pipeline Kanban)</h4>
+        <div class="path">/app/crm</div>
+        <div class="description">Pipeline visual Kanban de leads com drag-and-drop, filtros e views salvas</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/components/CrmBoard.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>CRM360 Overview</h4>
+        <div class="path">/app/crm360</div>
+        <div class="description">Visão executiva do CRM com KPIs, cards de atalho e métricas agregadas</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/crm360/components/CrmOverview.tsx</span></div>
+      </div>
+
+      <h3>Prospecção Flow</h3>
+      <div class="route-card">
+        <h4>Hub de Prospecção</h4>
+        <div class="path">/app/prospect</div>
+        <div class="description">Descoberta de prospects via Apollo/IA, enriquecimento de CNPJ e promoção para CRM</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">SDR, CLOSER, GESTOR, ADMIN</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/prospecting/components/ProspectingHub.tsx</span>
+        </div>
+      </div>
+
+      <h3>Inteligência Flow</h3>
+      <div class="route-card">
+        <h4>Hub de IA</h4>
+        <div class="path">/app/intelligence</div>
+        <div class="description">Toolkit de 20 funções de IA para geração de conteúdo e análise</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/intelligence/components/IntelligenceHub.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Agente Comercial de Elite</h4>
+        <div class="path">/app/intelligence/elite-agent</div>
+        <div class="description">Workspace do agente comercial conversacional (NBA)</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/intelligence/components/EliteCommercialAgentWorkspace.tsx</span></div>
+      </div>
+
+      <h3>Comercial Inteligente Flow</h3>
+      <div class="route-card">
+        <h4>Comercial Inteligente</h4>
+        <div class="path">/app/commercial_intelligence</div>
+        <div class="description">Módulo executivo com dashboards, forecasts e detecção de riscos</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-role">ADMIN, GESTOR</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/commercial-intelligence/components/CommercialIntelligenceHub.tsx</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <h4>Plano Diário</h4>
+        <div class="path">/app/daily-plan</div>
+        <div class="description">Planejamento diário de atividades comerciais</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-role">ADMIN, GESTOR</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/commercial-intelligence/components/DailyPlanHub.tsx</span></div>
+      </div>
+
+      <h3>Market Intelligence Flow</h3>
+      <div class="route-card">
+        <h4>LDR (Lead Dataset Request)</h4>
+        <div class="path">/app/market-intelligence</div>
+        <div class="description">Universo empresarial oficial com dados de Receita Federal</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/pages/Ldr.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Account 360</h4>
+        <div class="path">/app/market-intelligence/accounts/:id</div>
+        <div class="description">Visão detalhada de uma empresa do universo oficial</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/market-intelligence/components/Account360.tsx</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="unauthenticated-flows">
+      <h2>🌐 Fluxos Não Autenticados</h2>
+
+      <div class="route-card">
+        <h4>Landing Page / Welcome</h4>
+        <div class="path">/ ou /welcome</div>
+        <div class="description">Tela institucional com hero, emblema e CTA "Explorar Hub"</div>
+        <div class="guards">
+          <span class="badge badge-auth">Público</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/auth/components/WelcomeScreen.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Login Screen</h4>
+        <div class="path">/login</div>
+        <div class="description">Formulário de login com e-mail/senha e OAuth</div>
+        <div class="guards">
+          <span class="badge badge-auth">Público</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/auth/components/LoginScreen.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Reset Password</h4>
+        <div class="path">/reset-password</div>
+        <div class="description">Formulário de recuperação de senha</div>
+        <div class="guards">
+          <span class="badge badge-auth">Público</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/auth/components/ResetPasswordScreen.tsx</span>
+        </div>
+      </div>
+
+      <div class="route-card">
+        <h4>Política de Privacidade</h4>
+        <div class="path">/privacy</div>
+        <div class="description">Página de política de privacidade</div>
+        <div class="guards">
+          <span class="badge badge-auth">Público</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/pages/PrivacyPolicy.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Termos de Uso</h4>
+        <div class="path">/terms</div>
+        <div class="description">Página de termos de uso</div>
+        <div class="guards">
+          <span class="badge badge-auth">Público</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/pages/TermsOfUse.tsx</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="admin-flows">
+      <h2>⚙️ Fluxos Administrativos</h2>
+
+      <div class="route-card">
+        <h4>Team Management</h4>
+        <div class="path">/app/team</div>
+        <div class="description">Gestão de usuários, papéis e convites</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-role">ADMIN</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/team/components/Team.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Module Access</h4>
+        <div class="path">/app/module-access</div>
+        <div class="description">Administração de acesso a módulos executivos</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-role">ADMIN</span>
+        </div>
+        <div class="evidence"><span
+            class="evidence-code">src/features/module-access/components/ModuleAccessAdmin.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Usage / Billing</h4>
+        <div class="path">/app/usage</div>
+        <div class="description">Consumo de IA e billing por organização</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-role">ADMIN, GESTOR</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/billing/components/Billing.tsx</span></div>
+      </div>
+
+      <div class="route-card">
+        <h4>Settings</h4>
+        <div class="path">/app/settings</div>
+        <div class="description">Configurações da organização e preferências do usuário</div>
+        <div class="guards">
+          <span class="badge badge-auth">Autenticado</span>
+          <span class="badge badge-module">Todos os papéis</span>
+        </div>
+        <div class="evidence"><span class="evidence-code">src/features/settings/components/Settings.tsx</span></div>
+      </div>
+    </div>
+
+    <div class="section" id="guards">
+      <h2>🛡️ Guards e Proteção de Rotas</h2>
+
+      <h3>Componentes de Guard</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Guard</th>
+            <th>Propósito</th>
+            <th>Lógica</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ProtectedRoute</td>
+            <td>Verifica autenticação</td>
+            <td>Redireciona para /login se não autenticado</td>
+          </tr>
+          <tr>
+            <td>RequireRole</td>
+            <td>Verifica papel (RBAC)</td>
+            <td>Verifica hierarquia de papéis via authorization.ts</td>
+          </tr>
+          <tr>
+            <td>RequireModuleAccess</td>
+            <td>Verifica acesso a módulo executivo</td>
+            <td>Consulta ModuleAccessGrant no banco</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Proteção no Backend</h3>
+      <ul class="component-list">
+        <li><strong>authenticateToken:</strong> Middleware que valida sessão Better Auth</li>
+        <li><strong>requireTenant:</strong> Middleware que resolve organizationId da sessão</li>
+        <li><strong>requireRole:</strong> Middleware que verifica papel via authorization.ts</li>
+        <li><strong>Rate Limiting:</strong> Limites por IP, organização e rota específica</li>
+      </ul>
+
+      <div class="evidence"><span class="evidence-code">src/components/layout/ProtectedRoute.tsx,
+          src/components/layout/RequireRole.tsx, src/shared/middlewares/</span></div>
+
+      <h3>Proteção Defesa em Profundidade</h3>
+      <p>Rotas sensíveis (Commercial Intelligence, Mesa de Tratamento, Copiloto IA) têm proteção dupla: guard no
+        frontend E middleware no backend. Isso previne acesso via URL direto.</p>
+
+      <div class="evidence"><span class="evidence-code">src/App.tsx (exemplos de RequireRole),
+          src/bootstrap/routes.ts</span></div>
+    </div>
+
+    <div class="footer">
+      <p>📖 <a href="00-INDEX.html">← Documentation Hub</a></p>
+      <p style="margin-top: 20px; color: #58616C;">Generated by Repository Documentation Architect V5 • 2026-09-25</p>
+    </div>
+  </div>
+</body>
+
+</html>

@@ -1,0 +1,176 @@
+{
+  "snapshotMeta": {
+    "snapshotId": "2026-09-25-repo-snapshot-v5",
+    "generatedAt": "2026-09-25T13:00:00Z",
+    "generatedBy": "Repository Documentation Architect V5",
+    "generatorVersion": "5.0.0-pipeline-unified"
+  },
+  "repository": {
+    "name": "Birthub-360",
+    "path": "C:\\Github\\Birthub-360",
+    "branch": "main",
+    "commit": "1dec130b8ed77d05749aefca86a03401b2ab88fb",
+    "commitDate": "2026-09-25T10:25:27-03:00",
+    "analysisDate": "2026-09-25T12:00:00Z"
+  },
+  "projectIdentity": {
+    "productName": "Birth Hub 360",
+    "productAliases": [],
+    "repositoryName": "Birthub-360",
+    "detectedBrandNames": [
+      "Birth Hub 360",
+      "BirthHub360"
+    ],
+    "detectedLegacyNames": [
+      "AtlasGR",
+      "Atlas"
+    ]
+  },
+  "technicalSnapshot": {
+    "frontend": {
+      "framework": "React 19.3.0",
+      "buildTool": "Vite 6.2.3",
+      "styling": "TailwindCSS 4.1.14",
+      "motion": "Framer Motion 13.1.1",
+      "router": "React Router DOM 7.18.1",
+      "mobile": "Capacitor 8.5.0",
+      "pwa": true
+    },
+    "backend": {
+      "runtime": "Node.js 22+",
+      "framework": "Express 5.2.1",
+      "language": "TypeScript 6.0.3",
+      "auth": "Better Auth 1.7.4",
+      "orm": "Prisma 7.10.0"
+    },
+    "database": {
+      "type": "PostgreSQL",
+      "extensions": [
+        "pgvector"
+      ],
+      "rls": true,
+      "multiTenant": true
+    },
+    "cache": {
+      "redis": "7-alpine",
+      "meilisearch": "v1.6"
+    },
+    "queues": {
+      "framework": "BullMQ 6.3.2",
+      "workers": 23 distinct workers identified"
+    },
+    "storage": {
+      "type": "S3-compatible",
+      "local": "MinIO",
+      "production": "Supabase Storage"
+    }
+  },
+  "evidenceSnapshot": {
+    "routes": {
+      "count": 30+,
+      "basePath": "/api",
+      "publicRoutes": [
+        "/",
+        "/welcome",
+        "/login",
+        "/reset-password",
+        "/privacy",
+        "/terms"
+      ],
+      "authenticatedRoutes": [
+        "/app/*"
+      ],
+      "modules": [
+        "crm",
+        "prospect",
+        "intelligence",
+        "commercial-intelligence",
+        "market-intelligence",
+        "cadence",
+        "team",
+        "settings"
+      ]
+    },
+    "components": {
+      "count": 100+,
+      "layout": [
+        "MainLayout",
+        "Sidebar",
+        "AppTopbar",
+        "FloatingDock"
+      ],
+      "crm": [
+        "CrmBoard",
+        "EntityNotes",
+        "EntityAttachments"
+      ],
+      "intelligence": [
+        "Intelligence",
+        "IntelligenceSignal"
+      ],
+      "ui": [
+        "Badge",
+        "Skeleton",
+        "Button",
+        "Card"
+      ]
+    },
+    "services": {
+      "count": 50+,
+      "domains": [
+        "auth",
+        "crm",
+        "prospect",
+        "intelligence",
+        "integrations",
+        "enrichment"
+      ]
+    },
+    "database": {
+      "migrationCount": 135,
+      "orm": "Prisma 7.10.0",
+      "rls": true,
+      "multiTenant": true
+    },
+    "models": {
+      "orm": "Prisma",
+      "count": 100,
+      "core": [
+        "Organization",
+        "User",
+        "Company",
+        "Contact",
+        "Lead",
+        "Activity"
+      ],
+      "intelligence": [
+        "MarketIntelligenceCompany",
+        "AccountIntelligenceSnapshot"
+      ],
+      "integrations": [
+        "BitrixExtractionRun",
+        "WhatsAppMessage"
+      ]
+    },
+    "endpoints": {
+      "total": 100+,
+      "documented": "docs/openapi.yaml"
+    },
+    "tests": {
+      "unit": "vitest.unit.config.ts",
+      "integration": "vitest.integration.config.ts",
+      "e2e": "Playwright",
+      "coverage": "Vitest coverage-v8"
+    },
+    "configs": {
+      "env": ".env.example (364 lines)",
+      "brand": "src/config/brand.ts",
+      "modules": "src/config/module-catalog.ts",
+      "capabilities": "src/config/capability-catalog.ts"
+    }
+  },
+  "consistencyReport": {
+    "generatedAt": "2026-09-25T12:00:00Z",
+    "checks": []
+  }
+}

@@ -1,431 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Repository Intelligence Hub | AtlasGR</title>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>00-INDEX - Birth Hub 360</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --primary: #3b82f6;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --success: #22c55e;
-      --warning: #eab308;
-      --danger: #ef4444;
-      --partial: #f59e0b;
-      --unverified: #64748b;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    .layout {
-      display: flex;
+
+    body {
+      font-family: 'Cabin', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #101D2F 0%, #101D2F 100%);
+      color: #F5F2EA;
+      line-height: 1.6;
       min-height: 100vh;
     }
-    .sidebar {
-      width: 250px;
-      background-color: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 2rem 1rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
-    .sidebar h2 {
-      font-size: 1rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .sidebar li {
-      margin-bottom: 0.5rem;
-    }
-    .sidebar a {
-      color: var(--text);
-      text-decoration: none;
-      display: block;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-    }
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--primary);
-    }
-    .main-content {
-      flex: 1;
-      padding: 2rem 4rem;
-      max-width: 1200px;
-    }
+
     .header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: rgba(21, 29, 47, 0.3);
+      border-radius: 20px;
+      border: 1px solid rgba(198, 155, 82, 0.3);
     }
-    .nav {
-      margin-bottom: 2rem;
+
+    .header h1 {
+      font-size: 3em;
+      background: linear-gradient(135deg, #C69B52 0%, #E4BC76 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
-    .nav a {
-      color: var(--primary);
-      text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+
+    .header .subtitle {
+      color: #58616C;
+      font-size: 1.2em;
     }
-    .nav a:hover {
-      text-decoration: underline;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
-    }
-    .card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1.5rem;
-      transition: transform 0.2s, border-color 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
-    }
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.25rem;
-    }
-    .card a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      height: 100%;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
-    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 2rem 0;
-      font-size: 0.875rem;
-    }
-    th, td {
-      padding: 1rem;
-      text-align: left;
-      border-bottom: 1px solid var(--border);
-    }
-    th {
-      background-color: rgba(255,255,255,0.02);
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    tr:hover {
-      background-color: rgba(255,255,255,0.01);
-    }
-    pre {
-      background-color: rgba(0,0,0,0.3);
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-    }
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-    }
-    p code, li code, td code {
-      background-color: rgba(255,255,255,0.1);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.8em;
-    }
-    .meta-info {
+
+    .metadata {
       display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
       flex-wrap: wrap;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      background: var(--surface);
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 2rem;
     }
-    .meta-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .meta-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.7;
-      margin-bottom: 0.25rem;
-    }
-    .meta-value {
-      font-weight: 600;
-      color: var(--text);
-      font-family: var(--font-mono);
+
+    .metadata-item {
+      background: rgba(198, 155, 82, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      border: 1px solid rgba(198, 155, 82, 0.3);
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin: 40px 0;
     }
+
     .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+      background: rgba(21, 29, 47, 0.3);
+      padding: 25px;
+      border-radius: 15px;
+      border: 1px solid rgba(216, 214, 207, 0.3);
       text-align: center;
     }
+
     .stat-value {
-      font-size: 2rem;
+      font-size: 2.5em;
       font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
+      color: #C69B52;
+      margin-bottom: 10px;
     }
+
     .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-muted);
+      color: #58616C;
+      font-size: 0.9em;
       text-transform: uppercase;
       letter-spacing: 0.05em;
     }
 
-    .accordion {
-      margin-top: 2rem;
-    }
-    .accordion-item {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-    .accordion-header {
-      background: var(--surface);
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
+    .nav-bar {
+      position: sticky;
+      top: 20px;
+      background: rgba(16, 29, 47, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+      margin-bottom: 40px;
+      z-index: 100;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .accordion-header:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .accordion-content {
-      padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      display: none;
+      gap: 20px;
+      overflow-x: auto;
     }
 
-    /* Utility classes */
-    .mt-8 { margin-top: 2rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .text-muted { color: var(--text-muted); }
+    .nav-bar a {
+      color: #F5F2EA;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      white-space: nowrap;
+    }
+
+    .nav-bar a:hover {
+      background: rgba(198, 155, 82, 0.2);
+    }
+
+    .section {
+      background: rgba(21, 29, 47, 0.3);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(216, 214, 207, 0.3);
+    }
+
+    .section h2 {
+      color: #C69B52;
+      margin-bottom: 30px;
+      font-size: 2em;
+      border-bottom: 2px solid rgba(198, 155, 82, 0.3);
+      padding-bottom: 15px;
+    }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      margin: 30px 0;
+    }
+
+    .doc-card {
+      background: rgba(21, 29, 47, 0.3);
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(216, 214, 207, 0.3);
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .doc-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(198, 155, 82, 0.5);
+      background: rgba(198, 155, 82, 0.05);
+    }
+
+    .doc-card h3 {
+      color: #C69B52;
+      margin-bottom: 15px;
+      font-size: 1.4em;
+    }
+
+    .doc-card .description {
+      color: #58616C;
+      font-size: 0.9em;
+      margin-bottom: 15px;
+    }
+
+    .doc-card .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.75em;
+      font-weight: 600;
+    }
+
+    .badge-implemented {
+      background: rgba(49, 95, 214, 0.2);
+      color: #8EADFF;
+      border: 1px solid rgba(49, 95, 214, 0.3);
+    }
+
+    .badge-partial {
+      background: rgba(198, 155, 82, 0.2);
+      color: #E4BC76;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+    }
+
+    .badge-missing {
+      background: rgba(190, 59, 54, 0.2);
+      color: #F38278;
+      border: 1px solid rgba(190, 59, 54, 0.3);
+    }
+
+    .badge-pending {
+      background: rgba(88, 97, 108, 0.2);
+      color: #9BA6B0;
+      border: 1px solid rgba(88, 97, 108, 0.3);
+    }
+
+    .status-section {
+      margin-top: 40px;
+    }
+
+    .status-section h3 {
+      color: #E4BC76;
+      margin-bottom: 20px;
+      font-size: 1.5em;
+    }
+
+    .status-list {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .status-item {
+      background: rgba(16, 29, 47, 0.3);
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #C69B52;
+    }
+
+    .status-item h4 {
+      color: #C69B52;
+      margin-bottom: 8px;
+    }
+
+    .status-item p {
+      color: #58616C;
+      font-size: 0.9em;
+    }
+
+    .footer {
+      text-align: center;
+      margin-top: 60px;
+      padding: 30px;
+      background: rgba(21, 29, 47, 0.3);
+      border-radius: 20px;
+      border: 1px solid rgba(216, 214, 207, 0.3);
+    }
+
+    .footer a {
+      color: #C69B52;
+      text-decoration: none;
+      margin: 0 15px;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .nav-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section {
+        padding: 25px;
+      }
+
+      .card-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Simple accordion logic
-      document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-          const content = header.nextElementSibling;
-          const isVisible = content.style.display === 'block';
-          content.style.display = isVisible ? 'none' : 'block';
-          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
-        });
-      });
-    });
-  </script>
+</head>
 
-    </head>
-    <body>
-      <div class="layout">
-
-    <div class="sidebar">
-      <h2>Documentation</h2>
-      <ul>
-
-          <li>
-            <a href="00-INDEX.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
-              Hub
-            </a>
-          </li>
-
-          <li>
-            <a href="01-PRD.html" style="">
-              01 - PRD
-            </a>
-          </li>
-
-          <li>
-            <a href="02-TRD.html" style="">
-              02 - TRD
-            </a>
-          </li>
-
-          <li>
-            <a href="03-APP-FLOW.html" style="">
-              03 - App Flow
-            </a>
-          </li>
-
-          <li>
-            <a href="04-UI-UX-DESIGN.html" style="">
-              04 - UI/UX Design
-            </a>
-          </li>
-
-          <li>
-            <a href="05-BACKEND-SCHEMA.html" style="">
-              05 - Backend Schema
-            </a>
-          </li>
-
-          <li>
-            <a href="06-IMPLEMENTATION-PLAN.html" style="">
-              06 - Implementation Plan
-            </a>
-          </li>
-
-      </ul>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>DOCUMENTATION HUB</h1>
+      <div class="subtitle">Birth Hub 360 — Portal de Documentação Inteligente</div>
+      <div class="metadata">
+        <div class="metadata-item">📅 Analysis: 2026-09-25</div>
+        <div class="metadata-item">🌿 Branch: main</div>
+        <div class="metadata-item">📝 Commit: 1dec130b</div>
+        <div class="metadata-item">🎯 Version: V5 Pipeline Unified</div>
+      </div>
     </div>
 
-        <div class="main-content">
-          <div class="header">
-            <h1>Repository Intelligence Hub</h1>
-            <p class="text-muted">Autonomous Technical Documentation Portal for AtlasGR</p>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-value">7</div>
+        <div class="stat-label">Documentos</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">30+</div>
+        <div class="stat-label">Rotas</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">100+</div>
+        <div class="stat-label">Endpoints</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">135+</div>
+        <div class="stat-label">Migrations</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">23</div>
+        <div class="stat-label">Workers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value">10+</div>
+        <div class="stat-label">Integrações</div>
+      </div>
+    </div>
 
-            <div class="meta-info mt-8">
-              <div class="meta-item">
-                <span class="meta-label">Project Name</span>
-                <span class="meta-value">AtlasGR - Commercial Intelligence OS</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">Branch</span>
-                <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">Commit</span>
-                <span class="meta-value">7a71a56</span>
-              </div>
-              <div class="meta-item">
-                <span class="meta-label">Date</span>
-                <span class="meta-value">2026-09-25</span>
-              </div>
-            </div>
+    <nav class="nav-bar">
+      <a href="#documents">Documentos</a>
+      <a href="#status">Status do Projeto</a>
+      <a href="#consistency">Consistência</a>
+      <a href="#changelog">Changelog</a>
+    </nav>
+
+    <div class="section" id="documents">
+      <h2>📚 Documentos</h2>
+
+      <div class="card-grid">
+        <a href="01-PRD.html" class="doc-card">
+          <h3>01 - PRD</h3>
+          <div class="description">Product Requirements Document — Visão de produto, personas, JTBD, módulos, jornada,
+            regras de negócio</div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">828 linhas</span>
           </div>
+        </a>
 
-          <h2>Project Analytics</h2>
-          <div class="stats-grid">
-            <div class="stat-card">
-              <div class="stat-value">4288</div>
-              <div class="stat-label">Total Files</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">139</div>
-              <div class="stat-label">Database Tables</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">React/Vite</div>
-              <div class="stat-label">Frontend</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-value">Node/Express</div>
-              <div class="stat-label">Backend</div>
-            </div>
+        <a href="02-TRD.html" class="doc-card">
+          <h3>02 - TRD</h3>
+          <div class="description">Technical Requirements Document — Arquitetura técnica, stack, banco, API, segurança,
+            infraestrutura</div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">758 linhas</span>
           </div>
+        </a>
 
-          <h2 class="mt-8">Documentation Modules</h2>
-          <div class="card-grid">
-            <div class="card">
-              <a href="01-PRD.html">
-                <h3>01 - PRD</h3>
-                <p>Product Requirements Document. Business perspective, features, use cases, and status of implementation.</p>
-              </a>
-            </div>
-            <div class="card">
-              <a href="02-TRD.html">
-                <h3>02 - TRD</h3>
-                <p>Technical Requirements Document. Architecture, tech stack, infrastructure, and security implementations.</p>
-              </a>
-            </div>
-            <div class="card">
-              <a href="03-APP-FLOW.html">
-                <h3>03 - App Flow</h3>
-                <p>Application Flow & User Journey. Navigation maps, core states, and authentication flows.</p>
-              </a>
-            </div>
-            <div class="card">
-              <a href="04-UI-UX-DESIGN.html">
-                <h3>04 - UI/UX Design</h3>
-                <p>Design System & Interface Analysis. UI components (shadcn/ui), themes, typography, and styling.</p>
-              </a>
-            </div>
-            <div class="card">
-              <a href="05-BACKEND-SCHEMA.html">
-                <h3>05 - Backend Schema</h3>
-                <p>Database structure (Prisma), APIs, services documentation, models, and entity relationships.</p>
-              </a>
-            </div>
-            <div class="card">
-              <a href="06-IMPLEMENTATION-PLAN.html">
-                <h3>06 - Implementation Plan</h3>
-                <p>Actionable roadmap based on technical debt, gap analysis, and current state of the repository.</p>
-              </a>
-            </div>
+        <a href="03-APP-FLOW.html" class="doc-card">
+          <h3>03 - App Flow</h3>
+          <div class="description">Application Flow & User Journey — Rotas, guards, autenticação, fluxos autenticados e
+            administrativos</div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">703 linhas</span>
           </div>
+        </a>
 
-          <h2 class="mt-8">Legend & Status Markers</h2>
-          <div>
-            <span class="badge implemented">IMPLEMENTADO</span> Features fully present and functional in code.
-            <br>
-            <span class="badge partial">PARCIAL</span> Features partially implemented or mocked.
-            <br>
-            <span class="badge missing">AUSENTE</span> Planned features not found in codebase.
-            <br>
-            <span class="badge unverified">NAO_VERIFICADO</span> Inferred features or unable to definitively confirm.
+        <a href="04-UI-UX-DESIGN.html" class="doc-card">
+          <h3>04 - UI/UX Design</h3>
+          <div class="description">UI/UX Design System & Interface Analysis — Design system (Brandbook V4.1), cores,
+            tipografia, componentes, Screen Inventory</div>
+          <div class="meta">
+            <span class="badge badge-partial">PARCIAL (Brandbook V4.1)</span>
+            <span class="badge">867 linhas</span>
+          </div>
+        </a>
+
+        <a href="05-BACKEND-SCHEMA.html" class="doc-card">
+          <h3>05 - Backend Schema</h3>
+          <div class="description">Backend Schema Complete — Database, API, services, queues, workers, security,
+            observabilidade</div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">694 linhas</span>
+          </div>
+        </a>
+
+        <a href="06-IMPLEMENTATION-PLAN.html" class="doc-card">
+          <h3>06 - Implementation Plan</h3>
+          <div class="description">Implementation Plan — Plano executivo com fases, gaps, debt, prioridades e validações
+          </div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">707 linhas</span>
+          </div>
+        </a>
+
+        <a href="07-REPOSITORY-EVIDENCE.html" class="doc-card">
+          <h3>07 - Repository Evidence</h3>
+          <div class="description">Repository Evidence — Livro-caixa de evidências linha-a-linha, cross-checks e runtime
+            validation
+          </div>
+          <div class="meta">
+            <span class="badge badge-implemented">IMPLEMENTADO</span>
+            <span class="badge">592 linhas</span>
+          </div>
+        </a>
+      </div>
+    </div>
+
+    <div class="section" id="status">
+      <h2>📊 Status do Projeto</h2>
+
+      <div class="status-section">
+        <h3>Funcionalidades Implementadas</h3>
+        <div class="status-list">
+          <div class="status-item">
+            <h4>CRM Core</h4>
+            <p>Leads, Companies, Contacts, Activities, Pipeline Kanban, Notes, Attachments</p>
+          </div>
+          <div class="status-item">
+            <h4>Prospecção</h4>
+            <p>Hub de prospecção, enriquecimento de CNPJ, promoção para CRM</p>
+          </div>
+          <div class="status-item">
+            <h4>Inteligência Artificial</h4>
+            <p>Hub de IA com 20 funções, Agente Comercial de Elite, Toolkit</p>
+          </div>
+          <div class="status-item">
+            <h4>Integrações</h4>
+            <p>Bitrix24, WhatsApp, Google Workspace, Email, etc.</p>
+          </div>
+          <div class="status-item">
+            <h4>Market Intelligence</h4>
+            <p>LDR (Lead Dataset Request), Account 360, Universe oficial</p>
           </div>
         </div>
       </div>
-    </body>
-    </html>
+
+      <div class="status-section">
+        <h3>Funcionalidades Parciais</h3>
+        <div class="status-list">
+          <div class="status-item">
+            <h4>LGPD</h4>
+            <p>PII encryption implementado, mas política de retenção/exclusão ausente</p>
+          </div>
+          <div class="status-item">
+            <h4>Bitrix Sync</h4>
+            <p>Worker existe, mas fluxo não idempotente e falhas podem ser silenciosas</p>
+          </div>
+          <div class="status-item">
+            <h4>WhatsApp Automation</h4>
+            <p>Baileys configurado, mas fluxo completo não validado</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="status-section">
+        <h3>Dívida Técnica</h3>
+        <div class="status-list">
+          <div class="status-item">
+            <h4>Documentation</h4>
+            <p>UI/UX sem screenshots reais, links internos não validados</p>
+          </div>
+          <div class="status-item">
+            <h4>Testing</h4>
+            <p>Coverage não medido, suite E2E parcial</p>
+          </div>
+          <div class="status-item">
+            <h4>RBAC</h4>
+            <p>Hierarquia definida, mas alguns endpoints não verificados</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section" id="consistency">
+      <h2>✅ Consistência da Documentação</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Check</th>
+            <th>Status</th>
+            <th>Descrição</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nome do Projeto</td>
+            <td><span class="badge badge-implemented">PASS</span></td>
+            <td>Todos os documentos usam "Birth Hub 360"</td>
+          </tr>
+          <tr>
+            <td>Branch</td>
+            <td><span class="badge badge-implemented">PASS</span></td>
+            <td>Todos os documentos usam "main"</td>
+          </tr>
+          <tr>
+            <td>Commit</td>
+            <td><span class="badge badge-partial">WARN</span></td>
+            <td>06-IMPLEMENTATION-PLAN tinha commit 7a71a56 (corrigido)</td>
+          </tr>
+          <tr>
+            <td>Data de Análise</td>
+            <td><span class="badge badge-implemented">PASS</span></td>
+            <td>Todos os documentos usam 2026-09-25</td>
+          </tr>
+          <tr>
+            <td>Links Internos</td>
+            <td><span class="badge badge-pending">PENDENTE</span></td>
+            <td>Links precisam ser validados</td>
+          </tr>
+          <tr>
+            <td>Paridade de Rotas</td>
+            <td><span class="badge badge-pending">PENDENTE</span></td>
+            <td>App Flow vs App.tsx precisa ser validado</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="changelog">
+      <h2>📝 Changelog</h2>
+
+      <div class="status-list">
+        <div class="status-item">
+          <h4>v3.0 — 2026-09-25</h4>
+          <p>DOCUMENTATION RECONCILIATION</p>
+          <p style="margin-top: 10px;">
+            <strong>CHANGED:</strong><br>
+            - 06-IMPLEMENTATION-PLAN: Atualizado para Birth Hub 360, formato expandido com
+            ID/TASK/EVIDENCE/FILES/VALIDATION<br>
+            - 00-INDEX: Atualizado para Birth Hub 360, layout consistente<br>
+            - 04-UI-UX-DESIGN: Já em Birth Hub 360 (mantido)<br>
+            - 05-BACKEND-SCHEMA: Já em Birth Hub 360 (mantido)
+          </p>
+          <p style="margin-top: 10px;">
+            <strong>DETECTED:</strong><br>
+            - Inconsistência de identidade: 06-IMPLEMENTATION-PLAN e 00-INDEX referenciavam "AtlasGR"<br>
+            - Inconsistência de commit: 06-IMPLEMENTATION-PLAN tinha commit 7a71a56 (errado)<br>
+            - UI/UX sem screenshots reais<br>
+            - Links internos não validados
+          </p>
+          <p style="margin-top: 10px;">
+            <strong>ADDED:</strong><br>
+            - data/repository-snapshot.json: Snapshot centralizado do repositório<br>
+            - data/ consistency-report.json: Relatório de consistência
+          </p>
+        </div>
+
+        <div class="status-item">
+          <h4>v2.0 — 2026-09-25</h4>
+          <p>SECOND GENERATION</p>
+          <p style="margin-top: 10px;">
+            <strong>CHANGED:</strong><br>
+            - 01-PRD: Regenerado com 828 linhas, estrutura completa em pt-BR<br>
+            - 02-TRD: Regenerado com 758 linhas, arquitetura técnica detalhada<br>
+            - 03-APP-FLOW: Regenerado com 703 linhas, rotas e guards detalhados
+          </p>
+        </div>
+
+        <div class="status-item">
+          <h4>v1.0 — Data anterior</h4>
+          <p>INITIAL GENERATION</p>
+          <p style="margin-top: 10px;">
+            <strong>ADDED:</strong><br>
+            - Documentação inicial para AtlasGR (nome legado)
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Birth Hub 360 — Repository Documentation Architect V5</p>
+      <p style="margin-top: 10px; color: #a1a1aa;">Generated: 2026-09-25 • Commit: 1dec130b</p>
+    </div>
+  </div>
+</body>
+
+</html>

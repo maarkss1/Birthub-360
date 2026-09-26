@@ -1,0 +1,2121 @@
+{
+  "timestamp": "2026-09-25T15:31:56.492Z",
+  "baseUrl": "http://localhost:3024",
+  "totalRoutes": 41,
+  "totalViewports": 7,
+  "results": [
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.screenshot: Protocol error (Page.captureScreenshot): Unable to capture screenshot\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/",
+      "name": "welcome-screen",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\welcome-screen\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/login",
+      "name": "login-screen",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\login-screen\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/privacy",
+      "name": "privacy-policy",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\privacy-policy\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/terms",
+      "name": "terms-of-use",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\terms-of-use\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/social-selling",
+      "name": "social-selling-hub",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\social-selling-hub\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app",
+      "name": "dashboard",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/dashboard",
+      "name": "dashboard-alias",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\dashboard-alias\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/workspace",
+      "name": "workspace-home",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\workspace-home\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/prospect",
+      "name": "prospecting-hub",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\prospecting-hub\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm",
+      "name": "crm-board",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm-board\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/crm360",
+      "name": "crm360-overview",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\crm360-overview\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/mesa-tratamento",
+      "name": "mesa-tratamento",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\mesa-tratamento\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/intelligence",
+      "name": "intelligence-hub",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\intelligence-hub\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.screenshot: Protocol error (Page.captureScreenshot): Unable to capture screenshot\nCall log:\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n"
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/companies",
+      "name": "companies-list",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\companies-list\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "desktop-full",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\desktop-full.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\desktop-full-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "tablet",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\tablet.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\tablet-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "tablet-portrait",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\tablet-portrait.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\tablet-portrait-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "mobile",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "mobile-large",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile-large.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile-large-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/contacts",
+      "name": "contacts-list",
+      "viewport": "mobile-small",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile-small.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\contacts-list\\mobile-small-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "desktop",
+      "screenshot": "C:\\Github\\Birthub-360\\design-system-capture\\activities-list\\desktop.png",
+      "metrics": "C:\\Github\\Birthub-360\\design-system-capture\\activities-list\\desktop-metrics.json",
+      "success": true
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/activities",
+      "name": "activities-list",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/activities\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/activities\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/voice-hub",
+      "name": "voice-studio",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/voice-hub\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/voice-hub\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/cadence",
+      "name": "cadence-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/cadence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/cadence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/chatbook",
+      "name": "chatbook-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/chatbook\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/chatbook\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/roleplay",
+      "name": "roleplay-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/roleplay\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/roleplay\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/qualification_matrix",
+      "name": "qualification-matrix",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/qualification_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/qualification_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/objections_matrix",
+      "name": "objections-matrix",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/objections_matrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/objections_matrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/topic_training",
+      "name": "topic-training-academy",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/topic_training\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/topic_training\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/bitrix",
+      "name": "bitrix-guide-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/bitrix\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/bitrix\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/reports",
+      "name": "reports-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/reports\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/reports\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/integrations",
+      "name": "integrations",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/integrations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/integrations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/knowledge",
+      "name": "knowledge-base",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/knowledge\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/knowledge\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/analytics",
+      "name": "analytics",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/analytics\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/analytics\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/winloss",
+      "name": "win-loss-analysis",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/winloss\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/winloss\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/propostas",
+      "name": "propostas-list",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/propostas\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/propostas\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/commercial_intelligence",
+      "name": "commercial-intelligence",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/commercial_intelligence\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/commercial_intelligence\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/daily-plan",
+      "name": "daily-plan-hub",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/daily-plan\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/daily-plan\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/sdr-diagnostic",
+      "name": "sdr-diagnostic",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/sdr-diagnostic\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/sdr-diagnostic\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/calendar",
+      "name": "calendar",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/calendar\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/calendar\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/notifications",
+      "name": "notifications",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/notifications\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/notifications\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/automations",
+      "name": "automations",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/automations\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/automations\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/usage",
+      "name": "usage",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/usage\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/usage\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/editor",
+      "name": "document-editor",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/editor\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/editor\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/team",
+      "name": "team",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/team\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/team\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/module-access",
+      "name": "module-access",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/module-access\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/module-access\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "desktop",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "desktop-full",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "tablet",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "tablet-portrait",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "mobile",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "mobile-large",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    },
+    {
+      "route": "/app/settings",
+      "name": "settings",
+      "viewport": "mobile-small",
+      "success": false,
+      "error": "Error: page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:3024/app/settings\nCall log:\n\u001b[2m  - navigating to \"http://localhost:3024/app/settings\", waiting until \"networkidle\"\u001b[22m\n"
+    }
+  ]
+}

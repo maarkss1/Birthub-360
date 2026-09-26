@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-09-25T15:47:33.060Z",
+  "cssVariables": {},
+  "fonts": [
+    "\"Times New Roman\""
+  ],
+  "body": {
+    "backgroundColor": "rgba(0, 0, 0, 0)",
+    "color": "rgb(0, 0, 0)",
+    "fontFamily": "\"Times New Roman\"",
+    "fontSize": "16px",
+    "width": 1424,
+    "height": 0
+  },
+  "buttons": null,
+  "inputs": null,
+  "cards": null,
+  "navigation": null,
+  "colorPalette": [
+    {
+      "color": "rgb(0, 0, 0)",
+      "count": 14
+    }
+  ]
+}

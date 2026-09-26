@@ -22,3 +22,8 @@ HTML autocontido, offline, responsivo, com vetores exportáveis. Nenhuma promess
 
 ## Accessibility & Inclusion
 Texto com contraste calculado, navegação por teclado, tamanhos de toque de 44 px, movimento reduzido e leitura sem JavaScript.
+
+## v4.1 — Melhorias
+- Hierarquia visual aprimorada com melhor contraste entre elementos
+- Capítulo de aplicações específico para contexto CRM/comercial
+- QA validado com 0 erros em desktop e mobile

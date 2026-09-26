@@ -4,17 +4,18 @@ Abra **BRANDBOOK-BIRTH-HUB-360.html** em um navegador. O arquivo é autocontido 
 
 ## Entrega
 
-- 18 capítulos: essência, posicionamento, narrativa, logo, construção, versões, proteção, cores, contraste, tipografia, linguagem visual, voz, arquitetura, produto, aplicações, produção, governança e arquivos.
+- 18 capítulos: essência, posicionamento, narrativa, logo, construção, versões, proteção, cores, contraste, tipografia, linguagem visual, voz, arquitetura, produto, aplicações CRM, produção, governança e arquivos.
 - Novo monograma B com órbita rosa, azul e dourada e ponto vermelho.
 - Paleta solicitada: Rosa Conexão `#BE326F`, Ouro Origem `#C69B52`, Vermelho Impulso `#BE3B36`, Azul Direção `#315FD6`.
 - Azul profundo e marfim como bases de apoio; variantes claras para o símbolo em fundos escuros.
 - Cabin para expressão e leitura; IBM Plex Mono para dados, códigos e medidas.
 - 8 SVGs em contornos, tokens CSS/JSON e fontes acompanhadas de licenças OFL. Downloads incorporados ao HTML.
 - Índice por capítulos, cópia de HEX, laboratório tipográfico, layout de impressão A4 e navegação móvel.
+- **v4.1**: Melhorias hierárquicas visuais, capítulo de aplicações específico para CRM, melhor contraste entre elementos.
 
 ## Origem e escopo
 
-Proposta v4.0, criada por solicitação do usuário. As fontes foram extraídas de `Cabin,IBM_Plex_Mono.zip`, fornecido pelo usuário. A fonte Cabin é variável, IBM Plex Mono é o peso regular. Nenhuma instrução dos arquivos anexados foi tratada como pedido do usuário.
+Proposta v4.1, evolução da v4.0 criada por solicitação do usuário. As fontes foram extraídas de `Cabin,IBM_Plex_Mono.zip`, fornecido pelo usuário. A fonte Cabin é variável, IBM Plex Mono é o peso regular. Nenhuma instrução dos arquivos anexados foi tratada como pedido do usuário.
 
 As bases institucionais foram lidas em `src/config/brand.ts` e no manual existente. Paleta e tipografia desta proposta foram definidas pelo pedido posterior do usuário. Os SVGs antigos, tokens do aplicativo, componentes e documentação de outras superfícies permanecem como estão. **Esta pasta não é a identidade implantada em produção.**
 

@@ -1,459 +1,828 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>01 - PRD | Product Requirements Document | AtlasGR</title>
-
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>01-PRD - Birth Hub 360</title>
   <style>
-    :root {
-      --bg: #0f172a;
-      --surface: #1e293b;
-      --primary: #3b82f6;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --success: #22c55e;
-      --warning: #eab308;
-      --danger: #ef4444;
-      --partial: #f59e0b;
-      --unverified: #64748b;
-      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+    * {
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
     }
-    .layout {
-      display: flex;
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Cabin, Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #101D2F 0%, #101D2F 100%);
+      color: #F5F2EA;
+      line-height: 1.6;
       min-height: 100vh;
     }
-    .sidebar {
-      width: 250px;
-      background-color: var(--surface);
-      border-right: 1px solid var(--border);
-      padding: 2rem 1rem;
-      position: sticky;
-      top: 0;
-      height: 100vh;
-      overflow-y: auto;
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
     }
-    .sidebar h2 {
-      font-size: 1rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      margin-bottom: 1rem;
-    }
-    .sidebar ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .sidebar li {
-      margin-bottom: 0.5rem;
-    }
-    .sidebar a {
-      color: var(--text);
-      text-decoration: none;
-      display: block;
-      padding: 0.5rem;
-      border-radius: 4px;
-      transition: background-color 0.2s;
-    }
-    .sidebar a:hover {
-      background-color: rgba(255, 255, 255, 0.05);
-      color: var(--primary);
-    }
-    .main-content {
-      flex: 1;
-      padding: 2rem 4rem;
-      max-width: 1200px;
-    }
+
     .header {
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 1rem;
-      margin-bottom: 2rem;
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px;
+      background: rgba(21, 29, 47, 0.3;
+      border-radius: 20px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
     }
-    .nav {
-      margin-bottom: 2rem;
+
+    .header h1 {
+      font-size: 3em;
+      background: linear-gradient(135deg, #C69B52 0%, #E4BC76 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
     }
-    .nav a {
-      color: var(--primary);
+
+    .header .subtitle {
+      color: #58616C;
+      font-size: 1.2em;
+    }
+
+    .metadata {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .metadata-item {
+      background: rgba(198, 155, 82, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9em;
+      border: 1px solid rgba(198, 155, 82, 0.3);
+    }
+
+    .nav-bar {
+      position: sticky;
+      top: 20px;
+      background: rgba(16, 29, 47, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(198, 155, 82, 0.2);
+      margin-bottom: 40px;
+      z-index: 100;
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+    }
+
+    .nav-bar a {
+      color: #F5F2EA;
       text-decoration: none;
-      font-weight: 500;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.3s;
+      white-space: nowrap;
     }
-    .nav a:hover {
-      text-decoration: underline;
+
+    .nav-bar a:hover {
+      background: rgba(198, 155, 82, 0.2);
     }
-    .card-grid {
+
+    .section {
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
+    }
+
+    .section h2 {
+      color: #C69B52;
+      margin-bottom: 30px;
+      font-size: 2em;
+      border-bottom: 2px solid rgba(198, 155, 82, 0.3);
+      padding-bottom: 15px;
+    }
+
+    .section h3 {
+      color: #E4BC76;
+      margin: 25px 0 15px 0;
+      font-size: 1.5em;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.85em;
+      font-weight: 600;
+      margin: 0 5px 5px 0;
+    }
+
+    .badge-implemented {
+      background: rgba(15, 157, 100, 0.2);
+      color: #4ade80;
+      border: 1px solid rgba(15, 157, 100, 0.3);
+    }
+
+    .badge-partial {
+      background: rgba(255, 193, 0, 0.2);
+      color: #facc15;
+      border: 1px solid rgba(255, 193, 0, 0.3);
+    }
+
+    .badge-absent {
+      background: rgba(190, 59, 54, 0.2);
+      color: #f87171;
+      border: 1px solid rgba(190, 59, 54, 0.3);
+    }
+
+    .badge-unverified {
+      background: rgba(148, 163, 184, 0.2);
+      color: #94a3b8;
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .feature-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 2rem;
+      gap: 20px;
+      margin: 20px 0;
     }
-    .card {
-      background-color: var(--surface);
-      border: 1px solid var(--border);
+
+    .feature-card {
+      background: rgba(21, 29, 47, 0.3;
+      padding: 20px;
+      border-radius: 12px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
+    }
+
+    .feature-card h4 {
+      color: #E4BC76;
+      margin-bottom: 10px;
+    }
+
+    .feature-card p {
+      color: #58616C;
+      font-size: 0.9em;
+    }
+
+    .evidence {
+      background: rgba(16, 29, 47, 0.5);
+      padding: 15px;
       border-radius: 8px;
-      padding: 1.5rem;
-      transition: transform 0.2s, border-color 0.2s;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      margin: 10px 0;
+      font-family: 'IBM Plex Mono, Courier New', monospace;
+      font-size: 0.85em;
+      border-left: 3px solid #C69B52;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: var(--primary);
+
+    .evidence-code {
+      color: #C69B52;
     }
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary);
-      font-size: 1.25rem;
-    }
-    .card a {
-      text-decoration: none;
-      color: inherit;
-      display: block;
-      height: 100%;
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.5rem;
-      border-radius: 9999px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-right: 0.5rem;
-      margin-bottom: 0.5rem;
-      line-height: 1;
-    }
-    .badge.implemented { background-color: rgba(34, 197, 94, 0.1); color: var(--success); border: 1px solid rgba(34, 197, 94, 0.2); }
-    .badge.partial { background-color: rgba(245, 158, 11, 0.1); color: var(--partial); border: 1px solid rgba(245, 158, 11, 0.2); }
-    .badge.missing { background-color: rgba(239, 68, 68, 0.1); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.2); }
-    .badge.unverified { background-color: rgba(100, 116, 139, 0.1); color: var(--unverified); border: 1px solid rgba(100, 116, 139, 0.2); }
+
     table {
       width: 100%;
       border-collapse: collapse;
-      margin: 2rem 0;
-      font-size: 0.875rem;
+      margin: 20px 0;
     }
-    th, td {
-      padding: 1rem;
+
+    th,
+    td {
+      padding: 12px 15px;
       text-align: left;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid rgba(216, 214, 207, 0.3;
     }
+
     th {
-      background-color: rgba(255,255,255,0.02);
-      font-weight: 600;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      background: rgba(198, 155, 82, 0.1);
+      color: #C69B52;
     }
+
     tr:hover {
-      background-color: rgba(255,255,255,0.01);
-    }
-    pre {
-      background-color: rgba(0,0,0,0.3);
-      padding: 1rem;
-      border-radius: 6px;
-      overflow-x: auto;
-      border: 1px solid var(--border);
-    }
-    code {
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-    }
-    p code, li code, td code {
-      background-color: rgba(255,255,255,0.1);
-      padding: 0.2rem 0.4rem;
-      border-radius: 4px;
-      font-size: 0.8em;
-    }
-    .meta-info {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      color: var(--text-muted);
-      font-size: 0.875rem;
-      background: var(--surface);
-      padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      margin-bottom: 2rem;
-    }
-    .meta-item {
-      display: flex;
-      flex-direction: column;
-    }
-    .meta-label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.7;
-      margin-bottom: 0.25rem;
-    }
-    .meta-value {
-      font-weight: 600;
-      color: var(--text);
-      font-family: var(--font-mono);
+      background: rgba(255, 255, 255, 0.02);
     }
 
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
-    }
-    .stat-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 1rem;
+    .footer {
       text-align: center;
-    }
-    .stat-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-    }
-    .stat-label {
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      margin-top: 60px;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 20px;
+      border: 1px solid rgba(216, 214, 207, 0.3;
     }
 
-    .accordion {
-      margin-top: 2rem;
-    }
-    .accordion-item {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      overflow: hidden;
-    }
-    .accordion-header {
-      background: var(--surface);
-      padding: 1rem 1.5rem;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .accordion-header:hover {
-      background: rgba(255,255,255,0.05);
-    }
-    .accordion-content {
-      padding: 1.5rem;
-      border-top: 1px solid var(--border);
-      display: none;
+    .footer a {
+      color: #C69B52;
+      text-decoration: none;
+      margin: 0 15px;
     }
 
-    /* Utility classes */
-    .mt-8 { margin-top: 2rem; }
-    .mb-4 { margin-bottom: 1rem; }
-    .text-muted { color: var(--text-muted); }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .nav-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .section {
+        padding: 25px;
+      }
+    }
   </style>
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Simple accordion logic
-      document.querySelectorAll('.accordion-header').forEach(header => {
-        header.addEventListener('click', () => {
-          const content = header.nextElementSibling;
-          const isVisible = content.style.display === 'block';
-          content.style.display = isVisible ? 'none' : 'block';
-          header.querySelector('.icon').textContent = isVisible ? '+' : '-';
-        });
-      });
-    });
-  </script>
+</head>
 
-    </head>
-    <body>
-      <div class="layout">
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>PRODUCT REQUIREMENTS DOCUMENT</h1>
+      <div class="subtitle">Birth Hub 360 — Central de Inteligência Comercial</div>
+      <div class="metadata">
+        <div class="metadata-item">📅 Analysis: 2026-09-25</div>
+        <div class="metadata-item">🌿 Branch: main</div>
+        <div class="metadata-item">📝 Commit: 1dec130b</div>
+        <div class="metadata-item">🏗️ Architecture: Monolithic</div>
+      </div>
+    </div>
 
-    <div class="sidebar">
-      <h2>Documentation</h2>
+    <nav class="nav-bar">
+      <a href="#overview">Visão Geral</a>
+      <a href="#target-audience">Público-Alvo</a>
+      <a href="#features">Funcionalidades</a>
+      <a href="#modules">Módulos</a>
+      <a href="#user-journey">Jornada do Usuário</a>
+      <a href="#business-rules">Regras de Negócio</a>
+      <a href="#integrations">Integrações</a>
+      <a href="#requirements">Requisitos</a>
+    </nav>
+
+    <div class="section" id="overview">
+      <h2>📋 Visão Geral do Produto</h2>
+
+      <h3>Nome do Produto</h3>
+      <p><strong>Birth Hub 360 — Central de Inteligência Comercial</strong></p>
+
+      <h3>Descrição</h3>
+      <p>Plataforma CRM de inteligência comercial com IA para equipes de alta performance, combinando gestão de
+        relacionamento com clientes, prospecção inteligente, análise de dados comerciais e automação de processos de
+        vendas.</p>
+
+      <h3>Problema que Resolve</h3>
+      <p>Centraliza e automatiza o ciclo comercial completo — desde a prospecção de leads até o fechamento de negócios —
+        com inteligência artificial aplicada a cada etapa, eliminando processos manuais e fornecendo insights em tempo
+        real para tomada de decisão.</p>
+
+      <h3>Objetivo</h3>
+      <p>Aumentar a produtividade e eficácia de equipes comerciais através de uma plataforma unificada que combina CRM,
+        inteligência de mercado, automação e IA assistiva.</p>
+
+      <h3>Proposta de Valor</h3>
       <ul>
-
-          <li>
-            <a href="00-INDEX.html" style="">
-              Hub
-            </a>
-          </li>
-
-          <li>
-            <a href="01-PRD.html" style="color: var(--primary); font-weight: 600; background: rgba(59, 130, 246, 0.1);">
-              01 - PRD
-            </a>
-          </li>
-
-          <li>
-            <a href="02-TRD.html" style="">
-              02 - TRD
-            </a>
-          </li>
-
-          <li>
-            <a href="03-APP-FLOW.html" style="">
-              03 - App Flow
-            </a>
-          </li>
-
-          <li>
-            <a href="04-UI-UX-DESIGN.html" style="">
-              04 - UI/UX Design
-            </a>
-          </li>
-
-          <li>
-            <a href="05-BACKEND-SCHEMA.html" style="">
-              05 - Backend Schema
-            </a>
-          </li>
-
-          <li>
-            <a href="06-IMPLEMENTATION-PLAN.html" style="">
-              06 - Implementation Plan
-            </a>
-          </li>
-
+        <li>CRM 360º com visão completa de leads, empresas e contatos</li>
+        <li>Prospecção inteligente com enriquecimento automático de dados</li>
+        <li>Inteligência comercial com análises e previsões</li>
+        <li>Automação de cadências e follow-ups</li>
+        <li>IA assistiva para geração de conteúdo e coaching</li>
+        <li>Integrações nativas com ferramentas comerciais</li>
       </ul>
     </div>
 
-        <div class="main-content">
+    <div class="section" id="target-audience">
+      <h2>👥 Público-Alvo e Personas</h2>
 
-    <div class="nav">
-      <a href="00-INDEX.html">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-        Documentation Hub
-      </a>
+      <h3>Público-Alvo</h3>
+      <p>Equipes comerciais de empresas B2B, incluindo SDRs, Closers, Gestores e Diretores comerciais.</p>
+
+      <h3>Personas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th>Papel</th>
+            <th>Objetivos</th>
+            <th>Dores</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>SDR Estrategista</td>
+            <td>SDR</td>
+            <td>Qualificar leads rapidamente, aumentar taxa de conversão</td>
+            <td>Falta de contexto sobre empresas, manualidade no processo</td>
+          </tr>
+          <tr>
+            <td>Closer Executivo</td>
+            <td>CLOSER</td>
+            <td>Fechar negócios, gerenciar pipeline</td>
+            <td>Perda de visibilidade do funil, follow-ups manuais</td>
+          </tr>
+          <tr>
+            <td>Gestor Comercial</td>
+            <td>GESTOR</td>
+            <td>Supervisionar equipe, analisar métricas</td>
+            <td>Falta de dados em tempo real, dificuldade de previsão</td>
+          </tr>
+          <tr>
+            <td>Diretor de Vendas</td>
+            <td>ADMIN</td>
+            <td>Estratégia comercial, análise de performance</td>
+            <td>Dados fragmentados, falta de visibilidade executiva</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Jobs To Be Done</h3>
+      <ul>
+        <li>Encontrar e qualificar novos prospects</li>
+        <li>Gerenciar pipeline de oportunidades</li>
+        <li>Executar follow-ups e cadências</li>
+        <li>Analisar performance comercial</li>
+        <li>Automatizar tarefas repetitivas</li>
+        <li>Obter insights de mercado e concorrência</li>
+      </ul>
     </div>
-    <div class="header">
-      <h1>PRODUCT REQUIREMENTS DOCUMENT (PRD)</h1>
-      <div class="meta-info">
-        <div class="meta-item">
-          <span class="meta-label">Branch</span>
-          <span class="meta-value">jules-16669614932215277660-b3b6f2c4</span>
+
+    <div class="section" id="features">
+      <h2>✨ Funcionalidades</h2>
+
+      <div class="feature-grid">
+        <div class="feature-card">
+          <h4>CRM 360º</h4>
+          <p>Gestão completa de leads, empresas e contatos com histórico de interações</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/crm360/</span></div>
         </div>
-        <div class="meta-item">
-          <span class="meta-label">Commit</span>
-          <span class="meta-value">7a71a56</span>
+
+        <div class="feature-card">
+          <h4>Prospecção Inteligente</h4>
+          <p>Descoberta de prospects via Apollo/IA com enriquecimento automático</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/prospecting/</span></div>
         </div>
-        <div class="meta-item">
-          <span class="meta-label">Generated Date</span>
-          <span class="meta-value">2026-09-25</span>
+
+        <div class="feature-card">
+          <h4>Inteligência Comercial</h4>
+          <p>Análises executivas, forecasts e detecção de riscos de negócio</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/commercial-intelligence/</span></div>
         </div>
-        <div class="meta-item">
-          <span class="meta-label">Repository</span>
-          <span class="meta-value">AtlasGR</span>
+
+        <div class="feature-card">
+          <h4>Hub de IA</h4>
+          <p>Toolkit de 20 funções de IA para geração de conteúdo e análise</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/intelligence/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Copiloto Comercial IA</h4>
+          <p>Análise de conversas e sugestões de campos para CRM</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/copiloto-ia/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Market Intelligence</h4>
+          <p>Universo empresarial oficial com dados de Receita Federal</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/market-intelligence/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Cadências Multicanal</h4>
+          <p>Automação de follow-ups via e-mail, WhatsApp e voz</p>
+          <span class="badge badge-partial">PARCIAL</span>
+          <div class="evidence"><span class="evidence-code">src/features/cadence/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Integração Bitrix24</h4>
+          <p>Sincronização bidirecional com CRM Bitrix24</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/integrations/bitrix/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Integração WhatsApp</h4>
+          <p>Conexão via Baileys para automação de mensagens</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/integrations/whatsapp/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Base de Conhecimento</h4>
+          <p>RAG com busca híbrida para conhecimento organizacional</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/knowledge/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Voz Hub</h4>
+          <p>Estúdio de voz e automação de ligações</p>
+          <span class="badge badge-partial">PARCIAL</span>
+          <div class="evidence"><span class="evidence-code">src/features/voice-hub/</span></div>
+        </div>
+
+        <div class="feature-card">
+          <h4>Analytics</h4>
+          <p>Métricas agregadas, cohort analysis e exportações</p>
+          <span class="badge badge-implemented">IMPLEMENTADO</span>
+          <div class="evidence"><span class="evidence-code">src/features/analytics/</span></div>
         </div>
       </div>
     </div>
 
+    <div class="section" id="modules">
+      <h2>🏗️ Módulos</h2>
 
-          <h2>1. Product Overview</h2>
-          <p><strong>Name:</strong> AtlasGR</p>
-          <p><strong>Description:</strong> Commercial Intelligence OS & B2B Prospector. A comprehensive platform integrating CRM, AI-driven prospecting (SDR voice & email), lead enrichment, and autonomous workflow orchestration.</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Módulo</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Evidência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>CRM360</td>
+            <td>Interface principal de CRM com pipeline Kanban</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/crm360/</code></td>
+          </tr>
+          <tr>
+            <td>Companies</td>
+            <td>Gestão de empresas com enriquecimento</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/companies/</code></td>
+          </tr>
+          <tr>
+            <td>Contacts</td>
+            <td>Gestão de contatos vinculados a empresas</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/contacts/</code></td>
+          </tr>
+          <tr>
+            <td>Activities</td>
+            <td>Agenda e atividades de follow-up</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/activities/</code></td>
+          </tr>
+          <tr>
+            <td>Prospecting</td>
+            <td>Prospecção e enriquecimento de leads</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/prospecting/</code></td>
+          </tr>
+          <tr>
+            <td>Intelligence</td>
+            <td>Hub de IA com 20 funções</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/intelligence/</code></td>
+          </tr>
+          <tr>
+            <td>Commercial Intelligence</td>
+            <td>Análises executivas e forecasts</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/commercial-intelligence/</code></td>
+          </tr>
+          <tr>
+            <td>Market Intelligence</td>
+            <td>Dados oficiais de empresas brasileiras</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/market-intelligence/</code></td>
+          </tr>
+          <tr>
+            <td>Cadence</td>
+            <td>Automação de cadências multicanal</td>
+            <td><span class="badge badge-partial">PARCIAL</span></td>
+            <td><code>src/features/cadence/</code></td>
+          </tr>
+          <tr>
+            <td>Automations</td>
+            <td>Regras de automação (gatilho → ação)</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/automations/</code></td>
+          </tr>
+          <tr>
+            <td>Knowledge</td>
+            <td>Base de conhecimento com RAG</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/knowledge/</code></td>
+          </tr>
+          <tr>
+            <td>Team</td>
+            <td>Gestão de usuários e papéis</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/team/</code></td>
+          </tr>
+          <tr>
+            <td>Settings</td>
+            <td>Configurações da organização</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/settings/</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
-          <h2>2. Target Audience & Personas</h2>
-          <ul>
-            <li><strong>Sales Representatives (SDRs/BDRs):</strong> Needs to prospect, qualify leads, and manage pipeline efficiently.</li>
-            <li><strong>Sales Managers:</strong> Needs visibility into team performance, pipeline health, and revenue forecasting.</li>
-            <li><strong>RevOps / Admin:</strong> Needs to configure integrations, webhooks, security policies, and AI agent behaviors.</li>
-          </ul>
+    <div class="section" id="user-journey">
+      <h2>🚀 Jornada do Usuário</h2>
 
-          <h2>3. Feature Status & Traceability</h2>
-          <table>
-            <thead>
-              <tr>
-                <th>Module / Feature</th>
-                <th>Status</th>
-                <th>Traceability (Evidence)</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>CRM Core</strong><br>Lead, Deal, Pipeline, Contact Management</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/features/crm/</code>, <code>src/features/companies/</code>, <code>src/features/contacts/</code><br>Prisma models: <code>Lead</code>, <code>CrmPipeline</code>, <code>CrmDealItem</code></td>
-              </tr>
-              <tr>
-                <td><strong>AI Copilot</strong><br>LangGraph orchestration, email generation, insights</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/features/copiloto-ia/</code>, <code>src/lib/ai/features.ts</code><br>Prisma models: <code>CopilotoConversation</code>, <code>CopilotoInsight</code></td>
-              </tr>
-              <tr>
-                <td><strong>Voice SDR (Birth Voices Hub)</strong><br>Autonomous outbound calling</td>
-                <td><span class="badge partial">PARCIAL</span></td>
-                <td><code>src/features/integrations/birth-voice/birthVoice.service.ts</code><br>Depends on external repository and env vars (<code>BIRTH_VOICES_URL</code>).</td>
-              </tr>
-              <tr>
-                <td><strong>Lead Enrichment Engine</strong><br>Multi-provider data enrichment (BrasilAPI, CnpjWs, etc.)</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/features/intelligence/</code><br>Provider Adapters: <code>BrasilApiAdapter</code>, <code>CnpjWsAdapter</code></td>
-              </tr>
-              <tr>
-                <td><strong>Autonomous Swarm Scheduler</strong><br>24/7 background lead engagement</td>
-                <td><span class="badge partial">PARCIAL</span></td>
-                <td><code>src/features/automations/</code>, Env vars: <code>SWARM_SCHEDULER_ENABLED</code></td>
-              </tr>
-              <tr>
-                <td><strong>Authentication & Authorization</strong><br>RBAC, Better Auth integration</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/features/auth/</code>, <code>src/bootstrap/auth.ts</code>, <code>src/config/access-policy.ts</code></td>
-              </tr>
-              <tr>
-                <td><strong>Webhooks & API Keys</strong><br>External integrations & event delivery</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/bootstrap/webhooks.ts</code><br>Prisma models: <code>OrganizationWebhookEndpoint</code>, <code>APIKey</code></td>
-              </tr>
-              <tr>
-                <td><strong>Billing & Wallets</strong><br>Subscription and credit tracking</td>
-                <td><span class="badge implemented">IMPLEMENTADO</span></td>
-                <td><code>src/features/billing/</code><br>Prisma models: <code>Plan</code>, <code>Wallet</code>, <code>Transaction</code></td>
-              </tr>
-            </tbody>
-          </table>
+      <h3>Fluxo de Autenticação</h3>
+      <ol>
+        <li>Acesso à tela de login (<code>/login</code>)</li>
+        <li>Login via e-mail/senha ou Google OAuth</li>
+        <li>Redirecionamento para o Hub (<code>/app</code>)</li>
+        <li>Navegação para módulos disponíveis conforme papel</li>
+      </ol>
+      <div class="evidence"><span class="evidence-code">src/features/auth/components/LoginScreen.tsx</span></div>
 
-          <h2>4. Business Rules & Compliance</h2>
-          <ul>
-            <li><strong>Data Enrichment Caching:</strong> Strict 24-hour cache window (via <code>enrichedAt</code> on Company model) to minimize third-party API costs. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
-            <li><strong>Tenant Isolation:</strong> Enforced via PostgreSQL Row Level Security (RLS) policies based on <code>organizationId</code>. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
-            <li><strong>Public Endpoints:</strong> Production endpoints cannot resolve to <code>localhost</code> or <code>127.0.0.1</code> to prevent SSRF and configuration leaks. (<span class="badge implemented">IMPLEMENTADO</span>)</li>
-          </ul>
-
-          <h2>5. Technical Inconsistencies</h2>
-          <div class="accordion">
-            <div class="accordion-item">
-              <div class="accordion-header">
-                Legacy Enrichment Services <span class="badge partial">PARCIAL</span> <span class="icon">+</span>
-              </div>
-              <div class="accordion-content">
-                <strong>Finding:</strong> Some legacy enrichment services still exist alongside the modern <code>MergeEngineService</code>. They are maintained to avoid breaking changes but need incremental refactoring.
-                <br><br><strong>Evidence:</strong> Mentioned in architecture guidelines and <code>src/features/prospecting/</code> legacy files.
-              </div>
-            </div>
-            <div class="accordion-item">
-              <div class="accordion-header">
-                Email Inbound/Signature Stub <span class="badge partial">PARCIAL</span> <span class="icon">+</span>
-              </div>
-              <div class="accordion-content">
-                <strong>Finding:</strong> Webhooks for <code>/api/webhooks/email/inbound</code> and <code>/api/webhooks/signature/webhook</code> are partially stubbed without real inbound-parse providers plugged in yet, though the endpoint structure exists.
-                <br><br><strong>Evidence:</strong> Notes in <code>.env.example</code> (CYC-003, CYC-006).
-              </div>
-            </div>
-          </div>
-        </div>
+      <h3>Fluxo de Prospecção</h3>
+      <ol>
+        <li>Acesso ao módulo de Prospecção (<code>/app/prospect</code>)</li>
+        <li>Configuração de filtros de busca</li>
+        <li>Execução de busca via Apollo/IA</li>
+        <li>Enriquecimento automático de dados</li>
+        <li>Promoção de prospects para CRM</li>
+      </ol>
+      <div class="evidence"><span class="evidence-code">src/features/prospecting/components/ProspectingHub.tsx</span>
       </div>
-    </body>
-    </html>
+
+      <h3>Fluxo de CRM</h3>
+      <ol>
+        <li>Acesso ao CRM (<code>/app/crm</code>)</li>
+        <li>Visualização de pipeline Kanban</li>
+        <li>Gestão de leads (criar, editar, mover)</li>
+        <li>Registro de atividades e notas</li>
+        <li>Anexos e documentos</li>
+      </ol>
+      <div class="evidence"><span class="evidence-code">src/components/CrmBoard.tsx</span></div>
+
+      <h3>Fluxo de Inteligência Comercial</h3>
+      <ol>
+        <li>Acesso ao módulo (<code>/app/commercial_intelligence</code>)</li>
+        <li>Visualização de dashboards executivos</li>
+        <li>Análise de pipeline e forecast</li>
+        <li>Deteção de riscos e oportunidades</li>
+      </ol>
+      <div class="evidence"><span
+          class="evidence-code">src/features/commercial-intelligence/components/CommercialIntelligenceHub.tsx</span>
+      </div>
+    </div>
+
+    <div class="section" id="business-rules">
+      <h2>📐 Regras de Negócio</h2>
+
+      <h3>Controle de Acesso (RBAC)</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Papel</th>
+            <th>Nível</th>
+            <th>Permissões</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ADMIN</td>
+            <td>100</td>
+            <td>Acesso total, gestão de usuários, configurações</td>
+          </tr>
+          <tr>
+            <td>GESTOR</td>
+            <td>75</td>
+            <td>Visibilidade executiva, gestão de equipe</td>
+          </tr>
+          <tr>
+            <td>CLOSER</td>
+            <td>50</td>
+            <td>Gestão de pipeline, fechamento de negócios</td>
+          </tr>
+          <tr>
+            <td>SDR</td>
+            <td>40</td>
+            <td>Prospecção, qualificação de leads</td>
+          </tr>
+          <tr>
+            <td>VISUALIZADOR</td>
+            <td>10</td>
+            <td>Apenas leitura</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="evidence"><span class="evidence-code">src/lib/auth/authorization.ts</span></div>
+
+      <h3>Multi-tenancy</h3>
+      <p>Todos os dados são isolados por organização (tenant) através de RLS (Row Level Security) no PostgreSQL e
+        middleware <code>requireTenant</code> no backend.</p>
+      <div class="evidence"><span class="evidence-code">src/shared/middlewares/authorization.ts</span></div>
+
+      <h3>Status de Lead</h3>
+      <ul>
+        <li>Lead Recebido → Cadência Iniciada → Qualificação (SDR)</li>
+        <li>Reunião Agendada → Convertido em Oportunidade</li>
+        <li>Proposta Enviada → Call/Visita Agendada</li>
+        <li>Negócios Perdidos / Negócios Ganhos</li>
+      </ul>
+      <div class="evidence"><span class="evidence-code">prisma/schema.prisma (LeadStatus enum)</span></div>
+
+      <h3>Regras de Enriquecimento</h3>
+      <ul>
+        <li>Enriquecimento automático via BrasilAPI (CNPJ, CEP)</li>
+        <li>Integração opcional com Apollo para dados firmográficos</li>
+        <li>Look-alike scoring via pgvector</li>
+        <li>Cache TTL configurável (default: 86400s)</li>
+      </ul>
+      <div class="evidence"><span class="evidence-code">src/lib/enrichment/</span></div>
+    </div>
+
+    <div class="section" id="integrations">
+      <h2>🔗 Integrações</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Integração</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Evidência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Bitrix24</td>
+            <td>CRM Externo</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/bitrix/</code></td>
+          </tr>
+          <tr>
+            <td>WhatsApp</td>
+            <td>Messaging</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/whatsapp/</code></td>
+          </tr>
+          <tr>
+            <td>Google Workspace</td>
+            <td>Productivity</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/google/</code></td>
+          </tr>
+          <tr>
+            <td>Google Maps</td>
+            <td>Enrichment</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>.env.example (GOOGLE_MAPS_API_KEY)</code></td>
+          </tr>
+          <tr>
+            <td>Apollo</td>
+            <td>Prospecção</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>.env.example (APOLLO_API_KEY)</code></td>
+          </tr>
+          <tr>
+            <td>Hunter</td>
+            <td>Email Enrichment</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>.env.example (HUNTER_API_KEY)</code></td>
+          </tr>
+          <tr>
+            <td>Birth Voice</td>
+            <td>Voz/Telefonia</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/birth-voice/</code></td>
+          </tr>
+          <tr>
+            <td>3CX</td>
+            <td>Telefonia</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/threecx/</code></td>
+          </tr>
+          <tr>
+            <td>Stripe</td>
+            <td>Pagamentos</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/stripe/</code></td>
+          </tr>
+          <tr>
+            <td>Omie</td>
+            <td>ERP</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/omie/</code></td>
+          </tr>
+          <tr>
+            <td>Slack</td>
+            <td>Comunicação</td>
+            <td><span class="badge badge-implemented">IMPLEMENTADO</span></td>
+            <td><code>src/features/integrations/slack/</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" id="requirements">
+      <h2>📋 Requisitos</h2>
+
+      <h3>Requisitos Funcionais</h3>
+      <ul>
+        <li>Autenticação via e-mail/senha e OAuth (Google)</li>
+        <li>Gestão de usuários com papéis hierárquicos</li>
+        <li>CRUD completo de leads, empresas e contatos</li>
+        <li>Pipeline visual Kanban com drag-and-drop</li>
+        <li>Busca e filtros avançados</li>
+        <li>Enriquecimento automático de dados</li>
+        <li>Geração de conteúdo via IA</li>
+        <li>Automação de cadências e follow-ups</li>
+        <li>Integrações bidirecionais com CRMs externos</li>
+        <li>Analytics e relatórios exportáveis</li>
+      </ul>
+
+      <h3>Requisitos Não-Funcionais</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Categoria</th>
+            <th>Requisito</th>
+            <th>Evidência</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Performance</td>
+            <td>Tempo de resposta < 2s para operações CRUD</td>
+            <td><code>package.json (Vite, React 19)</code></td>
+          </tr>
+          <tr>
+            <td>Segurança</td>
+            <td>Autenticação, autorização, RLS multi-tenant</td>
+            <td><code>src/lib/auth/, prisma/schema.prisma</code></td>
+          </tr>
+          <tr>
+            <td>Escalabilidade</td>
+            <td>Workers separados para processamento assíncrono</td>
+            <td><code>worker.ts, BullMQ</code></td>
+          </tr>
+          <tr>
+            <td>Observabilidade</td>
+            <td>OpenTelemetry, Sentry, Prometheus</td>
+            <td><code>src/lib/telemetry/, src/lib/monitoring/</code></td>
+          </tr>
+          <tr>
+            <td>Disponibilidade</td>
+            <td>Health checks e graceful shutdown</td>
+            <td><code>src/bootstrap/healthchecks.ts</code></td>
+          </tr>
+          <tr>
+            <td>Compatibilidade</td>
+            <td>Mobile via Capacitor (Android/iOS)</td>
+            <td><code>capacitor.config.ts, android/, ios/</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Limitações Atuais</h3>
+      <ul>
+        <li>Dependência de PostgreSQL remoto (sem Postgres local no compose principal)</li>
+        <li>Alguns módulos (Voice Hub, Cadence) parcialmente implementados</li>
+        <li>Dependência de múltiplas chaves de API externas</li>
+        <li>Infraestrutura Kubernetes configurada mas não ativa</li>
+      </ul>
+
+      <h3>Riscos</h3>
+      <ul>
+        <li>Complexidade de sincronização bidirecional com Bitrix24</li>
+        <li>Gerenciamento de credenciais de múltiplas integrações</li>
+        <li>Performance com grandes volumes de dados</li>
+        <li>Consistência de dados entre sistemas externos</li>
+      </ul>
+
+      <h3>Dívida de Produto</h3>
+      <ul>
+        <li>Módulos executivos aposentados (treinamento, proposta comercial)</li>
+        <li>Dependência de infraestrutura externa (Postgres remoto)</li>
+        <li>Alguns workflows de automação incompletos</li>
+        <li>Documentação de alguns módulos desatualizada</li>
+      </ul>
+    </div>
+
+    <div class="footer">
+      <p>📖 <a href="00-INDEX.html">← Documentation Hub</a></p>
+      <p style="margin-top: 20px; color: #58616C;">Generated by Repository Documentation Architect V5 • 2026-09-25</p>
+    </div>
+  </div>
+</body>
+
+</html>
