@@ -23,7 +23,7 @@ vi.mock('./webhook.service.js', () => ({
   webhookService: { dispatch: vi.fn() },
 }));
 
-vi.mock('../../lib/voice-runtime/providers/LLMGateway.js', () => ({
+vi.mock('@/lib/voice-runtime/providers/LLMGateway.js', () => ({
   llmProviderGateway: { processRequest: vi.fn() },
 }));
 
@@ -36,7 +36,7 @@ vi.mock('./workflowRuntimeService.js', () => ({
 
 import { findAgentById } from '../repositories/agentRepository.js';
 import { findSessionById, updateSession } from '../repositories/sessionRepository.js';
-import { llmProviderGateway } from '../../lib/voice-runtime/providers/LLMGateway.js';
+import { llmProviderGateway } from '@/lib/voice-runtime/providers/LLMGateway.js';
 import {
   prepareWorkflowTurn,
   resumeAfterTool,

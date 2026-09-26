@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function findUserByEmail(email: string) {
   return prisma.user.findFirst({ where: { email: email.toLowerCase(), deletedAt: null } });

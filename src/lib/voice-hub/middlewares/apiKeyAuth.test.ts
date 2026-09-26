@@ -96,7 +96,7 @@ describe('getAuthUser — API key path', () => {
 });
 
 describe('attachAuthIfPresent — per-API-key rate limit', () => {
-  it('sets req.user/req.organizationId and calls next() for a valid key under the limit', async () => {
+  it('sets req.voiceHubUser/req.organizationId and calls next() for a valid key under the limit', async () => {
     vi.mocked(authenticateApiKey).mockResolvedValue({ apiKeyId: 'key-1', session: VALID_SESSION });
 
     const req = makeReq({ headers: { authorization: 'Bearer bvhk_live_ok' } });
@@ -105,7 +105,7 @@ describe('attachAuthIfPresent — per-API-key rate limit', () => {
 
     await attachAuthIfPresent(req, res, next);
 
-    expect(req.user).toEqual(VALID_SESSION);
+    expect(req.voiceHubUser).toEqual(VALID_SESSION);
     expect(req.organizationId).toBe('tenant-1');
     expect(next).toHaveBeenCalledTimes(1);
     expect(res.status).not.toHaveBeenCalled();

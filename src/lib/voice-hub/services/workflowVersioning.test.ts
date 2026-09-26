@@ -38,7 +38,7 @@ import {
   ValidationFailedError,
   type WorkflowMetadata,
 } from './workflowService.js';
-import type { NodeType, StudioEdge, StudioNode } from '../../lib/studio/types.js';
+import type { NodeType, StudioEdge, StudioNode } from '@/lib/studio/types.js';
 
 const mockFindForTenant = vi.mocked(workflowRepository.findWorkflowForTenant);
 const mockFindByIdForTenant = vi.mocked(workflowRepository.findWorkflowByIdForTenant);

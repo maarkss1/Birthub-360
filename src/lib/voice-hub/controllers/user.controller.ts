@@ -14,7 +14,7 @@ export async function createUserHandler(req: Request, res: Response) {
 
   try {
     const user = await createUserInTenant(req.organizationId!, parsed.data);
-    writeAuditLog(req.organizationId, req.user?.id, 'USER_CREATE_BY_ADMIN', { targetUserId: user.id, email: user.email });
+    writeAuditLog(req.organizationId, req.voiceHubUser?.id, 'USER_CREATE_BY_ADMIN', { targetUserId: user.id, email: user.email });
     return res.json({ success: true, user });
   } catch (err: any) {
     if (err instanceof UserServiceError) return res.status(err.status).json({ error: err.message });
@@ -27,8 +27,8 @@ export async function updateUserHandler(req: Request, res: Response) {
   if (!parsed.success) return res.status(400).json({ error: parsed.error.issues[0].message });
 
   try {
-    await updateUserProfile(String(req.params.id), req.organizationId!, req.user!, parsed.data);
-    writeAuditLog(req.organizationId, req.user?.id, 'USER_UPDATE', { targetUserId: String(req.params.id) });
+    await updateUserProfile(String(req.params.id), req.organizationId!, req.voiceHubUser!, parsed.data);
+    writeAuditLog(req.organizationId, req.voiceHubUser?.id, 'USER_UPDATE', { targetUserId: String(req.params.id) });
     return res.json({ success: true, message: 'Perfil atualizado com sucesso.' });
   } catch (err: any) {
     if (err instanceof UserServiceError) return res.status(err.status).json({ error: err.message });
@@ -38,8 +38,8 @@ export async function updateUserHandler(req: Request, res: Response) {
 
 export async function deleteUserHandler(req: Request, res: Response) {
   try {
-    await deleteUser(String(req.params.id), req.organizationId!, req.user?.id);
-    writeAuditLog(req.organizationId, req.user?.id, 'USER_DELETE', { targetUserId: String(req.params.id) });
+    await deleteUser(String(req.params.id), req.organizationId!, req.voiceHubUser?.id);
+    writeAuditLog(req.organizationId, req.voiceHubUser?.id, 'USER_DELETE', { targetUserId: String(req.params.id) });
     return res.json({ success: true, message: 'Usuário excluído com sucesso.' });
   } catch (err: any) {
     if (err instanceof UserServiceError) return res.status(err.status).json({ error: err.message });
@@ -53,8 +53,8 @@ export async function deleteUserHandler(req: Request, res: Response) {
 // invoke it on behalf of a titular within the same tenant.
 export async function anonymizeUserHandler(req: Request, res: Response) {
   try {
-    await anonymizeUserData(String(req.params.id), req.organizationId!, req.user!);
-    writeAuditLog(req.organizationId, req.user?.id, 'USER_DATA_ANONYMIZED', { targetUserId: String(req.params.id) });
+    await anonymizeUserData(String(req.params.id), req.organizationId!, req.voiceHubUser!);
+    writeAuditLog(req.organizationId, req.voiceHubUser?.id, 'USER_DATA_ANONYMIZED', { targetUserId: String(req.params.id) });
     return res.json({ success: true, message: 'Dados pessoais anonimizados com sucesso, conforme solicitação do titular (LGPD).' });
   } catch (err: any) {
     if (err instanceof UserServiceError) return res.status(err.status).json({ error: err.message });

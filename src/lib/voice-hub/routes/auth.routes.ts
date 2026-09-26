@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/auth/register', registerHandler);
 router.post('/auth/login', loginHandler);
 // `/auth/me` is the browser/session introspection endpoint. It must resolve the httpOnly access
-// cookie (or bearer token) before the controller reads req.user; previously this route called the
+// cookie (or bearer token) before the controller reads req.voiceHubUser; previously this route called the
 // controller directly and could return `user: undefined` even for a valid logged-in session.
 router.get('/auth/me', requireTenant, meHandler);
 router.post('/auth/logout', logoutHandler);

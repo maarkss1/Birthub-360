@@ -1,5 +1,5 @@
 import type { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export function createAuditLog(data: { organizationId?: string; userId: string; action: string; details: unknown }) {
   return prisma.auditLog.create({

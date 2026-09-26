@@ -11,7 +11,7 @@ vi.mock('../lib/prisma.js', () => ({
   },
 }));
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 import {
   upsertAtlasGRCallResult,
   findAtlasGRCallResultByCallId,

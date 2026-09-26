@@ -5,7 +5,7 @@
 // `src/services/billingService.ts`, which is the only caller of this file (Clean Architecture,
 // AGENTS.md §2: Controller → Service → Repository, no Prisma access outside `src/repositories/**`).
 import { type Plan, Prisma, type Transaction, type Wallet } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 export type WalletWithPlan = Wallet & { plan: Plan | null };
 

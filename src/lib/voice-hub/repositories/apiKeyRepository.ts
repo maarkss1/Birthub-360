@@ -12,7 +12,7 @@
 // plaintext key to hash-and-compare) touches it. This makes an accidental hash leak through the
 // listing endpoint structurally impossible rather than something the service layer has to
 // remember to strip.
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma.js';
 
 // Shape returned by listing/lookup-by-id — deliberately excludes `keyHash`.
 export const API_KEY_SAFE_SELECT = {

@@ -125,7 +125,7 @@ export async function revokeApiKeyForTenant(organizationId: string, id: string):
 }
 
 // Result of a successful API-key authentication: the same TokenPayload shape the rest of the
-// codebase already expects from JWT auth (req.user), plus the key's own id so the caller
+// codebase already expects from JWT auth (req.voiceHubUser), plus the key's own id so the caller
 // (middleware) can attribute rate limiting and can distinguish "authenticated via API key" from
 // "authenticated via JWT" without re-parsing the Authorization header.
 export interface ApiKeyAuthResult {

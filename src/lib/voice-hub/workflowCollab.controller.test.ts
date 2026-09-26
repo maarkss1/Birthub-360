@@ -12,10 +12,10 @@ import {
   lockNode,
   unlockNode,
   ConflictError,
-} from '../services/workflowCollabService.js';
-import { NotFoundError } from '../services/workflowService.js';
+} from './services/workflowCollabService.js';
+import { NotFoundError } from './services/workflowService.js';
 
-vi.mock('../services/workflowCollabService.js', () => ({
+vi.mock('./services/workflowCollabService.js', () => ({
   addComment: vi.fn(),
   resolveComment: vi.fn(),
   lockNode: vi.fn(),
@@ -28,7 +28,7 @@ vi.mock('../services/workflowCollabService.js', () => ({
   },
 }));
 
-vi.mock('../services/workflowService.js', () => ({
+vi.mock('./services/workflowService.js', () => ({
   NotFoundError: class NotFoundError extends Error {
     constructor(message: string) {
       super(message);
