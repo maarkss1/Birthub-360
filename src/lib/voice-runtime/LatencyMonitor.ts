@@ -1,5 +1,5 @@
-import { LatencyMetrics } from './types';
-import { observability } from './Observability';
+import { LatencyMetrics } from './types.js';
+import { observability } from './Observability.js';
 
 // The numeric timing fields of LatencyMetrics — distinct from the provider-identity fields
 // (llmProviderUsed, ttsProviderUsed, ...), which are strings/booleans and go through

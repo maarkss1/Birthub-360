@@ -1,6 +1,6 @@
-import { BaseProvider, ProviderResponse, ProviderInput, ProviderContext } from './BaseProvider';
+import { BaseProvider, ProviderResponse, ProviderInput, ProviderContext } from './BaseProvider.js';
 import { WebSocket } from 'ws';
-import { logger } from '../../../src/lib/logger.js';
+import { logger } from '../../logger.js';
 
 export class TwilioProvider extends BaseProvider {
   public id = 'Twilio';

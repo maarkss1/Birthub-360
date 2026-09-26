@@ -1,8 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
-import { otelCollector, SYSTEM_TENANT_ID } from "../otel";
-import { getAiConsent } from "../../../src/services/settingService.js";
-import { createMetric } from "../../../src/services/metricService.js";
-import { logger } from "../../../src/lib/logger.js";
+import { otelCollector, SYSTEM_TENANT_ID } from "../otel.js";
+import { getAiConsent } from "../../../services/settingService.js";
+import { createMetric } from "../../../services/metricService.js";
+import { logger } from "../../logger.js";
 
 export interface GatewayResponse {
   text: string;

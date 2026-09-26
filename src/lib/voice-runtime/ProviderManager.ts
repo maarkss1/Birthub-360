@@ -1,12 +1,12 @@
-import { BaseProvider } from './providers/BaseProvider';
-import { observability } from './Observability';
-import { logger } from '../../src/lib/logger.js';
-import { geminiProvider } from './providers/GeminiProvider';
-import { openaiProvider } from './providers/OpenAIProvider';
-import { anthropicProvider } from './providers/AnthropicProvider';
-import { elevenLabsProvider } from './providers/ElevenLabsProvider';
-import { voiceboxProvider } from './providers/VoiceboxProvider';
-import { twilioProvider } from './providers/TwilioProvider';
+import { BaseProvider } from './providers/BaseProvider.js';
+import { observability } from './Observability.js';
+import { logger } from '../logger.js';
+import { geminiProvider } from './providers/GeminiProvider.js';
+import { openaiProvider } from './providers/OpenAIProvider.js';
+import { anthropicProvider } from './providers/AnthropicProvider.js';
+import { elevenLabsProvider } from './providers/ElevenLabsProvider.js';
+import { voiceboxProvider } from './providers/VoiceboxProvider.js';
+import { twilioProvider } from './providers/TwilioProvider.js';
 
 export class ProviderManager {
   private providers: Map<string, BaseProvider> = new Map();

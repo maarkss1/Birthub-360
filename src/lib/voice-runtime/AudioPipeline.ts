@@ -1,6 +1,6 @@
-import { AudioChunk } from './types';
-import { streamingEngine } from './StreamingEngine';
-import { observability } from './Observability';
+import { AudioChunk } from './types.js';
+import { streamingEngine } from './StreamingEngine.js';
+import { observability } from './Observability.js';
 
 export class AudioPipeline {
   

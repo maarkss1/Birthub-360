@@ -1,6 +1,6 @@
-import { BaseProvider, ProviderResponse } from './BaseProvider';
+import { BaseProvider, ProviderResponse } from './BaseProvider.js';
 import { ElevenLabsClient } from 'elevenlabs';
-import { logger } from '../../../src/lib/logger.js';
+import { logger } from '../../logger.js';
 
 export class ElevenLabsProvider extends BaseProvider {
   public id = 'ElevenLabs';

@@ -1,5 +1,5 @@
 import { isPrivateOrReservedHost } from '../../src/validators/index.js';
-import { logger } from '../../src/lib/logger.js';
+import { logger } from '../logger.js';
 
 /**
  * Generic outbound HTTP call for a Studio `tool` node (`node.data.config.method/endpoint/

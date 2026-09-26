@@ -1,7 +1,17 @@
 import './src/lib/telemetry/otel.js'; // Precisa ser avaliado antes de qualquer modulo instrumentado (ex.: express, que carrega http internamente) para o HttpInstrumentation cobrir os requires abaixo.
 import { initTracing } from './src/lib/tracing.js';
-import { initSentry } from './src/lib/monitoring/sentry.js';
-initSentry(true);
+import * as SentryNode from '@sentry/node';
+
+// Inicializa o Sentry Node (servidor) diretamente aqui, sem passar pelo
+// src/lib/monitoring/sentry.ts — que agora é exclusivo do browser (React).
+const _sentryDsn = process.env.SENTRY_DSN;
+if (_sentryDsn) {
+  SentryNode.init({
+    dsn: _sentryDsn,
+    environment: process.env.NODE_ENV || 'development',
+    tracesSampleRate: process.env.NODE_ENV === 'production' ? 0.2 : 1.0,
+  });
+}
 initTracing();
 
 // Registrado logo no boot: sem Redis configurado, comandos internos do BullMQ rejeitam com

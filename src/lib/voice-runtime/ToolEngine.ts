@@ -1,4 +1,4 @@
-import { observability } from './Observability';
+import { observability } from './Observability.js';
 
 // Raised whenever a tool call is refused for scope reasons — kept distinct from "tool not found"
 // or the tool's own execution errors so callers (and observability consumers) can tell "the

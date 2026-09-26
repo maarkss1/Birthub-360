@@ -1,4 +1,4 @@
-import { AudioChunk } from '../types';
+import { AudioChunk } from '../types.js';
 
 export interface ProviderResponse {
   text?: string;

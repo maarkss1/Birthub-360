@@ -1,5 +1,5 @@
-import { RuntimeEvent } from './types';
-import { logger } from '../../src/lib/logger.js';
+import { RuntimeEvent } from './types.js';
+import { logger } from '../logger.js';
 
 export class ObservabilityEngine {
   private events: Map<string, RuntimeEvent[]> = new Map();

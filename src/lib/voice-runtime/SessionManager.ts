@@ -1,12 +1,12 @@
-import { VoiceSession, SessionState, AgentRuntimeConfig, ConversationTurn } from './types';
-import { observability } from './Observability';
-import { latencyMonitor } from './LatencyMonitor';
-import { memoryPipeline } from './MemoryPipeline';
-import { streamingEngine } from './StreamingEngine';
-import { audioPipeline } from './AudioPipeline';
-import { failoverEngine } from './FailoverEngine';
-import { webhookService } from '../../src/services/webhook.service.js';
-import { getAiConsent } from '../../src/services/settingService.js';
+import { VoiceSession, SessionState, AgentRuntimeConfig, ConversationTurn } from './types.js';
+import { observability } from './Observability.js';
+import { latencyMonitor } from './LatencyMonitor.js';
+import { memoryPipeline } from './MemoryPipeline.js';
+import { streamingEngine } from './StreamingEngine.js';
+import { audioPipeline } from './AudioPipeline.js';
+import { failoverEngine } from './FailoverEngine.js';
+import { webhookService } from '../../services/webhook.service.js';
+import { getAiConsent } from '../../services/settingService.js';
 
 // A session with no activity for this long is considered abandoned. Without this, a session that
 // never reaches endSession() (dropped WebSocket, crashed client, etc.) lives in `sessions` /

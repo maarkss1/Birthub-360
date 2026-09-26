@@ -1,6 +1,6 @@
 import { WebSocket } from 'ws';
-import { AudioChunk } from './types';
-import { observability } from './Observability';
+import { AudioChunk } from './types.js';
+import { observability } from './Observability.js';
 
 type StreamCallback = (chunk: AudioChunk) => void;
 

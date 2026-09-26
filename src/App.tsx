@@ -183,6 +183,9 @@ const TermsOfUse = lazy(() => import('./pages/TermsOfUse.js'));
 const WelcomeScreen = lazy(() =>
   import('./features/auth/components/WelcomeScreen.js').then((m) => ({ default: m.WelcomeScreen })),
 );
+const LandingInnovative = lazy(() =>
+  import('./features/voice-hub/pages/LandingInnovative.js').then((m) => ({ default: m.default })),
+);
 const Ldr = lazy(() => import('./pages/Ldr.js').then((m) => ({ default: m.Ldr })));
 const Account360 = lazy(() =>
   import('./features/market-intelligence/components/Account360.js').then((m) => ({
@@ -421,8 +424,9 @@ export default function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route path="/" element={<WelcomeScreen />} />
+                      <Route path="/" element={<LandingInnovative />} />
                       <Route path="/welcome" element={<WelcomeScreen />} />
+                      <Route path="/landing-new" element={<LandingInnovative />} />
                       <Route path="/privacy" element={<PrivacyPolicy />} />
                       <Route path="/terms" element={<TermsOfUse />} />
                       {/* `/select-brand` era a escolha entre as duas marcas anteriores. Com marca
